@@ -24,7 +24,7 @@ export const Sidebar = () => {
                             }} alt="" />
                             Recentes
                         </button>
-                        <button style={button}>
+                        <button  style={button}>
                             <img src="/notas.png" style={{
                                 width: '35px',
                                 height: '35px',

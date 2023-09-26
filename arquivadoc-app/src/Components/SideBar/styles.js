@@ -2,11 +2,11 @@
 export const containerStyle = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignContent: 'start',
     padding: '6.3px 0',
     gap: '40px',
-    position: 'absolute',
     width: '140px',
+    position: 'absolute',
     left: '0',
     top: '102px',
     height: 'auto',

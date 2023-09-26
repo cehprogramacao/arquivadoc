@@ -4,28 +4,15 @@ import { Container } from '@mui/material';
 import { Header } from '../Components/Header/Header';
 // import {Main} from '../Components/Main/Main';
 import {Sidebar} from '../Components/SideBar/Sidebar';
-import Main from '../Components/Main/Main';
+import {Main} from '../Components/Main/Main';
 import Grid from '@mui/material/Grid';
 
 export default function Home() {
   return (
-    <React.Fragment>
-      <Container style={{
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
+      <Container >
         <Header />
-        <div style={{
-          background: 'red',
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '0',
-        }}>
-        <Sidebar/>
+        <Sidebar />
         <Main />
-        </div>
       </Container>
-
-    </React.Fragment>
   );
 }

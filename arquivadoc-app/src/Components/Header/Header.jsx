@@ -9,7 +9,7 @@ export const Header = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: '#247117',
-                padding: '.7rem 1.5rem'
+                padding: '.7rem 1.5rem',
             }}>
                 <Toolbar >
                     <img src="/logo.png" alt="" />
