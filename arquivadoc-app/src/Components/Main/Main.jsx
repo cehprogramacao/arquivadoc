@@ -1,6 +1,7 @@
 import { Container, TextField } from "@mui/material";
 import { Search } from "../Search/Search";
 import { Button, Buttons } from "../Button/Button";
+import DocList from "../List/DocList";
 
 
 export const Main = () => {
@@ -9,14 +10,13 @@ export const Main = () => {
     <div className="" style={{
       display: 'flex',
       flexDirection: 'column',
-      padding: '20px 60px',
+      padding: '30px 60px',
       gap: '40px',
       position: 'absolute',
-      maxWidth: '1500px',
-      left: '276px',
-      top: '102px',
-      height: '517px',
-
+      width: '100%',
+      left: '0',
+      top: '80px',
+      minHeight: '539px',
     }}>
       <div style={{
         width: '100%',
@@ -44,6 +44,7 @@ export const Main = () => {
         <h3>Recentes</h3>
         <span>More than 400+ new members</span>
       </div>
+      <DocList />
     </div>
   );
 };

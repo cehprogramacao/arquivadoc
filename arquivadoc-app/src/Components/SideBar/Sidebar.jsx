@@ -1,17 +1,12 @@
 "use client"
-
-import { Drawer, List, ListItem, ListItemIcon } from '@mui/material';
-import { containerStyle,listSx, listItemIcon, button, listaSx } from './styles';
-import { Container } from '@mui/material';
+import { listItemIcon, button, listaConfig, listSx } from '../SideBar/styles';
+import { ListItemIcon } from '@mui/material';
+import { List, ListItem } from '@mui/material'
 export const Sidebar = () => {
-
-    const handleOpenConfig = () => {
-        alert('Clicou')
-    }
 
     return (
 
-        <Container style={containerStyle}>
+        <div>
             <List sx={listSx}>
                 <ListItem >
                     <ListItemIcon sx={listItemIcon}>
@@ -24,7 +19,7 @@ export const Sidebar = () => {
                             }} alt="" />
                             Recentes
                         </button>
-                        <button  style={button}>
+                        <button style={button}>
                             <img src="/notas.png" style={{
                                 width: '35px',
                                 height: '35px',
@@ -39,7 +34,7 @@ export const Sidebar = () => {
                                 height: '35px',
                                 flexShrink: 0,
                                 cursor: 'pointer'
-    
+
                             }} alt="" />
                             RGI
                         </button>
@@ -49,7 +44,7 @@ export const Sidebar = () => {
 
             </List>
 
-            <List sx={listaSx}>
+            <List sx={listaConfig}>
                 <ListItem>
                     <ListItemIcon sx={{
                         display: 'flex',
@@ -66,7 +61,7 @@ export const Sidebar = () => {
                                 cursor: 'pointer'
                             }} alt="" />
                         </button>
-                        <button style={button} onClick={handleOpenConfig}>
+                        <button style={button} >
                             <img src="/config.png" style={{
                                 width: '35px',
                                 height: '35px',
@@ -77,7 +72,7 @@ export const Sidebar = () => {
                     </ListItemIcon>
                 </ListItem>
             </List>
-        </Container>
+        </div>
 
     );
 };

@@ -7,14 +7,16 @@ import SearchIcon from '@mui/icons-material/Search';
 export const Search = () => {
 
     return (
-        <div>
+        <div style={{ 
+            width: '600px',
+        }}>
             <TextField sx={{
                 outline: 'none',
-                width: '500px',
+                width: '100%',
                 border: '',
-                
+                flex: '1'
             }}
-            margin="n"
+
             variant="outlined" placeholder="Pesquisar" InputProps={{
                 startAdornment: (
                     <InputAdornment position="star">

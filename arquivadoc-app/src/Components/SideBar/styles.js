@@ -1,35 +1,21 @@
 
-export const containerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignContent: 'start',
-    padding: '6.3px 0',
-    gap: '40px',
-    width: '140px',
-    position: 'absolute',
-    left: '0',
-    top: '102px',
-    height: 'auto',
-    backgroundColor: '#24711766',
-    boxShadow: 'inset 0px -4px 20px rgba(255, 255, 255, 0.1), inset 0px 4px 20px rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(15px)',
-    borderRadius: '0 14px 14px 0',
-}
 
 export const listSx = {
     width: '100%',
     display: 'flex',
     alignItems: 'start',
     padding: '34px 24px',
-    borderBottom: '1px solid #FFFFFF'
-
+    borderBottom: '1px solid #FFFFFF',
+    backgroundColor: '#24711766',
+    height: '100%',
 }
-export const listaSx = {
+export const listaConfig = {
     width: '100%',
     display: 'flex',
     alignItems: 'start',
-    padding: '0 24px',
-
+    padding: '2.2px 24px',
+    height: 'auto',
+    backgroundColor: '#24711766',
 }
 export const listItemIcon = {
     display: 'flex',
@@ -47,5 +33,5 @@ export const button = {
     border: 'none',
     background: 'transparent',
     color: "#fff",
-    gap: '2px'
+    gap: '2px',
 }
