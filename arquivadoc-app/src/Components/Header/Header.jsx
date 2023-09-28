@@ -16,12 +16,14 @@ export const Header = () => {
     return (
         <div>
             <AppBar style={{
+                width: '100%',
                 display: "flex",
                 alignItems: 'center',
                 backgroundColor: '#247117',
                 padding: '.8rem 1.5rem',
                 flexDirection: 'row',
-
+                flexWrap: 'wrap-reverse',
+                justifyContent: 'center'
             }}>
                 <IconButton
                     edge="start"
@@ -37,7 +39,7 @@ export const Header = () => {
                     display: 'flex',
                     margin: '0 auto'
                 }}>
-                    <img src="/logo.png" style={{
+                    <img src="/image/logo.png" style={{
                         width: '150px',
                         maxWidth: '100%',
                         flexShrink: '0',

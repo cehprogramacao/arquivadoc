@@ -19,7 +19,7 @@ export const Search = () => {
 
             variant="outlined" placeholder="Pesquisar" InputProps={{
                 startAdornment: (
-                    <InputAdornment position="star">
+                    <InputAdornment position="start">
                         <SearchIcon sx={{
                             marginRight: '6px'
                         }}/>

@@ -1,6 +1,6 @@
-import { Container, TextField } from "@mui/material";
+
 import { Search } from "../Search/Search";
-import { Button, Buttons } from "../Button/Button";
+import { Buttons } from "../Button/Button";
 import DocList from "../List/DocList";
 
 
@@ -41,8 +41,13 @@ export const Main = () => {
         left: '29px',
         top: '0px'
       }}>
-        <h3>Recentes</h3>
-        <span>More than 400+ new members</span>
+        <h3 style={{
+          color: '#212121',
+          fontWeight: '500'
+        }}>Recentes</h3>
+        <span style={{
+          color: '#B5B5C3'
+        }}>More than 400+ new members</span>
       </div>
       <DocList />
     </div>

@@ -11,7 +11,7 @@ export const Sidebar = () => {
                 <ListItem >
                     <ListItemIcon sx={listItemIcon}>
                         <button style={button}>
-                            <img src="/relogio.png" style={{
+                            <img src="/image/relogio.png" style={{
                                 width: '35px',
                                 height: '35px',
                                 flexShrink: 0,
@@ -20,7 +20,7 @@ export const Sidebar = () => {
                             Recentes
                         </button>
                         <button style={button}>
-                            <img src="/notas.png" style={{
+                            <img src="/image/notas.png" style={{
                                 width: '35px',
                                 height: '35px',
                                 flexShrink: 0,
@@ -29,7 +29,7 @@ export const Sidebar = () => {
                             Notas
                         </button>
                         <button style={button}>
-                            <img src="/casa.png" style={{
+                            <img src="/image/casa.png" style={{
                                 width: '35px',
                                 height: '35px',
                                 flexShrink: 0,
@@ -54,7 +54,7 @@ export const Sidebar = () => {
                         padding: '20px 0'
                     }}>
                         <button style={button}>
-                            <img src="/icon-neutro.png" style={{
+                            <img src="/image/icon-neutro.png" style={{
                                 width: '35px',
                                 height: '35px',
                                 flexShrink: 0,
@@ -62,7 +62,7 @@ export const Sidebar = () => {
                             }} alt="" />
                         </button>
                         <button style={button} >
-                            <img src="/config.png" style={{
+                            <img src="/image/config.png" style={{
                                 width: '35px',
                                 height: '35px',
                                 flexShrink: 0,
