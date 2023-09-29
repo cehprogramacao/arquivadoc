@@ -7,7 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 export const Search = () => {
 
     return (
-        <div style={{ 
+        <div style={{
             width: '600px',
         }}>
             <TextField sx={{

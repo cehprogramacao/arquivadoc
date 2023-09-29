@@ -6,10 +6,10 @@ export const Sidebar = () => {
 
     return (
 
-        <div>
+        <div >
             <List sx={listSx}>
                 <ListItem >
-                    <ListItemIcon sx={listItemIcon}>
+                    <ListItemIcon sx={listItemIcon} >
                         <button style={button}>
                             <img src="/image/relogio.png" style={{
                                 width: '35px',
@@ -45,33 +45,39 @@ export const Sidebar = () => {
             </List>
 
             <List sx={listaConfig}>
-                <ListItem>
-                    <ListItemIcon sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        cursor: 'pointer',
-                        gap: '20px',
-                        padding: '20px 0'
-                    }}>
-                        <button style={button}>
-                            <img src="/image/icon-neutro.png" style={{
-                                width: '35px',
-                                height: '35px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
-                            }} alt="" />
-                        </button>
-                        <button style={button} >
-                            <img src="/image/config.png" style={{
-                                width: '35px',
-                                height: '35px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
-                            }} alt="" />
-                        </button>
-                    </ListItemIcon>
-                </ListItem>
-            </List>
+<ListItem>
+    <ListItemIcon sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        cursor: 'pointer',
+        gap: '20px',
+        padding: '20px 0'
+    }}>
+        <button style={button}>
+            <img src="/image/icon-neutro.png" style={{
+                width: '35px',
+                height: '35px',
+                flexShrink: 0,
+                cursor: 'pointer'
+            }} alt="" />
+        </button>
+        <button style={button} >
+            <img src="/image/config.png" style={{
+                width: '35px',
+                height: '35px',
+                flexShrink: 0,
+                cursor: 'pointer'
+            }} alt="" />
+        </button>
+
+
+
+
+    </ListItemIcon>
+</ListItem>
+</List>
+
+
         </div>
 
     );

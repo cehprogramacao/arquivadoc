@@ -8,13 +8,15 @@ export const listSx = {
     borderBottom: '1px solid #FFFFFF',
     backgroundColor: '#24711766',
     height: '100%',
+
 }
+
 export const listaConfig = {
-    width: '100%',
+    width: 'auto',
     display: 'flex',
     alignItems: 'start',
     padding: '2.2px 24px',
-    height: 'auto',
+    height: '100%',
     backgroundColor: '#24711766',
 }
 export const listItemIcon = {
@@ -22,7 +24,9 @@ export const listItemIcon = {
     flexDirection: 'column',
     cursor: 'pointer',
     gap: '20px',
-    padding: '20px 0'
+    padding: '20px 0',
+
+
 }
 
 export const button = {
