@@ -89,7 +89,7 @@ export default function DocList() {
 
     return (
         <Grid container spacing={2} sx={
-            { flexGrow: 1, maxWidth: '100%', height: '300px' }}>
+            { flexGrow: 1, maxWidth: '100%', height: '300px', margin: '0 auto', position: 'relative', left: '50px' }}>
             {docs.map((item, index) => (
                 <Grid item key={index} xs={12} sm={6} md={4} lg={3} >
                     <List >

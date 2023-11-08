@@ -7,7 +7,7 @@ import { Sidebar } from '../SideBar/Sidebar';
 
 import { Drawer, IconButton} from '@mui/material'
 
-export const Header = () => {
+ const Header = () => {
     const [openSideBar, setOpenSideBar] = useState(false)
     const handleToggleButton = () => {
         setOpenSideBar(!openSideBar)
@@ -55,3 +55,4 @@ export const Header = () => {
         </div>
     )
 }
+export default Header

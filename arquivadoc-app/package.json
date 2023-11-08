@@ -13,8 +13,8 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/poppins": "^5.0.8",
     "@mui/icons-material": "^5.14.11",
-    "@mui/material": "^5.14.11",
-    "next": "latest",
+    "@mui/material": "^5.14.17",
+    "next": "^14.0.1",
     "react": "latest",
     "react-dom": "latest",
     "styled-components": "^6.0.8"

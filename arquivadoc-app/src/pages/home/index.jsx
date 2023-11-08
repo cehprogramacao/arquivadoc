@@ -1,7 +1,9 @@
 
-import { Search } from "../Search/Search";
-import { Buttons } from "../Button/Button";
-import DocList from "../List/DocList";
+
+import { Search } from "@/Components/Search/Search";
+import DocList from "@/Components/List/DocList";
+import { Buttons } from "@/Components/Button/Button";
+import Header from '@/Components/Header/Header'
 
 
 export const Main = () => {
@@ -13,11 +15,12 @@ export const Main = () => {
       padding: '30px 60px',
       gap: '40px',
       position: 'absolute',
-      width: '100%',
+      width: 'auto',
       left: '0',
       top: '80px',
       minHeight: '539px',
     }}>
+      <Header />
       <div style={{
         width: '100%',
         display: 'flex',
@@ -40,6 +43,7 @@ export const Main = () => {
         height: '50px',
         left: '29px',
         top: '0px'
+        
       }}>
         <h3 style={{
           color: '#212121',

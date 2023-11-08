@@ -4,11 +4,9 @@ export const listSx = {
     width: '100%',
     display: 'flex',
     alignItems: 'start',
-    padding: '34px 24px',
     borderBottom: '1px solid #FFFFFF',
     backgroundColor: '#24711766',
     height: '100%',
-
 }
 
 export const listaConfig = {
@@ -25,7 +23,7 @@ export const listItemIcon = {
     cursor: 'pointer',
     gap: '20px',
     padding: '20px 0',
-
+    margin: '0 auto'
 
 }
 
