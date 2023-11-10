@@ -4,15 +4,16 @@ import Toolbar from '@mui/material/Toolbar';
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from 'react';
 import { Sidebar } from '../SideBar/Sidebar';
-
-import { Drawer, IconButton} from '@mui/material'
-
- const Header = () => {
+import createRoutes from '@/routes/index.routes';
+import { Drawer, IconButton } from '@mui/material'
+import Link from 'next/link';
+const Header = () => {
+    const routes = createRoutes();
     const [openSideBar, setOpenSideBar] = useState(false)
     const handleToggleButton = () => {
         setOpenSideBar(!openSideBar)
     }
-    
+
     return (
         <div>
             <AppBar style={{
@@ -39,17 +40,20 @@ import { Drawer, IconButton} from '@mui/material'
                     display: 'flex',
                     margin: '0 auto'
                 }}>
-                    <img src="/image/logo.png" style={{
-                        width: '150px',
-                        maxWidth: '100%',
-                        flexShrink: '0',
-                        objectFit: 'cover',
-                        
-                    }} alt="" />
+                    <Link href='/' style={{ textDecoration: 'none' }}>
+                        <img src="/image/logo.png" style={{
+                            width: '150px',
+                            maxWidth: '100%',
+                            flexShrink: '0',
+                            objectFit: 'cover',
+                            cursor: 'pointer'
+                        }} alt="" onClick={routes.goToMainPage} />
+                    </Link>
                 </Toolbar>
+
             </AppBar>
 
-            <Drawer anchor="left"  open={openSideBar} onClose={handleToggleButton}>
+            <Drawer anchor="left" open={openSideBar} onClose={handleToggleButton}>
                 <Sidebar />
             </Drawer>
         </div>

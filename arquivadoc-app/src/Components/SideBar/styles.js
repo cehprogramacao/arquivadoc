@@ -23,7 +23,8 @@ export const listItemIcon = {
     cursor: 'pointer',
     gap: '20px',
     padding: '20px 0',
-    margin: '0 auto'
+    margin: '0 auto',
+    alignItems: 'center',
 
 }
 

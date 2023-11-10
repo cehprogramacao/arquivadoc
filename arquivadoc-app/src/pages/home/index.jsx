@@ -1,11 +1,89 @@
 
 
 import { Search } from "@/Components/Search/Search";
-import DocList from "@/Components/List/DocList";
+import { DocList } from "@/Components/List/DocList";
 import { Buttons } from "@/Components/Button/Button";
 import Header from '@/Components/Header/Header'
 
+const docs = [
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
+  {
+      name: 'Ronaldo',
+      text: 'Procuração'
+  },
 
+]
 export const Main = () => {
 
   return (
@@ -53,7 +131,7 @@ export const Main = () => {
           color: '#B5B5C3'
         }}>More than 400+ new members</span>
       </div>
-      <DocList />
+      <DocList data={docs} />
     </div>
   );
 };

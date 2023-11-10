@@ -1,3 +1,4 @@
+import Header from '@/Components/Header/Header'
 import './globals.css'
 import { Poppins } from 'next/font/google'
 
@@ -12,8 +13,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-br">
       <body className={inter.className}>
-      
         {children}
+        
         </body>
 
     </html >

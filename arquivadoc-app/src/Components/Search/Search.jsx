@@ -14,9 +14,9 @@ export const Search = () => {
                 outline: 'none',
                 width: '100%',
                 border: '',
-                flex: '1'
+                flex: '1',
             }}
-
+            
             variant="outlined" placeholder="Pesquisar" InputProps={{
                 startAdornment: (
                     <InputAdornment position="start">
@@ -24,7 +24,8 @@ export const Search = () => {
                             marginRight: '6px'
                         }}/>
                     </InputAdornment>
-                )
+                ), 
+                
             }}/>
         </div>
     )

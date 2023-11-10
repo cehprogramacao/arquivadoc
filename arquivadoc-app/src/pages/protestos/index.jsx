@@ -1,34 +1,28 @@
-import { Box, TextField, Typography } from '@mui/material';
+import { AutoComplete } from "@/Components/AutoComplete"
+import { Buttons } from "@/Components/Button/Button"
+import { ButtonLixeira } from "@/Components/ButtonLixeira"
+import Header from "@/Components/Header/Header"
+import { DocList } from "@/Components/List/DocList"
+import { Box, TextField, Typography } from "@mui/material"
 
-import { Buttons } from '@/Components/Button/Button';
-import { ButtonLixeira } from '@/Components/ButtonLixeira';
-import { AutoComplete } from '@/Components/AutoComplete';
-import { DocList } from '@/Components/List/DocList';
-import Header from '@/Components/Header/Header';
-
+const PageProtestos = ({data}) => {
+    const docs = [
+        {
+            name: 'Ronaldo',
+            text: 'Procuração'
+        },
+        
+    
+    ]
+    
 const top100Films = [
     {
-        label: 'Prenotação'
-    },
-    {
-        label: 'Matrícula '
+        label: 'Número '
     },
     {
         label: 'Caixa'
     },
-    {
-        label: 'Apresentante(documento)'
-    }
 ];
-const docs = [
-    {
-        name: 'Ronaldo',
-        text: 'Procuração'
-    },
-    
-
-]
-const PageRGI = () => {
     return (
         <Box sx={{
             width: '100%',
@@ -39,11 +33,12 @@ const PageRGI = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '10px'
+            gap: '10px',
+            justifyContent: 'space-between'
         }}>
             <Header />
             <Typography fontSize={30} fontWeight={'bold'} >
-                RGI
+                PROTESTO
             </Typography>
             <div style={{
                 height: '40px',
@@ -52,9 +47,10 @@ const PageRGI = () => {
                 alignItems: 'center',
                 gap: '30px',
                 margin: '0 auto',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+
             }}>
-                <div style={{display: 'flex', alignItems: 'center', gap: 30}}>
+                <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 30}}>
                     <TextField label="Buscar" sx={{ width: 300 }} />
                     <AutoComplete data={top100Films} />
                 </div>
@@ -64,6 +60,6 @@ const PageRGI = () => {
 
             <DocList data={docs} />
         </Box>
-    );
-};
-export default PageRGI;
+    )
+}
+export default PageProtestos
