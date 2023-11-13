@@ -1,6 +1,6 @@
 "use client"
 import { listItemIcon, button, listaConfig, listSx } from '../SideBar/styles';
-import { ListItemIcon } from '@mui/material';
+import { Box, ListItemIcon } from '@mui/material';
 import { List, ListItem } from '@mui/material'
 import createRoutes from '@/routes/index.routes';
 export const Sidebar = () => {
@@ -8,7 +8,7 @@ export const Sidebar = () => {
 
     return (
 
-        <div >
+        <Box >
             <List sx={listSx}>
                 <ListItem >
                     <ListItemIcon sx={listItemIcon} >
@@ -18,10 +18,11 @@ export const Sidebar = () => {
                                 height: '35px',
                                 flexShrink: 0,
                                 cursor: 'pointer',
+                                
                             }} alt="" />
                             Recentes
                         </button>
-                        <button style={button}>
+                        <button style={button} onClick={routes.goToPageNotas}>
                             <img src="/image/notas.png" style={{
                                 width: '35px',
                                 height: '35px',
@@ -30,15 +31,7 @@ export const Sidebar = () => {
                             }} alt="" />
                             Notas
                         </button>
-                        <button style={button} onClick={routes.goToPageTermos}>
-                            <img src="/image/notas.png" style={{
-                                width: '35px',
-                                height: '35px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
-                            }} alt="" />
-                            Termos
-                        </button>
+                        
                         <button style={button} onClick={routes.goToPageRGI} >
                             <img src="/image/casa.png" style={{
                                 width: '35px',
@@ -59,6 +52,7 @@ export const Sidebar = () => {
                             }} alt="" />
                             Protestos
                         </button>
+                        
                     </ListItemIcon>
                 </ListItem>
 
@@ -98,7 +92,7 @@ export const Sidebar = () => {
             </List>
 
 
-        </div>
+        </Box>
 
     );
 };

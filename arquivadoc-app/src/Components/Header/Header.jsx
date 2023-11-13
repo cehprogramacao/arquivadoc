@@ -46,7 +46,8 @@ const Header = () => {
                             maxWidth: '100%',
                             flexShrink: '0',
                             objectFit: 'cover',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            
                         }} alt="" onClick={routes.goToMainPage} />
                     </Link>
                 </Toolbar>

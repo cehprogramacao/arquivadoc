@@ -10,11 +10,14 @@ export const Search = () => {
         <div style={{
             width: '600px',
         }}>
-            <TextField sx={{
+            <TextField color="success" sx={{
                 outline: 'none',
                 width: '100%',
                 border: '',
                 flex: '1',
+                '& input': {
+                    color: 'success.main', // Color when not focused
+                },
             }}
             
             variant="outlined" placeholder="Pesquisar" InputProps={{

@@ -5,13 +5,16 @@ export const AutoComplete = ({ data }) => {
     return (
         <Stack>
             <Autocomplete
-                    
-                    disablePortal
-                    id="combo-box-demo"
-                    options={data}
-                    sx={{ width: 400 }}
-                    renderInput={(params) => <TextField {...params} label="Buscar Por" sx={{ borderColor: 'green' }} />}
-                />
+                
+                disablePortal
+                id="combo-box-demo"
+                options={data}
+                sx={{ width: 450 }}
+                renderInput={(params) => <TextField color="success" {...params} label="Buscar Por" 
+                sx={{ color: "#237117", '& input': {
+                    color: 'success.main', 
+                }, }} />}
+            />
         </Stack>
     )
 }

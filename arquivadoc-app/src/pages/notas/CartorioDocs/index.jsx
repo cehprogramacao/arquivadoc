@@ -3,32 +3,18 @@ import { Box, TextField, Typography } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
-import { DocList } from '@/Components/List/DocList';
 import Header from '@/Components/Header/Header';
 
-const top100Films = [
-    {
-        label: 'Prenotação'
-    },
-    {
-        label: 'Matrícula '
-    },
-    {
-        label: 'Caixa'
-    },
-    {
-        label: 'Apresentante(documento)'
-    }
-];
-const docs = [
-    {
-        name: 'Ronaldo',
-        text: 'Procuração'
-    },
-    
 
-]
-const PageRGI = () => {
+const CartorioDocs = ({ data }) => {
+    const top100Films = [
+        {
+            label: 'Ordem'
+        },
+        {
+            label: 'Livro'
+        },
+    ];
     return (
         <Box sx={{
             width: '100%',
@@ -43,27 +29,27 @@ const PageRGI = () => {
         }}>
             <Header />
             <Typography fontSize={30} fontWeight={'bold'} >
-                RGI
+                Notas
             </Typography>
             <div style={{
+                width: '100%',
                 height: '40px',
-                padding: '8px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '30px',
-                margin: '0 auto',
-                justifyContent: 'space-between'
+                marginTop: 20,
+                placeContent: 'center'
             }}>
-                <div style={{display: 'flex', alignItems: 'center', gap: 30}}>
-                    <TextField label="Buscar" sx={{ width: 400, '& input': {color: 'success.main', }}} color='success' />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
+                    <TextField label="Buscar" sx={{ width: 400, '& input': { } }} inputProps={{
+                        
+                    }} />
                     <AutoComplete data={top100Films} />
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
                 <ButtonLixeira />
             </div>
-
-            <DocList data={docs} />
         </Box>
-    );
-};
-export default PageRGI;
+    )
+}
+export default CartorioDocs

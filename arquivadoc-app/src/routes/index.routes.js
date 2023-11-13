@@ -16,6 +16,15 @@ const createRoutes = () => {
     goToPageTermos: () => {
       router.push('/termos');
     },
+    goToPageNotas: () => {
+      router.push('/notas');
+    },
+    goToPageCartoes: () => {
+      router.push('/notas/cartoes')
+    },
+    goToPageCartorioDocs: () => {
+      router.push('/notas/CartorioDocs')
+    }
   };
 };
 

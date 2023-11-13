@@ -51,7 +51,7 @@ const top100Films = [
 
             }}>
                 <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 30}}>
-                    <TextField label="Buscar" sx={{ width: 300 }} />
+                    <TextField label="Buscar" sx={{ width: 400, '& input': {color: 'success.main'}}} color="success"/>
                     <AutoComplete data={top100Films} />
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
