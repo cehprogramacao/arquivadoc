@@ -38,14 +38,16 @@ export const listaConfig = {
     
 }
 export const listItemIcon = {
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     cursor: 'pointer',
     gap: '20px',
-    padding: '0',
-    margin: '0 auto',
+    
+    position: 'relative',
+    left: '10px',
     alignItems: 'center',
-
+    justifyContent: 'center',
 }
 
 export const button = {
