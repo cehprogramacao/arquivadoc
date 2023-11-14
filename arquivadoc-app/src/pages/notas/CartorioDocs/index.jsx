@@ -4,7 +4,8 @@ import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
 import Header from '@/Components/Header/Header';
-
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 
 const CartorioDocs = ({ data }) => {
     const top100Films = [
@@ -41,12 +42,13 @@ const CartorioDocs = ({ data }) => {
                 placeContent: 'center'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
-                    <TextField label="Buscar" sx={{ width: 400, '& input': { } }} inputProps={{
-                        
-                    }} />
+                    <TextField label="Buscar" sx={{ width: 400, '& input': { color: 'success.main' } }} 
+                    color='success'
+                    />
                     <AutoComplete data={top100Films} />
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
+                <ButtonOpenModals onClick={() => alert('Oii')} />
                 <ButtonLixeira />
             </div>
         </Box>

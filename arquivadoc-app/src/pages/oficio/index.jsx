@@ -6,7 +6,7 @@ import Header from "@/Components/Header/Header"
 import { DocList } from "@/Components/List/DocList"
 import { Box, TextField, Typography } from "@mui/material"
 
-const PageProtestos = ({data}) => {
+const PageOficio = () => {
     const docs = [
         {
             name: 'Ronaldo',
@@ -28,40 +28,39 @@ const top100Films = [
         <Box sx={{
             width: '100%',
             height: '100vh',
-            marginTop: 11,
+            marginTop: 8,
             position: 'relative',
             padding: '30px 0',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            gap: '10px',
-            justifyContent: 'space-between'
+
+            gap: '30px',
         }}>
             <Header />
-            <Typography fontSize={30} fontWeight={'bold'} >
-                PROTESTO
+            <Typography fontSize={30} fontWeight={'bold'} align="center">
+                Ofícios
             </Typography>
             <div style={{
+                width: '100%',
                 height: '40px',
-                padding: '8px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '30px',
-                margin: '0 auto',
-                justifyContent: 'space-between',
-
+                gap: '60px',
+                placeContent: 'center'
             }}>
-                <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 30}}>
-                    <TextField label="Buscar" sx={{ width: 400, '& input': {color: 'success.main'}}} color="success"/>
+                <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 40}}>
+                    <TextField label="Buscar" sx={{ width: 340, '& input': {color: 'success.main'}}} color="success"/>
                     <AutoComplete data={top100Films} />
                 </div>
+                <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 30}}>
                 <Buttons color={'green'} title={'Buscar'} />
                 <ButtonOpenModals />
                 <ButtonLixeira />
+                </div>
             </div>
 
             <DocList data={docs} />
         </Box>
     )
 }
-export default PageProtestos
+export default PageOficio

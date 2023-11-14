@@ -1,29 +1,35 @@
-import { AutoComplete } from "@/Components/AutoComplete"
-import { Buttons } from "@/Components/Button/Button"
-import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
-import Header from "@/Components/Header/Header"
-import { DocList } from "@/Components/List/DocList"
-import { Box, TextField, Typography } from "@mui/material"
+import { Box, TextField, Typography } from '@mui/material';
 
-const PageProtestos = ({data}) => {
-    const docs = [
-        {
-            name: 'Ronaldo',
-            text: 'Procuração'
-        },
-        
-    
-    ]
-    
+import { Buttons } from '@/Components/Button/Button';
+import { ButtonLixeira } from '@/Components/ButtonLixeira';
+import { AutoComplete } from '@/Components/AutoComplete';
+import { DocList } from '@/Components/List/DocList';
+import Header from '@/Components/Header/Header';
+import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
+
 const top100Films = [
     {
-        label: 'Número '
+        label: 'Prenotação'
+    },
+    {
+        label: 'Matrícula '
     },
     {
         label: 'Caixa'
     },
+    {
+        label: 'Apresentante(documento)'
+    }
 ];
+const docs = [
+    {
+        name: 'Ronaldo',
+        text: 'Procuração'
+    },
+    
+
+]
+const PageRTD = () => {
     return (
         <Box sx={{
             width: '100%',
@@ -34,12 +40,11 @@ const top100Films = [
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '10px',
-            justifyContent: 'space-between'
+            gap: '10px'
         }}>
             <Header />
             <Typography fontSize={30} fontWeight={'bold'} >
-                PROTESTO
+                RTD
             </Typography>
             <div style={{
                 height: '40px',
@@ -48,11 +53,10 @@ const top100Films = [
                 alignItems: 'center',
                 gap: '30px',
                 margin: '0 auto',
-                justifyContent: 'space-between',
-
+                justifyContent: 'space-between'
             }}>
-                <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 30}}>
-                    <TextField label="Buscar" sx={{ width: 400, '& input': {color: 'success.main'}}} color="success"/>
+                <div style={{display: 'flex', alignItems: 'center', gap: 30}}>
+                    <TextField label="Buscar" sx={{ width: 400, '& input': {color: 'success.main', }}} color='success' />
                     <AutoComplete data={top100Films} />
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
@@ -62,6 +66,6 @@ const top100Films = [
 
             <DocList data={docs} />
         </Box>
-    )
-}
-export default PageProtestos
+    );
+};
+export default PageRTD;

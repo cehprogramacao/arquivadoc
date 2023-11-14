@@ -4,19 +4,19 @@ import SearchIcon from '@mui/icons-material/Search';
 
 
 
-export const Search = () => {
+export const Search = ({onChange}) => {
 
     return (
         <div style={{
             width: '600px',
         }}>
-            <TextField color="success" sx={{
+            <TextField onChange={onChange} color="success" sx={{
                 outline: 'none',
                 width: '100%',
                 border: '',
                 flex: '1',
                 '& input': {
-                    color: 'success.main', // Color when not focused
+                    color: 'success.main',
                 },
             }}
             

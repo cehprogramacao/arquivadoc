@@ -10,7 +10,7 @@ const createRoutes = () => {
     goToPageRGI: () => {
       router.push('/rgi');
     },
-    goToPageProtestos: () => {
+  goToPageProtestos: () => {
       router.push('/protestos');
     },
     goToPageTermos: () => {
@@ -24,6 +24,15 @@ const createRoutes = () => {
     },
     goToPageCartorioDocs: () => {
       router.push('/notas/CartorioDocs')
+    },
+    goToPageOficios: () => {
+      router.push('/oficio')
+    },
+    goToPageRTD: () => {
+      router.push('/rtd')
+    },
+    goToPageRPJ: () => {
+      router.push('/rpj')
     }
   };
 };

@@ -5,6 +5,7 @@ import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
 import { DocList } from '@/Components/List/DocList';
 import Header from '@/Components/Header/Header';
+import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 
 const top100Films = [
     {
@@ -59,6 +60,7 @@ const PageRGI = () => {
                     <AutoComplete data={top100Films} />
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
+                <ButtonOpenModals />
                 <ButtonLixeira />
             </div>
 

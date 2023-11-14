@@ -3,9 +3,10 @@ import { Buttons } from "@/Components/Button/Button"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import Header from "@/Components/Header/Header"
 import { DocList } from "@/Components/List/DocList"
-import { Box, Button, TextField, Typography } from "@mui/material"
+import { Autocomplete, Box, Button, TextField, Typography } from "@mui/material"
 import { TermosTable } from "./tableTermos/table"
 import { useState } from "react"
+import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 
 
 
@@ -20,7 +21,7 @@ const PageTermos = ({ data }) => {
     ]
     const top100Films = [
         {
-            label: 'Número '
+            label: 'Número'
         },
         {
             label: 'Caixa'
@@ -38,14 +39,17 @@ const PageTermos = ({ data }) => {
         { id: 9, numero: '4477', caixa: 2, parte: 'Ivy Thomas', cartao: '901234' },
         { id: 10, numero: '2255', caixa: 1, parte: 'Jack Robinson', cartao: '012345' },
     ]);
-    const handleButtonLixeira = () => {
-        setRows([])
-    }
+
     const handleExcluir = (id) => {
         const updatedRows = rows.filter((row) => row.id !== id);
         setRows(updatedRows);
     };
-    
+    const [select, setSelect] = useState(null);
+    const [valueInput, setValueInput] = useState('')
+    const handleBuscar = () => {
+
+    };
+
     return (
         <Box sx={{
             width: '100%',
@@ -67,7 +71,7 @@ const PageTermos = ({ data }) => {
                 padding: '8px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '70px',
+                gap: '30px',
                 margin: '0 auto',
                 flexWrap: 'wrap'
             }}>
@@ -79,9 +83,35 @@ const PageTermos = ({ data }) => {
                                 color: 'success.main',
                             },
                         }} color="success" />
-                    <AutoComplete data={top100Films}/>
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={top100Films}
+                        sx={{ width: 450 }}
+                        autoHighlight
+                        getOptionLabel={(option) => option.label}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                color="success"
+                                label="Buscar Por"
+                                onChange={(e) => {
+                                    const selected = top100Films.find(
+                                        (item) => item.label === e.target.value
+                                    );
+                                    setSelect(selected)
+                                }}
+                                sx={{
+                                    color: "#237117",
+                                    "& input": {
+                                        color: "success.main",
+                                    },
+                                }}
+                            />
+                        )}
+                    />
                 </div>
-                <Button variant="contained" sx={{
+                <Button variant="contained" onClick={handleBuscar} sx={{
                     background: '#247117',
                     padding: '14px 10px',
                     ":hover": {
@@ -90,7 +120,8 @@ const PageTermos = ({ data }) => {
                 }}>
                     BUSCAR
                 </Button>
-                <ButtonLixeira onClick={handleButtonLixeira} />
+                <ButtonOpenModals />
+                <ButtonLixeira />
             </div>
             <TermosTable data={rows} onClick={handleExcluir} />
         </Box>

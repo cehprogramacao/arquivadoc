@@ -21,6 +21,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
   },
+  padding: '10px 22px' 
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -52,7 +53,7 @@ export const TermosTable = ({ data, onClick }) => {
             <StyledTableCell align='right'>Editar</StyledTableCell>
           </TableRow>
         </TableHead>
-        <TableBody sx={{ maxHeight: '400px', overflowY: 'auto' }}>
+        <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
           {data.map((row, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell align='left'>{row.numero}</StyledTableCell>
@@ -64,7 +65,14 @@ export const TermosTable = ({ data, onClick }) => {
                   fontSize: '15px',
                   textTransform: 'none',
                   left: '12px',
-                  color: 'black'
+                  color: 'black',
+                  background: 'transparent',
+                  border: '1px solid #EA1010',
+                  color: '#EA1010',
+                  ":hover": {
+                    background: '#EA1010',
+                    color: '#fff'
+                  }
                 }} onClick={() => onClick(row.id)}>
                   Excluir
                 </Button>
@@ -74,7 +82,14 @@ export const TermosTable = ({ data, onClick }) => {
                   fontSize: '15px',
                   textTransform: 'none',
                   left: '14px',
-                  color: 'black'
+                  color: 'black',
+                  background: 'transparent',
+                  border: '1px solid #FFD500',
+                  color: '#FFD500',
+                  ":hover": {
+                    background: '#FFD500',
+                    color: '#fff'
+                  }
                 }}>
                   Editar
                 </Button>

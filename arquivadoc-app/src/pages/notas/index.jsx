@@ -7,7 +7,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 const StyledButton = styled(Button)({
-    width: '200px',
+    maxWidth: '200px',
     fontSize: '17px',
     //   background: '#217117',
     display: 'flex',
@@ -39,7 +39,7 @@ const PageNotas = () => {
         }}>
             <Header />
             <Typography fontSize={30} fontWeight={'bold'}>
-                NOTAS
+                Notas
             </Typography>
             <Stack sx={{
                 width: 'auto',
@@ -51,7 +51,8 @@ const PageNotas = () => {
                 position: 'relative',
                 right: 0,
                 alignItems: 'center',
-                gap: 20
+                gap: 10,
+                
             }}>
                 <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
                     <FolderOpenOutlinedIcon sx={{
@@ -60,6 +61,7 @@ const PageNotas = () => {
                     }} />
                     <Typography sx={{
                         fontFamily: 'Roboto, sans-serif',
+                        fontSize: "1em"
                     }}>
                         Escrituras, Procurações, etc
                     </Typography>
@@ -71,6 +73,7 @@ const PageNotas = () => {
                     }} />
                     <Typography sx={{
                         fontFamily: 'Roboto, sans-serif',
+                        fontSize: "1em"
                     }}>
                         Cartões de Autógrafo
                     </Typography>
@@ -82,6 +85,7 @@ const PageNotas = () => {
                     }} />
                     <Typography sx={{
                         fontFamily: 'Roboto, sans-serif',
+                        fontSize: "1em"
                     }}>
                         Termos LGPD
                     </Typography>

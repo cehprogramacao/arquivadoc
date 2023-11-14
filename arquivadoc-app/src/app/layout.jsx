@@ -1,6 +1,7 @@
 import Header from '@/Components/Header/Header'
 import './globals.css'
 import { Poppins } from 'next/font/google'
+import Link from 'next/link'
 
 const inter = Poppins({ subsets: ['latin'], weight: '500' })
 
@@ -14,8 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="pt-br">
       <body className={inter.className}>
         {children}
-        
-        </body>
+      </body>
 
     </html >
   )

@@ -3,7 +3,7 @@
 export const listSx = {
     width: '100%',
     display: 'flex',
-    height: '448px',
+    height: '408px',
     alignItems: 'start',
     borderBottom: '1px solid #FFFFFF',
     backgroundColor: '#237117',
@@ -28,18 +28,21 @@ export const listSx = {
 export const listaConfig = {
     width: 'auto',
     display: 'flex',
-    alignItems: 'start',
-    padding: '2.2px 24px',
+    alignItems: 'center',
+    padding: '0 24px',
     backgroundColor: '#237117',
-    height: 'auto',
-    alingContent: 'center'
+    minHeight: '194px',
+    flexDirection: 'column',
+    gap: '20px',
+    
+    
 }
 export const listItemIcon = {
     display: 'flex',
     flexDirection: 'column',
     cursor: 'pointer',
     gap: '20px',
-    padding: '20px 0',
+    padding: '0',
     margin: '0 auto',
     alignItems: 'center',
 
