@@ -6,8 +6,10 @@ import { AutoComplete } from '@/Components/AutoComplete';
 import Header from '@/Components/Header/Header';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
+import createRoutes from '@/routes/index.routes';
 
 const CartorioDocs = ({ data }) => {
+    const routes = createRoutes()
     const top100Films = [
         {
             label: 'Ordem'
@@ -49,7 +51,7 @@ const CartorioDocs = ({ data }) => {
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
                 <ButtonOpenModals onClick={() => alert('Oii')} />
-                <ButtonLixeira />
+                <ButtonLixeira onClick={routes.goToPageLixeiraCartorioDocs} />
             </div>
         </Box>
     )

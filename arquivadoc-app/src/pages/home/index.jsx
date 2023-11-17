@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useState } from "react";
+import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
 
 
 const docs = [
@@ -107,7 +108,7 @@ export const PageHome = () => {
       gap: '10px',
       position: 'absolute',
       width: 'auto',
-      marginTop: 11
+      marginTop: 11,
 
     }}>
       <Header />
@@ -115,7 +116,7 @@ export const PageHome = () => {
         width: '100%',
         display: 'flex',
         alignItems: 'center',
-        gap: '90px',
+        gap: '20px',
         flexWrap: "wrap",
         placeContent: 'center'
       }}>
@@ -140,12 +141,14 @@ export const PageHome = () => {
             <MenuItem value={30}>Thirty</MenuItem>
           </Select>
         </FormControl>
-        <Buttons title='Cadastrar' color={'#3699FF'} />
+        <Buttons color={'green'} title={'Buscar'} onClick={() => alert('Oiii')} />
+        <ButtonOpenModals />
+        
         </div>
       </div>
 
       <Box sx={{
-        width: '100%',
+        maxWidth: 1200,
         display: 'flex',
         flexDirection: 'column',
         gap: '40px',

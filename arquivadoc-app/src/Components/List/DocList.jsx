@@ -11,7 +11,7 @@ export const DocList = ({ data }) => {
 
     return (
         <Grid container spacing={2} sx={
-            { flexGrow: 1, width: '100%', height: '450px', margin: '0 auto', position: 'relative', overflowY: 'auto' }}>
+            { flexGrow: 1, maxWidth:'1200px',height: '450px', margin: '0 auto', position: 'relative', overflowY: 'auto' }}>
             {data.map((item, index) => (
                 <Grid item key={index} xs={12} sm={6} md={4} lg={3} sx={{
                     display: 'grid', justifyContent: 'center', padding: '10px 0'

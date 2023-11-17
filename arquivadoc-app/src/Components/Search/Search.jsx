@@ -1,5 +1,5 @@
 import React from "react"
-import { InputAdornment, TextField } from "@mui/material"
+import { InputAdornment, Stack, TextField } from "@mui/material"
 import SearchIcon from '@mui/icons-material/Search';
 
 
@@ -7,14 +7,12 @@ import SearchIcon from '@mui/icons-material/Search';
 export const Search = ({onChange}) => {
 
     return (
-        <div style={{
-            width: '600px',
-        }}>
-            <TextField onChange={onChange} color="success" sx={{
+        <Stack>
+            <TextField onChange={onChange}  color="success" sx={{
                 outline: 'none',
-                width: '100%',
+                width: 500,
                 border: '',
-                flex: '1',
+                flex: 1,
                 '& input': {
                     color: 'success.main',
                 },
@@ -30,6 +28,6 @@ export const Search = ({onChange}) => {
                 ), 
                 
             }}/>
-        </div>
+        </Stack>
     )
 }

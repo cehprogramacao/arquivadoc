@@ -5,9 +5,11 @@ import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
 import Header from '@/Components/Header/Header';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
+import createRoutes from '@/routes/index.routes';
 
 
 const PageAutographCards = ({ data }) => {
+    const routes = createRoutes()
     const top100Films = [
         {
             label: 'Número'
@@ -19,6 +21,9 @@ const PageAutographCards = ({ data }) => {
             label: 'Parte'
         },
     ];
+    const handleGoToLixeira = () => {
+        routes.goToPageLixeiraCartoes()
+    }
     return (
         <Box sx={{
             width: '100%',
@@ -50,7 +55,7 @@ const PageAutographCards = ({ data }) => {
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
                 <ButtonOpenModals />
-                <ButtonLixeira />
+                <ButtonLixeira onClick={routes.goToPageLixeiraCartoes}/>
             </div>
         </Box>
     )

@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import { Search } from '@mui/icons-material';
 
 
-export const Buttons = ({title, color}) => {
+export const Buttons = ({title, color, onClick}) => {
     return (
         <Stack>
             <Button color='inherit' sx={{
@@ -17,7 +17,7 @@ export const Buttons = ({title, color}) => {
                 ":hover": {
                     background: `${color}`
                 }
-            }} variant='contained'>
+            }} variant='contained' onClick={onClick}>
                 <Search sx={{
                     width: '20px',
                     height: '20px'

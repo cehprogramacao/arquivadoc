@@ -4,9 +4,11 @@ import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import Header from "@/Components/Header/Header"
 import { DocList } from "@/Components/List/DocList"
+import createRoutes from "@/routes/index.routes"
 import { Box, TextField, Typography } from "@mui/material"
 
 const PageProtestos = ({data}) => {
+    const routes = createRoutes()
     const docs = [
         {
             name: 'Ronaldo',
@@ -57,7 +59,7 @@ const top100Films = [
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
                 <ButtonOpenModals />
-                <ButtonLixeira />
+                <ButtonLixeira onClick={routes.goToPageLixeiraProtestos}/>
             </div>
 
             <DocList data={docs} />

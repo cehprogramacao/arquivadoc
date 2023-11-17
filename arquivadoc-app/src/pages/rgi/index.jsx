@@ -6,6 +6,7 @@ import { AutoComplete } from '@/Components/AutoComplete';
 import { DocList } from '@/Components/List/DocList';
 import Header from '@/Components/Header/Header';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
+import createRoutes from '@/routes/index.routes';
 
 const top100Films = [
     {
@@ -30,6 +31,7 @@ const docs = [
 
 ]
 const PageRGI = () => {
+    const routes = createRoutes()
     return (
         <Box sx={{
             width: '100%',
@@ -61,7 +63,7 @@ const PageRGI = () => {
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
                 <ButtonOpenModals />
-                <ButtonLixeira />
+                <ButtonLixeira onClick={routes.goToPageLixeiraRGI}/>
             </div>
 
             <DocList data={docs} />

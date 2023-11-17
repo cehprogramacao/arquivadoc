@@ -1,17 +1,18 @@
+
+
+
 import { AutoComplete } from "@/Components/AutoComplete"
 import { Buttons } from "@/Components/Button/Button"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import Header from "@/Components/Header/Header"
-import { DocList } from "@/Components/List/DocList"
+
 import { Autocomplete, Box, Button, TextField, Typography } from "@mui/material"
-import { TermosTable } from "./tableTermos/table"
 import { useState } from "react"
-import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
-import createRoutes from "@/routes/index.routes"
+import { LixeiraTable } from "./tableLixeira"
 
 
 
-const PageTermos = ({ data }) => {
+const LixeiraProtestos = ({ data }) => {
     const docs = [
         {
             name: 'Ronaldo',
@@ -28,19 +29,122 @@ const PageTermos = ({ data }) => {
             label: 'Caixa'
         },
     ];
-    const routes = createRoutes()
+    
     const [rows, setRows] = useState([
-        { id: 1, numero: '8231', caixa: 2, parte: 'Alice Johnson', cartao: '123456' },
-        { id: 2, numero: '1234', caixa: 1, parte: 'Bob Smith', cartao: '234567' },
-        { id: 3, numero: '5678', caixa: 3, parte: 'Charlie Brown', cartao: '345678' },
-        { id: 4, numero: '9876', caixa: 4, parte: 'David Lee', cartao: '456789' },
-        { id: 5, numero: '5432', caixa: 2, parte: 'Eva Miller', cartao: '567890' },
-        { id: 6, numero: '1122', caixa: 1, parte: 'Frank Wilson', cartao: '678901' },
-        { id: 7, numero: '9988', caixa: 3, parte: 'Grace Davis', cartao: '789012' },
-        { id: 8, numero: '6655', caixa: 4, parte: 'Henry Taylor', cartao: '890123' },
-        { id: 9, numero: '4477', caixa: 2, parte: 'Ivy Thomas', cartao: '901234' },
-        { id: 10, numero: '2255', caixa: 1, parte: 'Jack Robinson', cartao: '012345' },
-    ]);
+        { 
+          id: 1, 
+          numero: '000001',
+          caixa: '14276348000110',
+          status: 'Ativo',
+          tipo: 'Tipo 1',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 1',
+          devedor: 'Devedor 1',
+          arquivo: 'https://link-arquivo-1.com'
+        },
+        { 
+          id: 2, 
+          numero: '000002',
+          caixa: '14276348000110',
+          status: 'Inativo',
+          tipo: 'Tipo 2',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 2',
+          devedor: 'Devedor 2',
+          arquivo: 'https://link-arquivo-2.com'
+        },
+        { 
+          id: 3, 
+          numero: '000003',
+          caixa: '14276348000110',
+          status: 'Ativo',
+          tipo: 'Tipo 3',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 3',
+          devedor: 'Devedor 3',
+          arquivo: 'https://link-arquivo-3.com'
+        },
+        { 
+          id: 4, 
+          numero: '000004',
+          caixa: '14276348000110',
+          status: 'Inativo',
+          tipo: 'Tipo 4',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 4',
+          devedor: 'Devedor 4',
+          arquivo: 'https://link-arquivo-4.com'
+        },
+        { 
+          id: 5, 
+          numero: '000005',
+          caixa: '14276348000110',
+          status: 'Ativo',
+          tipo: 'Tipo 5',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 5',
+          devedor: 'Devedor 5',
+          arquivo: 'https://link-arquivo-5.com'
+        },
+        { 
+          id: 6, 
+          numero: '000006',
+          caixa: '14276348000110',
+          status: 'Inativo',
+          tipo: 'Tipo 6',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 6',
+          devedor: 'Devedor 6',
+          arquivo: 'https://link-arquivo-6.com'
+        },
+        { 
+          id: 7, 
+          numero: '000007',
+          caixa: '14276348000110',
+          status: 'Ativo',
+          tipo: 'Tipo 7',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 7',
+          devedor: 'Devedor 7',
+          arquivo: 'https://link-arquivo-7.com'
+        },
+        { 
+          id: 8, 
+          numero: '000008',
+          caixa: '14276348000110',
+          status: 'Inativo',
+          tipo: 'Tipo 8',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 8',
+          devedor: 'Devedor 8',
+          arquivo: 'https://link-arquivo-8.com'
+        },
+        { 
+          id: 9, 
+          numero: '000009',
+          caixa: '14276348000110',
+          status: 'Ativo',
+          tipo: 'Tipo 9',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 9',
+          devedor: 'Devedor 9',
+          arquivo: 'https://link-arquivo-9.com'
+        },
+        { 
+          id: 10, 
+          numero: '000010',
+          caixa: '14276348000110',
+          status: 'Inativo',
+          tipo: 'Tipo 10',
+          apresentante: '14276348000110',
+          sacado: 'Sacado 10',
+          devedor: 'Devedor 10',
+          arquivo: 'https://link-arquivo-10.com'
+        },
+      ]);
+      
+      
+      
 
     const handleExcluir = (id) => {
         const updatedRows = rows.filter((row) => row.id !== id);
@@ -62,10 +166,11 @@ const PageTermos = ({ data }) => {
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
+            placeItems: 'center'
         }}>
             <Header />
             <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
-                TERMOS
+                Lixeira
             </Typography>
             <div style={{
                 maxWidth: '1200px',
@@ -74,8 +179,8 @@ const PageTermos = ({ data }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '30px',
-                margin: '0 auto',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
                     <TextField label="Buscar"
@@ -122,12 +227,10 @@ const PageTermos = ({ data }) => {
                 }}>
                     BUSCAR
                 </Button>
-                <ButtonOpenModals />
-                <ButtonLixeira onClick={routes.goToPageLixeiraTermosLixeira} />
             </div>
-            <TermosTable data={rows} onClick={handleExcluir} />
+            <LixeiraTable data={rows} onClick={handleExcluir}/>
         </Box>
     )
 }
 
-export default PageTermos
+export default LixeiraProtestos

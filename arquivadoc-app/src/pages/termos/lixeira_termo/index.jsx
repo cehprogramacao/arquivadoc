@@ -1,17 +1,12 @@
-import { AutoComplete } from "@/Components/AutoComplete"
-import { Buttons } from "@/Components/Button/Button"
-import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import Header from "@/Components/Header/Header"
-import { DocList } from "@/Components/List/DocList"
+
 import { Autocomplete, Box, Button, TextField, Typography } from "@mui/material"
-import { TermosTable } from "./tableTermos/table"
 import { useState } from "react"
-import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
-import createRoutes from "@/routes/index.routes"
+import { LixeiraTable } from "./tableLixeira"
 
 
 
-const PageTermos = ({ data }) => {
+const LixeiraTermos = ({ data }) => {
     const docs = [
         {
             name: 'Ronaldo',
@@ -28,19 +23,80 @@ const PageTermos = ({ data }) => {
             label: 'Caixa'
         },
     ];
-    const routes = createRoutes()
     const [rows, setRows] = useState([
-        { id: 1, numero: '8231', caixa: 2, parte: 'Alice Johnson', cartao: '123456' },
-        { id: 2, numero: '1234', caixa: 1, parte: 'Bob Smith', cartao: '234567' },
-        { id: 3, numero: '5678', caixa: 3, parte: 'Charlie Brown', cartao: '345678' },
-        { id: 4, numero: '9876', caixa: 4, parte: 'David Lee', cartao: '456789' },
-        { id: 5, numero: '5432', caixa: 2, parte: 'Eva Miller', cartao: '567890' },
-        { id: 6, numero: '1122', caixa: 1, parte: 'Frank Wilson', cartao: '678901' },
-        { id: 7, numero: '9988', caixa: 3, parte: 'Grace Davis', cartao: '789012' },
-        { id: 8, numero: '6655', caixa: 4, parte: 'Henry Taylor', cartao: '890123' },
-        { id: 9, numero: '4477', caixa: 2, parte: 'Ivy Thomas', cartao: '901234' },
-        { id: 10, numero: '2255', caixa: 1, parte: 'Jack Robinson', cartao: '012345' },
-    ]);
+        { 
+          id: 1, 
+          numero: '8231', 
+          caixa: 2, 
+          parte: 'Alice Johnson', 
+          cartao: '123456' 
+        },
+        { 
+          id: 2, 
+          numero: '1234', 
+          caixa: 1, 
+          parte: 'Bob Smith', 
+          cartao: '234567' 
+        },
+        { 
+          id: 3, 
+          numero: '5678', 
+          caixa: 3, 
+          parte: 'Charlie Brown', 
+          cartao: '345678' 
+        },
+        { 
+          id: 4, 
+          numero: '9876', 
+          caixa: 4, 
+          parte: 'David Lee', 
+          cartao: '456789' 
+        },
+        { 
+          id: 5, 
+          numero: '5432', 
+          caixa: 2, 
+          parte: 'Eva Miller', 
+          cartao: '567890' 
+        },
+        { 
+          id: 6, 
+          numero: '1122', 
+          caixa: 1, 
+          parte: 'Frank Wilson', 
+          cartao: '678901' 
+        },
+        { 
+          id: 7, 
+          numero: '9988', 
+          caixa: 3, 
+          parte: 'Grace Davis', 
+          cartao: '789012' 
+        },
+        { 
+          id: 8, 
+          numero: '6655', 
+          caixa: 4, 
+          parte: 'Henry Taylor', 
+          cartao: '890123' 
+        },
+        { 
+          id: 9, 
+          numero: '4477', 
+          caixa: 2, 
+          parte: 'Ivy Thomas', 
+          cartao: '901234' 
+        },
+        { 
+          id: 10, 
+          numero: '2255', 
+          caixa: 1, 
+          parte: 'Jack Robinson', 
+          cartao: '012345' 
+        },
+      ]);
+      
+      
 
     const handleExcluir = (id) => {
         const updatedRows = rows.filter((row) => row.id !== id);
@@ -62,10 +118,11 @@ const PageTermos = ({ data }) => {
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
+            placeItems: 'center'
         }}>
             <Header />
             <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
-                TERMOS
+                Lixeira
             </Typography>
             <div style={{
                 maxWidth: '1200px',
@@ -74,13 +131,13 @@ const PageTermos = ({ data }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '30px',
-                margin: '0 auto',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
                     <TextField label="Buscar"
                         sx={{
-                            width: 400,
+                            width: 450,
                             '& input': {
                                 color: 'success.main',
                             },
@@ -89,7 +146,7 @@ const PageTermos = ({ data }) => {
                         disablePortal
                         id="combo-box-demo"
                         options={top100Films}
-                        sx={{ width: 450 }}
+                        sx={{ width: 500 }}
                         autoHighlight
                         getOptionLabel={(option) => option.label}
                         renderInput={(params) => (
@@ -122,12 +179,10 @@ const PageTermos = ({ data }) => {
                 }}>
                     BUSCAR
                 </Button>
-                <ButtonOpenModals />
-                <ButtonLixeira onClick={routes.goToPageLixeiraTermosLixeira} />
             </div>
-            <TermosTable data={rows} onClick={handleExcluir} />
+            <LixeiraTable data={rows} onClick={handleExcluir}/>
         </Box>
     )
 }
 
-export default PageTermos
+export default LixeiraTermos

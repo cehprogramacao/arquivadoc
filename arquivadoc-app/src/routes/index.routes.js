@@ -33,7 +33,22 @@ const createRoutes = () => {
     },
     goToPageRPJ: () => {
       router.push('/rpj')
-    }
+    },
+    goToPageLixeiraCartoes: () => {
+      router.push('/notas/cartoes/lixeira_cartoes')
+    },
+    goToPageLixeiraCartorioDocs: () => {
+      router.push('/notas/CartorioDocs/lixeira_notas')
+    },
+    goToPageLixeiraTermosLixeira: () => {
+      router.push('/termos/lixeira_termo')
+    },
+    goToPageLixeiraRGI: () => {
+      router.push('/rgi/lixeira_rgi')
+    },
+    goToPageLixeiraProtestos: () => {
+      router.push('/protestos/lixeira_protesto')
+    },
   };
 };
 
