@@ -9,7 +9,7 @@ export const Buttons = ({title, color, onClick}) => {
             <Button color='inherit' sx={{
                 display: 'flex',
                 width: '110px',
-                padding: '15px 0px',
+                padding: '15px 12px',
                 fontSize: '11px',
                 gap: '5px',
                 background: `${color}`,

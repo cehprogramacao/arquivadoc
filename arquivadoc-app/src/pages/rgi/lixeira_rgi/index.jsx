@@ -1,19 +1,15 @@
 
-
-
-import { AutoComplete } from "@/Components/AutoComplete"
-import { Buttons } from "@/Components/Button/Button"
-import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import Header from "@/Components/Header/Header"
-
-import { Autocomplete, Box, Button, TextField, Typography } from "@mui/material"
+import { Autocomplete, Box, Button, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
 import { useState } from "react"
-import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import { LixeiraTable } from "./tableLixeira"
 
 
 
+
 const LixeiraRGI = ({ data }) => {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const docs = [
         {
             name: 'Ronaldo',
@@ -105,43 +101,34 @@ const LixeiraRGI = ({ data }) => {
                 alignItems: 'center',
                 gap: '30px',
                 flexWrap: 'wrap',
-                
+                placeContent: 'center',
+                flexDirection: isSmallScreen ? 'column' : 'row'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
-                    <TextField label="Buscar"
-                        sx={{
-                            width: 400,
-                            '& input': {
-                                color: 'success.main',
-                            },
-                        }} color="success" />
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={top100Films}
-                        sx={{ width: 450 }}
-                        autoHighlight
-                        getOptionLabel={(option) => option.label}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                color="success"
-                                label="Buscar Por"
-                                onChange={(e) => {
-                                    const selected = top100Films.find(
-                                        (item) => item.label === e.target.value
-                                    );
-                                    setSelect(selected)
-                                }}
-                                sx={{
-                                    color: "#237117",
-                                    "& input": {
-                                        color: "success.main",
-                                    },
-                                }}
-                            />
-                        )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
+                <TextField
+                        label="Buscar"
+                        sx={{ width: isSmallScreen ? '100%' : 500, '& input': { color: 'success.main' } }}
+                        color="success"
                     />
+                        <Autocomplete
+                            disablePortal
+                            id="combo-box-demo"
+                            options={top100Films}
+                            sx={{ width: isSmallScreen ? '100%' : 500}}
+                            renderInput={(params) => (
+                                <TextField
+                                    color="success"
+                                    {...params}
+                                    label="Buscar Por"
+                                    sx={{
+                                        color: "#237117",
+                                        '& input': {
+                                            color: 'success.main',
+                                        },
+                                    }}
+                                />
+                            )}
+                        />
                 </div>
                 <Button variant="contained" onClick={handleBuscar} sx={{
                     background: '#247117',

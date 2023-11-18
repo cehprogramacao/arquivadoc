@@ -1,14 +1,16 @@
-import { Box, TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
-import { AutoComplete } from '@/Components/AutoComplete';
+import Autocomplete from '@mui/material/Autocomplete';
 import Header from '@/Components/Header/Header';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import createRoutes from '@/routes/index.routes';
 
 
 const PageAutographCards = ({ data }) => {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const routes = createRoutes()
     const top100Films = [
         {
@@ -41,17 +43,28 @@ const PageAutographCards = ({ data }) => {
                 Cartões
             </Typography>
             <div style={{
-                width: '100%',
-                height: '40px',
                 display: 'flex',
-                alignItems: 'center',
-                gap: '30px',
-                marginTop: 20,
-                placeContent: 'center'
+                flexDirection: isSmallScreen ? 'column' : 'row',
+                alignItems: isSmallScreen ? 'center' : 'flex-start',
+                gap: '40px',
+                margin: '0 auto',
+                flexWrap: isSmallScreen ? 'nowrap' : 'wrap',
+                placeContent: 'center',
+                marginTop: 16
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
-                    <TextField label="Buscar" sx={{ width: 400, '& input': { color: 'success.main'} }} color='success'/>
-                    <AutoComplete data={top100Films} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
+                    <TextField label="Buscar" sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main'} }} color='success'/>
+                    <Autocomplete
+                
+                disablePortal
+                id="combo-box-demo"
+                options={top100Films}
+                sx={{ width: isSmallScreen ? '100%' : 450 }}
+                renderInput={(params) => <TextField color="success" {...params} label="Buscar Por" 
+                sx={{ color: "#237117", '& input': {
+                    color: 'success.main', 
+                }, }} />}
+            />
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
                 <ButtonOpenModals />

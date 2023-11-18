@@ -11,6 +11,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useState } from "react";
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
+import { useMediaQuery, useTheme } from '@mui/material';
 
 
 const docs = [
@@ -94,7 +95,8 @@ const docs = [
 ]
 export const PageHome = () => {
   const [age, setAge] = useState('');
-
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const handleChange = (event) => {
     setAge(event.target.value);
   };
@@ -105,11 +107,10 @@ export const PageHome = () => {
       display: 'flex',
       flexDirection: 'column',
       padding: '30px 60px',
-      gap: '10px',
+      gap: '20px',
       position: 'absolute',
       width: 'auto',
-      marginTop: 11,
-
+      marginTop: 12,
     }}>
       <Header />
       <div style={{
@@ -124,50 +125,53 @@ export const PageHome = () => {
         <div style={{
           display: 'flex',
           gap: 50,
-          alignItems: 'center'
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          placeContent: 'center'
         }}>
-        <FormControl sx={{width: 200}}>
-          <InputLabel id="demo-simple-select-label" color="success">Age</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={age}
-            label="Age"
-            onChange={handleChange}
-            color="success"
-          >
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
-        </FormControl>
-        <Buttons color={'green'} title={'Buscar'} onClick={() => alert('Oiii')} />
-        <ButtonOpenModals />
-        
+          <FormControl sx={{ width: isSmallScreen ? '100%' : 200 }}>
+            <InputLabel id="demo-simple-select-label" color="success">Age</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={age}
+              label="Age"
+              onChange={handleChange}
+              color="success"
+            >
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Select>
+          </FormControl>
+          <Buttons color={'green'} title={'Buscar'} onClick={() => alert('Oiii')} />
+          <ButtonOpenModals />
+
         </div>
       </div>
 
       <Box sx={{
-        maxWidth: 1200,
+        maxWidth: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: '40px',
+        gap: '0px',
+
       }}>
         <div style={{
           display: 'flex',
           flexDirection: 'column ',
           padding: '0px',
-          gap: '0px',
+          gap: 'px',
           width: 'auto',
           height: '50px',
           left: '29px',
           top: '0px'
 
         }}>
-          <h3 style={{
+          <span style={{
             color: '#212121',
             fontWeight: '500'
-          }}>Recentes</h3>
+          }}>Recentes</span>
           <span style={{
             color: '#B5B5C3'
           }}>More than 400+ new members</span>

@@ -1,9 +1,8 @@
-import { AutoComplete } from "@/Components/AutoComplete"
-import { Buttons } from "@/Components/Button/Button"
+
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import Header from "@/Components/Header/Header"
 import { DocList } from "@/Components/List/DocList"
-import { Autocomplete, Box, Button, TextField, Typography } from "@mui/material"
+import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
 import { TermosTable } from "./tableTermos/table"
 import { useState } from "react"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
@@ -12,6 +11,8 @@ import createRoutes from "@/routes/index.routes"
 
 
 const PageTermos = ({ data }) => {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const docs = [
         {
             name: 'Ronaldo',
@@ -68,19 +69,21 @@ const PageTermos = ({ data }) => {
                 TERMOS
             </Typography>
             <div style={{
-                maxWidth: '1200px',
+                maxWidth: '100%',
                 height: 'auto',
                 padding: '8px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '30px',
                 margin: '0 auto',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                placeContent: "center",
+                flexDirection: isSmallScreen ? 'column' : 'row'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
                     <TextField label="Buscar"
                         sx={{
-                            width: 400,
+                            width: isSmallScreen ? '100%' : 450,
                             '& input': {
                                 color: 'success.main',
                             },
@@ -89,7 +92,7 @@ const PageTermos = ({ data }) => {
                         disablePortal
                         id="combo-box-demo"
                         options={top100Films}
-                        sx={{ width: 450 }}
+                        sx={{ width: isSmallScreen ? '100%' : 450 }}
                         autoHighlight
                         getOptionLabel={(option) => option.label}
                         renderInput={(params) => (
@@ -115,7 +118,7 @@ const PageTermos = ({ data }) => {
                 </div>
                 <Button variant="contained" onClick={handleBuscar} sx={{
                     background: '#247117',
-                    padding: '14px 10px',
+                    padding: '14px 30px',
                     ":hover": {
                         background: '#247117'
                     }

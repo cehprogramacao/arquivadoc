@@ -1,18 +1,14 @@
-
-
-
-import { AutoComplete } from "@/Components/AutoComplete"
-import { Buttons } from "@/Components/Button/Button"
-import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import Header from "@/Components/Header/Header"
 
-import { Autocomplete, Box, Button, TextField, Typography } from "@mui/material"
+import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
 import { useState } from "react"
 import { LixeiraTable } from "./tableLixeira"
 
 
 
 const LixeiraProtestos = ({ data }) => {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const docs = [
         {
             name: 'Ronaldo',
@@ -180,12 +176,13 @@ const LixeiraProtestos = ({ data }) => {
                 alignItems: 'center',
                 gap: '30px',
                 flexWrap: 'wrap',
-                
+                flexDirection: isSmallScreen ? 'column' : 'row',
+                placeContent: 'center'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 30, placeContent: 'center', flexWrap: 'wrap' }}>
                     <TextField label="Buscar"
                         sx={{
-                            width: 400,
+                            width: isSmallScreen ? '100%' : 550,
                             '& input': {
                                 color: 'success.main',
                             },
@@ -194,7 +191,7 @@ const LixeiraProtestos = ({ data }) => {
                         disablePortal
                         id="combo-box-demo"
                         options={top100Films}
-                        sx={{ width: 450 }}
+                        sx={{ width: isSmallScreen ? '100%' : 500 }}
                         autoHighlight
                         getOptionLabel={(option) => option.label}
                         renderInput={(params) => (

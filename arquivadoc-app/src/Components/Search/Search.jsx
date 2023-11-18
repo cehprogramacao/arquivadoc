@@ -1,18 +1,20 @@
 import React from "react"
 import { InputAdornment, Stack, TextField } from "@mui/material"
 import SearchIcon from '@mui/icons-material/Search';
-
+import { useMediaQuery, useTheme } from '@mui/material';
 
 
 export const Search = ({onChange}) => {
+    const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    
 
     return (
         <Stack>
             <TextField onChange={onChange}  color="success" sx={{
                 outline: 'none',
-                width: 500,
+                width: isSmallScreen ? '100%' : 600,
                 border: '',
-                flex: 1,
                 '& input': {
                     color: 'success.main',
                 },

@@ -84,10 +84,10 @@ export const LixeiraTable = ({ data, onClick }) => {
                   left: '14px',
                   color: 'black',
                   background: 'transparent',
-                  border: '1px solid #FFD500',
-                  color: '#FFD500',
+                  border: '1px solid #0DCAF0',
+                  color: '#0DCAF0',
                   ":hover": {
-                    background: '#FFD500',
+                    background: '#0DCAF0',
                     color: '#fff'
                   }
                 }}>

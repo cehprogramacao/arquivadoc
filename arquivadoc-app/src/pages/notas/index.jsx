@@ -7,8 +7,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 const StyledButton = styled(Button)({
-    maxWidth: '200px',
-    fontSize: '17px',
+    maxWidth: '300px',
+    fontSize: 'clamp(1rem, 2vw, 1.7rem)',
     //   background: '#217117',
     display: 'flex',
     flexDirection: 'column',
@@ -38,18 +38,17 @@ const PageNotas = () => {
             placeItems: 'center'
         }}>
             <Header />
-            <Typography fontSize={30} fontWeight={'bold'}>
+            <Typography fontSize={40} fontWeight={'bold'}>
                 Notas
             </Typography>
             <Stack sx={{
                 width: 'auto',
                 display: 'flex',
                 flexDirection: 'row',
-                marginTop: 6,
+                marginTop: 9,
                 flexWrap: 'wrap',
-                placeContent: 'space-evenly',
+                placeContent: 'center',
                 position: 'relative',
-                right: 0,
                 alignItems: 'center',
                 gap: 10,
                 

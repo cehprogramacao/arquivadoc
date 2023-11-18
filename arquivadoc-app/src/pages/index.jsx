@@ -1,21 +1,35 @@
-"use client"
-
-
 import React from 'react';
-import Box from '@mui/material/Box';
-import Header from '@/Components/Header/Header'
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Header from '@/Components/Header/Header';
 import { PageHome } from './home';
 
-
-
 export default function Home() {
-
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#1976D2',
+      },
+    },
+    typography: {
+      fontWeightBold: 700,
+    },
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+      },
+    },
+  });
 
   return (
-    <Box>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Header />
       <PageHome />
-      
-    </Box>
+    </ThemeProvider>
   );
 }
