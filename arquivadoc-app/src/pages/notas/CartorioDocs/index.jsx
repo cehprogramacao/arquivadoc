@@ -52,14 +52,14 @@ const CartorioDocs = ({ data }) => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center"}}>
                     <TextField
                         label="Buscar"
-                        sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }}
+                        sx={{ width: isSmallScreen ? '100%' : 500, '& input': { color: 'success.main' } }}
                         color="success"
                     />
                         <Autocomplete
                             disablePortal
                             id="combo-box-demo"
                             options={top100Films}
-                            sx={{ width: isSmallScreen ? '100%' : 400}}
+                            sx={{ width: isSmallScreen ? '100%' : 500}}
                             renderInput={(params) => (
                                 <TextField
                                     color="success"

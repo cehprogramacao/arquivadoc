@@ -49,44 +49,46 @@ const PageRGI = () => {
             </Typography>
             <Box
                 sx={{
+                    width: '100%',
                     display: 'flex',
                     flexDirection: isSmallScreen ? 'column' : 'row',
-                    alignItems: isSmallScreen ? 'center' : 'flex-start',
                     gap: '40px',
-                    margin: '0 auto',
-                    flexWrap: isSmallScreen ? 'nowrap' : 'wrap',
-                    placeContent: 'center'
+                    placeItems: 'center',
+                    placeContent: "center",
+                    flexWrap: 'wrap'
                 }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, placeContent: "center"}}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, placeContent: "center",flexWrap: 'wrap' }}>
                     <TextField
                         label="Buscar"
                         sx={{ width: isSmallScreen ? '100%' : 500, '& input': { color: 'success.main' } }}
                         color="success"
                     />
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={top100Films}
-                            sx={{ width: isSmallScreen ? '100%' : 500}}
-                            renderInput={(params) => (
-                                <TextField
-                                    color="success"
-                                    {...params}
-                                    label="Buscar Por"
-                                    sx={{
-                                        color: "#237117",
-                                        '& input': {
-                                            color: 'success.main',
-                                        },
-                                    }}
-                                />
-                            )}
-                        />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={top100Films}
+                        sx={{ width: isSmallScreen ? '100%' : 500 }}
+                        renderInput={(params) => (
+                            <TextField
+                                color="success"
+                                {...params}
+                                label="Buscar Por"
+                                sx={{
+                                    color: "#237117",
+                                    '& input': {
+                                        color: 'success.main',
+                                    },
+                                }}
+                            />
+                        )}
+                    />
                 </Box>
-                <Buttons color={'green'} title={'Buscar'} />
-                <ButtonOpenModals />
-                <ButtonLixeira onClick={routes.goToPageLixeiraRGI} />
+                <Box sx={{display: 'flex', width: 'auto', gap: '10px'}}>
+                    <Buttons color={'green'} title={'Buscar'} />
+                    <ButtonOpenModals />
+                    <ButtonLixeira onClick={routes.goToPageLixeiraRGI} />
+                </Box>
             </Box>
 
             <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
