@@ -53,22 +53,26 @@ const PageAutographCards = ({ data }) => {
                 marginTop: 16
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
-                    <TextField label="Buscar" sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main'} }} color='success'/>
+                    <TextField label="Buscar" sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }} color='success' />
                     <Autocomplete
-                
-                disablePortal
-                id="combo-box-demo"
-                options={top100Films}
-                sx={{ width: isSmallScreen ? '100%' : 450 }}
-                renderInput={(params) => <TextField color="success" {...params} label="Buscar Por" 
-                sx={{ color: "#237117", '& input': {
-                    color: 'success.main', 
-                }, }} />}
-            />
+
+                        disablePortal
+                        id="combo-box-demo"
+                        options={top100Films}
+                        sx={{ width: isSmallScreen ? '100%' : 450 }}
+                        renderInput={(params) => <TextField color="success" {...params} label="Buscar Por"
+                            sx={{
+                                color: "#237117", '& input': {
+                                    color: 'success.main',
+                                },
+                            }} />}
+                    />
                 </div>
-                <Buttons color={'green'} title={'Buscar'} />
-                <ButtonOpenModals />
-                <ButtonLixeira onClick={routes.goToPageLixeiraCartoes}/>
+                <Box sx={{ display: 'flex', width: 'auto', gap: '10px' }}>
+                    <Buttons color={'green'} title={'Buscar'} />
+                    <ButtonOpenModals />
+                    <ButtonLixeira onClick={routes.goToPageLixeiraCartoes} />
+                </Box>
             </div>
         </Box>
     )

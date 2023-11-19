@@ -116,17 +116,21 @@ const PageTermos = ({ data }) => {
                         )}
                     />
                 </div>
-                <Button variant="contained" onClick={handleBuscar} sx={{
-                    background: '#247117',
-                    padding: '14px 30px',
-                    ":hover": {
-                        background: '#247117'
-                    }
-                }}>
-                    BUSCAR
-                </Button>
-                <ButtonOpenModals />
-                <ButtonLixeira onClick={routes.goToPageLixeiraTermosLixeira} />
+                <Box sx={{ display: 'flex', width: 'auto', gap: '10px' }}>
+                    <Button variant="contained" onClick={handleBuscar} sx={{
+                        background: '#247117',
+                        padding: '14px 30px',
+                        ":hover": {
+                            background: '#247117'
+                        }
+                    }}>
+                        BUSCAR
+                    </Button>
+                    <ButtonOpenModals />
+                    <ButtonLixeira onClick={routes.goToPageLixeiraTermosLixeira} />
+                </Box>
+
+
             </div>
             <TermosTable data={rows} onClick={handleExcluir} />
         </Box>

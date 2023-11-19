@@ -104,12 +104,13 @@ export const PageHome = () => {
 
   return (
     <Box className="" sx={{
+
       display: 'flex',
       flexDirection: 'column',
       padding: '30px 60px',
       gap: '20px',
       position: 'absolute',
-      width: 'auto',
+      width: '100%',
       marginTop: 12,
     }}>
       <Header />
@@ -154,8 +155,7 @@ export const PageHome = () => {
         maxWidth: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: '0px',
-
+        gap: '60px',
       }}>
         <div style={{
           display: 'flex',
@@ -164,9 +164,7 @@ export const PageHome = () => {
           gap: 'px',
           width: 'auto',
           height: '50px',
-          left: '29px',
-          top: '0px'
-
+          position: 'relative',
         }}>
           <span style={{
             color: '#212121',

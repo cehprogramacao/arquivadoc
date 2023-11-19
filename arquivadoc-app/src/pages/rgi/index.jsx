@@ -44,7 +44,7 @@ const PageRGI = () => {
             }}
         >
             <Header />
-            <Typography fontSize={30} fontWeight={'bold'}>
+            <Typography fontSize={40} fontWeight={'bold'}>
                 RGI
             </Typography>
             <Box
@@ -55,7 +55,8 @@ const PageRGI = () => {
                     gap: '40px',
                     placeItems: 'center',
                     placeContent: "center",
-                    flexWrap: 'wrap'
+                    flexWrap: 'wrap',
+                    marginTop: 4
                 }}
             >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, placeContent: "center",flexWrap: 'wrap' }}>
@@ -84,14 +85,14 @@ const PageRGI = () => {
                         )}
                     />
                 </Box>
-                <Box sx={{display: 'flex', width: 'auto', gap: '10px'}}>
+                <Box sx={{display: 'flex', width: 'fit-content', gap: '10px'}}>
                     <Buttons color={'green'} title={'Buscar'} />
                     <ButtonOpenModals />
                     <ButtonLixeira onClick={routes.goToPageLixeiraRGI} />
                 </Box>
             </Box>
 
-            <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
+            <DocList data={docs} sx={{ marginTop: isSmallScreen ? 3 : 0 }} />
         </Box>
     );
 };

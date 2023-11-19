@@ -83,9 +83,11 @@ const PageProtesto = () => {
                             )}
                         />
                 </Box>
-                <Buttons color={'green'} title={'Buscar'} />
-                <ButtonOpenModals />
-                <ButtonLixeira onClick={routes.goToPageLixeiraProtestos} />
+                <Box sx={{display: 'flex', width: 'auto', gap: '10px'}}>
+                    <Buttons color={'green'} title={'Buscar'} />
+                    <ButtonOpenModals />
+                    <ButtonLixeira onClick={routes.goToPageLixeiraProtestos} />
+                </Box>
             </Box>
 
             <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />

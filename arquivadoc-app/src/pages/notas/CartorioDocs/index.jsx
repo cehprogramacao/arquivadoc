@@ -75,9 +75,11 @@ const CartorioDocs = ({ data }) => {
                             )}
                         />
                 </Box>
-                <Buttons color={'green'} title={'Buscar'} />
-                <ButtonOpenModals />
-                <ButtonLixeira onClick={routes.goToPageLixeiraCartorioDocs} />
+                <Box sx={{display: 'flex', width: 'auto', gap: '10px'}}>
+                    <Buttons color={'green'} title={'Buscar'} />
+                    <ButtonOpenModals />
+                    <ButtonLixeira onClick={routes.goToPageLixeiraCartorioDocs} />
+                </Box>
             </Box>
 
                 

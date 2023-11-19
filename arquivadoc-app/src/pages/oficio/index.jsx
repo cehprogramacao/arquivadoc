@@ -83,9 +83,11 @@ const PageOficio = () => {
                             )}
                         />
                 </Box>
-                <Buttons color={'green'} title={'Buscar'} />
-                <ButtonOpenModals />
-                <ButtonLixeira  />
+                <Box sx={{display: 'flex', width: 'auto', gap: '10px'}}>
+                    <Buttons color={'green'} title={'Buscar'} />
+                    <ButtonOpenModals />
+                    <ButtonLixeira />
+                </Box>
             </Box>
 
             <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
