@@ -92,7 +92,7 @@ const PageRGI = () => {
                 </Box>
             </Box>
 
-            <DocList data={docs} sx={{ marginTop: isSmallScreen ? 3 : 0 }} />
+            <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
         </Box>
     );
 };
