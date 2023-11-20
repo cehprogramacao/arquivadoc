@@ -122,15 +122,17 @@ export const PageHome = () => {
         flexWrap: "wrap",
         placeContent: 'center'
       }}>
-        <Search />
+        
         <div style={{
           display: 'flex',
-          gap: 50,
+          gap: 20,
           alignItems: 'center',
           flexWrap: 'wrap',
-          placeContent: 'center'
+          placeContent: 'center',
+          
         }}>
-          <FormControl sx={{ width: isSmallScreen ? '100%' : 200 }}>
+          <Search />
+          <FormControl sx={{ width: isSmallScreen ? '100%' : 400 }}>
             <InputLabel id="demo-simple-select-label" color="success">Age</InputLabel>
             <Select
               labelId="demo-simple-select-label"
@@ -145,10 +147,9 @@ export const PageHome = () => {
               <MenuItem value={30}>Thirty</MenuItem>
             </Select>
           </FormControl>
-          <Buttons color={'green'} title={'Buscar'} onClick={() => alert('Oiii')} />
-          <ButtonOpenModals />
-
         </div>
+        <Buttons color={'green'} title={'Buscar'} onClick={() => alert('Oiii')} />
+          <ButtonOpenModals />
       </div>
 
       <Box sx={{

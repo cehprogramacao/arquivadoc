@@ -60,7 +60,7 @@ const PageRPJ = () => {
                     display: 'flex',
                     flexDirection: isSmallScreen ? 'column' : 'row',
                     alignItems: isSmallScreen ? 'center' : 'flex-start',
-                    gap: '40px',
+                    gap: '30px',
                     margin: '0 auto',
                     flexWrap: isSmallScreen ? 'nowrap' : 'wrap',
                     placeContent: 'center',
@@ -70,14 +70,14 @@ const PageRPJ = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center"}}>
                     <TextField
                         label="Buscar"
-                        sx={{ width: isSmallScreen ? '100%' : 550, '& input': { color: 'success.main' } }}
+                        sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }}
                         color="success"
                     />
                         <Autocomplete
                             disablePortal
                             id="combo-box-demo"
                             options={top100Films}
-                            sx={{ width: isSmallScreen ? '100%' : 550}}
+                            sx={{ width: isSmallScreen ? '100%' : 400}}
                             renderInput={(params) => (
                                 <TextField
                                     color="success"
@@ -93,10 +93,10 @@ const PageRPJ = () => {
                             )}
                         />
                 </Box>
-                <Box sx={{display: 'flex', width: 'auto', gap: '10px'}}>
-                    <Buttons color={'green'} title={'Buscar'} />
+                <Buttons color={'green'} title={'Buscar'} />
+                <Box sx={{display: 'flex', width: 'auto', gap: '30px'}}>
                     <ButtonOpenModals />
-                    <ButtonLixeira />
+                    <ButtonLixeira onClick={routes.goToPageLixeiraRPJ} />
                 </Box>
             </Box>
 

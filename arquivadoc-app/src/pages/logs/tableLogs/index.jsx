@@ -1,4 +1,3 @@
-
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import Header from "@/Components/Header/Header"
 import { DocList } from "@/Components/List/DocList"
@@ -11,7 +10,7 @@ import { Buttons } from "@/Components/Button/Button"
 
 
 
-const PageTermos = ({ data }) => {
+const PageLogs = ({ data }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const docs = [
@@ -130,5 +129,4 @@ const PageTermos = ({ data }) => {
         </Box>
     )
 }
-
-export default PageTermos
+export default PageLogs

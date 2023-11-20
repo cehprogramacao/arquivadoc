@@ -19,6 +19,27 @@ const CartorioDocs = ({ data }) => {
             label: 'Livro'
         },
     ];
+
+    const tipos_escrituras = [
+        {
+            label: 'Compra e Venda'
+        },
+        {
+            label: 'Declatória',
+        },
+        {
+            label: 'Doação',
+        },
+        {
+            label: 'Rerratificação',
+        },
+        {
+            label: 'Revogação',
+        },
+        {
+            label: 'Aditamento',
+        },
+    ];
     return (
         <Box
             sx={{
@@ -40,49 +61,74 @@ const CartorioDocs = ({ data }) => {
             <Box
                 sx={{
                     display: 'flex',
-                    flexDirection: isSmallScreen ? 'column' : 'row',
-                    alignItems: isSmallScreen ? 'center' : 'flex-start',
-                    gap: '40px',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '30px',
                     margin: '0 auto',
                     flexWrap: isSmallScreen ? 'nowrap' : 'wrap',
                     placeContent: 'center',
                     marginTop: 4
                 }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center"}}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap',
+                placeContent: "center" }}>
                     <TextField
                         label="Buscar"
-                        sx={{ width: isSmallScreen ? '100%' : 500, '& input': { color: 'success.main' } }}
+                        sx={{ width: isSmallScreen ? '100%' : 350, '& input': { color: 'success.main' },
+                        flexShrink: 1
+                    }}
                         color="success"
                     />
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={top100Films}
-                            sx={{ width: isSmallScreen ? '100%' : 500}}
-                            renderInput={(params) => (
-                                <TextField
-                                    color="success"
-                                    {...params}
-                                    label="Buscar Por"
-                                    sx={{
-                                        color: "#237117",
-                                        '& input': {
-                                            color: 'success.main',
-                                        },
-                                    }}
-                                />
-                            )}
-                        />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={top100Films}
+                        sx={{ width: isSmallScreen ? '100%' : 350 }}
+                        renderInput={(params) => (
+                            <TextField
+                                color="success"
+                                {...params}
+                                label="Buscar Por"
+                                sx={{
+                                    color: "#237117",
+                                    '& input': {
+                                        color: 'success.main',
+                                    },
+                                    flexShrink: 1
+                                }}
+                            />
+                        )}
+                    />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={tipos_escrituras}
+                        sx={{ width: isSmallScreen ? '100%' : 350 }}
+                        renderInput={(params) => (
+                            <TextField
+                                color="success"
+                                {...params}
+                                label="Buscar Por Tipo"
+                                sx={{
+                                    color: "#237117",
+                                    '& input': {
+                                        color: 'success.main',
+                                    },
+                                    flexShrink: 1
+                                }}
+                            />
+                        )}
+                    />
                 </Box>
-                <Box sx={{display: 'flex', width: 'auto', gap: '10px'}}>
+                <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <Buttons color={'green'} title={'Buscar'} />
+
                     <ButtonOpenModals />
                     <ButtonLixeira onClick={routes.goToPageLixeiraCartorioDocs} />
                 </Box>
             </Box>
 
-                
+
         </Box>
     )
 }

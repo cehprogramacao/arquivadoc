@@ -171,7 +171,7 @@ const LixeiraCartoes = ({ data }) => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
                     <TextField label="Buscar"
                         sx={{
-                            width: isSmallScreen ? '100%' : 450,
+                            width: isSmallScreen ? '100%' : 400,
                             '& input': {
                                 color: 'success.main',
                             },
@@ -180,7 +180,7 @@ const LixeiraCartoes = ({ data }) => {
                         disablePortal
                         id="combo-box-demo"
                         options={top100Films}
-                        sx={{ width: isSmallScreen ? '100%' : 450 }}
+                        sx={{ width: isSmallScreen ? '100%' : 400 }}
                         autoHighlight
                         getOptionLabel={(option) => option.label}
                         renderInput={(params) => (

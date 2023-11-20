@@ -1,7 +1,6 @@
 "use client"
-import { listItemIcon, button, listaConfig, listSx } from '../SideBar/styles';
-import { Box, ListItemIcon, Typography, List, ListItem, useTheme, useMediaQuery } from '@mui/material';
 
+import { Box, ListItemIcon, Typography, List, ListItem, useTheme, useMediaQuery } from '@mui/material';
 import createRoutes from '@/routes/index.routes';
 import PendingActionsSharpIcon from '@mui/icons-material/PendingActionsSharp';
 import QueryBuilderSharpIcon from '@mui/icons-material/QueryBuilderSharp';
@@ -10,14 +9,23 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import Link from 'next/link';
+import { useState } from 'react';
+import { ModalOptions } from '../Modals/modalOptions/modalOptions';
+
 
 export const Sidebar = () => {
     const routes = createRoutes();
-
-
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     return (
 
@@ -190,6 +198,44 @@ export const Sidebar = () => {
                             }} alt="" />
                             RPJ
                         </button>
+                        <button style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            border: 'none',
+                            background: 'transparent',
+                            color: "#fff",
+                            gap: '2px',
+                        }} onClick={routes.goToPageCartoes} >
+                            <NoteAltOutlinedIcon sx={{
+                                width: '40px',
+                                height: '40px',
+                                flexShrink: 0,
+                                cursor: 'pointer'
+
+                            }} alt="" />
+                            Cartões de Autógrafo
+                        </button>
+                        <button style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            border: 'none',
+                            background: 'transparent',
+                            color: "#fff",
+                            gap: '2px',
+                        }} onClick={routes.goToPageTermos} >
+                            <NoteAltOutlinedIcon sx={{
+                                width: '40px',
+                                height: '40px',
+                                flexShrink: 0,
+                                cursor: 'pointer'
+
+                            }} alt="" />
+                            Termos
+                        </button>
                     </ListItemIcon>
                 </ListItem>
 
@@ -203,7 +249,7 @@ export const Sidebar = () => {
                 backgroundColor: '#237117',
                 flexDirection: 'column',
                 gap: '20px',
-                height:'auto',
+                height: 'auto',
                 placeContent: 'center'
             }}>
                 <ListItem>
@@ -241,7 +287,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} >
+                        }} onClick={handleClick}>
                             <PersonOutlineOutlinedIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -265,7 +311,7 @@ export const Sidebar = () => {
                 </Typography>
             </List>
 
-
+            <ModalOptions anchorEl={anchorEl} open={open} onClose={handleClose} />
         </Box>
 
     );

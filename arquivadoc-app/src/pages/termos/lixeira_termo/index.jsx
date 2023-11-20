@@ -140,7 +140,7 @@ const LixeiraTermos = ({ data }) => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 30, placeContent: "center", flexWrap: 'wrap' }}>
                     <TextField label="Buscar"
                         sx={{
-                            width: isSmallScreen ? '100%' : 500,
+                            width: isSmallScreen ? '100%' : 400,
                             '& input': {
                                 color: 'success.main',
                             },
@@ -149,7 +149,7 @@ const LixeiraTermos = ({ data }) => {
                         disablePortal
                         id="combo-box-demo"
                         options={top100Films}
-                        sx={{ width: isSmallScreen ? '100%' : 500 }}
+                        sx={{ width: isSmallScreen ? '100%' : 400 }}
                         autoHighlight
                         getOptionLabel={(option) => option.label}
                         renderInput={(params) => (

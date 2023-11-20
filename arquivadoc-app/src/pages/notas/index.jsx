@@ -7,9 +7,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 const StyledButton = styled(Button)({
-    maxWidth: '300px',
-    fontSize: 'clamp(1rem, 2vw, 1.7rem)',
-    //   background: '#217117',
+    width: '200px',
+    fontSize: 'clamp(1rem, 1.3rem, 2rem)',
     display: 'flex',
     flexDirection: 'column',
     color: '#237117',
@@ -45,50 +44,94 @@ const PageNotas = () => {
                 width: 'auto',
                 display: 'flex',
                 flexDirection: 'row',
-                marginTop: 9,
+                justifyContent: "space-between",
+                marginTop: 2,
                 flexWrap: 'wrap',
-                placeContent: 'center',
-                position: 'relative',
-                alignItems: 'center',
-                gap: 10,
                 
+                position: 'relative',
+                gap: 5,
+                placeContent: "center"
             }}>
                 <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
                     <FolderOpenOutlinedIcon sx={{
                         width: '80px',
                         height: 'auto'
                     }} />
+
                     <Typography sx={{
                         fontFamily: 'Roboto, sans-serif',
                         fontSize: "1em"
                     }}>
-                        Escrituras, Procurações, etc
+                        Escrituras
                     </Typography>
                 </StyledButton>
-                <StyledButton variant="outlined" onClick={routes.goToPageCartoes}>
+                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
                     <FolderOpenOutlinedIcon sx={{
                         width: '80px',
                         height: 'auto'
                     }} />
+
                     <Typography sx={{
                         fontFamily: 'Roboto, sans-serif',
                         fontSize: "1em"
                     }}>
-                        Cartões de Autógrafo
+                        Procurações
                     </Typography>
                 </StyledButton>
-                <StyledButton variant="outlined" onClick={routes.goToPageTermos}>
+                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
                     <FolderOpenOutlinedIcon sx={{
                         width: '80px',
                         height: 'auto'
                     }} />
+
+                    <Typography sx={{
+                        fontFamily: 'Roboto, sans-serif',
+                        fontSize: "19px",
+                    }}>
+                        Substabelecimento
+                    </Typography>
+                </StyledButton>
+                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
+                    <FolderOpenOutlinedIcon sx={{
+                        width: '80px',
+                        height: 'auto'
+                    }} />
+
                     <Typography sx={{
                         fontFamily: 'Roboto, sans-serif',
                         fontSize: "1em"
                     }}>
-                        Termos LGPD
+                        Iventrário
                     </Typography>
                 </StyledButton>
+                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
+                    <FolderOpenOutlinedIcon sx={{
+                        width: '80px',
+                        height: 'auto'
+                    }} />
+
+                    <Typography sx={{
+                        fontFamily: 'Roboto, sans-serif',
+                        fontSize: "1em"
+                    }}>
+                        Divorcio
+                    </Typography>
+                </StyledButton>
+                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
+                    <FolderOpenOutlinedIcon sx={{
+                        width: '80px',
+                        height: 'auto'
+                    }} />
+
+                    <Typography sx={{
+                        fontFamily: 'Roboto, sans-serif',
+                        fontSize: "1em"
+                    }}>
+                        Ata Notarial
+                    </Typography>
+                </StyledButton>
+                
+                
             </Stack>
         </Box>
     );

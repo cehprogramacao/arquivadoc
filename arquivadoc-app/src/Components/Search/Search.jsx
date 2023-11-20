@@ -13,7 +13,7 @@ export const Search = ({onChange}) => {
         <Stack>
             <TextField onChange={onChange}  color="success" sx={{
                 outline: 'none',
-                width: isSmallScreen ? '100%' : 600,
+                width: isSmallScreen ? '100%' : 500,
                 border: '',
                 '& input': {
                     color: 'success.main',
