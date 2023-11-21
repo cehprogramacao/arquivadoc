@@ -52,8 +52,7 @@ export const PageEditUser = () => {
                 />
 
                 <TextField sx={{
-                    width: is
-                    SmallScreen ? '100%' : '400px',
+                    width: isSmallScreen ? '100%' : '400px',
                     '& input': { color: 'success.main' },
 
 
