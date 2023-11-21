@@ -12,7 +12,6 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import { useState } from 'react';
 import { ModalOptions } from '../Modals/modalOptions/modalOptions';
 
-
 export const Sidebar = () => {
     const routes = createRoutes();
     const theme = useTheme()
@@ -33,7 +32,7 @@ export const Sidebar = () => {
             <List sx={{
                 width: '100%',
                 display: 'flex',
-                height: isSmallScreen ? 'auto' : 'max-content',
+                height: 'auto',
                 alignItems: 'start',
                 borderBottom: '1px solid #FFFFFF',
                 backgroundColor: '#237117',
@@ -61,7 +60,7 @@ export const Sidebar = () => {
                         gap: '30px',
 
                         position: 'relative',
-                        left: '0px',
+                        left: 0,
                         alignItems: 'center',
                         justifyContent: 'center',
                     }} >
@@ -236,6 +235,44 @@ export const Sidebar = () => {
                             }} alt="" />
                             Termos
                         </button>
+                        <button style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            border: 'none',
+                            background: 'transparent',
+                            color: "#fff",
+                            gap: '2px',
+                        }} onClick={routes.goToPageSolicitantes} >
+                            <NoteAltOutlinedIcon sx={{
+                                width: '40px',
+                                height: '40px',
+                                flexShrink: 0,
+                                cursor: 'pointer'
+
+                            }} alt="" />
+                            Solicitantes
+                        </button>
+                        <button style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            border: 'none',
+                            background: 'transparent',
+                            color: "#fff",
+                            gap: '2px',
+                        }} onClick={routes.goToPagePessoas} >
+                            <NoteAltOutlinedIcon sx={{
+                                width: '40px',
+                                height: '40px',
+                                flexShrink: 0,
+                                cursor: 'pointer'
+
+                            }} alt="" />
+                            Pessoas
+                        </button>
                     </ListItemIcon>
                 </ListItem>
 
@@ -249,7 +286,7 @@ export const Sidebar = () => {
                 backgroundColor: '#237117',
                 flexDirection: 'column',
                 gap: '20px',
-                height: 'auto',
+                height: isSmallScreen ? 'auto' : '219px',
                 placeContent: 'center'
             }}>
                 <ListItem>

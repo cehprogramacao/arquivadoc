@@ -3,6 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Header from '@/Components/Header/Header';
 import { PageHome } from './home';
+import LoginPage from './login';
 
 export default function Home() {
   const theme = createTheme({
@@ -28,8 +29,7 @@ export default function Home() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Header />
-      <PageHome />
+      <LoginPage />
     </ThemeProvider>
   );
 }

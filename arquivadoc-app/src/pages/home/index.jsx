@@ -93,7 +93,7 @@ const docs = [
   },
 
 ]
-export const PageHome = () => {
+const PageHome = () => {
   const [age, setAge] = useState('');
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -110,7 +110,7 @@ export const PageHome = () => {
       padding: '30px 60px',
       gap: '20px',
       position: 'absolute',
-      width: '100%',
+      width: 'auto',
       marginTop: 12,
     }}>
       <Header />
@@ -181,4 +181,6 @@ export const PageHome = () => {
     </Box>
   );
 };
+
+export default PageHome
 

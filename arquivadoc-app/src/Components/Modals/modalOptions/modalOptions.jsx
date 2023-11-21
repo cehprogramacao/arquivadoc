@@ -10,6 +10,10 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import { Typography } from '@mui/material';
 import createRoutes from '@/routes/index.routes';
+import GroupIcon from '@mui/icons-material/Group';
+import HistoryIcon from '@mui/icons-material/History';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 export const ModalOptions = ({open, onClose, anchorEl}) => {
   const router = createRoutes()
@@ -56,22 +60,31 @@ export const ModalOptions = ({open, onClose, anchorEl}) => {
         transformOrigin={{ horizontal: 'left', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
       >
-        <Typography sx={{padding: '4px', textAlign: "center"}}>
+        <Typography sx={{padding: '4px',mb: '5px', textAlign: "center"}}>
           Bem-vindo, kauan
         </Typography>
-        <MenuItem onClick={onClose}>
-          <Avatar /> Editar Perfil
-        </MenuItem>
+        
         <Divider />
+        <MenuItem onClick={() => {
+          onClose()
+          router.goToPageEditarPerfil()
+        }}>
+          <ListItemIcon>
+            <EditIcon fontSize="small" />
+          </ListItemIcon> Editar Perfil
+        </MenuItem>
         <MenuItem onClick={handleRouter}>
           <ListItemIcon>
-            <PersonAdd fontSize="small" />
+            <HistoryIcon fontSize="small" />
           </ListItemIcon>
           Logs
         </MenuItem>
-        <MenuItem onClick={onClose}>
+        <MenuItem onClick={()=> {
+          onClose()
+          router.goToPageUsuarios()
+        }}>
           <ListItemIcon>
-            <Settings fontSize="small" />
+            <GroupIcon fontSize="small" />
           </ListItemIcon>
           Usuários
         </MenuItem>

@@ -5,7 +5,7 @@ const createRoutes = () => {
 
   return {
     goToMainPage: () => {
-      router.push('/');
+      router.push('/home');
     },
     goToPageRGI: () => {
       router.push('/rgi');
@@ -37,6 +37,21 @@ const createRoutes = () => {
     goToPageLogs: () => {
       router.push('/logs')
     },
+    goToPageUsuarios: () => {
+      router.push('/usuarios')
+    },
+    goToPageSolicitantes: () => {
+      router.push('/solicitantes')
+    },
+    goToPagePessoas: () => {
+      router.push('/pessoas')
+    },
+    goToPageEditarPerfil: () => {
+      router.push('/mudarSenha')
+    },
+    goToEditarUsuarios: () =>{
+      router.push('/editarUsuario')
+    },
     goToPageLixeiraCartoes: () => {
       router.push('/notas/cartoes/lixeira_cartoes')
     },
@@ -60,6 +75,7 @@ const createRoutes = () => {
     },
     goToPageLixeiraRPJ: () => {
       router.push('rpj/lixeira_rpj')
+
     }
   };
 };
