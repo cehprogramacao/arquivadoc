@@ -40,7 +40,7 @@ const Header = () => {
                     display: 'flex',
                     margin: '0 auto'
                 }}>
-                    <Link href='/' style={{ textDecoration: 'none' }}>
+                    <Link href='/home' style={{ textDecoration: 'none' }}>
                         <img src="/image/logo.png" style={{
                             width: '150px',
                             maxWidth: '100%',
@@ -48,7 +48,7 @@ const Header = () => {
                             objectFit: 'cover',
                             cursor: 'pointer',
                             
-                        }} alt="" onClick={routes.goToMainPage} />
+                        }} alt=""  />
                     </Link>
                 </Toolbar>
 

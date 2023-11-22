@@ -10,28 +10,35 @@ const LoginPage = () => {
     const [userAndEmail, setUserAndEmail] = useState('')
     const [senha, setSenha] = useState('')
     const routes = createRoutes()
+
     const handleEntrar = () => {
         if (userAndEmail === 'Kauan' && senha === 'kauansilva') {
-            routes.goToMainPage()
+            routes.goToHome();
+        } else {
+            setSenha('');
+            setUserAndEmail('');
         }
-        else {
-            setSenha('')
-            setUserAndEmail('')
-            alert("🧐")
+    };
 
+    const handleKeyUpEnter = (event) => {
+        if (event.key.toLowerCase() === 'enter') {
+            handleEntrar()
         }
-    }
+    };
+
+
     return (
         <Box sx={{
-            background: 'url("image/bg.jpg") no-repeat center center fixed',
+            background: 'url("image/bg.jpg") no-repeat center fixed',
             backgroundSize: 'cover',
             width: '100%',
             height: '100vh',
             display: 'flex',
             placeContent: 'center',
             placeItems: 'center',
-            padding: '20px'
-        }}>
+            padding: '20px',
+            backgroundSize: "cover"
+        }} onKeyUp={handleKeyUpEnter}>
             <Box sx={{
                 width: '400px',
                 height: '420px',
@@ -75,7 +82,7 @@ const LoginPage = () => {
                     <TextField
                         placeholder="Usuario/E-mail"
                         id="outlined-start-adornment"
-                    
+
                         sx={{ width: '100%', background: '#FFFFFF', borderRadius: '8px' }}
                         color="success"
                         InputProps={{
@@ -107,7 +114,7 @@ const LoginPage = () => {
                     ":hover": {
                         background: '#237117'
                     }
-                }} onClick={handleEntrar}>
+                }} onClick={handleEntrar} >
                     Entrar
                 </Button>
             </Box>

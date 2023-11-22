@@ -49,7 +49,7 @@ const PageRGI = () => {
             </Typography>
             <Box
                 sx={{
-                    width: '100%',
+                    width: '1200px',
                     display: 'flex',
                     flexDirection: isSmallScreen ? 'column' : 'row',
                     gap: '30px',

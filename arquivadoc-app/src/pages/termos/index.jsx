@@ -2,18 +2,22 @@
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import Header from "@/Components/Header/Header"
 import { DocList } from "@/Components/List/DocList"
-import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
+import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery, Drawer } from "@mui/material"
 import { TermosTable } from "./tableTermos/table"
 import { useState } from "react"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import createRoutes from "@/routes/index.routes"
 import { Buttons } from "@/Components/Button/Button"
+import { CadastroTermosModal } from "@/Components/Modals/ModalCadastroTermo"
 
 
 
 const PageTermos = ({ data }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     const docs = [
         {
             name: 'Ronaldo',
@@ -53,6 +57,7 @@ const PageTermos = ({ data }) => {
     const handleBuscar = () => {
 
     };
+
 
     return (
         <Box sx={{
@@ -119,14 +124,18 @@ const PageTermos = ({ data }) => {
                 </div>
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
-                
-                    <ButtonOpenModals />
+
+                    <ButtonOpenModals onClick={handleOpen} />
                     <ButtonLixeira onClick={routes.goToPageLixeiraTermosLixeira} />
                 </Box>
 
 
             </div>
             <TermosTable data={rows} onClick={handleExcluir} />
+            <Drawer anchor="left" open={open} onClose={handleClose}>
+                <CadastroTermosModal onClose={handleClose} />
+            </Drawer>
+
         </Box>
     )
 }

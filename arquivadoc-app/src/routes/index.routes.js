@@ -4,13 +4,19 @@ const createRoutes = () => {
   const router = useRouter();
 
   return {
-    goToMainPage: () => {
+    goToHome: () => {
       router.push('/home');
+    },
+    goToPageEditarPessoas: () => {
+      router.push('/editarPessoas')
+    },
+    goToPageEditarSolicitantes: () => {
+      router.push('/editarSolicitantes')
     },
     goToPageRGI: () => {
       router.push('/rgi');
     },
-  goToPageProtestos: () => {
+    goToPageProtestos: () => {
       router.push('/protestos');
     },
     goToPageTermos: () => {
@@ -49,7 +55,7 @@ const createRoutes = () => {
     goToPageEditarPerfil: () => {
       router.push('/mudarSenha')
     },
-    goToEditarUsuarios: () =>{
+    goToEditarUsuarios: () => {
       router.push('/editarUsuario')
     },
     goToPageLixeiraCartoes: () => {

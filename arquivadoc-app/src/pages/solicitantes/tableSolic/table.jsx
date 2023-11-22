@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import createRoutes from '@/routes/index.routes';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,8 +38,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export const UserTable = ({ data, onClick }) => {
  
-  
-  
+  const router = createRoutes()
   
 
   return (
@@ -78,7 +78,7 @@ export const UserTable = ({ data, onClick }) => {
                   Excluir
                 </Button>
               </StyledTableCell>
-              <StyledTableCell align='center'>
+              <StyledTableCell align='center' onClick={router.goToPageEditarPessoas}>
                 <Button sx={{
                   fontSize: '15px',
                   textTransform: 'none',
