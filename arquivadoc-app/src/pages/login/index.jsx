@@ -30,7 +30,7 @@ const LoginPage = () => {
             display: 'flex',
             placeContent: 'center',
             placeItems: 'center',
-            
+            padding: '20px'
         }}>
             <Box sx={{
                 width: '400px',

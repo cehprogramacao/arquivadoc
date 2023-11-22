@@ -11,17 +11,18 @@ const PageEditarPerfil = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '10px'
+            gap: isSmallScreen ? '10px' : '40px',
+
         }}>
             <Header />
-            <Typography fontSize={40} fontWeight='bold' marginTop={11}>
+            <Typography fontSize={40} fontWeight='bold' marginTop={isSmallScreen ? 11 : 10}>
                 Mudar senha
             </Typography>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 width: 'auto',
-                gap: '20px',
+                gap: '20px'
             }}>
                 <Box sx={{
                     display: 'flex',
