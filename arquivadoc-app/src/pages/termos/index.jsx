@@ -9,6 +9,7 @@ import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import createRoutes from "@/routes/index.routes"
 import { Buttons } from "@/Components/Button/Button"
 import { CadastroTermosModal } from "@/Components/Modals/ModalCadastroTermo"
+import { CadastroPartes } from "@/Components/Modals/ModalcadastroPartes"
 
 
 
@@ -16,8 +17,23 @@ const PageTermos = ({ data }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const [openPartes, setOpenPartes] = useState(false)
+    const handleOpen = () => {
+        setOpen(true)
+    }
+    const handleClose = () => {
+        setOpen(false);
+    }
+    const handleClosePartes = () => {
+        setOpenPartes(false)
+    }
+    const handleOpenPartes = () => {
+        setOpenPartes(true)
+    }
+    
+
+
+
     const docs = [
         {
             name: 'Ronaldo',
@@ -101,6 +117,7 @@ const PageTermos = ({ data }) => {
                         sx={{ width: isSmallScreen ? '100%' : 400 }}
                         autoHighlight
                         getOptionLabel={(option) => option.label}
+                        
                         renderInput={(params) => (
                             <TextField
                                 {...params}
@@ -132,10 +149,12 @@ const PageTermos = ({ data }) => {
 
             </div>
             <TermosTable data={rows} onClick={handleExcluir} />
-            <Drawer anchor="left" open={open} onClose={handleClose}>
-                <CadastroTermosModal onClose={handleClose} />
+            <Drawer anchor="left" open={open} onClose={handleClose} >
+                <CadastroTermosModal onClose={handleClose} onClickPartes={handleOpenPartes} />
             </Drawer>
-
+            <Drawer anchor="right" open={openPartes} onClose={handleClosePartes}>
+                <CadastroPartes onClose={handleClosePartes} />
+            </Drawer>
         </Box>
     )
 }

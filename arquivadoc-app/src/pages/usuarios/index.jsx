@@ -24,8 +24,8 @@ const PageUsuarios = ({ data }) => {
     const routes = createRoutes()
     const [rows, setRows] = useState([
         { id: 1, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'},
-        { id: 1, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'},
-        { id: 1, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'}
+        { id: 2, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'},
+        { id: 3, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'}
     ]);
 
     const handleExcluir = (id) => {

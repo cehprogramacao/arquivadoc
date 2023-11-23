@@ -149,7 +149,6 @@ const PageHome = () => {
           </FormControl>
         </div>
         <Buttons color={'green'} title={'Buscar'} onClick={() => alert('Oiii')} />
-          <ButtonOpenModals />
       </div>
 
       <Box sx={{

@@ -4,6 +4,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Header from '@/Components/Header/Header';
 import { PageHome } from './home';
 import LoginPage from './login';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 export default function Home() {
   const theme = createTheme({

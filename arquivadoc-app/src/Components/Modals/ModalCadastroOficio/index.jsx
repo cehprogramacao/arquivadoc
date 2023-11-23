@@ -1,22 +1,37 @@
-import { useMediaQuery, useTheme, TextField, Button, Typography } from "@mui/material";
+
+import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
 import FilledInput from '@mui/material/FilledInput';
 
 
-export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
+export const CadastroOficio = ({ onClose, onClickPartes }) => {
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-
+  const opt = [
+    {
+      label: 'Comunicação'
+    },
+    {
+      label: 'Solicitação'
+    },
+    {
+      label: 'Patrocínio'
+    },
+    {
+      label: 'Jurídico'
+    },
+  ]
   return (
     <Box sx={{
-      width: isSmallScreen ? '300px' : "400px",
+      width: isSmallScreen ? '300px' : "390px",
       height: '100vh',
       padding: '8px 10px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '30px'
+      gap: '30px',
+      overflow: 'hidden'
     }}>
       <Box sx={{
         maxWidth: '100%',
@@ -27,7 +42,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         <Typography sx={{
           fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
         }}>
-          Cadastro - Termo
+          Cadastro - Oficio
         </Typography>
         <button style={{
           boxSizing: 'content-box',
@@ -50,8 +65,10 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
-        width: 'auto',
-        gap: isSmallScreen ? '20px' : '26px',
+        width: '100%',
+        gap: isSmallScreen ? '20px' : '30px',
+        height: "100vh",
+        overflowY: 'auto'
       }}>
         <Button sx={{
           width: '169px',
@@ -71,40 +88,65 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         }} variant="contained" onClick={() => {
           onClose()
           onClickPartes()
-
         }}>
           Cadastrar Partes
         </Button>
         <TextField sx={{
-          width: isSmallScreen ? '100%' : '400px',
+          width: isSmallScreen ? '100%' : '360px',
           '& input': { color: 'success.main' },
 
 
         }}
-          label="N° do Cartão"
+          label="Número"
           color='success'
         />
         <TextField sx={{
-          width: isSmallScreen ? '100%' : '400px',
+          width: isSmallScreen ? '100%' : '360px',
           '& input': { color: 'success.main' }
         }}
           label="N° da Caixa"
           color='success'
         />
         <TextField sx={{
-          width: isSmallScreen ? '100%' : '400px',
+          width: isSmallScreen ? '100%' : '360px',
           '& input': { color: 'success.main' },
 
-          "::placeholder": {
-            color: 'success.main'
-          }
+
         }}
-          label="Parte"
+          label="Entidade"
           color='success'
+        />
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={opt}
+          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          renderInput={(params) => (
+            <TextField
+              color="success"
+              {...params}
+              label="Tipo"
+              sx={{
+                color: "#237117",
+                '& input': {
+                  color: 'success.main',
+                },
+              }}
+            />
+          )}
+        />
+        <TextField sx={{
+          width: isSmallScreen ? '100%' : '360px',
+
+        }}
+          type="date"
+          label="Data"
+          color='success'
+          InputLabelProps={{ shrink: true }}
         />
         <TextField
           sx={{
-            width: isSmallScreen ? '100%' : '400px',
+            width: isSmallScreen ? '100%' : '360px',
             border: 'none',
             '::placeholder': {
               color: 'success.main',
