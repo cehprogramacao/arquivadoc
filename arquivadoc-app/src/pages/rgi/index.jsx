@@ -8,6 +8,8 @@ import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import createRoutes from '@/routes/index.routes';
 import { Stack } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
+import ModalList from '@/Components/Modals/ModalList';
+import { useState } from 'react';
 
 const top100Films = [
     { label: 'Prenotação' },
@@ -20,6 +22,7 @@ const docs = [
     {
         name: 'Ronaldo',
         text: 'Procuração',
+        link:''
     },
 ];
 
@@ -28,6 +31,16 @@ const PageRGI = () => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const routes = createRoutes();
+
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
         <Box
@@ -92,7 +105,8 @@ const PageRGI = () => {
                 </Box>
             </Box>
 
-            <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
+            <DocList onClick={handleOpen} data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
+            <ModalList onClose={handleClose} open={open} />
         </Box>
     );
 };

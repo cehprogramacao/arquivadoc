@@ -6,7 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 
 
-export const DocList = ({ data }) => {
+export const DocList = ({ data, onClick }) => {
     
 
     return (
@@ -17,7 +17,7 @@ export const DocList = ({ data }) => {
                     display: 'grid', justifyContent: 'center', padding: '10px 0',
                 }}>
                     <List sx={{ width: 240, }}>
-                        <ListItem style={{
+                        <ListItem onClick={onClick} style={{
 
                             cursor: 'pointer'
                         }}>
