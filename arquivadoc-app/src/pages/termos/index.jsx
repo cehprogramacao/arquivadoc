@@ -10,6 +10,7 @@ import createRoutes from "@/routes/index.routes"
 import { Buttons } from "@/Components/Button/Button"
 import { CadastroTermosModal } from "@/Components/Modals/ModalCadastroTermo"
 import { CadastroPartes } from "@/Components/Modals/ModalcadastroPartes"
+import ResponsiveTable from "../table"
 
 
 
@@ -84,7 +85,8 @@ const PageTermos = ({ data }) => {
             padding: '30px 0',
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
+            gap: '20px',
+            placeItems: 'center'
         }}>
             <Header />
             <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
@@ -148,7 +150,8 @@ const PageTermos = ({ data }) => {
 
 
             </div>
-            <TermosTable data={rows} onClick={handleExcluir} />
+            {/* <TermosTable data={rows} onClick={handleExcluir} /> */}
+            <ResponsiveTable />
             <Drawer anchor="left" open={open} onClose={handleClose} >
                 <CadastroTermosModal onClose={handleClose} onClickPartes={handleOpenPartes} />
             </Drawer>
