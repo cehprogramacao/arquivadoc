@@ -1,37 +1,40 @@
 
+
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
 import FilledInput from '@mui/material/FilledInput';
 
 
-export const CadastroOficio = ({ onClose, onClickPartes }) => {
+export const CadastroProtestosModal = ({ onClose, onClickPartes }) => {
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  
+  const status = [
+    {
+      label: "Status 1"
+    },
+    {
+      label: 'Status 2'
+    }
+  ]
 
-  const opt = [
+  const tipo = [
     {
-      label: 'Comunicação'
+      label: "Tipo 1"
     },
     {
-      label: 'Solicitação'
-    },
-    {
-      label: 'Patrocínio'
-    },
-    {
-      label: 'Jurídico'
-    },
+      label: 'Tipo 2'
+    }
   ]
   return (
     <Box sx={{
-      width: isSmallScreen ? '300px' : "390px",
+      width: isSmallScreen ? '300px' : "400px",
       height: '100vh',
       padding: '8px 10px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '30px',
-      overflow: 'hidden'
+      gap: '30px'
     }}>
       <Box sx={{
         maxWidth: '100%',
@@ -42,7 +45,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
         <Typography sx={{
           fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
         }}>
-          Cadastro - Oficio
+          Cadastro - Termo
         </Typography>
         <button style={{
           boxSizing: 'content-box',
@@ -65,10 +68,8 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
-        width: '100%',
-        gap: isSmallScreen ? '20px' : '30px',
-        height: "100vh",
-        overflowY: 'auto'
+        width: 'auto',
+        gap: isSmallScreen ? '20px' : '26px',
       }}>
         <Button sx={{
           width: '169px',
@@ -88,11 +89,12 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
         }} variant="contained" onClick={() => {
           onClose()
           onClickPartes()
+
         }}>
           Cadastrar Partes
         </Button>
         <TextField sx={{
-          width: isSmallScreen ? '100%' : '360px',
+          width: isSmallScreen ? '100%' : '400px',
           '& input': { color: 'success.main' },
 
 
@@ -102,27 +104,37 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
           color='success'
         />
         <TextField sx={{
-          width: isSmallScreen ? '100%' : '360px',
+          width: isSmallScreen ? '100%' : '400px',
           '& input': { color: 'success.main' }
         }}
           label="N° da Caixa"
           type="number"
           color='success'
         />
-        <TextField sx={{
-          width: isSmallScreen ? '100%' : '360px',
-          '& input': { color: 'success.main' },
-
-
-        }}
-          label="Entidade"
-          color='success'
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={status}
+          sx={{ width: isSmallScreen ? '100%' : 400 }}
+          renderInput={(params) => (
+            <TextField
+              color="success"
+              {...params}
+              label="Status"
+              sx={{
+                color: "#237117",
+                '& input': {
+                  color: 'success.main',
+                },
+              }}
+            />
+          )}
         />
         <Autocomplete
           disablePortal
           id="combo-box-demo"
-          options={opt}
-          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          options={tipo}
+          sx={{ width: isSmallScreen ? '100%' : 400 }}
           renderInput={(params) => (
             <TextField
               color="success"
@@ -138,17 +150,29 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
           )}
         />
         <TextField sx={{
-          width: isSmallScreen ? '100%' : '360px',
-
+          width: isSmallScreen ? '100%' : '400px',
+          '& input': { color: 'success.main' }
         }}
-          type="date"
-          label="Data"
+          label="Apresentante"
           color='success'
-          InputLabelProps={{ shrink: true }}
+        />
+        <TextField sx={{
+          width: isSmallScreen ? '100%' : '400px',
+          '& input': { color: 'success.main' }
+        }}
+          label="Devedor"
+          color='success'
+        />
+        <TextField sx={{
+          width: isSmallScreen ? '100%' : '400px',
+          '& input': { color: 'success.main' }
+        }}
+          label="Sacado"
+          color='success'
         />
         <TextField
           sx={{
-            width: isSmallScreen ? '100%' : '360px',
+            width: isSmallScreen ? '100%' : '400px',
             border: 'none',
             '::placeholder': {
               color: 'success.main',

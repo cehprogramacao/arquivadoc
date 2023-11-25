@@ -20,10 +20,11 @@ const PagePessoas = ({ data }) => {
             label: 'Nome'
         },
     ];
-    const routes = createRoutes()
+
+
     const [rows, setRows] = useState([
         { id: 1, documento: '45357', tipo: 'Física', nome: 'Diego'},
-        { id: 1, documento: '87564', tipo: 'Juídica', nome: 'Construtora'},
+        { id: 2, documento: '87564', tipo: 'Juídica', nome: 'Construtora'},
     ]);
 
     const handleExcluir = (id) => {

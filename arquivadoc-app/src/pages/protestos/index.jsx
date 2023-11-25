@@ -1,4 +1,4 @@
-import { Box, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, TextField, Typography, useMediaQuery, useTheme, Drawer } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
@@ -6,8 +6,10 @@ import { DocList } from '@/Components/List/DocList';
 import Header from '@/Components/Header/Header';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import createRoutes from '@/routes/index.routes';
-import { Stack } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
+import { useState } from 'react';
+import { CadastroProtestosModal } from '@/Components/Modals/ModalCadastroProtesto';
+import { CadastroPartes } from '@/Components/Modals/ModalcadastroPartes';
 
 const top100Films = [
     { label: 'Número' },
@@ -24,6 +26,21 @@ const docs = [
 const PageProtesto = () => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const [open, setOpen] = useState(false)
+    const [openPartes, setOpenPartes] = useState(false)
+
+    const handleOpenModalCadastro = () => {
+        setOpen(true)
+    }
+    const handleCloseModalCadastro = () => {
+        setOpen(false)
+    }
+    const handleOpenModalPartes = () => {
+        setOpenPartes(true)
+    }
+    const handleCloseModalPartes = () => {
+        setOpenPartes(false)
+    }
 
     const routes = createRoutes();
 
@@ -57,40 +74,47 @@ const PageProtesto = () => {
                     marginTop: 4
                 }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center"}}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center" }}>
                     <TextField
                         label="Buscar"
                         sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }}
                         color="success"
                     />
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={top100Films}
-                            sx={{ width: isSmallScreen ? '100%' : 400}}
-                            renderInput={(params) => (
-                                <TextField
-                                    color="success"
-                                    {...params}
-                                    label="Buscar Por"
-                                    sx={{
-                                        color: "#237117",
-                                        '& input': {
-                                            color: 'success.main',
-                                        },
-                                    }}
-                                />
-                            )}
-                        />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={top100Films}
+                        sx={{ width: isSmallScreen ? '100%' : 400 }}
+                        renderInput={(params) => (
+                            <TextField
+                                color="success"
+                                {...params}
+                                label="Buscar Por"
+                                sx={{
+                                    color: "#237117",
+                                    '& input': {
+                                        color: 'success.main',
+                                    },
+                                }}
+                            />
+                        )}
+                    />
                 </Box>
                 <Buttons color={'green'} title={'Buscar'} />
-                <Box sx={{display: 'flex', width: 'auto', gap: '30px'}}>
-                    <ButtonOpenModals />
+                <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
+                    <ButtonOpenModals onClick={handleOpenModalCadastro} />
                     <ButtonLixeira onClick={routes.goToPageLixeiraProtestos} />
                 </Box>
             </Box>
 
             <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
+
+            <Drawer anchor='left' open={open} onClose={handleCloseModalCadastro} >
+                <CadastroProtestosModal onClickPartes={handleOpenModalPartes} onClose={handleCloseModalCadastro} />
+            </Drawer>
+            <Drawer anchor='right' open={openPartes} onClose={handleCloseModalPartes} >
+                <CadastroPartes onClose={handleCloseModalPartes}  />
+            </Drawer>
         </Box>
     );
 };

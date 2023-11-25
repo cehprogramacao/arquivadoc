@@ -44,7 +44,7 @@ const ModalList = ({ open, onClose }) => {
                     }}>
                         <Box sx={{
                             width: isSmallScreen ? '100%' : '400px',
-                            maxHeight: isSmallScreen ? '300px' : "400px",
+                            maxHeight: isSmallScreen ? '300px' : "700px",
                             
                         }}>
                             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
