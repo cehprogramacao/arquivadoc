@@ -97,6 +97,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
 
         }}
           label="Número"
+          type="number"
           color='success'
         />
         <TextField sx={{
@@ -104,6 +105,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
           '& input': { color: 'success.main' }
         }}
           label="N° da Caixa"
+          type="number"
           color='success'
         />
         <TextField sx={{

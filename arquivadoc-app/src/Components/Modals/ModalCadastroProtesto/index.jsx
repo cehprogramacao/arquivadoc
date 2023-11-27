@@ -2,6 +2,7 @@
 
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
+<<<<<<< HEAD
 
 
 export const CadastroProtesto = ({ onClose, onClickPartes }) => {
@@ -45,12 +46,46 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
   return (
     <Box sx={{
       width: isSmallScreen ? '320px' : "390px",
+=======
+import FilledInput from '@mui/material/FilledInput';
+
+
+export const CadastroProtestosModal = ({ onClose, onClickPartes }) => {
+
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  
+  const status = [
+    {
+      label: "Status 1"
+    },
+    {
+      label: 'Status 2'
+    }
+  ]
+
+  const tipo = [
+    {
+      label: "Tipo 1"
+    },
+    {
+      label: 'Tipo 2'
+    }
+  ]
+  return (
+    <Box sx={{
+      width: isSmallScreen ? '300px' : "400px",
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
       height: '100vh',
       padding: '8px 10px',
       display: 'flex',
       flexDirection: 'column',
+<<<<<<< HEAD
       gap: '30px',
       overflow: 'hidden'
+=======
+      gap: '30px'
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
     }}>
       <Box sx={{
         maxWidth: '100%',
@@ -61,7 +96,11 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         <Typography sx={{
           fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
         }}>
+<<<<<<< HEAD
           Cadastro - Protestos
+=======
+          Cadastro - Termo
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
         </Typography>
         <button style={{
           boxSizing: 'content-box',
@@ -84,6 +123,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
+<<<<<<< HEAD
         width: '100%',
         gap: isSmallScreen ? '20px' : '30px',
         height: "100vh",
@@ -91,6 +131,13 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
       }}>
         <Button sx={{
           width: 'max-content',
+=======
+        width: 'auto',
+        gap: isSmallScreen ? '20px' : '26px',
+      }}>
+        <Button sx={{
+          width: '169px',
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
           background: 'transparent',
 
           border: '1px solid #237117',
@@ -107,11 +154,19 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         }} variant="contained" onClick={() => {
           onClose()
           onClickPartes()
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
         }}>
           Cadastrar Partes
         </Button>
         <TextField sx={{
+<<<<<<< HEAD
           width: isSmallScreen ? '100%' : '360px',
+=======
+          width: isSmallScreen ? '100%' : '400px',
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
           '& input': { color: 'success.main' },
 
 
@@ -121,7 +176,11 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           color='success'
         />
         <TextField sx={{
+<<<<<<< HEAD
           width: isSmallScreen ? '100%' : '360px',
+=======
+          width: isSmallScreen ? '100%' : '400px',
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
           '& input': { color: 'success.main' }
         }}
           label="N° da Caixa"
@@ -131,14 +190,22 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         <Autocomplete
           disablePortal
           id="combo-box-demo"
+<<<<<<< HEAD
           options={optipos}
           sx={{ width: isSmallScreen ? '100%' : 360 }}
+=======
+          options={status}
+          sx={{ width: isSmallScreen ? '100%' : 400 }}
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
           renderInput={(params) => (
             <TextField
               color="success"
               {...params}
               label="Status"
+<<<<<<< HEAD
               placeholder="Escolha uma opção"
+=======
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
               sx={{
                 color: "#237117",
                 '& input': {
@@ -151,14 +218,22 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         <Autocomplete
           disablePortal
           id="combo-box-demo"
+<<<<<<< HEAD
           options={opt}
           sx={{ width: isSmallScreen ? '100%' : 360 }}
+=======
+          options={tipo}
+          sx={{ width: isSmallScreen ? '100%' : 400 }}
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
           renderInput={(params) => (
             <TextField
               color="success"
               {...params}
               label="Tipo"
+<<<<<<< HEAD
               placeholder="Escolha uma opção"
+=======
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
               sx={{
                 color: "#237117",
                 '& input': {
@@ -168,6 +243,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
             />
           )}
         />
+<<<<<<< HEAD
         <Autocomplete
 
           disablePortal
@@ -285,6 +361,32 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         <TextField
           sx={{
             width: isSmallScreen ? '100%' : '360px',
+=======
+        <TextField sx={{
+          width: isSmallScreen ? '100%' : '400px',
+          '& input': { color: 'success.main' }
+        }}
+          label="Apresentante"
+          color='success'
+        />
+        <TextField sx={{
+          width: isSmallScreen ? '100%' : '400px',
+          '& input': { color: 'success.main' }
+        }}
+          label="Devedor"
+          color='success'
+        />
+        <TextField sx={{
+          width: isSmallScreen ? '100%' : '400px',
+          '& input': { color: 'success.main' }
+        }}
+          label="Sacado"
+          color='success'
+        />
+        <TextField
+          sx={{
+            width: isSmallScreen ? '100%' : '400px',
+>>>>>>> 8938b04acaebb9b127a65e8700f3835d423edf23
             border: 'none',
             '::placeholder': {
               color: 'success.main',
