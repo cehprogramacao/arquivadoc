@@ -5,11 +5,14 @@ import { Box, Button, Modal, Typography, useMediaQuery, useTheme } from '@mui/ma
 import EditIcon from '@mui/icons-material/Edit';
 import PrintIcon from '@mui/icons-material/Print';
 import DeleteIcon from '@mui/icons-material/Delete';
-const ModalList = ({ open, onClose }) => {
+const ModalList = ({ open, onClose, data, link }) => {
 
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
-
+    const handlePrintFile = () => {
+        window.open(data[0].link)
+        onClose()
+    }
     return (
         <Box>
 
@@ -48,7 +51,7 @@ const ModalList = ({ open, onClose }) => {
                             
                         }}>
                             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                <Viewer fileUrl="/teste.pdf" />
+                                <Viewer fileUrl={link} />
                             </Worker>
                         </Box>
 
@@ -67,12 +70,12 @@ const ModalList = ({ open, onClose }) => {
                             }}>
                                 <EditIcon />
                             </Button>
-                            <Button variant="outlined" sx={{
+                            <Button variant="outlined" color='inherit' sx={{
                                 color: "#0dcaf0",
                                 ":hover": {
-                                    color: "#0dcaf0"
+                                    color: "#0DCAF0"
                                 }
-                            }} >
+                            }} onClick={handlePrintFile} >
                                 <PrintIcon />
                             </Button>
                             <Button variant="outlined" color='error' >

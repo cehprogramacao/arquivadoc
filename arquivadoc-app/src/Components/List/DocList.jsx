@@ -17,7 +17,7 @@ export const DocList = ({ data, onClick }) => {
                     display: 'grid', justifyContent: 'center', padding: '10px 0',
                 }}>
                     <List sx={{ width: 240, }}>
-                        <ListItem onClick={onClick} style={{
+                        <ListItem onClick={() => onClick(index)} style={{
 
                             cursor: 'pointer'
                         }}>

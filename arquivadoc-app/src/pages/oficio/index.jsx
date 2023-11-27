@@ -10,7 +10,7 @@ import { Stack } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
 import { useState } from 'react';
 import { CadastroOficio } from '@/Components/Modals/ModalCadastroOficio';
-import { CadastroPartes } from '@/Components/Modals/ModalcadastroPartes';
+import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
 
 const top100Films = [
     { label: 'Número' },

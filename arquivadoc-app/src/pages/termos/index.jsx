@@ -9,8 +9,9 @@ import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import createRoutes from "@/routes/index.routes"
 import { Buttons } from "@/Components/Button/Button"
 import { CadastroTermosModal } from "@/Components/Modals/ModalCadastroTermo"
-import { CadastroPartes } from "@/Components/Modals/ModalcadastroPartes"
+import { CadastroPartes } from "@/Components/Modals/ModalCadastroPartes"
 import ResponsiveTable from "../table"
+import ModalList from "@/Components/Modals/ModalList"
 
 
 
@@ -18,6 +19,7 @@ const PageTermos = ({ data }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const [open, setOpen] = useState(false);
+    const [openList, setOpenList] = useState(false);
     const [openPartes, setOpenPartes] = useState(false)
     const handleOpen = () => {
         setOpen(true)
@@ -31,17 +33,21 @@ const PageTermos = ({ data }) => {
     const handleOpenPartes = () => {
         setOpenPartes(true)
     }
-    
+    const handleOpenList = () => {
+        setOpenList(true)
+    }
+    const handleCloseList = () => {
+        setOpenList(false)
+    }
 
 
 
     const docs = [
         {
             name: 'Ronaldo',
-            text: 'Procuração'
+            text: 'Procuração',
+            link: "/teste.pdf"
         },
-
-
     ]
     const top100Films = [
         {
@@ -150,8 +156,8 @@ const PageTermos = ({ data }) => {
 
 
             </div>
-            {/* <TermosTable data={rows} onClick={handleExcluir} /> */}
-            <ResponsiveTable />
+            <DocList onClick={handleOpenList} data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
+            <ModalList onClose={handleCloseList} open={openList} data={docs} />
             <Drawer anchor="left" open={open} onClose={handleClose} >
                 <CadastroTermosModal onClose={handleClose} onClickPartes={handleOpenPartes} />
             </Drawer>

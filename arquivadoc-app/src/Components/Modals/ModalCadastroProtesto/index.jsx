@@ -1,30 +1,50 @@
 
+
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
 
 
-export const CadastroOficio = ({ onClose, onClickPartes }) => {
+export const CadastroProtesto = ({ onClose, onClickPartes }) => {
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const opt = [
+  const optipos = [
     {
-      label: 'Comunicação'
+      label: 'Protestado'
     },
     {
-      label: 'Solicitação'
+      label: 'Cancelamento'
     },
     {
-      label: 'Patrocínio'
-    },
-    {
-      label: 'Jurídico'
+      label: 'Em andamento  '
     },
   ]
+
+  const opt = [
+    {
+      label: 'Por falta ou recusa de aceite'
+    },
+    {
+      label: 'Por falta ou recusa de pagamento'
+    },
+    {
+      label: 'Por falta de devolução'
+    },
+    {
+      label: 'Por simples indicação do portador'
+    },
+  ]
+
+  const optapresentante = [
+    {
+      numero: '3333', label: 'Guaiuba Construtora'
+    }
+  ]
+
   return (
     <Box sx={{
-      width: isSmallScreen ? '300px' : "390px",
+      width: isSmallScreen ? '320px' : "390px",
       height: '100vh',
       padding: '8px 10px',
       display: 'flex',
@@ -41,7 +61,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
         <Typography sx={{
           fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
         }}>
-          Cadastro - Oficio
+          Cadastro - Protestos
         </Typography>
         <button style={{
           boxSizing: 'content-box',
@@ -70,7 +90,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
         overflowY: 'auto'
       }}>
         <Button sx={{
-          width: '169px',
+          width: 'max-content',
           background: 'transparent',
 
           border: '1px solid #237117',
@@ -97,6 +117,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
 
         }}
           label="Número"
+          type="number"
           color='success'
         />
         <TextField sx={{
@@ -104,16 +125,28 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
           '& input': { color: 'success.main' }
         }}
           label="N° da Caixa"
+          type="number"
           color='success'
         />
-        <TextField sx={{
-          width: isSmallScreen ? '100%' : '360px',
-          '& input': { color: 'success.main' },
-
-
-        }}
-          label="Entidade"
-          color='success'
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={optipos}
+          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          renderInput={(params) => (
+            <TextField
+              color="success"
+              {...params}
+              label="Status"
+              placeholder="Escolha uma opção"
+              sx={{
+                color: "#237117",
+                '& input': {
+                  color: 'success.main',
+                },
+              }}
+            />
+          )}
         />
         <Autocomplete
           disablePortal
@@ -125,6 +158,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
               color="success"
               {...params}
               label="Tipo"
+              placeholder="Escolha uma opção"
               sx={{
                 color: "#237117",
                 '& input': {
@@ -134,14 +168,119 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
             />
           )}
         />
-        <TextField sx={{
-          width: isSmallScreen ? '100%' : '360px',
+        <Autocomplete
 
-        }}
-          type="date"
-          label="Data"
-          color='success'
-          InputLabelProps={{ shrink: true }}
+          disablePortal
+          id="combo-box-demo"
+          options={optapresentante}
+          autoHighlight
+          getOptionLabel={(option) => option.numero}
+          renderOption={(props, option) => (
+            <Box component="li" sx={{
+              width: '100%',
+              display: 'flex', flexDirection: 'column', gap: '6px'
+            }} {...props}>
+              <Typography sx={{ fontSize: "12px", display: 'flex', alignSelf: 'start' }}>
+                {option.numero}
+              </Typography>
+              <Typography sx={{
+                fontSize: "11px", display: 'flex', alignSelf: 'start',
+                textTransform: 'uppercase'
+              }}>
+                {option.label}
+              </Typography>
+            </Box>
+          )}
+          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          renderInput={(params) => <TextField color="success" {...params}
+
+
+            inputProps={{
+              ...params.inputProps,
+              autoComplete: 'new-password',
+            }}
+            label="Apresentante"
+            sx={{
+              color: "#237117", '& input': {
+                color: 'success.main',
+              },
+            }} />}
+        />
+        <Autocomplete
+
+          disablePortal
+          id="combo-box-demo"
+          options={optapresentante}
+          autoHighlight
+          getOptionLabel={(option) => option.numero}
+          renderOption={(props, option) => (
+            <Box component="li" sx={{
+              width: '100%',
+              display: 'flex', flexDirection: 'column', gap: '6px'
+            }} {...props}>
+              <Typography sx={{ fontSize: "12px", display: 'flex', alignSelf: 'start' }}>
+                {option.numero}
+              </Typography>
+              <Typography sx={{
+                fontSize: "11px", display: 'flex', alignSelf: 'start',
+                textTransform: 'uppercase'
+              }}>
+                {option.label}
+              </Typography>
+            </Box>
+          )}
+          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          renderInput={(params) => <TextField color="success" {...params}
+
+
+            inputProps={{
+              ...params.inputProps,
+              autoComplete: 'new-password',
+            }}
+            label="Sacado"
+            sx={{
+              color: "#237117", '& input': {
+                color: 'success.main',
+              },
+            }} />}
+        />
+        <Autocomplete
+
+          disablePortal
+          id="combo-box-demo"
+          options={optapresentante}
+          autoHighlight
+          getOptionLabel={(option) => option.numero}
+          renderOption={(props, option) => (
+            <Box component="li" sx={{
+              width: '100%',
+              display: 'flex', flexDirection: 'column', gap: '6px'
+            }} {...props}>
+              <Typography sx={{ fontSize: "12px", display: 'flex', alignSelf: 'start' }}>
+                {option.numero}
+              </Typography>
+              <Typography sx={{
+                fontSize: "11px", display: 'flex', alignSelf: 'start',
+                textTransform: 'uppercase'
+              }}>
+                {option.label}
+              </Typography>
+            </Box>
+          )}
+          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          renderInput={(params) => <TextField color="success" {...params}
+
+
+            inputProps={{
+              ...params.inputProps,
+              autoComplete: 'new-password',
+            }}
+            label="Devedor"
+            sx={{
+              color: "#237117", '& input': {
+                color: 'success.main',
+              },
+            }} />}
         />
         <TextField
           sx={{

@@ -1,4 +1,4 @@
-import { Box, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
@@ -10,6 +10,8 @@ import { Stack } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
 import ModalList from '@/Components/Modals/ModalList';
 import { useState } from 'react';
+import { CadastroModalRGI } from '@/Components/Modals/ModalCadastroRGI';
+import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
 
 const top100Films = [
     { label: 'Prenotação' },
@@ -22,7 +24,7 @@ const docs = [
     {
         name: 'Ronaldo',
         text: 'Procuração',
-        link:''
+        link:'/teste.pdf'
     },
 ];
 
@@ -33,6 +35,12 @@ const PageRGI = () => {
     const routes = createRoutes();
 
     const [open, setOpen] = useState(false);
+    const [openModalRGI, setOpenModalRGI] = useState(false)
+    const [openModalPartes, setOpenModalPartes] = useState(false)
+    const handleOpenModalRGI = () => setOpenModalRGI(true)
+    const handleCloseModalRGI = () => setOpenModalRGI(false)
+    const handleOpenModalPartes = () => setOpenModalPartes(true)
+    const handleCloseModalPartes = () => setOpenModalPartes(false) 
 
     const handleOpen = () => {
         setOpen(true);
@@ -69,7 +77,7 @@ const PageRGI = () => {
                     placeItems: 'center',
                     placeContent: "center",
                     flexWrap: 'wrap',
-                    marginTop: 4
+                    marginTop: 1
                 }}
             >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, placeContent: "center",flexWrap: 'wrap' }}>
@@ -100,13 +108,19 @@ const PageRGI = () => {
                 </Box>
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{display: 'flex', width: 'fit-content', gap: '30px'}}>
-                    <ButtonOpenModals />
+                    <ButtonOpenModals onClick={handleOpenModalRGI} />
                     <ButtonLixeira onClick={routes.goToPageLixeiraRGI} />
                 </Box>
             </Box>
 
             <DocList onClick={handleOpen} data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
-            <ModalList onClose={handleClose} open={open} />
+            <ModalList onClose={handleClose} open={open} data={docs} />
+            <Drawer anchor='left' open={openModalRGI} onClose={handleCloseModalRGI} >
+                <CadastroModalRGI onClose={handleCloseModalRGI} onClickPartes={handleOpenModalPartes} />
+            </Drawer>
+            <Drawer open={openModalPartes} onClose={handleCloseModalPartes} anchor='right' >
+                <CadastroPartes onClose={handleCloseModalPartes} />
+            </Drawer>
         </Box>
     );
 };

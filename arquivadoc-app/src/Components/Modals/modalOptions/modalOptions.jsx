@@ -34,19 +34,21 @@ export const ModalOptions = ({open, onClose, anchorEl}) => {
           sx: {
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
+            marginBottom: 2,
             ml: 8,
+            position: 'fixed',
             '& .MuiAvatar-root': {
               width: 32,
               height: 32,
               ml: -0.5,
               mr: 1,
+              background:""
             },
             '&:before': {
               content: '""',
               display: 'block',
-              position: 'absolute',
-              top: 158,
+              position: 'fixed',
+              top: 178,
               right: 0,
               left: -5,
               width: 10,
@@ -57,8 +59,8 @@ export const ModalOptions = ({open, onClose, anchorEl}) => {
             },
           },
         }}
-        transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+        transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+        anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
       >
         <Typography sx={{padding: '4px',mb: '5px', textAlign: "center"}}>
           Bem-vindo, kauan

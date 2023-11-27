@@ -6,9 +6,9 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Header from '@/Components/Header/Header';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import createRoutes from '@/routes/index.routes';
-import { CadastrarCartoesModal } from '@/Components/Modals/ModalCartoes';
+import { CadastrarCartoesModal } from '@/Components/Modals/ModalCadastroCartoes';
 import { useState } from 'react';
-import { CadastroPartes } from '@/Components/Modals/ModalcadastroPartes';
+import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
 
 
 const PageAutographCards = ({ data }) => {

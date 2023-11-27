@@ -22,7 +22,7 @@ const PageSolicitantes = ({ data }) => {
     ];
     const routes = createRoutes()
     const [rows, setRows] = useState([
-        { id: 1, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'},
+        { id: 1, nome: 'Kauan BrTech'},
     ]);
 
     const handleExcluir = (id) => {

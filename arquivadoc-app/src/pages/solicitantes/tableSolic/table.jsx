@@ -48,8 +48,6 @@ export const UserTable = ({ data, onClick }) => {
           <TableRow>
             <StyledTableCell>ID</StyledTableCell>
             <StyledTableCell align='center'>Nome</StyledTableCell>
-            <StyledTableCell align='center'>E-mail</StyledTableCell>
-            <StyledTableCell align='center'>Setor</StyledTableCell>
             <StyledTableCell align='center'>Excluir</StyledTableCell>
             <StyledTableCell align='center'>Editar</StyledTableCell>
           </TableRow>
@@ -59,8 +57,6 @@ export const UserTable = ({ data, onClick }) => {
             <StyledTableRow key={index}>
               <StyledTableCell align='left'>{row.id}</StyledTableCell>
               <StyledTableCell align='center'>{row.nome}</StyledTableCell>
-              <StyledTableCell align='center' >{row.email}</StyledTableCell>
-              <StyledTableCell align='center'>{row.setor}</StyledTableCell>
               <StyledTableCell align='center'>
                 <Button sx={{
                   fontSize: '15px',

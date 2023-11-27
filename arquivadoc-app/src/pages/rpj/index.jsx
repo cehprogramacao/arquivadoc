@@ -1,4 +1,4 @@
-import { Box, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
@@ -8,6 +8,10 @@ import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import createRoutes from '@/routes/index.routes';
 import { Stack } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
+import ModalList from '@/Components/Modals/ModalList';
+import { useState } from 'react';
+import { CadastroModalRPJ } from '@/Components/Modals/ModalCadastroRPJ';
+import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
 
 const top100Films = [
     {
@@ -26,17 +30,40 @@ const top100Films = [
 
 const docs = [
     {
+        id: 1,
         name: 'Ronaldo',
         text: 'Procuração',
+        link: '/teste.pdf'
     },
+    {
+        id: 2,
+        name: 'Kauan BrTech',
+        text: 'Compra e Venda',
+        link: '/'
+    },
+
 ];
 
 const PageRPJ = () => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
     const routes = createRoutes();
+    const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
+    const [openModalCadastroRPJ, setOpenModalCadastroRPJ] = useState(false)
+    const [openModalCadastroPartes, setOpenModalCadastroPartes] = useState(false)
+    const [temp, setTemp] = useState(0)
+    const handleOpenModalListFilePDF = (index) => {
+        setTemp(index)
+        setOpenModalListFilePDF(true)
+    }
+    const handleCloseModalListFilePDF = () => {
+        setOpenModalListFilePDF(false)
+    }
+    const handleOpenModalCadastroRPJ = () => setOpenModalCadastroRPJ(true)
+    const handleCloseModalCadastroRPJ = () => setOpenModalCadastroRPJ(false)
 
+    const handleOpenModalPartes = () => setOpenModalCadastroPartes(true)
+    const handleCloseModalPartes = () => setOpenModalCadastroPartes(false)
     return (
         <Box
             sx={{
@@ -95,12 +122,19 @@ const PageRPJ = () => {
                 </Box>
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{display: 'flex', width: 'auto', gap: '30px'}}>
-                    <ButtonOpenModals />
+                    <ButtonOpenModals onClick={handleOpenModalCadastroRPJ} />
                     <ButtonLixeira onClick={routes.goToPageLixeiraRPJ} />
                 </Box>
             </Box>
+            <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} onClick={handleOpenModalListFilePDF} />
+            <ModalList data={docs} link={docs[temp].link} onClose={handleCloseModalListFilePDF} open={openModalListFilePDF} />
 
-            <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} />
+            <Drawer anchor='left' open={openModalCadastroRPJ} onClose={handleCloseModalCadastroRPJ}>
+                <CadastroModalRPJ onClose={handleCloseModalCadastroRPJ} onClickPartes={handleOpenModalPartes} />
+            </Drawer>
+            <Drawer anchor='right' open={openModalCadastroPartes} onClose={handleCloseModalPartes} >
+                <CadastroPartes onClose={handleCloseModalPartes} />
+            </Drawer>
         </Box>
     );
 };

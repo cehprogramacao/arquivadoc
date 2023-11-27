@@ -10,7 +10,7 @@ import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import { useState } from 'react';
-import { ModalOptions } from '../Modals/modalOptions/modalOptions';
+import { ModalOptions } from '../Modals/ModalOptions/modalOptions';
 
 export const Sidebar = () => {
     const routes = createRoutes();
