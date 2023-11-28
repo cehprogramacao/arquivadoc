@@ -1,20 +1,82 @@
 import React, { useEffect, useState } from 'react';
-import { Viewer, Worker } from '@react-pdf-viewer/core';
-import '@react-pdf-viewer/core/lib/styles/index.css';
 import { Box, Button, Modal, Typography, useMediaQuery, useTheme } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import PrintIcon from '@mui/icons-material/Print';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+
+// Plugins
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+
+// Import styles
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+
+// Create new plugin instance
+// import { Icon, Viewer, Worker } from '@react-pdf-viewer/core';
+// import { BookmarkIcon, defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+
+// import '@react-pdf-viewer/core/lib/styles/index.css';
+// import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+
+// const ExpandIcon = () => (
+//     <Icon size={16}>
+//         <path d="M.541,5.627,11.666,18.2a.5.5,0,0,0,.749,0L23.541,5.627" />
+//     </Icon>
+// );
+
+// const CollapseIcon = () => (
+//     <Icon size={16}>
+//         <path d="M5.651,23.5,18.227,12.374a.5.5,0,0,0,0-.748L5.651.5" />
+//     </Icon>
+// );
+
 const ModalList = ({ open, onClose, data, link }) => {
 
-    const theme = useTheme()
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
-    const handlePrintFile = () => {
-        window.open(link)
-        onClose()
-    }
+    // const renderBookmarkItem = (renderProps) =>
+    //     renderProps.defaultRenderItem(
+    //         renderProps.onClickItem,
+    //         <>
+    //             {renderProps.defaultRenderToggle(<ExpandIcon />, <CollapseIcon />)}
+    //             {renderProps.defaultRenderTitle(renderProps.onClickTitle)}
+    //         </>
+    //     );
 
-    
+    // const defaultLayoutPluginInstance = defaultLayoutPlugin({
+    //     sidebarTabs: (defaultTabs) => [
+    //         defaultTabs[0],
+    //         {
+    //             content: <Bookmarks renderBookmarkItem={renderBookmarkItem} />,
+    //             icon: <BookmarkIcon />,
+    //             title: 'Bookmark',
+    //         },
+    //         defaultTabs[2],
+    //     ],
+    // });
+    // const bookmarkPluginInstance = defaultLayoutPluginInstance.bookmarkPluginInstance;
+    // const { Bookmarks } = bookmarkPluginInstance;
+
+
+    const theme = useTheme()
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'))
+    const handlePrintFile = () => {
+        const base64Data = link;
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        
+        // Criar uma URL do Blob e abrir em uma nova janela
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+    }
+    const defaultLayoutPluginInstance = defaultLayoutPlugin();
+
+
+
 
     return (
         <Box>
@@ -29,7 +91,7 @@ const ModalList = ({ open, onClose, data, link }) => {
                 <Box sx={{
                     position: 'absolute',
                     width: '80%',
-                    maxWidth: 640,
+                    maxWidth: '100%',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
@@ -49,12 +111,13 @@ const ModalList = ({ open, onClose, data, link }) => {
                         placeContent: "center"
                     }}>
                         <Box sx={{
-                            width: isSmallScreen ? '100%' : '400px',
-                            maxHeight: isSmallScreen ? '300px' : "700px",
+                            width: isSmallScreen ? '100%' : '700px',
+                            height: isSmallScreen ? '300px' : "520px",
 
                         }}>
                             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                <Viewer fileUrl={`data:application/pdf;base64,${link}`}  />
+                                <Viewer fileUrl={`data:application/pdf;base64,${link}`} plugins={[defaultLayoutPluginInstance]} />
+
                             </Worker>
                         </Box>
 

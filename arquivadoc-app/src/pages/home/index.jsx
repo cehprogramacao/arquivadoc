@@ -174,7 +174,7 @@ const PageHome = () => {
             color: '#B5B5C3'
           }}>More than 400+ new members</span>
         </div>
-        <DocList data={docs} />
+        <DocList data={docs}  />
       </Box>
 
     </Box>

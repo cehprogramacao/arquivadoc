@@ -5,7 +5,7 @@ import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } 
 import { Box } from "@mui/system";
 
 
-export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
+export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -62,7 +62,7 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
                 <Typography sx={{
                     fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
                 }}>
-                    Cadastro - RPJ
+                    Cadastro - RTD
                 </Typography>
                 <button style={{
                     boxSizing: 'content-box',
