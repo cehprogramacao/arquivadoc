@@ -30,8 +30,8 @@ export const DocList = ({ data, onClick }) => {
                                     color: 'black',
                                     fontWeight: "bold"
                                 }}
-                                primary={item.text}
-                                secondary={`por ${item.name}`}
+                                primary={item.NomeFile}
+                                secondary={`por ${item.nameUser}`}
                             />
                         </ListItem>
 

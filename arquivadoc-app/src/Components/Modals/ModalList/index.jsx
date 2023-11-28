@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import { Box, Button, Modal, Typography, useMediaQuery, useTheme } from '@mui/material';
@@ -10,9 +10,12 @@ const ModalList = ({ open, onClose, data, link }) => {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
     const handlePrintFile = () => {
-        window.open(data[0].link)
+        window.open(link)
         onClose()
     }
+
+    
+
     return (
         <Box>
 
@@ -37,28 +40,28 @@ const ModalList = ({ open, onClose, data, link }) => {
                     borderRadius: "20px"
                 }}>
                     <Box sx={{
-                        width:"100%",
+                        width: "100%",
                         display: "flex",
                         flexDirection: "row",
                         mt: 2,
-                        gap:" 80px",
-                        flexWrap:"wrap",
-                        placeContent:"center"
+                        gap: " 80px",
+                        flexWrap: "wrap",
+                        placeContent: "center"
                     }}>
                         <Box sx={{
                             width: isSmallScreen ? '100%' : '400px',
                             maxHeight: isSmallScreen ? '300px' : "700px",
-                            
+
                         }}>
                             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                <Viewer fileUrl={link} />
+                                <Viewer fileUrl={`data:application/pdf;base64,${link}`}  />
                             </Worker>
                         </Box>
 
                         <Box sx={{
-                            display:'flex',
-                            gap:'25px',
-                            alignItems:'start',
+                            display: 'flex',
+                            gap: '25px',
+                            alignItems: 'start',
                             flexDirection: isSmallScreen ? 'row' : "column"
                         }}>
                             {/* Add your buttons here */}
@@ -81,7 +84,7 @@ const ModalList = ({ open, onClose, data, link }) => {
                             <Button variant="outlined" color='error' >
                                 <DeleteIcon sx={{
                                     fill: '#dc3545'
-                                }}/>
+                                }} />
                             </Button>
                         </Box>
                     </Box>

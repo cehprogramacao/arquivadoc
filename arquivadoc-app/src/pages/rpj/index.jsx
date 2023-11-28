@@ -9,9 +9,10 @@ import createRoutes from '@/routes/index.routes';
 import { Stack } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
 import ModalList from '@/Components/Modals/ModalList';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CadastroModalRPJ } from '@/Components/Modals/ModalCadastroRPJ';
 import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
+import axios from 'axios'
 
 const top100Films = [
     {
@@ -51,11 +52,33 @@ const PageRPJ = () => {
     const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
     const [openModalCadastroRPJ, setOpenModalCadastroRPJ] = useState(false)
     const [openModalCadastroPartes, setOpenModalCadastroPartes] = useState(false)
-    const [temp, setTemp] = useState(0)
+
+    const [list, setList] = useState([]);
+
+
+
+
+    const [temp, setTemp] = useState(null)
     const handleOpenModalListFilePDF = (index) => {
         setTemp(index)
         setOpenModalListFilePDF(true)
+
     }
+    const fetchData = async () => {
+        try {
+            const response = await fetch('http://localhost:3004/');
+            if (response.ok) {
+                const data = await response.json();
+                setList(data.data || []);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    useEffect(() => {
+        fetchData();
+
+    }, []);
     const handleCloseModalListFilePDF = () => {
         setOpenModalListFilePDF(false)
     }
@@ -64,6 +87,9 @@ const PageRPJ = () => {
 
     const handleOpenModalPartes = () => setOpenModalCadastroPartes(true)
     const handleCloseModalPartes = () => setOpenModalCadastroPartes(false)
+
+
+
     return (
         <Box
             sx={{
@@ -94,40 +120,42 @@ const PageRPJ = () => {
                     marginTop: 4
                 }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center"}}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center" }}>
                     <TextField
                         label="Buscar"
                         sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }}
                         color="success"
                     />
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={top100Films}
-                            sx={{ width: isSmallScreen ? '100%' : 400}}
-                            renderInput={(params) => (
-                                <TextField
-                                    color="success"
-                                    {...params}
-                                    label="Buscar Por"
-                                    sx={{
-                                        color: "#237117",
-                                        '& input': {
-                                            color: 'success.main',
-                                        },
-                                    }}
-                                />
-                            )}
-                        />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={top100Films}
+                        sx={{ width: isSmallScreen ? '100%' : 400 }}
+                        renderInput={(params) => (
+                            <TextField
+                                color="success"
+                                {...params}
+                                label="Buscar Por"
+                                sx={{
+                                    color: "#237117",
+                                    '& input': {
+                                        color: 'success.main',
+                                    },
+                                }}
+                            />
+                        )}
+                    />
                 </Box>
                 <Buttons color={'green'} title={'Buscar'} />
-                <Box sx={{display: 'flex', width: 'auto', gap: '30px'}}>
+                <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <ButtonOpenModals onClick={handleOpenModalCadastroRPJ} />
                     <ButtonLixeira onClick={routes.goToPageLixeiraRPJ} />
                 </Box>
             </Box>
-            <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} onClick={handleOpenModalListFilePDF} />
-            <ModalList data={docs} link={docs[temp].link} onClose={handleCloseModalListFilePDF} open={openModalListFilePDF} />
+            <DocList data={list} sx={{ marginTop: isSmallScreen ? 2 : 0 }} onClick={handleOpenModalListFilePDF} />
+                <ModalList data={list} link={list[temp]?.data} onClose={handleCloseModalListFilePDF} open={openModalListFilePDF} />
+
+
 
             <Drawer anchor='left' open={openModalCadastroRPJ} onClose={handleCloseModalCadastroRPJ}>
                 <CadastroModalRPJ onClose={handleCloseModalCadastroRPJ} onClickPartes={handleOpenModalPartes} />
@@ -140,5 +168,3 @@ const PageRPJ = () => {
 };
 
 export default PageRPJ;
-
-
