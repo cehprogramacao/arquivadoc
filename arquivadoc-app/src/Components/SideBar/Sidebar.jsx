@@ -28,7 +28,22 @@ export const Sidebar = () => {
 
     return (
 
-        <Box >
+        <Box sx={{
+            overflowY: 'auto',
+                flex: 1,
+
+                '::-webkit-scrollbar': {
+                    width: '15px',
+
+                },
+                '::-webkit-scrollbar-thumb': {
+                    background: '#fff',
+                    borderRadius: '18px'
+                },
+                '::-webkit-scrollbar-track': {
+                    background: '#237117',
+                },
+        }}>
             <List sx={{
                 width: '100%',
                 display: 'flex',
@@ -44,7 +59,7 @@ export const Sidebar = () => {
 
                 },
                 '::-webkit-scrollbar-thumb': {
-                    background: '#E9E9E9',
+                    background: '#fff',
                     borderRadius: '18px'
                 },
                 '::-webkit-scrollbar-track': {

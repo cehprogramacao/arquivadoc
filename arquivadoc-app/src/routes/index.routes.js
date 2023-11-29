@@ -31,6 +31,21 @@ const createRoutes = () => {
     goToPageCartorioDocs: () => {
       router.push('/notas/CartorioDocs')
     },
+    goToPageProcuracao: () => {
+      router.push('/notas/procuracoes')
+    },
+    goToPageSubstabelecimento: () => {
+      router.push('/notas/substabelecimento')
+    },
+    goToPageDivorcio: () => {
+      router.push('/notas/divorcio')
+    },
+    goToPageAtaNotarial: () => {
+      router.push('/notas/ataNotarial')
+    },
+    goToPageInventario: () => {
+      router.push('/notas/inventario')
+    },
     goToPageOficios: () => {
       router.push('/oficio')
     },

@@ -65,7 +65,7 @@ const PageNotas = () => {
                         Escrituras
                     </Typography>
                 </StyledButton>
-                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
+                <StyledButton variant="outlined" onClick={routes.goToPageProcuracao}>
                     <FolderOpenOutlinedIcon sx={{
                         width: '80px',
                         height: 'auto'
@@ -78,7 +78,7 @@ const PageNotas = () => {
                         Procurações
                     </Typography>
                 </StyledButton>
-                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
+                <StyledButton variant="outlined" onClick={routes.goToPageSubstabelecimento}>
                     <FolderOpenOutlinedIcon sx={{
                         width: '80px',
                         height: 'auto'
@@ -91,7 +91,7 @@ const PageNotas = () => {
                         Substabelecimento
                     </Typography>
                 </StyledButton>
-                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
+                <StyledButton variant="outlined" onClick={routes.goToPageInventario}>
                     <FolderOpenOutlinedIcon sx={{
                         width: '80px',
                         height: 'auto'
@@ -101,10 +101,10 @@ const PageNotas = () => {
                         fontFamily: 'Roboto, sans-serif',
                         fontSize: "1em"
                     }}>
-                        Iventrário
+                        Inventário
                     </Typography>
                 </StyledButton>
-                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
+                <StyledButton variant="outlined" onClick={routes.goToPageDivorcio}>
                     <FolderOpenOutlinedIcon sx={{
                         width: '80px',
                         height: 'auto'
@@ -117,7 +117,7 @@ const PageNotas = () => {
                         Divorcio
                     </Typography>
                 </StyledButton>
-                <StyledButton variant="outlined" onClick={routes.goToPageCartorioDocs}>
+                <StyledButton variant="outlined" onClick={routes.goToPageAtaNotarial}>
                     <FolderOpenOutlinedIcon sx={{
                         width: '80px',
                         height: 'auto'
