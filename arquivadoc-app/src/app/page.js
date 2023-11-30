@@ -3,7 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import LoginPage from './login';
 
-export default function Home() {
+const Home = () => {
   const theme = createTheme({
     palette: {
       primary: {
@@ -31,3 +31,4 @@ export default function Home() {
     </ThemeProvider>
   );
 }
+export default Home

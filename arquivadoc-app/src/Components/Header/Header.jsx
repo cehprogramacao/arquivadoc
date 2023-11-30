@@ -4,11 +4,9 @@ import Toolbar from '@mui/material/Toolbar';
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from 'react';
 import { Sidebar } from '../SideBar/Sidebar';
-import createRoutes from '@/routes/index.routes';
 import { Drawer, IconButton } from '@mui/material'
 import Link from 'next/link';
 const Header = () => {
-    const routes = createRoutes();
     const [openSideBar, setOpenSideBar] = useState(false)
     const handleToggleButton = () => {
         setOpenSideBar(!openSideBar)

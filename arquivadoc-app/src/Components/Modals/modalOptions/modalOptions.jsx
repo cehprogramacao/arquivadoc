@@ -9,14 +9,12 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import { Typography } from '@mui/material';
-import createRoutes from '@/routes/index.routes';
 import GroupIcon from '@mui/icons-material/Group';
 import HistoryIcon from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
 
 
 export const ModalOptions = ({open, onClose, anchorEl}) => {
-  const router = createRoutes()
   const handleRouter = () => {
     onClose(),
     router.goToPageLogs()

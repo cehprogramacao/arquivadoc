@@ -1,7 +1,6 @@
 "use client"
 
 import { Box, ListItemIcon, Typography, List, ListItem, useTheme, useMediaQuery } from '@mui/material';
-import createRoutes from '@/routes/index.routes';
 import PendingActionsSharpIcon from '@mui/icons-material/PendingActionsSharp';
 import QueryBuilderSharpIcon from '@mui/icons-material/QueryBuilderSharp';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -11,9 +10,9 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import { useState } from 'react';
 import { ModalOptions } from '../Modals/ModalOptions/modalOptions';
+import Link from 'next/link';
 
 export const Sidebar = () => {
-    const routes = createRoutes();
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -30,19 +29,19 @@ export const Sidebar = () => {
 
         <Box sx={{
             overflowY: 'auto',
-                flex: 1,
+            flex: 1,
 
-                '::-webkit-scrollbar': {
-                    width: '15px',
+            '::-webkit-scrollbar': {
+                width: '15px',
 
-                },
-                '::-webkit-scrollbar-thumb': {
-                    background: '#fff',
-                    borderRadius: '18px'
-                },
-                '::-webkit-scrollbar-track': {
-                    background: '#237117',
-                },
+            },
+            '::-webkit-scrollbar-thumb': {
+                background: '#fff',
+                borderRadius: '18px'
+            },
+            '::-webkit-scrollbar-track': {
+                background: '#237117',
+            },
         }}>
             <List sx={{
                 width: '100%',
@@ -88,7 +87,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToMainPage}>
+                        }} >
                             <QueryBuilderSharpIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -107,7 +106,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToPageNotas}>
+                        }} >
                             <DescriptionOutlinedIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -126,7 +125,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToPageRGI} >
+                        }}  >
                             <HomeOutlinedIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -145,7 +144,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToPageProtestos} >
+                        }}  >
                             <PendingActionsSharpIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -164,7 +163,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToPageOficios} >
+                        }}  >
                             <NoteAltOutlinedIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -174,25 +173,27 @@ export const Sidebar = () => {
                             }} alt="" />
                             Ofícios
                         </button>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }} onClick={routes.goToPageRTD} >
-                            <NoteAltOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
+                        <Link href="/rtd">
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }}  >
+                                <NoteAltOutlinedIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
 
-                            }} alt="" />
-                            RTD
-                        </button>
+                                }} alt="" />
+                                RTD
+                            </button>
+                        </Link>
                         <button style={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -202,7 +203,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToPageRPJ} >
+                        }}  >
                             <NoteAltOutlinedIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -221,7 +222,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToPageCartoes} >
+                        }}  >
                             <NoteAltOutlinedIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -240,7 +241,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToPageTermos} >
+                        }} >
                             <NoteAltOutlinedIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -259,7 +260,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToPageSolicitantes} >
+                        }}  >
                             <NoteAltOutlinedIcon sx={{
                                 width: '40px',
                                 height: '40px',
@@ -278,7 +279,7 @@ export const Sidebar = () => {
                             background: 'transparent',
                             color: "#fff",
                             gap: '2px',
-                        }} onClick={routes.goToPagePessoas} >
+                        }}  >
                             <NoteAltOutlinedIcon sx={{
                                 width: '40px',
                                 height: '40px',

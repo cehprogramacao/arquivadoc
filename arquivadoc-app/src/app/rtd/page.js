@@ -1,17 +1,16 @@
+"use client"
 import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { Buttons } from '@/Components/Button/Button';
-import { ButtonLixeira } from '@/Components/ButtonLixeira';
+import { Buttons } from '../../Components/Button/Button';
+import { ButtonLixeira } from '../../Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
-import { DocList } from '@/Components/List/DocList';
-import Header from '@/Components/Header/Header';
-import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
-import createRoutes from '@/routes/index.routes';
+import { DocList } from '../../Components/List/DocList';
+import { ButtonOpenModals } from '../../Components/ButtonOpenModals';
 import { Stack } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
-import ModalList from '@/Components/Modals/ModalList';
+import ModalList from '../../Components/Modals/ModalList';
 import { useEffect, useState } from 'react';
-import { CadastroModalRTD } from '@/Components/Modals/ModalCadastroRTD';
-import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
+import { CadastroModalRTD } from '../../Components/Modals/ModalCadastroRTD';
+import { CadastroPartes } from '../../Components/Modals/ModalCadastroPartes';
 import axios from 'axios'
 
 const top100Films = [
@@ -48,7 +47,6 @@ const docs = [
 const PageRTD = () => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const routes = createRoutes();
     const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
     const [openModalCadastroRTD, setOpenModalCadastroRTD] = useState(false)
     const [openModalCadastroPartes, setOpenModalCadastroPartes] = useState(false)
@@ -104,7 +102,6 @@ const PageRTD = () => {
                 gap: '10px',
             }}
         >
-            <Header />
             <Typography fontSize={40} fontWeight={'bold'}>
                 RTD
             </Typography>
@@ -149,7 +146,7 @@ const PageRTD = () => {
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <ButtonOpenModals onClick={handleOpenModalCadastroRTD} />
-                    <ButtonLixeira onClick={routes.goToPageLixeiraRTD} />
+                    <ButtonLixeira  />
                 </Box>
             </Box>
             <DocList data={list} sx={{ marginTop: isSmallScreen ? 2 : 0 }} onClick={handleOpenModalListFilePDF} />

@@ -1,4 +1,4 @@
-
+"use client"
 import React from "react";
 import { Search } from "@/Components/Search/Search";
 import { DocList } from "@/Components/List/DocList";
@@ -93,7 +93,7 @@ const docs = [
   },
 
 ]
-const PageHome = () => {
+const Page = () => {
   const [age, setAge] = useState('');
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -181,5 +181,5 @@ const PageHome = () => {
   );
 };
 
-export default PageHome
+export default Page
 
