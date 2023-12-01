@@ -17,7 +17,7 @@ export const CadastroPartes = ({ onClose }) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     return (
         <Box sx={{
-            width: isSmallScreen ? '300px' : "400px",
+            width: isSmallScreen ? '400px' : "440px",
             height: '100vh',
             padding: '20px 20px',
             display: 'flex',

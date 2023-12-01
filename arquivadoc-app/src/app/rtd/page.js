@@ -102,7 +102,7 @@ const PageRTD = () => {
                 gap: '10px',
             }}
         >
-            <Typography fontSize={40} fontWeight={'bold'}>
+            <Typography fontSize={40} fontWeight={'bold'} color="black">
                 RTD
             </Typography>
             <Box

@@ -1,7 +1,8 @@
+"use client"
 import React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import LoginPage from './login';
+import LoginPage from './login/page';
 
 const Home = () => {
   const theme = createTheme({

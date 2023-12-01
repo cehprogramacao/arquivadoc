@@ -1,19 +1,17 @@
+"use client"
 import { Avatar, Button, TextField, Typography } from "@mui/material"
 import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
 import { useState } from "react";
-import createRoutes from "@/routes/index.routes";
 const { Box } = require("@mui/system")
 
 
 const LoginPage = () => {
     const [userAndEmail, setUserAndEmail] = useState('')
     const [senha, setSenha] = useState('')
-    const routes = createRoutes()
-
     const handleEntrar = () => {
         if (userAndEmail === 'Kauan' && senha === 'kauansilva') {
-            routes.goToHome();
+            
         } else {
             setSenha('');
             setUserAndEmail('');
