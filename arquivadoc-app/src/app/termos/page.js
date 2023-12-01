@@ -1,12 +1,10 @@
-
+"use client"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import Header from "@/Components/Header/Header"
 import { DocList } from "@/Components/List/DocList"
 import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery, Drawer } from "@mui/material"
 import { TermosTable } from "./tableTermos/table"
 import { useState } from "react"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
-import createRoutes from "@/routes/index.routes"
 import { Buttons } from "@/Components/Button/Button"
 import { CadastroTermosModal } from "@/Components/Modals/ModalCadastroTermo"
 import { CadastroPartes } from "@/Components/Modals/ModalCadastroPartes"
@@ -57,7 +55,7 @@ const PageTermos = ({ data }) => {
             label: 'Caixa'
         },
     ];
-    const routes = createRoutes()
+
     const [rows, setRows] = useState([
         { id: 1, numero: '8231', caixa: 2, parte: 'Alice Johnson', cartao: '123456' },
         { id: 2, numero: '1234', caixa: 1, parte: 'Bob Smith', cartao: '234567' },
@@ -94,8 +92,7 @@ const PageTermos = ({ data }) => {
             gap: '20px',
             placeItems: 'center'
         }}>
-            <Header />
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
+            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
                 TERMOS
             </Typography>
             <div style={{
@@ -151,7 +148,7 @@ const PageTermos = ({ data }) => {
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
 
                     <ButtonOpenModals onClick={handleOpen} />
-                    <ButtonLixeira onClick={routes.goToPageLixeiraTermosLixeira} />
+                    <ButtonLixeira href={"/termos/lixeira_termo"} />
                 </Box>
 
 

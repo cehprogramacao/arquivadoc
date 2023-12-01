@@ -1,6 +1,4 @@
-
-
-
+"use client"
 import { Buttons } from "@/Components/Button/Button"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
@@ -11,7 +9,7 @@ import { Box, TextField, Typography, Autocomplete, useTheme, useMediaQuery } fro
 const top100Films = ['Ordem', 'Livro', 'CPF']
 
 
-const pageAtaNotarial = () => {
+const pageSubstabelecimento = () => {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -30,8 +28,8 @@ const pageAtaNotarial = () => {
             }}
         >
             <Header />
-            <Typography fontSize={isSmallScreen ? 30 : 40} fontWeight={'bold'}>
-                Ata Notarial
+            <Typography fontSize={isSmallScreen ? 30 : 40} fontWeight={'bold'} color={"black"}>
+                Substabelecimento
             </Typography>
             <Box
                 sx={{
@@ -74,11 +72,11 @@ const pageAtaNotarial = () => {
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{ display: 'flex', width: 'fit-content', gap: '30px' }}>
                     <ButtonOpenModals  />
-                    <ButtonLixeira  />
+                    <ButtonLixeira href={"/notas/substabelecimento/lixeira_substabelecimento"} />
                 </Box>
             </Box>
         </Box>
     )
 }
 
-export default pageAtaNotarial
+export default pageSubstabelecimento

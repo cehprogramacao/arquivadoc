@@ -1,11 +1,10 @@
+"use client"
 import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
 import { DocList } from '@/Components/List/DocList';
-import Header from '@/Components/Header/Header';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
-import createRoutes from '@/routes/index.routes';
 import { Stack } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
 import { useState } from 'react';
@@ -43,7 +42,6 @@ const PageOficio = () => {
         setOpenPartes(true)
     }
 
-    const routes = createRoutes();
 
     return (
         <Box
@@ -59,8 +57,7 @@ const PageOficio = () => {
                 gap: '10px',
             }}
         >
-            <Header />
-            <Typography fontSize={40} fontWeight={'bold'}>
+            <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
                 Ofício
             </Typography>
             <Box
@@ -105,7 +102,7 @@ const PageOficio = () => {
 
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <ButtonOpenModals onClick={handleOpen} />
-                    <ButtonLixeira onClick={routes.goToPageLixeiraOficios} />
+                    <ButtonLixeira href={"/oficio/lixeira_oficios"} />
                 </Box>
             </Box>
 

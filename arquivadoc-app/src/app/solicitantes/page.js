@@ -1,104 +1,27 @@
-import Header from "@/Components/Header/Header"
-
+"use client"
+import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
 import { useState } from "react"
-import { LixeiraTable } from "./tableLixeira"
+import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
+import { Buttons } from "@/Components/Button/Button"
+import { UserTable } from "./tableSolic/table"
 
 
 
-const LixeiraTermos = ({ data }) => {
+const PageSolicitantes = ({ data }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const docs = [
-        {
-            name: 'Ronaldo',
-            text: 'Procuração'
-        },
-
-
-    ]
     const top100Films = [
         {
-            label: 'Número'
+            label: 'ID'
         },
         {
-            label: 'Caixa'
+            label: 'Nome'
         },
-    ];
+    ]
     const [rows, setRows] = useState([
-        { 
-          id: 1, 
-          numero: '8231', 
-          caixa: 2, 
-          parte: 'Alice Johnson', 
-          cartao: '123456' 
-        },
-        { 
-          id: 2, 
-          numero: '1234', 
-          caixa: 1, 
-          parte: 'Bob Smith', 
-          cartao: '234567' 
-        },
-        { 
-          id: 3, 
-          numero: '5678', 
-          caixa: 3, 
-          parte: 'Charlie Brown', 
-          cartao: '345678' 
-        },
-        { 
-          id: 4, 
-          numero: '9876', 
-          caixa: 4, 
-          parte: 'David Lee', 
-          cartao: '456789' 
-        },
-        { 
-          id: 5, 
-          numero: '5432', 
-          caixa: 2, 
-          parte: 'Eva Miller', 
-          cartao: '567890' 
-        },
-        { 
-          id: 6, 
-          numero: '1122', 
-          caixa: 1, 
-          parte: 'Frank Wilson', 
-          cartao: '678901' 
-        },
-        { 
-          id: 7, 
-          numero: '9988', 
-          caixa: 3, 
-          parte: 'Grace Davis', 
-          cartao: '789012' 
-        },
-        { 
-          id: 8, 
-          numero: '6655', 
-          caixa: 4, 
-          parte: 'Henry Taylor', 
-          cartao: '890123' 
-        },
-        { 
-          id: 9, 
-          numero: '4477', 
-          caixa: 2, 
-          parte: 'Ivy Thomas', 
-          cartao: '901234' 
-        },
-        { 
-          id: 10, 
-          numero: '2255', 
-          caixa: 1, 
-          parte: 'Jack Robinson', 
-          cartao: '012345' 
-        },
-      ]);
-      
-      
+        { id: 1, nome: 'Kauan BrTech'},
+    ]);
 
     const handleExcluir = (id) => {
         const updatedRows = rows.filter((row) => row.id !== id);
@@ -120,24 +43,23 @@ const LixeiraTermos = ({ data }) => {
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
-            placeItems: 'center'
+            alignItems: 'center'
         }}>
-            <Header />
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
-                Lixeira
+            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
+                Solicitantes
             </Typography>
             <div style={{
-                maxWidth: '1200px',
+                width: 'auto',
                 height: 'auto',
                 padding: '8px',
+                gap: '30px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '30px',
                 flexWrap: 'wrap',
-                placeContent: 'center',
+                placeContent: 'space-evenly',
                 flexDirection: isSmallScreen ? 'column' : 'row'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30, placeContent: "center", flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
                     <TextField label="Buscar"
                         sx={{
                             width: isSmallScreen ? '100%' : 400,
@@ -173,19 +95,18 @@ const LixeiraTermos = ({ data }) => {
                         )}
                     />
                 </div>
-                <Button variant="contained" onClick={handleBuscar} sx={{
-                    background: '#247117',
-                    padding: '14px 30px',
-                    ":hover": {
-                        background: '#247117'
-                    }
+                <Box sx={{
+                    display: 'flex',
+                    width: 'auto',
+                    gap: isSmallScreen ? '20px' : '50px'
                 }}>
-                    BUSCAR
-                </Button>
+                    <Buttons color={'green'} title={'Buscar'} />
+                    <ButtonOpenModals />
+                </Box>
             </div>
-            <LixeiraTable data={rows} onClick={handleExcluir}/>
+            <UserTable data={rows} onClick={handleExcluir} />
         </Box>
     )
-}
+}   
 
-export default LixeiraTermos
+export default PageSolicitantes

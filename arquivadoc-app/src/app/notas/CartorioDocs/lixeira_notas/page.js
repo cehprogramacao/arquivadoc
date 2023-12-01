@@ -1,12 +1,13 @@
-import Header from "@/Components/Header/Header"
+"use client"
 
 import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
 import { useState } from "react"
+
 import { LixeiraTable } from "./tableLixeira"
 
 
 
-const LixeiraProtestos = ({ data }) => {
+const LixeiraNotas = ({ data }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const docs = [
@@ -25,121 +26,68 @@ const LixeiraProtestos = ({ data }) => {
             label: 'Caixa'
         },
     ];
-    
     const [rows, setRows] = useState([
         { 
           id: 1, 
-          numero: '000001',
-          caixa: '14276348000110',
-          status: 'Ativo',
-          tipo: 'Tipo 1',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 1',
-          devedor: 'Devedor 1',
-          arquivo: 'https://link-arquivo-1.com'
+          ordem: 'Ordem 1',
+          solicitacao: 'Solicitação 1',
+          tipoDeServico: 'Tipo de Serviço 1',
+          livro: 'Livro 1',
+          folhas: 'Folhas 1',
+          outorgantes: 'Outorgantes 1',
+          outorgados: 'Outorgados 1',
         },
         { 
           id: 2, 
-          numero: '000002',
-          caixa: '14276348000110',
-          status: 'Inativo',
-          tipo: 'Tipo 2',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 2',
-          devedor: 'Devedor 2',
-          arquivo: 'https://link-arquivo-2.com'
+          ordem: 'Ordem 2',
+          solicitacao: 'Solicitação 2',
+          tipoDeServico: 'Tipo de Serviço 2',
+          livro: 'Livro 2',
+          folhas: 'Folhas 2',
+          outorgantes: 'Outorgantes 2',
+          outorgados: 'Outorgados 2',
         },
         { 
           id: 3, 
-          numero: '000003',
-          caixa: '14276348000110',
-          status: 'Ativo',
-          tipo: 'Tipo 3',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 3',
-          devedor: 'Devedor 3',
-          arquivo: 'https://link-arquivo-3.com'
+          ordem: 'Ordem 3',
+          solicitacao: 'Solicitação 3',
+          tipoDeServico: 'Tipo de Serviço 3',
+          livro: 'Livro 3',
+          folhas: 'Folhas 3',
+          outorgantes: 'Outorgantes 3',
+          outorgados: 'Outorgados 3',
         },
         { 
           id: 4, 
-          numero: '000004',
-          caixa: '14276348000110',
-          status: 'Inativo',
-          tipo: 'Tipo 4',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 4',
-          devedor: 'Devedor 4',
-          arquivo: 'https://link-arquivo-4.com'
+          ordem: 'Ordem 4',
+          solicitacao: 'Solicitação 4',
+          tipoDeServico: 'Tipo de Serviço 4',
+          livro: 'Livro 4',
+          folhas: 'Folhas 4',
+          outorgantes: 'Outorgantes 4',
+          outorgados: 'Outorgados 4',
         },
         { 
           id: 5, 
-          numero: '000005',
-          caixa: '14276348000110',
-          status: 'Ativo',
-          tipo: 'Tipo 5',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 5',
-          devedor: 'Devedor 5',
-          arquivo: 'https://link-arquivo-5.com'
+          ordem: 'Ordem 5',
+          solicitacao: 'Solicitação 5',
+          tipoDeServico: 'Tipo de Serviço 5',
+          livro: 'Livro 5',
+          folhas: 'Folhas 5',
+          outorgantes: 'Outorgantes 5',
+          outorgados: 'Outorgados 5',
         },
         { 
           id: 6, 
-          numero: '000006',
-          caixa: '14276348000110',
-          status: 'Inativo',
-          tipo: 'Tipo 6',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 6',
-          devedor: 'Devedor 6',
-          arquivo: 'https://link-arquivo-6.com'
-        },
-        { 
-          id: 7, 
-          numero: '000007',
-          caixa: '14276348000110',
-          status: 'Ativo',
-          tipo: 'Tipo 7',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 7',
-          devedor: 'Devedor 7',
-          arquivo: 'https://link-arquivo-7.com'
-        },
-        { 
-          id: 8, 
-          numero: '000008',
-          caixa: '14276348000110',
-          status: 'Inativo',
-          tipo: 'Tipo 8',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 8',
-          devedor: 'Devedor 8',
-          arquivo: 'https://link-arquivo-8.com'
-        },
-        { 
-          id: 9, 
-          numero: '000009',
-          caixa: '14276348000110',
-          status: 'Ativo',
-          tipo: 'Tipo 9',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 9',
-          devedor: 'Devedor 9',
-          arquivo: 'https://link-arquivo-9.com'
-        },
-        { 
-          id: 10, 
-          numero: '000010',
-          caixa: '14276348000110',
-          status: 'Inativo',
-          tipo: 'Tipo 10',
-          apresentante: '14276348000110',
-          sacado: 'Sacado 10',
-          devedor: 'Devedor 10',
-          arquivo: 'https://link-arquivo-10.com'
+          ordem: 'Ordem 6',
+          solicitacao: 'Solicitação 6',
+          tipoDeServico: 'Tipo de Serviço 6',
+          livro: 'Livro 6',
+          folhas: 'Folhas 6',
+          outorgantes: 'Outorgantes 6',
+          outorgados: 'Outorgados 6',
         },
       ]);
-      
-      
       
 
     const handleExcluir = (id) => {
@@ -165,7 +113,7 @@ const LixeiraProtestos = ({ data }) => {
             placeItems: 'center'
         }}>
             <Header />
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
+            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
                 Lixeira
             </Typography>
             <div style={{
@@ -176,13 +124,13 @@ const LixeiraProtestos = ({ data }) => {
                 alignItems: 'center',
                 gap: '30px',
                 flexWrap: 'wrap',
-                flexDirection: isSmallScreen ? 'column' : 'row',
-                placeContent: 'center'
+                placeContent: 'center',
+                flexDirection: isSmallScreen ? 'column' : 'row'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30, placeContent: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
                     <TextField label="Buscar"
                         sx={{
-                            width: isSmallScreen ? '100%' : 400,
+                            width: isSmallScreen ? '100%' : 450,
                             '& input': {
                                 color: 'success.main',
                             },
@@ -191,7 +139,7 @@ const LixeiraProtestos = ({ data }) => {
                         disablePortal
                         id="combo-box-demo"
                         options={top100Films}
-                        sx={{ width: isSmallScreen ? '100%' : 400 }}
+                        sx={{ width: isSmallScreen ? '100%' : 450 }}
                         autoHighlight
                         getOptionLabel={(option) => option.label}
                         renderInput={(params) => (
@@ -217,7 +165,7 @@ const LixeiraProtestos = ({ data }) => {
                 </div>
                 <Button variant="contained" onClick={handleBuscar} sx={{
                     background: '#247117',
-                    padding: '14px 10px',
+                    padding: '14px 30px',
                     ":hover": {
                         background: '#247117'
                     }
@@ -230,4 +178,4 @@ const LixeiraProtestos = ({ data }) => {
     )
 }
 
-export default LixeiraProtestos
+export default LixeiraNotas

@@ -1,4 +1,4 @@
-import Header from '@/Components/Header/Header'
+"use client"
 import { Box, Button, TextField, Typography, useTheme, useMediaQuery } from '@mui/material'
 
 const PageEditarPerfil = () => {
@@ -11,11 +11,10 @@ const PageEditarPerfil = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: isSmallScreen ? '10px' : '40px',
+            gap: isSmallScreen ? '10px' : '10px',
 
         }}>
-            <Header />
-            <Typography fontSize={40} fontWeight='bold' marginTop={isSmallScreen ? 11 : 10}>
+            <Typography fontSize={40} fontWeight='bold' marginTop={isSmallScreen ? 11 : 14} color={"black"}>
                 Mudar senha
             </Typography>
             <Box sx={{
@@ -46,18 +45,6 @@ const PageEditarPerfil = () => {
                     }}
                         label="Email"
                         placeholder='exemple@gmail.com'
-                        color='success'
-                    />
-                    <TextField sx={{
-                        width: isSmallScreen ? '100%' : '400px',
-                        '& input': { color: 'success.main' },
-
-                        "::placeholder": {
-                            color: 'success.main'
-                        }
-                    }}
-                        label="Senha"
-                        placeholder='Digite seu nome de usuário'
                         color='success'
                     />
                     <TextField sx={{

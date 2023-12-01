@@ -78,101 +78,111 @@ export const Sidebar = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                     }} >
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }} >
-                            <QueryBuilderSharpIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer',
+                        <Link href={"/home"}>
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }} >
+                                <QueryBuilderSharpIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer',
 
-                            }} alt="" />
-                            Recentes
-                        </button>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }} >
-                            <DescriptionOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
-                            }} alt="" />
-                            Notas
-                        </button>
+                                }} alt="" />
+                                Recentes
+                            </button>
+                        </Link>
+                        <Link href={"/notas"}>
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }} >
+                                <DescriptionOutlinedIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
+                                }} alt="" />
+                                Notas
+                            </button>
+                        </Link>
 
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }}  >
-                            <HomeOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
+                        <Link href={"/rgi"}>
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }}  >
+                                <HomeOutlinedIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
 
-                            }} alt="" />
-                            RGI
-                        </button>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }}  >
-                            <PendingActionsSharpIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
+                                }} alt="" />
+                                RGI
+                            </button>
+                        </Link>
+                        <Link href={"/protestos"}>
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }}  >
+                                <PendingActionsSharpIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
 
-                            }} alt="" />
-                            Protestos
-                        </button>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }}  >
-                            <NoteAltOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
+                                }} alt="" />
+                                Protestos
+                            </button>
+                        </Link>
+                        <Link href={"/oficio"}>
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }}  >
+                                <NoteAltOutlinedIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
 
-                            }} alt="" />
-                            Ofícios
-                        </button>
+                                }} alt="" />
+                                Ofícios
+                            </button>
+                        </Link>
                         <Link href="/rtd">
                             <button style={{
                                 display: 'flex',
@@ -194,101 +204,111 @@ export const Sidebar = () => {
                                 RTD
                             </button>
                         </Link>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }}  >
-                            <NoteAltOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
+                        <Link href={"/rpj"}>
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }}  >
+                                <NoteAltOutlinedIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
 
-                            }} alt="" />
-                            RPJ
-                        </button>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }}  >
-                            <NoteAltOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
+                                }} alt="" />
+                                RPJ
+                            </button>
+                        </Link>
+                        <Link href={"/notas/cartoes"}>
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }}  >
+                                <NoteAltOutlinedIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
 
-                            }} alt="" />
-                            Cartões de Autógrafo
-                        </button>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }} >
-                            <NoteAltOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
+                                }} alt="" />
+                                Cartões de Autógrafo
+                            </button>
+                        </Link>
+                        <Link href={"/termos"}>
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }} >
+                                <NoteAltOutlinedIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
 
-                            }} alt="" />
-                            Termos
-                        </button>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }}  >
-                            <NoteAltOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
+                                }} alt="" />
+                                Termos
+                            </button>
+                        </Link>
+                        <Link href={"/solicitantes"} >
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }}  >
+                                <NoteAltOutlinedIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
 
-                            }} alt="" />
-                            Solicitantes
-                        </button>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }}  >
-                            <NoteAltOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
+                                }} alt="" />
+                                Solicitantes
+                            </button>
+                        </Link>
+                        <Link href={"/pessoas"}>
+                            <button style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                fontSize: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: "#fff",
+                                gap: '2px',
+                            }}  >
+                                <NoteAltOutlinedIcon sx={{
+                                    width: '40px',
+                                    height: '40px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer'
 
-                            }} alt="" />
-                            Pessoas
-                        </button>
+                                }} alt="" />
+                                Pessoas
+                            </button>
+                        </Link>
                     </ListItemIcon>
                 </ListItem>
 

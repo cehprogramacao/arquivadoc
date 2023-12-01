@@ -1,4 +1,4 @@
-import Header from "@/Components/Header/Header";
+"use client"
 import { Box, Button, TextField, Typography, useTheme, useMediaQuery } from '@mui/material'
 
 
@@ -16,8 +16,7 @@ export const PageEditUser = () => {
             gap: '30px'
 
         }}>
-            <Header />
-            <Typography fontSize={40} fontWeight={'bold'} marginTop={11}>
+            <Typography fontSize={40} fontWeight={'bold'} marginTop={15} color={"black"}>
                 Editar Usuário
             </Typography>
             <Box sx={{
@@ -68,8 +67,8 @@ export const PageEditUser = () => {
 
 
                 }}
-                    label="Usuário"
-                    placeholder='Digite o nome do usuário:'
+                    label="Senha"
+                    placeholder='Digite sua senha'
                     color='success'
                 />
                 <Button sx={{

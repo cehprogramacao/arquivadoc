@@ -1,5 +1,4 @@
-
-import Header from "@/Components/Header/Header"
+"use client"
 import { Autocomplete, Box, Button, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
 import { useState } from "react"
 import { LixeiraTable } from "./tableLixeira"
@@ -89,8 +88,7 @@ const LixeiraRGI = ({ data }) => {
             gap: '10px',
             placeItems: 'center'
         }}>
-            <Header />
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
+            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
                 Lixeira
             </Typography>
             <div style={{

@@ -35,7 +35,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
     ];
     return (
         <Box sx={{
-            width: isSmallScreen ? '300px' : "390px",
+            width: isSmallScreen ? '300px' : "409px",
             height: '100vh',
             padding: '8px 10px',
             display: 'flex',

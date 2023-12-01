@@ -1,18 +1,21 @@
-
-import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import Header from "@/Components/Header/Header"
+"use client"
 import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
 import { useState } from "react"
-import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
-import createRoutes from "@/routes/index.routes"
-import { Buttons } from "@/Components/Button/Button"
-import { UserTable } from "./tableUser/table"
+import { LixeiraTable } from "./tableLixeira"
 
 
 
-const PageUsuarios = ({ data }) => {
+const LixeiraRTD = ({ data }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const docs = [
+        {
+            name: 'Ronaldo',
+            text: 'Procuração'
+        },
+
+
+    ]
     const top100Films = [
         {
             label: 'Número'
@@ -21,12 +24,23 @@ const PageUsuarios = ({ data }) => {
             label: 'Caixa'
         },
     ];
-    const routes = createRoutes()
+
     const [rows, setRows] = useState([
-        { id: 1, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'},
-        { id: 2, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'},
-        { id: 3, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'}
+        {
+            id: 1,
+            registro: '000001',
+            protocolo: '14276',
+            caixa: '001',
+            apresentante: 'Apresentante 1',
+            livro: '02',
+            folhas: '64',
+            arquivo: 'https://link-arquivo-1.com'
+        },
+
     ]);
+
+
+
 
     const handleExcluir = (id) => {
         const updatedRows = rows.filter((row) => row.id !== id);
@@ -48,24 +62,23 @@ const PageUsuarios = ({ data }) => {
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
-            alignItems: 'center'
+            placeItems: 'center'
         }}>
-            <Header />
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
-                Usuários
+            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
+                Lixeira
             </Typography>
             <div style={{
-                width: 'auto',
+                maxWidth: '1200px',
                 height: 'auto',
                 padding: '8px',
-                gap: '30px',
                 display: 'flex',
                 alignItems: 'center',
+                gap: '30px',
                 flexWrap: 'wrap',
-                placeContent: 'space-evenly',
-                flexDirection: isSmallScreen ? 'column' : 'row'
+                flexDirection: isSmallScreen ? 'column' : 'row',
+                placeContent: 'center'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 30, placeContent: 'center', flexWrap: 'wrap' }}>
                     <TextField label="Buscar"
                         sx={{
                             width: isSmallScreen ? '100%' : 400,
@@ -101,18 +114,19 @@ const PageUsuarios = ({ data }) => {
                         )}
                     />
                 </div>
-                <Box sx={{
-                    display: 'flex',
-                    width: 'auto',
-                    gap: isSmallScreen ? '20px' : '50px'
+                <Button variant="contained" onClick={handleBuscar} sx={{
+                    background: '#247117',
+                    padding: '14px 10px',
+                    ":hover": {
+                        background: '#247117'
+                    }
                 }}>
-                    <Buttons color={'green'} title={'Buscar'} />
-                    <ButtonOpenModals />
-                </Box>
+                    BUSCAR
+                </Button>
             </div>
-            <UserTable data={rows} onClick={handleExcluir} />
+            <LixeiraTable data={rows} onClick={handleExcluir} />
         </Box>
     )
 }
 
-export default PageUsuarios
+export default LixeiraRTD

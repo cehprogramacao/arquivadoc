@@ -1,14 +1,16 @@
+"use client"
+
 import { Buttons } from "@/Components/Button/Button"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
-import Header from "@/Components/Header/Header"
+
 import { Box, TextField, Typography, Autocomplete, useTheme, useMediaQuery } from '@mui/material'
 
 
 const top100Films = ['Ordem', 'Livro', 'CPF']
 
 
-const pageProcuracoes = () => {
+const pageDivorcio = () => {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -26,9 +28,8 @@ const pageProcuracoes = () => {
                 gap: '10px'
             }}
         >
-            <Header />
-            <Typography fontSize={40} fontWeight={'bold'}>
-                Procurações
+            <Typography fontSize={isSmallScreen ? 30 : 40} fontWeight={'bold'} color={"black"}>
+                Divórcio
             </Typography>
             <Box
                 sx={{
@@ -71,11 +72,11 @@ const pageProcuracoes = () => {
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{ display: 'flex', width: 'fit-content', gap: '30px' }}>
                     <ButtonOpenModals  />
-                    <ButtonLixeira  />
+                    <ButtonLixeira href={""} />
                 </Box>
             </Box>
         </Box>
     )
 }
 
-export default pageProcuracoes
+export default pageDivorcio

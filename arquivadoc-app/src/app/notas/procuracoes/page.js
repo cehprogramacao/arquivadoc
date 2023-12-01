@@ -1,15 +1,14 @@
-
+"use client"
 import { Buttons } from "@/Components/Button/Button"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
-import Header from "@/Components/Header/Header"
 import { Box, TextField, Typography, Autocomplete, useTheme, useMediaQuery } from '@mui/material'
 
 
 const top100Films = ['Ordem', 'Livro', 'CPF']
 
 
-const pageSubstabelecimento = () => {
+const pageProcuracoes = () => {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -27,9 +26,8 @@ const pageSubstabelecimento = () => {
                 gap: '10px'
             }}
         >
-            <Header />
-            <Typography fontSize={isSmallScreen ? 30 : 40} fontWeight={'bold'}>
-                Substabelecimento
+            <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
+                Procurações
             </Typography>
             <Box
                 sx={{
@@ -72,11 +70,11 @@ const pageSubstabelecimento = () => {
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{ display: 'flex', width: 'fit-content', gap: '30px' }}>
                     <ButtonOpenModals  />
-                    <ButtonLixeira  />
+                    <ButtonLixeira href={"/notas/procuracoes/lixeira_procuracoes"} />
                 </Box>
             </Box>
         </Box>
     )
 }
 
-export default pageSubstabelecimento
+export default pageProcuracoes

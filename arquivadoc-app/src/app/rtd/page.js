@@ -146,7 +146,7 @@ const PageRTD = () => {
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <ButtonOpenModals onClick={handleOpenModalCadastroRTD} />
-                    <ButtonLixeira  />
+                    <ButtonLixeira href={"/rtd/lixeira_rtd"} />
                 </Box>
             </Box>
             <DocList data={list} sx={{ marginTop: isSmallScreen ? 2 : 0 }} onClick={handleOpenModalListFilePDF} />

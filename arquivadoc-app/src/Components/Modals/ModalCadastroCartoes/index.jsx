@@ -12,7 +12,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
     ]
     return (
         <Box sx={{
-            width: isSmallScreen ? '300px' : "400px",
+            width: isSmallScreen ? '300px' : "409px",
             height: '100vh',
             padding: '8px 10px',
             display: 'flex',
@@ -29,7 +29,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                 <Typography sx={{
                     fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
                 }}>
-                    Cadastro - Oficio
+                    Cadastro - Cartões de Autógrafo
                 </Typography>
                 <button style={{
                     boxSizing: 'content-box',

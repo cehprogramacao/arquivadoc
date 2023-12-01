@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import createRoutes from '@/routes/index.routes';
+import Link from 'next/link';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -23,7 +23,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
   },
-  padding: '10px 22px' 
+  padding: '10px 22px'
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -37,9 +37,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export const UserTable = ({ data, onClick }) => {
- 
-  const router = createRoutes()
-  
+
+
 
   return (
     <TableContainer component={Paper} sx={{ maxWidth: '1080px', margin: '0 auto', marginTop: '30px' }}>
@@ -74,21 +73,23 @@ export const UserTable = ({ data, onClick }) => {
                   Excluir
                 </Button>
               </StyledTableCell>
-              <StyledTableCell align='center' onClick={router.goToPageEditarPessoas}>
-                <Button sx={{
-                  fontSize: '15px',
-                  textTransform: 'none',
-                  color: 'black',
-                  background: 'transparent',
-                  border: '1px solid #FFD500',
-                  color: '#FFD500',
-                  ":hover": {
-                    background: '#FFD500',
-                    color: '#fff'
-                  }
-                }}>
-                  Editar
-                </Button>
+              <StyledTableCell align='center' >
+                <Link href={"/editarSolicitantes"}>
+                  <Button sx={{
+                    fontSize: '15px',
+                    textTransform: 'none',
+                    color: 'black',
+                    background: 'transparent',
+                    border: '1px solid #FFD500',
+                    color: '#FFD500',
+                    ":hover": {
+                      background: '#FFD500',
+                      color: '#fff'
+                    }
+                  }}>
+                    Editar
+                  </Button>
+                </Link>
               </StyledTableCell>
             </StyledTableRow>
           ))}

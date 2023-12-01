@@ -11,7 +11,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
 
   return (
     <Box sx={{
-      width: isSmallScreen ? '300px' : "400px",
+      width: isSmallScreen ? '300px' : "389px",
       height: '100vh',
       padding: '8px 10px',
       display: 'flex',
@@ -27,7 +27,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         <Typography sx={{
           fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
         }}>
-          Cadastro - Termo
+          Cadastro - Termos
         </Typography>
         <button style={{
           boxSizing: 'content-box',
@@ -76,7 +76,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
           Cadastrar Partes
         </Button>
         <TextField sx={{
-          width: isSmallScreen ? '100%' : '400px',
+          width: isSmallScreen ? '100%' : '370px',
           '& input': { color: 'success.main' },
 
 
@@ -85,14 +85,14 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
           color='success'
         />
         <TextField sx={{
-          width: isSmallScreen ? '100%' : '400px',
+          width: isSmallScreen ? '100%' : '370px',
           '& input': { color: 'success.main' }
         }}
           label="N° da Caixa"
           color='success'
         />
         <TextField sx={{
-          width: isSmallScreen ? '100%' : '400px',
+          width: isSmallScreen ? '100%' : '370px',
           '& input': { color: 'success.main' },
 
           "::placeholder": {
@@ -104,7 +104,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         />
         <TextField
           sx={{
-            width: isSmallScreen ? '100%' : '400px',
+            width: isSmallScreen ? '100%' : '370px',
             border: 'none',
             '::placeholder': {
               color: 'success.main',

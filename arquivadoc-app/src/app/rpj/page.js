@@ -1,11 +1,10 @@
+"use client"
 import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { AutoComplete } from '@/Components/AutoComplete';
 import { DocList } from '@/Components/List/DocList';
-import Header from '@/Components/Header/Header';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
-import createRoutes from '@/routes/index.routes';
 import { Stack } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
 import ModalList from '@/Components/Modals/ModalList';
@@ -48,7 +47,6 @@ const docs = [
 const PageRPJ = () => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const routes = createRoutes();
     const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
     const [openModalCadastroRPJ, setOpenModalCadastroRPJ] = useState(false)
     const [openModalCadastroPartes, setOpenModalCadastroPartes] = useState(false)
@@ -104,8 +102,7 @@ const PageRPJ = () => {
                 gap: '10px',
             }}
         >
-            <Header />
-            <Typography fontSize={40} fontWeight={'bold'}>
+            <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
                 RPJ
             </Typography>
             <Box
@@ -149,7 +146,7 @@ const PageRPJ = () => {
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <ButtonOpenModals onClick={handleOpenModalCadastroRPJ} />
-                    <ButtonLixeira onClick={routes.goToPageLixeiraRPJ} />
+                    <ButtonLixeira href={"/rpj/lixeira_rpj"} />
                 </Box>
             </Box>
             <DocList data={list} sx={{ marginTop: isSmallScreen ? 2 : 0 }} onClick={handleOpenModalListFilePDF} />

@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import createRoutes from '@/routes/index.routes';
+import Link from 'next/link';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,7 +38,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export const UserTable = ({ data, onClick }) => {
  
-  const routes = createRoutes()
   
   
 
@@ -80,6 +79,7 @@ export const UserTable = ({ data, onClick }) => {
                 </Button>
               </StyledTableCell>
               <StyledTableCell align='center'>
+                <Link href={"/editarUsuario"}> 
                 <Button sx={{
                   fontSize: '15px',
                   textTransform: 'none',
@@ -91,9 +91,10 @@ export const UserTable = ({ data, onClick }) => {
                     background: '#FFD500',
                     color: '#fff'
                   }
-                }} onClick={routes.goToEditarUsuarios}>
+                }} >
                   Editar
                 </Button>
+                </Link>
               </StyledTableCell>
             </StyledTableRow>
           ))}

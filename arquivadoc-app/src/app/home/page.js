@@ -3,7 +3,6 @@ import React from "react";
 import { Search } from "@/Components/Search/Search";
 import { DocList } from "@/Components/List/DocList";
 import { Buttons } from "@/Components/Button/Button";
-import Header from '@/Components/Header/Header'
 import Box from "@mui/material/Box";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -113,7 +112,6 @@ const Page = () => {
       width: 'auto',
       marginTop: 12,
     }}>
-      <Header />
       <div style={{
         width: '100%',
         display: 'flex',

@@ -45,7 +45,7 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
 
     return (
         <Box sx={{
-            width: isSmallScreen ? '320px' : "390px",
+            width: isSmallScreen ? '320px' : "409px",
             height: '100vh',
             padding: '8px 10px',
             display: 'flex',

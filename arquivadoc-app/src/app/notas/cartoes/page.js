@@ -1,11 +1,9 @@
+"use client"
 import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
-
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import Autocomplete from '@mui/material/Autocomplete';
-import Header from '@/Components/Header/Header';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
-import createRoutes from '@/routes/index.routes';
 import { CadastrarCartoesModal } from '@/Components/Modals/ModalCadastroCartoes';
 import { useState } from 'react';
 import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
@@ -14,7 +12,6 @@ import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
 const PageAutographCards = ({ data }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const routes = createRoutes()
     const [open, setOpen] = useState(false);
     const [openPartes, setOpenPartes] = useState(false)
     const handleOpen = () => {
@@ -54,7 +51,6 @@ const PageAutographCards = ({ data }) => {
             alignItems: 'center',
             gap: '10px'
         }}>
-            <Header />
             <Typography fontSize={30} fontWeight={'bold'} >
                 Cartões
             </Typography>
@@ -87,7 +83,7 @@ const PageAutographCards = ({ data }) => {
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <ButtonOpenModals onClick={handleOpen} />
-                    <ButtonLixeira onClick={routes.goToPageLixeiraCartoes} />
+                    <ButtonLixeira href={"/notas/cartoes/lixeira_cartoes"} />
                 </Box>
             </div>
             <Drawer anchor='left' open={open} onClose={handleClose}>

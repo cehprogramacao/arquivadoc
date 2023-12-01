@@ -12,13 +12,11 @@ import { Typography } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import HistoryIcon from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
+import Link from 'next/link';
 
 
-export const ModalOptions = ({open, onClose, anchorEl}) => {
-  const handleRouter = () => {
-    onClose(),
-    router.goToPageLogs()
-  }
+export const ModalOptions = ({ open, onClose, anchorEl }) => {
+
   return (
     <React.Fragment>
       <Menu
@@ -40,7 +38,7 @@ export const ModalOptions = ({open, onClose, anchorEl}) => {
               height: 32,
               ml: -0.5,
               mr: 1,
-              background:""
+              background: ""
             },
             '&:before': {
               content: '""',
@@ -60,34 +58,34 @@ export const ModalOptions = ({open, onClose, anchorEl}) => {
         transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
         anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
       >
-        <Typography sx={{padding: '4px',mb: '5px', textAlign: "center"}}>
+        <Typography sx={{ padding: '4px', mb: '5px', textAlign: "center" }}>
           Bem-vindo, kauan
         </Typography>
-        
+
         <Divider />
-        <MenuItem onClick={() => {
-          onClose()
-          router.goToPageEditarPerfil()
-        }}>
-          <ListItemIcon>
-            <EditIcon fontSize="small" />
-          </ListItemIcon> Editar Perfil
-        </MenuItem>
-        <MenuItem onClick={handleRouter}>
-          <ListItemIcon>
-            <HistoryIcon fontSize="small" />
-          </ListItemIcon>
-          Logs
-        </MenuItem>
-        <MenuItem onClick={()=> {
-          onClose()
-          router.goToPageUsuarios()
-        }}>
-          <ListItemIcon>
-            <GroupIcon fontSize="small" />
-          </ListItemIcon>
-          Usuários
-        </MenuItem>
+        <Link href={"/mudarSenha"}>
+          <MenuItem>
+            <ListItemIcon>
+              <EditIcon fontSize="small" />
+            </ListItemIcon> Editar Perfil
+          </MenuItem>
+        </Link>
+        <Link href={"/logs"}>
+          <MenuItem >
+            <ListItemIcon>
+              <HistoryIcon fontSize="small" />
+            </ListItemIcon>
+            Logs
+          </MenuItem>
+        </Link>
+        <Link href={"/usuarios"}>
+          <MenuItem>
+            <ListItemIcon>
+              <GroupIcon fontSize="small" />
+            </ListItemIcon>
+            Usuários
+          </MenuItem>
+        </Link>
         <MenuItem onClick={onClose}>
           <ListItemIcon>
             <Logout fontSize="small" />

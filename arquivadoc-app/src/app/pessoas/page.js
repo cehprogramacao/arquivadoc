@@ -1,9 +1,8 @@
+"use client"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import Header from "@/Components/Header/Header"
 import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
 import { useState } from "react"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
-import createRoutes from "@/routes/index.routes"
 import { Buttons } from "@/Components/Button/Button"
 import { UserTable } from "./tablePessoas/table"
 
@@ -49,8 +48,7 @@ const PagePessoas = ({ data }) => {
             gap: '10px',
             alignItems: 'center'
         }}>
-            <Header />
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
+            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
                 Pessoas
             </Typography>
             <div style={{

@@ -1,4 +1,4 @@
-import Header from "@/Components/Header/Header"
+"use client"
 import { Box,Typography} from "@mui/material"
 import { useState } from "react"
 import { LogsTable } from "./tableLogs";
@@ -36,8 +36,7 @@ const PageLogs = ({ data }) => {
             flexDirection: 'column',
             gap: '10px',
         }}>
-            <Header />
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} >
+            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
                 Visualizar Logs
             </Typography>
             <LogsTable data={rows} />
