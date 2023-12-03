@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import {
     Table,
@@ -73,6 +74,8 @@ const ResponsiveTable = () => {
             overflowY: "auto",
             maxHeight: '400px',
             position: 'relative',
+            margin: '0 auto',
+            marginTop: 29
         }}>
             {isSmScreen ? (
                 <Table>

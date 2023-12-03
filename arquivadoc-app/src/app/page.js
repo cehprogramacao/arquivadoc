@@ -1,10 +1,14 @@
 "use client"
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import LoginPage from './login/page';
+import { useRouter } from 'next/navigation';
+import Page from './home/page';
 
 const Home = () => {
+  const [login, setLogin] = useState(true)
+  const router = useRouter()
   const theme = createTheme({
     palette: {
       primary: {
@@ -25,10 +29,18 @@ const Home = () => {
     },
   });
 
+  useEffect(() => {
+    if (!login) {
+      router.push('/login');
+    } else {
+      router.push('/home')
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <LoginPage />
+      <Page />
     </ThemeProvider>
   );
 }

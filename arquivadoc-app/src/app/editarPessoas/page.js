@@ -9,7 +9,7 @@ const PageEditarPessoas = () => {
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
-            gap: isSmallScreen ? '40px' : '30px',
+            gap: isSmallScreen ? '40px' : '50px',
             placeItems:'center',
             padding: "5.1rem 0 "
         }}>
@@ -21,7 +21,7 @@ const PageEditarPessoas = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 width: 'auto',
-                gap: isSmallScreen ? '40px' : '37px',
+                gap: isSmallScreen ? '40px' : '60px',
             }}>
                     <TextField sx={{
                         width: isSmallScreen ? '100%' : '400px',
@@ -57,7 +57,7 @@ const PageEditarPessoas = () => {
                     background: "#237117",
                     color: '#fff',
                     border: '1px solid #237117',
-                    padding: '7px 22px',
+                    padding: '7px 30px',
                     ":hover": {
                         background: 'transparent',
                         color: '#237117',

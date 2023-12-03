@@ -1,14 +1,22 @@
 "use client"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
+import { Autocomplete, Box, Button,Drawer, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
 import { useState } from "react"
-import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import { Buttons } from "@/Components/Button/Button"
 import { UserTable } from "./tableUser/table"
-
+import { CadastroUsuarios } from "@/Components/Modals/ModalCadastroUsuario"
+import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 
 
 const PageUsuarios = ({ data }) => {
+    const [open, setOpen] = useState(false)
+    const handleOpen = () => {
+        setOpen(true)
+    }
+    const handleClose = () => {
+        setOpen(false)
+    }
+ 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const top100Films = [
@@ -29,11 +37,6 @@ const PageUsuarios = ({ data }) => {
     const handleExcluir = (id) => {
         const updatedRows = rows.filter((row) => row.id !== id);
         setRows(updatedRows);
-    };
-    const [select, setSelect] = useState(null);
-    const [valueInput, setValueInput] = useState('')
-    const handleBuscar = () => {
-
     };
 
     return (
@@ -104,10 +107,13 @@ const PageUsuarios = ({ data }) => {
                     gap: isSmallScreen ? '20px' : '50px'
                 }}>
                     <Buttons color={'green'} title={'Buscar'} />
-                    <ButtonOpenModals />
+                    <ButtonOpenModals onClick={handleOpen} />
                 </Box>
             </div>
             <UserTable data={rows} onClick={handleExcluir} />
+            <Drawer anchor="left" open={open} onClose={handleClose}>
+                <CadastroUsuarios onClose={handleClose} />
+            </Drawer>
         </Box>
     )
 }

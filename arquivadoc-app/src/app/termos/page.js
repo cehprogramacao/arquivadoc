@@ -8,7 +8,7 @@ import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import { Buttons } from "@/Components/Button/Button"
 import { CadastroTermosModal } from "@/Components/Modals/ModalCadastroTermo"
 import { CadastroPartes } from "@/Components/Modals/ModalCadastroPartes"
-import ResponsiveTable from "../table"
+import ResponsiveTable from "../table/page"
 import ModalList from "@/Components/Modals/ModalList"
 
 

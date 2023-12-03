@@ -1,15 +1,21 @@
 "use client"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
+import { Autocomplete, Box, Button, Drawer,TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
 import { useState } from "react"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import { Buttons } from "@/Components/Button/Button"
 import { UserTable } from "./tablePessoas/table"
+import { CadastroPessoas } from "@/Components/Modals/ModalCadastroPessoas"
 
 
 
 const PagePessoas = ({ data }) => {
     const theme = useTheme();
+    const [open, setOpen] = useState(false)
+
+    const handleOpenModal = () => setOpen(true)
+    const handleCloseModal = () => setOpen(false)
+
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const top100Films = [
         {
@@ -104,10 +110,14 @@ const PagePessoas = ({ data }) => {
                     gap: isSmallScreen ? '20px' : '50px'
                 }}>
                     <Buttons color={'green'} title={'Buscar'} />
-                    <ButtonOpenModals />
+                    <ButtonOpenModals onClick={handleOpenModal}  />
                 </Box>
             </div>
             <UserTable data={rows} onClick={handleExcluir} />
+
+            <Drawer anchor="left" open={open} onClose={handleCloseModal}>
+                <CadastroPessoas onClose={handleCloseModal} />
+            </Drawer>
         </Box>
     )
 }
