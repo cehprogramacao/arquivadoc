@@ -1,14 +1,24 @@
 "use client"
-import { Box, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import Autocomplete from '@mui/material/Autocomplete';
+import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
+import { CadastroNotasInventario } from '@/Components/Modals/ModalCadastroNotasInventario';
+import { useState } from 'react';
 const pageInventario = ({ data }) => {
+    const [openModalCadastro, setOpenModalCadastro] = useState(false)
+    const [openModalCadastroPartes, setOpenModalCadastroPartes] = useState(false)
+    const handleOpenModalCadastro = () => setOpenModalCadastro(!openModalCadastro)
+    const handleCloseModalCadastro = () => setOpenModalCadastro(!openModalCadastro)
+    const handleOpenModalCadastroPartes = () => setOpenModalCadastroPartes(!openModalCadastroPartes)
+    const handleCloseModalCadastroPartes = () => setOpenModalCadastroPartes(!openModalCadastroPartes)
+
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const top100Films = ['Ordem','Livro','CPF'];
+    const top100Films = ['Ordem', 'Livro', 'CPF'];
 
     const tipos_escrituras = ['Inventário e Partilha', 'Inventário e Sobrepartilha'];
     return (
@@ -25,7 +35,7 @@ const pageInventario = ({ data }) => {
                 gap: '10px',
             }}
         >
-            
+
             <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
                 Inventário
             </Typography>
@@ -41,13 +51,16 @@ const pageInventario = ({ data }) => {
                     marginTop: 4
                 }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap',
-                placeContent: "center" }}>
+                <Box sx={{
+                    display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap',
+                    placeContent: "center"
+                }}>
                     <TextField
                         label="Buscar"
-                        sx={{ width: isSmallScreen ? '100%' : 350, '& input': { color: 'success.main' },
-                        flexShrink: 1
-                    }}
+                        sx={{
+                            width: isSmallScreen ? '100%' : 350, '& input': { color: 'success.main' },
+                            flexShrink: 1
+                        }}
                         color="success"
                     />
                     <Autocomplete
@@ -94,11 +107,17 @@ const pageInventario = ({ data }) => {
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <Buttons color={'green'} title={'Buscar'} />
 
-                    <ButtonOpenModals />
+                    <ButtonOpenModals onClick={handleOpenModalCadastro} />
                     <ButtonLixeira href={""} />
                 </Box>
             </Box>
 
+            <Drawer anchor="left" open={openModalCadastro} onClose={handleCloseModalCadastro}>
+                <CadastroNotasInventario onClose={handleCloseModalCadastro} onClickPartes={handleOpenModalCadastroPartes} />
+            </Drawer>
+            <Drawer anchor="right" open={openModalCadastroPartes} onClose={handleCloseModalCadastroPartes}>
+                <CadastroPartes onClose={handleCloseModalCadastroPartes} />
+            </Drawer>
 
         </Box>
     )

@@ -10,13 +10,13 @@ export const DocList = ({ data, onClick }) => {
     
 
     return (
-        <Grid container spacing={2} sx={
-            { flexGrow: 1,marginLeft: '70px',width: '100%',height: '450px', margin: '0 auto', position: 'relative', overflowY: 'auto',}}>
+        <Grid container spacing={0} sx={
+            { flexGrow: 1,width: '100%',height: '450px', margin: '0 auto', position: 'relative', overflowY: 'auto',}}>
             {data.map((item, index) => (
-                <Grid item key={index} xs={12} sm={6} md={4} lg={3} sx={{
+                <Grid item key={index} xs={12} sm={6} md={4} lg={2} sx={{
                     display: 'grid', justifyContent: 'center', padding: '10px 0',
                 }}>
-                    <List sx={{ width: 240, }}>
+                    <List sx={{ width: '100%', }}>
                         <ListItem onClick={() => onClick(index)} style={{
 
                             cursor: 'pointer'

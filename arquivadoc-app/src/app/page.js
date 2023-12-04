@@ -29,18 +29,12 @@ const Home = () => {
     },
   });
 
-  useEffect(() => {
-    if (!login) {
-      router.push('/login');
-    } else {
-      router.push('/home')
-    }
-  }, []);
+  
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Page />
+      <LoginPage />
     </ThemeProvider>
   );
 }

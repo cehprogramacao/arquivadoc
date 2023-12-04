@@ -10,96 +10,30 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useState } from "react";
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
-import { useMediaQuery, useTheme } from '@mui/material';
+import { Autocomplete, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 
-const docs = [
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
-  {
-    name: 'Ronaldo',
-    text: 'Procuração'
-  },
 
-]
 const Page = () => {
-  const [age, setAge] = useState('');
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const handleChange = (event) => {
     setAge(event.target.value);
   };
 
+  const docs = [
+    { name: 'Ronaldo', text: 'Procuração' }, { name: 'Ronaldo', text: 'Procuração' }, 
+    { name: 'Ronaldo', text: 'Procuração' }, { name: 'Ronaldo', text: 'Procuração' }, 
+    { name: 'Ronaldo', text: 'Procuração' }, { name: 'Ronaldo', text: 'Procuração' },
+    { name: 'Ronaldo', text: 'Procuração' }, { name: 'Ronaldo', text: 'Procuração' },
+    { name: 'Ronaldo', text: 'Procuração' }, { name: 'Ronaldo', text: 'Procuração' },
+    { name: 'Ronaldo', text: 'Procuração' }, { name: 'Ronaldo', text: 'Procuração' }, 
+    { name: 'Ronaldo', text: 'Procuração' }, { name: 'Ronaldo', text: 'Procuração' },
+    { name: 'Ronaldo', text: 'Procuração' }, { name: 'Ronaldo', text: 'Procuração' }, 
+    { name: 'Ronaldo', text: 'Procuração' }, { name: 'Ronaldo', text: 'Procuração' }, 
+    { name: 'Ronaldo', text: 'Procuração' },
+
+  ]
 
   return (
     <Box className="" sx={{
@@ -107,7 +41,7 @@ const Page = () => {
       display: 'flex',
       flexDirection: 'column',
       padding: '30px 60px',
-      gap: '20px',
+      gap: '27px',
       position: 'absolute',
       width: 'auto',
       marginTop: 12,
@@ -120,61 +54,63 @@ const Page = () => {
         flexWrap: "wrap",
         placeContent: 'center'
       }}>
-        
+
         <div style={{
           display: 'flex',
           gap: 20,
           alignItems: 'center',
           flexWrap: 'wrap',
           placeContent: 'center',
-          
+
         }}>
-          <Search />
-          <FormControl sx={{ width: isSmallScreen ? '100%' : 400 }}>
-            <InputLabel id="demo-simple-select-label" color="success">Age</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={age}
-              label="Age"
-              onChange={handleChange}
-              color="success"
-            >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-          </FormControl>
+          <TextField
+            label="Buscar"
+            sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }}
+            color="success"
+          />
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={['CPF', 'CNPJ']}
+            sx={{ width: isSmallScreen ? '100%' : 400 }}
+            renderInput={(params) => (
+              <TextField
+                color="success"
+                {...params}
+                label="Buscar Por"
+                
+                sx={{
+                  color: "#237117",
+                  '& input': {
+                    color: 'success.main',
+                  },
+                }}
+              />
+            )}
+          />
         </div>
         <Buttons color={'green'} title={'Buscar'} onClick={() => alert('Oiii')} />
       </div>
 
-      <Box sx={{
-        maxWidth: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '60px',
+      <Typography sx={{
+        width:"max-content",
+        display:"flex",
+        flexDirection:"column",
+        gap: "0px",
+        color:'#C2C2C2',
+        fontWeight:'500',
+        padding:'0 40px'
       }}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column ',
-          padding: '0px',
-          gap: 'px',
-          width: 'auto',
-          height: '50px',
-          position: 'relative',
+        <span style={{
+          fontSize:"1.3rem",
+          color:'#000',
+          fontWeight:"bold"
         }}>
-          <span style={{
-            color: '#212121',
-            fontWeight: '500'
-          }}>Recentes</span>
-          <span style={{
-            color: '#B5B5C3'
-          }}>More than 400+ new members</span>
-        </div>
-        <DocList data={docs}  />
-      </Box>
-
+          Recentes
+        </span>
+        More than {'400'} new members
+      </Typography>
+      <DocList data={docs} />
     </Box>
   );
 };

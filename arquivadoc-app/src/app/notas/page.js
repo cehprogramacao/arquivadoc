@@ -39,16 +39,17 @@ const PageNotas = () => {
                 Notas
             </Typography>
             <Stack sx={{
-                width: 'auto',
+                maxWidth: '900px',
+                height:'auto',
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: "space-between",
-                marginTop: 2,
+                marginTop: 0,
                 flexWrap: 'wrap',
-
                 position: 'relative',
-                gap: 5,
-                placeContent: "center"
+                gap: 8,
+                padding: "20px",
+                placeContent: "center", 
             }}>
                 <Link href={"/notas/CartorioDocs"}>
                     <StyledButton variant="outlined" >
@@ -59,7 +60,7 @@ const PageNotas = () => {
 
                         <Typography sx={{
                             fontFamily: 'Roboto, sans-serif',
-                            fontSize: "1em"
+                            fontSize: "clamp(14px, 1.5vw, 22px)"
                         }}>
                             Escrituras
                         </Typography>
@@ -74,7 +75,7 @@ const PageNotas = () => {
 
                         <Typography sx={{
                             fontFamily: 'Roboto, sans-serif',
-                            fontSize: "1em"
+                            fontSize: "clamp(14px, 1.5vw, 22px)"
                         }}>
                             Procurações
                         </Typography>
@@ -89,7 +90,7 @@ const PageNotas = () => {
 
                         <Typography sx={{
                             fontFamily: 'Roboto, sans-serif',
-                            fontSize: "19px",
+                            fontSize: "clamp(14px, 1.5vw, 22px)"
                         }}>
                             Substabelecimento
                         </Typography>
@@ -104,7 +105,7 @@ const PageNotas = () => {
 
                         <Typography sx={{
                             fontFamily: 'Roboto, sans-serif',
-                            fontSize: "1em"
+                            fontSize: "clamp(14px, 1.5vw, 22px)"
                         }}>
                             Inventário
                         </Typography>
@@ -119,7 +120,7 @@ const PageNotas = () => {
 
                         <Typography sx={{
                             fontFamily: 'Roboto, sans-serif',
-                            fontSize: "1em"
+                            fontSize: "clamp(14px, 1.5vw, 22px)"
                         }}>
                             Divorcio
                         </Typography>
@@ -134,7 +135,7 @@ const PageNotas = () => {
 
                         <Typography sx={{
                             fontFamily: 'Roboto, sans-serif',
-                            fontSize: "1em"
+                            fontSize: "clamp(14px, 1.5vw, 22px)"
                         }}>
                             Ata Notarial
                         </Typography>

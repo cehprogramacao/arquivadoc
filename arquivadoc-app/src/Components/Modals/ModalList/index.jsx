@@ -4,57 +4,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import PrintIcon from '@mui/icons-material/Print';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
-
-// Plugins
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-
-// Import styles
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
-// Create new plugin instance
-// import { Icon, Viewer, Worker } from '@react-pdf-viewer/core';
-// import { BookmarkIcon, defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-
-// import '@react-pdf-viewer/core/lib/styles/index.css';
-// import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-
-// const ExpandIcon = () => (
-//     <Icon size={16}>
-//         <path d="M.541,5.627,11.666,18.2a.5.5,0,0,0,.749,0L23.541,5.627" />
-//     </Icon>
-// );
-
-// const CollapseIcon = () => (
-//     <Icon size={16}>
-//         <path d="M5.651,23.5,18.227,12.374a.5.5,0,0,0,0-.748L5.651.5" />
-//     </Icon>
-// );
-
 const ModalList = ({ open, onClose, data, link }) => {
-
-    // const renderBookmarkItem = (renderProps) =>
-    //     renderProps.defaultRenderItem(
-    //         renderProps.onClickItem,
-    //         <>
-    //             {renderProps.defaultRenderToggle(<ExpandIcon />, <CollapseIcon />)}
-    //             {renderProps.defaultRenderTitle(renderProps.onClickTitle)}
-    //         </>
-    //     );
-
-    // const defaultLayoutPluginInstance = defaultLayoutPlugin({
-    //     sidebarTabs: (defaultTabs) => [
-    //         defaultTabs[0],
-    //         {
-    //             content: <Bookmarks renderBookmarkItem={renderBookmarkItem} />,
-    //             icon: <BookmarkIcon />,
-    //             title: 'Bookmark',
-    //         },
-    //         defaultTabs[2],
-    //     ],
-    // });
-    // const bookmarkPluginInstance = defaultLayoutPluginInstance.bookmarkPluginInstance;
-    // const { Bookmarks } = bookmarkPluginInstance;
 
 
     const theme = useTheme()

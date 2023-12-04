@@ -1,16 +1,8 @@
 const tipo = 'tipo6';
-const tipos = ['tipo1', 'tipo2', 'tipo3', 'tipo4', 'tipo5'];
+const tipos = ['tipo1', 'tipo2', 'tipo6', 'tipo4', 'tipo5'];
 
 let tipoExiste = false;
 
-tipos.forEach(item => {
-  if (item === tipo) {
-    tipoExiste = true;
-  }
-});
+const filter = tipos.filter(item => item !== tipo)
 
-if (tipoExiste) {
-  console.log('Já existe');
-} else {
-  console.log('Ainda não existe');
-}
+console.log(filter)
