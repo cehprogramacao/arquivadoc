@@ -40,7 +40,7 @@ export const LixeiraTable = ({ data, onClick }) => {
   
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: '1300px',marginTop: '30px' }}>
+    <TableContainer component={Paper} sx={{ maxWidth: '1100px',marginTop: '30px' }}>
       <Table sx={{ maxWidth: '100%' }} >
         <TableHead>
           <TableRow>
