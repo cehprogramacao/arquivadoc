@@ -14,7 +14,10 @@ const PageEditarPerfil = () => {
             gap: isSmallScreen ? '10px' : '10px',
 
         }}>
-            <Typography fontSize={40} fontWeight='bold' marginTop={isSmallScreen ? 11 : 14} color={"black"}>
+            <Typography sx={{
+                fontSize: "clamp(36px, 5vw, 48px)",
+                textAlign: 'center'
+            }} fontWeight='bold' marginTop={isSmallScreen ? 15 : 14} color={"black"}>
                 Mudar senha
             </Typography>
             <Box sx={{

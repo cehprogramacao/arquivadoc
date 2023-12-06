@@ -55,29 +55,11 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                 width: '100%',
                 gap: isSmallScreen ? '20px' : '30px',
                 height: "100vh",
-                overflowY: 'auto'
+                overflowY: 'auto',
+                padding:'5px 0'
+    
             }}>
-                <Button sx={{
-                    width: '169px',
-                    background: 'transparent',
-
-                    border: '1px solid #237117',
-                    boxShadow: 'none',
-                    textTransform: "capitalize",
-                    color: "#237117",
-                    borderRadius: '8px',
-                    ":hover": {
-                        background: '#237117',
-
-                        color: '#fff',
-                        boxShadow: 'none'
-                    }
-                }} variant="contained" onClick={() => {
-                    onClose()
-                    onClickPartes()
-                }}>
-                    Cadastrar Partes
-                </Button>
+                
                 <TextField sx={{
                     width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' },
@@ -85,6 +67,14 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
 
                 }}
                     label="Número do cartão"
+                    type="number"
+                    color='success'
+                />
+                <TextField sx={{
+                    width: isSmallScreen ? '100%' : '360px',
+                    '& input': { color: 'success.main' }
+                }}
+                    label="N° da Caixa"
                     type="number"
                     color='success'
                 />

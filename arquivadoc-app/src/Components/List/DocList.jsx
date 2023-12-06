@@ -9,8 +9,6 @@ import { useMediaQuery, useTheme } from '@mui/material';
 export const DocList = ({ data, onClick }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-
-    // Defina o número de colunas com base no tamanho da tela
     const columns = isSmallScreen ? 1 : 4;
 
     return (
@@ -20,7 +18,7 @@ export const DocList = ({ data, onClick }) => {
             sx={{
                 flexGrow: 1,
                 maxWidth: isSmallScreen ? '100%' : '1300px',
-                height: '450px', // Ajuste a altura conforme necessário
+                height: '450px',
                 margin: '0 auto',
                 position: 'relative',
                 overflowY: 'auto',
@@ -30,6 +28,7 @@ export const DocList = ({ data, onClick }) => {
                 <Grid
                     item
                     key={index}
+                    columns={columns}
                     xs={12}
                     sm={6}
                     md={isSmallScreen ? 12 : 6}

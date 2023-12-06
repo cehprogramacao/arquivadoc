@@ -37,12 +37,12 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
     const inputValue = e.target.value;
     setValue(inputValue);
 
-    const exists = tipos_escrituras.some((item) => item.label === inputValue);
+    const exists = tipos_escrituras.includes(inputValue)
 
     if (!exists && inputValue.trim() !== '') {
-      setExisType(true);
+      onClickPartes
     } else {
-      setExisType(false);
+      return false
     }
   };
 
@@ -128,29 +128,10 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
         width: '100%',
         gap: isSmallScreen ? '20px' : '30px',
         height: "100vh",
-        overflowY: 'auto'
+        overflowY: 'auto',
+        padding:'5px 0'
       }}>
-        <Button sx={{
-          width: '169px',
-          background: 'transparent',
 
-          border: '1px solid #237117',
-          boxShadow: 'none',
-          textTransform: "capitalize",
-          color: "#237117",
-          borderRadius: '8px',
-          ":hover": {
-            background: '#237117',
-
-            color: '#fff',
-            boxShadow: 'none'
-          }
-        }} variant="contained" onClick={() => {
-          onClose()
-          onClickPartes()
-        }}>
-          Cadastrar Partes
-        </Button>
         <TextField sx={{
           width: isSmallScreen ? '100%' : '360px',
           '& input': { color: 'success.main' },
@@ -165,10 +146,18 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
           disablePortal
           id="combo-box-demo"
           options={opt}
+          noOptionsText=""
           sx={{ width: isSmallScreen ? '100%' : 360 }}
+          
           renderInput={(params) => (
             <TextField
               color="success"
+              InputProps={{
+                ...params.InputProps,
+                classes: {
+                  root: 'no-options-input',
+                },
+              }}
               {...params}
               label="Solicitado por"
 
@@ -185,11 +174,18 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
           disablePortal
           id="combo-box-demo"
           options={tipos_escrituras}
+          noOptionsText=""
+          
           sx={{ width: isSmallScreen ? "100%" : 360 }}
           renderInput={(params) => (
             <TextField
               color="success"
-
+              InputProps={{
+                ...params.InputProps,
+                classes: {
+                  root: 'no-options-input',
+                },
+              }}
               {...params}
               value={value}
               onChange={handleChangeTypeService}
@@ -203,19 +199,6 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
             />
           )}
         />
-        {exisType && (
-          <TextField
-            sx={{
-              width: isSmallScreen ? "100%" : "360px",
-              "& input": { color: "success.main" },
-            }}
-            label="Cadastre um novo serviço"
-            type="text"
-            required
-
-            color="success"
-          />
-        )}
         <TextField sx={{
           width: isSmallScreen ? '100%' : '360px',
           '& input': { color: 'success.main' },

@@ -52,29 +52,9 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         flexDirection: 'column',
         width: 'auto',
         gap: isSmallScreen ? '20px' : '26px',
+        padding:'5px 0'
       }}>
-        <Button sx={{
-          width: '169px',
-          background: 'transparent',
-
-          border: '1px solid #237117',
-          boxShadow: 'none',
-          textTransform: "capitalize",
-          color: "#237117",
-          borderRadius: '8px',
-          ":hover": {
-            background: '#237117',
-
-            color: '#fff',
-            boxShadow: 'none'
-          }
-        }} variant="contained" onClick={() => {
-          onClose()
-          onClickPartes()
-
-        }}>
-          Cadastrar Partes
-        </Button>
+        
         <TextField sx={{
           width: isSmallScreen ? '100%' : '370px',
           '& input': { color: 'success.main' },
