@@ -28,6 +28,10 @@ const PageSolicitantes = ({ data }) => {
     ]
     const [rows, setRows] = useState([
         { id: 1, nome: 'Kauan BrTech'},
+        { id: 2, nome: 'Kauan BrTech'},
+        { id: 3, nome: 'Kauan BrTech'},
+        { id: 4, nome: 'Kauan BrTech'},
+        { id: 5, nome: 'Kauan BrTech'},
     ]);
 
     const handleExcluir = (id) => {
@@ -46,7 +50,7 @@ const PageSolicitantes = ({ data }) => {
             height: '100vh',
             marginTop: 11,
             position: 'relative',
-            padding: '30px 0',
+            padding: '30px 20px',
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',

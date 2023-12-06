@@ -18,7 +18,7 @@ import ModalList from "@/Components/Modals/ModalList";
 const Page = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const isSmallScreenWrap = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreenWrap = useMediaQuery(theme.breakpoints.down('lg'));
   const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -53,11 +53,12 @@ const Page = () => {
     <Box className="" sx={{
       display: 'flex',
       flexDirection: 'column',
-      padding: '30px 60px',
       gap: '27px',
       position: 'absolute',
       width: '100%',
       marginTop: 12,
+      placeItems: 'center',
+      padding: "50px 60px"
     }}>
       <Box sx={{
         display: 'flex',
@@ -71,19 +72,22 @@ const Page = () => {
           gap: '20px',
           alignItems: 'center',
           padding: '0 40px ',
-          placeContent:"center",
-          flexDirection: isSmallScreenWrap ? 'column' : 'row'
+          placeContent: "center",
+          flexWrap: 'wrap',
+          flexDirection: isSmallScreenWrap ? 'column' : 'row',
+          alignItems: 'center',
+          padding: '0 20px',
         }}>
           <TextField
             label="Buscar"
-            sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }}
+            sx={{ width: isSmallScreen ? '100%' : 500, '& input': { color: 'success.main' } }}
             color="success"
           />
           <Autocomplete
             disablePortal
             id="combo-box-demo"
             options={['CPF', 'CNPJ']}
-            sx={{ width: isSmallScreen ? '100%' : 400 }}
+            sx={{ width: isSmallScreen ? '100%' : 500 }}
             renderInput={(params) => (
               <TextField
                 color="success"

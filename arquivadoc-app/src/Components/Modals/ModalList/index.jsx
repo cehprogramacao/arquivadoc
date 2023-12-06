@@ -67,7 +67,7 @@ const ModalList = ({ open, onClose, data, link }) => {
                         <Box sx={{
                             width: isSmallScreen ? '100%' : '700px',
                             height: isSmallScreen ? '300px' : "520px",
-
+                            padding: '20px'
                         }}>
                             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                                 <Viewer fileUrl={`data:application/pdf;base64,${link}`} plugins={[defaultLayoutPluginInstance]} />

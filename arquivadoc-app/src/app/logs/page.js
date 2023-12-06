@@ -31,7 +31,7 @@ const PageLogs = ({ data }) => {
             height: '100vh',
             marginTop: 11,
             position: 'relative',
-            padding: '30px 0',
+            padding: '30px 20px',
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
