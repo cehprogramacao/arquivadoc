@@ -49,10 +49,10 @@ const PageTermos = ({ data }) => {
     ]
     const top100Films = [
         {
-            label: 'Número'
+            label: 'CPF'
         },
         {
-            label: 'Caixa'
+            label: 'Nome'
         },
     ];
 

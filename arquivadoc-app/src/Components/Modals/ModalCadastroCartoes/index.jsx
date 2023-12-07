@@ -66,7 +66,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
 
 
                 }}
-                    label="Número do cartão"
+                    label="Número"
                     type="number"
                     color='success'
                 />
@@ -82,48 +82,10 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                     width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
-                    label="N° da Caixa"
-                    type="number"
+                    label="CPF"
+                    type="text"
                     color='success'
-                />
-                <Autocomplete
-
-                    disablePortal
-                    id="combo-box-demo"
-                    options={opt}
-                    autoHighlight
-                    getOptionLabel={(option) => option.numero}
-                    renderOption={(props, option) => (
-                        <Box component="li" sx={{
-                            width: '100%',
-                            display: 'flex', flexDirection: 'column', gap: '6px'
-                        }} {...props}>
-                            <Typography sx={{ fontSize: "12px", display: 'flex', alignSelf: 'start' }}>
-                                {option.numero}
-                            </Typography>
-                            <Typography sx={{
-                                fontSize: "11px", display: 'flex', alignSelf: 'start',
-                                textTransform: 'uppercase'
-                            }}>
-                                {option.label}
-                            </Typography>
-                        </Box>
-                    )}
-                    sx={{ width: isSmallScreen ? '100%' : 360 }}
-                    renderInput={(params) => <TextField color="success" {...params}
-
-
-                        inputProps={{
-                            ...params.inputProps,
-                            autoComplete: 'new-password',
-                        }}
-                        label="Parte"
-                        sx={{
-                            color: "#237117", '& input': {
-                                color: 'success.main',
-                            },
-                        }} />}
-                />
+                />  
                 <Stack sx={{
                     display: 'flex',
                     flexDirection: "column",

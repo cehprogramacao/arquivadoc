@@ -27,18 +27,7 @@ const PageAutographCards = ({ data }) => {
     const handleOpenPartes = () => {
         setOpenPartes(true)
     }
-    const top100Films = [
-        {
-            label: 'Número'
-        },
-        {
-            label: 'Caixa'
-        },
-        {
-            label: 'Parte'
-        },
-    ];
-    
+    const service = ['Nome','CPF','Ordem', 'Livro', 'Folha']
     return (
         <Box sx={{
             width: '100%',
@@ -70,9 +59,22 @@ const PageAutographCards = ({ data }) => {
 
                         disablePortal
                         id="combo-box-demo"
-                        options={top100Films}
+                        options={service}
                         sx={{ width: isSmallScreen ? '100%' : 400 }}
                         renderInput={(params) => <TextField color="success" {...params} label="Buscar Por"
+                            sx={{
+                                color: "#237117", '& input': {
+                                    color: 'success.main',
+                                },
+                            }} />}
+                    />
+                    <Autocomplete
+
+                        disablePortal
+                        id="combo-box-demo"
+                        options={['Cartoes']}
+                        sx={{ width: isSmallScreen ? '100%' : 400 }}
+                        renderInput={(params) => <TextField color="success" {...params} label="Tipo de serviço"
                             sx={{
                                 color: "#237117", '& input': {
                                     color: 'success.main',

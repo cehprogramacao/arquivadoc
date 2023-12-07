@@ -141,6 +141,7 @@ const CartorioDocs = () => {
                             />
                         )}
                     />
+                    
                 </Box>
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <Buttons color={'green'} title={'Buscar'} />

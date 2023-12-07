@@ -14,10 +14,10 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
       label: 'Protestado'
     },
     {
-      label: 'Cancelamento'
+      label: 'Cancelado'
     },
     {
-      label: 'Em andamento  '
+      label: 'Sustado'
     },
   ]
 
@@ -97,7 +97,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
 
 
         }}
-          label="Número"
+          label="Apontamento"
           type="number"
           color='success'
         />
@@ -109,46 +109,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           type="number"
           color='success'
         />
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={optipos}
-          sx={{ width: isSmallScreen ? '100%' : 360 }}
-          renderInput={(params) => (
-            <TextField
-              color="success"
-              {...params}
-              label="Status"
-              placeholder="Escolha uma opção"
-              sx={{
-                color: "#237117",
-                '& input': {
-                  color: 'success.main',
-                },
-              }}
-            />
-          )}
-        />
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={opt}
-          sx={{ width: isSmallScreen ? '100%' : 360 }}
-          renderInput={(params) => (
-            <TextField
-              color="success"
-              {...params}
-              label="Tipo"
-              placeholder="Escolha uma opção"
-              sx={{
-                color: "#237117",
-                '& input': {
-                  color: 'success.main',
-                },
-              }}
-            />
-          )}
-        />
+        
         <Autocomplete
 
           disablePortal
@@ -262,6 +223,26 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
                 color: 'success.main',
               },
             }} />}
+        />
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={optipos}
+          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          renderInput={(params) => (
+            <TextField
+              color="success"
+              {...params}
+              label="Situação"
+              placeholder="Escolha uma opção"
+              sx={{
+                color: "#237117",
+                '& input': {
+                  color: 'success.main',
+                },
+              }}
+            />
+          )}
         />
         <TextField
           sx={{

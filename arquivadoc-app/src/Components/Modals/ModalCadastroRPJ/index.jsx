@@ -6,7 +6,7 @@ import { Box } from "@mui/system";
 
 
 export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
-
+    const [value, setValue] = useState('')
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -91,31 +91,13 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
                 overflowY: 'auto',
                 padding: '5px 0'
             }}>
-                
+
                 <TextField sx={{
                     width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
-                    label="Protocolo"
-                    type="number"
-                    color='success'
-                />
-                <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
-                    '& input': { color: 'success.main' },
-
-
-                }}
-                    label="Registro"
-                    type="number"
-                    color='success'
-                />
-                <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
-                    '& input': { color: 'success.main' }
-                }}
-                    label="N° da Caixa"
-                    type="number"
+                    label="Prenotação"
+                    type="text"
                     color='success'
                 />
                 <Autocomplete
@@ -156,6 +138,45 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
                             },
                         }} />}
                 />
+                <TextField sx={{
+                    width: isSmallScreen ? '100%' : '360px',
+                    '& input': { color: 'success.main' },
+
+
+                }}
+                    label="Registro"
+                    type="text"
+                    color='success'
+                />
+                <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={['Nada ainda']}
+                    noOptionsText=""
+
+                    sx={{ width: isSmallScreen ? "100%" : 360 }}
+                    renderInput={(params) => (
+                        <TextField
+                            color="success"
+                            InputProps={{
+                                ...params.InputProps,
+                                classes: {
+                                    root: 'no-options-input',
+                                },
+                            }}
+                            {...params}
+                            value={value}
+                            label="Tipo de serviço"
+                            sx={{
+                                color: "#237117",
+                                "& input": {
+                                    color: "success.main",
+                                },
+                            }}
+                        />
+                    )}
+                />
+
 
                 <TextField sx={{
                     width: isSmallScreen ? '100%' : '360px',
@@ -170,10 +191,16 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
                     width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
-                    label="Folhas"
+                    label="Folha inicial"
                     color='success'
                 />
-
+                <TextField sx={{
+                    width: isSmallScreen ? '100%' : '360px',
+                    '& input': { color: 'success.main' }
+                }}
+                    label="Folha final"
+                    color='success'
+                />
                 <TextField
                     sx={{
                         width: isSmallScreen ? '100%' : '360px',

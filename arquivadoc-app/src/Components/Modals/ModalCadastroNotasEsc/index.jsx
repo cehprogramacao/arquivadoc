@@ -32,7 +32,11 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
       label: 'Aditamento',
     },
   ];
-
+  const optapresentante = [
+    {
+      numero: '3333', label: 'Guaiuba Construtora'
+    }
+  ]
   const handleChangeTypeService = (e) => {
     const inputValue = e.target.value;
     setValue(inputValue);
@@ -129,7 +133,7 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
         gap: isSmallScreen ? '20px' : '30px',
         height: "100vh",
         overflowY: 'auto',
-        padding:'5px 0'
+        padding: '5px 0'
       }}>
 
         <TextField sx={{
@@ -138,8 +142,8 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
 
 
         }}
-          label="Número da ordem"
-          type="number"
+          label="Ordem"
+          type="text"
           color='success'
         />
         <Autocomplete
@@ -148,7 +152,7 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
           options={opt}
           noOptionsText=""
           sx={{ width: isSmallScreen ? '100%' : 360 }}
-          
+
           renderInput={(params) => (
             <TextField
               color="success"
@@ -159,7 +163,7 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
                 },
               }}
               {...params}
-              label="Solicitado por"
+              label="Tag"
 
               sx={{
                 color: "#237117",
@@ -171,11 +175,49 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
           )}
         />
         <Autocomplete
+
+          disablePortal
+          id="combo-box-demo"
+          options={optapresentante}
+          autoHighlight
+          getOptionLabel={(option) => option.numero}
+          renderOption={(props, option) => (
+            <Box component="li" sx={{
+              width: '100%',
+              display: 'flex', flexDirection: 'column', gap: '6px'
+            }} {...props}>
+              <Typography sx={{ fontSize: "12px", display: 'flex', alignSelf: 'start' }}>
+                {option.numero}
+              </Typography>
+              <Typography sx={{
+                fontSize: "11px", display: 'flex', alignSelf: 'start',
+                textTransform: 'uppercase'
+              }}>
+                {option.label}
+              </Typography>
+            </Box>
+          )}
+          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          renderInput={(params) => <TextField color="success" {...params}
+
+
+            inputProps={{
+              ...params.inputProps,
+              autoComplete: 'new-password',
+            }}
+            label="Apresentante"
+            sx={{
+              color: "#237117", '& input': {
+                color: 'success.main',
+              },
+            }} />}
+        />
+        <Autocomplete
           disablePortal
           id="combo-box-demo"
           options={tipos_escrituras}
           noOptionsText=""
-          
+
           sx={{ width: isSmallScreen ? "100%" : 360 }}
           renderInput={(params) => (
             <TextField
@@ -216,7 +258,16 @@ export const CadastroNotaEscrituras = ({ onClose, onClickPartes }) => {
 
         }}
           type="text"
-          label="Folhas"
+          label="Folha inicial"
+          color='success'
+
+        />
+        <TextField sx={{
+          width: isSmallScreen ? '100%' : '360px',
+
+        }}
+          type="text"
+          label="Folha final"
           color='success'
 
         />

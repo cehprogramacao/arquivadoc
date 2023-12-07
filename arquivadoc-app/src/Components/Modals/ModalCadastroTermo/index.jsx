@@ -61,7 +61,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
 
 
         }}
-          label="N° do Cartão"
+          label="CPF"
           color='success'
         />
         <TextField sx={{
@@ -71,17 +71,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
           label="N° da Caixa"
           color='success'
         />
-        <TextField sx={{
-          width: isSmallScreen ? '100%' : '370px',
-          '& input': { color: 'success.main' },
-
-          "::placeholder": {
-            color: 'success.main'
-          }
-        }}
-          label="Parte"
-          color='success'
-        />
+        
         <TextField
           sx={{
             width: isSmallScreen ? '100%' : '370px',

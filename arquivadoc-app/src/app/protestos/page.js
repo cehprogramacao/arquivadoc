@@ -11,7 +11,8 @@ import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
 import ModalList from '@/Components/Modals/ModalList';
 
 const top100Films = [
-    { label: 'Número' },
+    { label: 'Nome' },
+    { label: 'CPF' },
     { label: 'Caixa' },
 ];
 

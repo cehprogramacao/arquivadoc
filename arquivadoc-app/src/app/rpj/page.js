@@ -18,13 +18,19 @@ const top100Films = [
         label: 'Prenotação'
     },
     {
-        label: 'Matrícula '
+        label: 'Nome'
     },
     {
-        label: 'Caixa'
+        label: 'Registro'
     },
     {
-        label: 'Apresentante(documento)'
+        label: 'CPF/CNPJ'
+    },
+    {
+        label: 'Livro'
+    },
+    {
+        label: 'Folha'
     }
 ];
 

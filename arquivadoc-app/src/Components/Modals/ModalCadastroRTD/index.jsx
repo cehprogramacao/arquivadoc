@@ -3,10 +3,11 @@
 
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
+import { useState } from "react";
 
 
 export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
-
+    const [value, setValue] = useState('')
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -96,27 +97,8 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
                     width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
-                    label="Protocolo"
-                    type="number"
-                    color='success'
-                />
-                <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
-                    '& input': { color: 'success.main' },
-
-
-                }}
-                    label="Registro"
-                    type="number"
-                    color='success'
-                />
-                
-                <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
-                    '& input': { color: 'success.main' }
-                }}
-                    label="N° da Caixa"
-                    type="number"
+                    label="Prenotação"
+                    type="text"
                     color='success'
                 />
                 <Autocomplete
@@ -162,19 +144,69 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
                     width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
-                    label="Livro"
-                    type="number"
+                    label="Registro"
+                    type="text"
                     color='success'
+                />
+                <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={['Nada ainda']}
+                    noOptionsText=""
+
+                    sx={{ width: isSmallScreen ? "100%" : 360 }}
+                    renderInput={(params) => (
+                        <TextField
+                            color="success"
+                            InputProps={{
+                                ...params.InputProps,
+                                classes: {
+                                    root: 'no-options-input',
+                                },
+                            }}
+                            {...params}
+                            value={value}
+                            label="Tipo de serviço"
+                            sx={{
+                                color: "#237117",
+                                "& input": {
+                                    color: "success.main",
+                                },
+                            }}
+                        />
+                    )}
                 />
 
                 <TextField sx={{
                     width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
-                    label="Folhas"
+                    label="Livro"
+                    type="number"
                     color='success'
                 />
-
+                <TextField sx={{
+                    width: isSmallScreen ? '100%' : '360px',
+                    '& input': { color: 'success.main' }
+                }}
+                    label="Folhas inicial"
+                    color='success'
+                />
+                <TextField sx={{
+                    width: isSmallScreen ? '100%' : '360px',
+                    '& input': { color: 'success.main' }
+                }}
+                    label="Folhas final"
+                    color='success'
+                />
+                <TextField sx={{
+                    width: isSmallScreen ? '100%' : '360px',
+                    '& input': { color: 'success.main' }
+                }}
+                    label="Número da caixa"
+                    type="number"
+                    color='success'
+                />
                 <TextField
                     sx={{
                         width: isSmallScreen ? '100%' : '360px',

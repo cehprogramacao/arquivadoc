@@ -13,10 +13,11 @@ import { CadastroModalRGI } from '@/Components/Modals/ModalCadastroRGI';
 import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
 
 const top100Films = [
-    { label: 'Prenotação' },
-    { label: 'Matrícula ' },
+    { label: 'Nome' },
+    { label: 'CPF' },
+    { label: 'Prenotação ' },
     { label: 'Caixa' },
-    { label: 'Apresentante(documento)' },
+    
 ];
 
 const docs = [

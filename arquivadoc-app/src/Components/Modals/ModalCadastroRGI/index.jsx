@@ -134,7 +134,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                     width: isSmallScreen ? '100%' : '360px',
 
                 }}
-                    type="number"
+                    type="text"
                     label="Número da matrícula"
                     color='success'
                 />
