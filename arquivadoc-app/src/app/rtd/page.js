@@ -14,24 +14,12 @@ import { CadastroPartes } from '../../Components/Modals/ModalCadastroPartes';
 import axios from 'axios'
 
 const top100Films = [
-    {
-        label: 'Prenotação'
-    },
-    {
-        label: 'Nome'
-    },
-    {
-        label: 'Registro'
-    },
-    {
-        label: 'CPF/CNPJ'
-    },
-    {
-        label:'Livro',
-    },
-    {
-        label: 'Folha'
-    }
+    'Prenotação',
+    'Nome',
+    'Registro',
+    'CPF/CNPJ',
+    'Livro',
+    'Folha'
 ];
 
 const docs = [
@@ -58,8 +46,8 @@ const PageRTD = () => {
     const [openModalCadastroPartes, setOpenModalCadastroPartes] = useState(false)
 
     const [list, setList] = useState([]);
-
-
+    const [selectOption, setSelectOption] = useState(null)
+    const [selectValue, setSelectValue] = useState('')
 
 
     const [temp, setTemp] = useState(null)
@@ -70,7 +58,7 @@ const PageRTD = () => {
     }
     const fetchData = async () => {
         try {
-            const response = await fetch('http://localhost:3004/');
+            const response = await fetch(`http://localhost:3004/data/${selectValue}`);
             if (response.ok) {
                 const data = await response.json();
                 setList(data.data || []);
@@ -79,10 +67,10 @@ const PageRTD = () => {
             console.error(error);
         }
     };
-    useEffect(() => {
-        fetchData();
+    // useEffect(() => {
+    //     fetchData();
 
-    }, []);
+    // }, []);
     const handleCloseModalListFilePDF = () => {
         setOpenModalListFilePDF(false)
     }
@@ -92,7 +80,16 @@ const PageRTD = () => {
     const handleOpenModalPartes = () => setOpenModalCadastroPartes(true)
     const handleCloseModalPartes = () => setOpenModalCadastroPartes(false)
 
-
+    const handleOnChangeOptions = (_, value) => {
+        setSelectOption(value)
+        console.log(value)
+    }
+    const handleBuscar = () => {
+        if (selectValue.trim() !== '' || selectOption !== '') {
+            fetchData()
+        }
+        return false
+    }
 
     return (
         <Box
@@ -126,6 +123,8 @@ const PageRTD = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center" }}>
                     <TextField
                         label="Buscar"
+                        value={selectValue}
+                        onChange={(e) => setSelectValue(e.target.value)}
                         sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }}
                         color="success"
                     />
@@ -133,6 +132,8 @@ const PageRTD = () => {
                         disablePortal
                         id="combo-box-demo"
                         options={top100Films}
+                        value={selectOption}
+                        onChange={handleOnChangeOptions}
                         sx={{ width: isSmallScreen ? '100%' : 400 }}
                         renderInput={(params) => (
                             <TextField
@@ -149,13 +150,25 @@ const PageRTD = () => {
                         )}
                     />
                 </Box>
-                <Buttons color={'green'} title={'Buscar'} />
+                <Buttons color={'green'} title={'Buscar'} onClick={handleBuscar} />
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <ButtonOpenModals onClick={handleOpenModalCadastroRTD} />
                     <ButtonLixeira href={"/rtd/lixeira_rtd"} />
                 </Box>
             </Box>
-            <DocList data={list} sx={{ marginTop: isSmallScreen ? 2 : 0 }} onClick={handleOpenModalListFilePDF} />
+            {list.length > 0 && (
+                <DocList
+                    data={list}
+                    sx={{ marginTop: isSmallScreen ? 2 : 0 }}
+                    onClick={handleOpenModalListFilePDF}
+                />
+            )}
+
+            {list.length === 0 && (
+                <Typography fontSize={40} marginTop={12} color={'black'}>
+                    Nenhum Arquivo Existente
+                </Typography>
+            )}
             <ModalList data={list} link={list[temp]?.data} onClose={handleCloseModalListFilePDF} open={openModalListFilePDF} />
 
 
