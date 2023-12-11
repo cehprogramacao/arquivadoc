@@ -1,149 +1,129 @@
 "use client"
-import { Box, Button, Stack, Typography, styled } from "@mui/material";
-import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined';
+import { Autocomplete, Box, Button, Drawer, Stack, TextField, Typography, styled, useMediaQuery, useTheme } from "@mui/material";
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import Link from "next/link";
-const StyledButton = styled(Button)({
-    width: '200px',
-    fontSize: 'clamp(1rem, 1.3rem, 2rem)',
+import { useState } from "react";
+import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
+import { CadastroNotas } from "@/Components/Modals/ModalCadastroNotas";
+import { DocList } from "@/Components/List/DocList";
+
+const BoxMain = styled('section')({
+    maxWidth: '1300px',
+    width: '85%',
     display: 'flex',
-    flexDirection: 'column',
-    color: '#237117',
-    border: 'none',
-    alignItems: 'center',
-    textAlign: 'center',
-    gap: 10,
-    '&:hover': {
-        background: 'none',
-        border: 'none'
-    },
+    flexDirection: "column",
+    padding: '5px 10px'
 });
 
+
 const PageNotas = () => {
+    const theme = useTheme()
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+    // const isSmallScreen = useMediaQuery('(max-width: 1067px)');
+    const [opt, setOpt] = useState(['Nome', 'CPF', 'Ordem', 'Livro', 'Livro Folha'])
+    const [optService, setOptService] = useState(['Escrituras', 'Procuração', 'Substabelecimento', 'Divórcio',
+        'Ata Notarial', 'Inventário'
+    ])
+    const [data, setData] = useState([
+        {
+            NomeFile: 'Arquivo 1',
+            nameUser: 'Kauan',
+            link: '/teste.pdf'
+        },
+        
+    ])
+    const [open, setOpen] = useState(false)
+
+    const handleOpen = () => setOpen(!open)
+    const handleClose = () => setOpen(!open)
+
+    const BoxSearch = styled('div')({
+        maxWidth: '100%',
+        width: '100%',
+        padding: '0px',
+        display: "flex",
+        gap: "30px",
+        alignItems: 'center',
+        flexWrap: isSmallScreen ? 'wrap' : 'nowrap',
+        flexDirection: isSmallScreen ? 'column' : 'row'
+    });
 
     return (
         <Box sx={{
             width: '100%',
-            marginTop: 11,
-            position: 'relative',
-            padding: '30px 0',
-            display: 'flex',
+            height: "100vh",
+            display: "flex",
             flexDirection: 'column',
-            gap: '10px',
-            placeItems: 'center'
+            placeItems: 'center',
+            gap: '10px'
         }}>
-            <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
+            <Typography fontSize={40} marginTop={13} fontWeight={'bold'} color={"black"}>
                 Notas
             </Typography>
-            <Stack sx={{
-                maxWidth: '900px',
-                height:'auto',
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: "space-between",
-                marginTop: 0,
-                flexWrap: 'wrap',
-                position: 'relative',
-                gap: 8,
-                padding: "20px",
-                placeContent: "center", 
-            }}>
-                <Link href={"/notas/CartorioDocs"}>
-                    <StyledButton variant="outlined" >
-                        <FolderOpenOutlinedIcon sx={{
-                            width: '80px',
-                            height: 'auto'
-                        }} />
+            <BoxMain >
+                <BoxSearch>
+                    <TextField label="Buscar" sx={{ width: isSmallScreen ? '100%' : 360 }} color="success" />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={opt}
+                        sx={{ width: isSmallScreen ? '100%' : 360 }}
+                        renderInput={(params) => (
+                            <TextField
+                                color="success"
+                                InputProps={{
+                                    ...params.InputProps,
+                                    classes: {
+                                        root: 'no-options-input',
+                                    },
+                                }}
+                                {...params}
+                                label="Buscar Por"
 
-                        <Typography sx={{
-                            fontFamily: 'Roboto, sans-serif',
-                            fontSize: "clamp(14px, 1.5vw, 22px)"
-                        }}>
-                            Escrituras
-                        </Typography>
-                    </StyledButton>
-                </Link>
-                <Link href={"/notas/procuracoes"}>
-                    <StyledButton variant="outlined" >
-                        <FolderOpenOutlinedIcon sx={{
-                            width: '80px',
-                            height: 'auto'
-                        }} />
+                                sx={{
+                                    color: "#237117",
+                                    '& input': {
+                                        color: 'success.main',
+                                    },
+                                }}
+                            />
+                        )}
+                    />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={optService}
+                        sx={{ width: isSmallScreen ? '100%' : 360 }}
+                        renderInput={(params) => (
+                            <TextField
+                                color="success"
+                                InputProps={{
+                                    ...params.InputProps,
+                                    classes: {
+                                        root: 'no-options-input',
+                                    },
+                                }}
+                                {...params}
+                                label="Buscar Tipo de Serviço"
 
-                        <Typography sx={{
-                            fontFamily: 'Roboto, sans-serif',
-                            fontSize: "clamp(14px, 1.5vw, 22px)"
-                        }}>
-                            Procurações
-                        </Typography>
-                    </StyledButton>
-                </Link>
-                <Link href={"/notas/substabelecimento"}>
-                    <StyledButton variant="outlined" >
-                        <FolderOpenOutlinedIcon sx={{
-                            width: '80px',
-                            height: 'auto'
-                        }} />
-
-                        <Typography sx={{
-                            fontFamily: 'Roboto, sans-serif',
-                            fontSize: "clamp(14px, 1.5vw, 22px)"
-                        }}>
-                            Substabelecimento
-                        </Typography>
-                    </StyledButton>
-                </Link>
-                <Link href={"/notas/inventario"}>
-                    <StyledButton variant="outlined" >
-                        <FolderOpenOutlinedIcon sx={{
-                            width: '80px',
-                            height: 'auto'
-                        }} />
-
-                        <Typography sx={{
-                            fontFamily: 'Roboto, sans-serif',
-                            fontSize: "clamp(14px, 1.5vw, 22px)"
-                        }}>
-                            Inventário
-                        </Typography>
-                    </StyledButton>
-                </Link>
-                <Link href={"/notas/divorcio"}>
-                    <StyledButton variant="outlined" >
-                        <FolderOpenOutlinedIcon sx={{
-                            width: '80px',
-                            height: 'auto'
-                        }} />
-
-                        <Typography sx={{
-                            fontFamily: 'Roboto, sans-serif',
-                            fontSize: "clamp(14px, 1.5vw, 22px)"
-                        }}>
-                            Divorcio
-                        </Typography>
-                    </StyledButton>
-                </Link>
-                <Link href={"/notas/ataNotarial"}>
-                    <StyledButton variant="outlined" >
-                        <FolderOpenOutlinedIcon sx={{
-                            width: '80px',
-                            height: 'auto'
-                        }} />
-
-                        <Typography sx={{
-                            fontFamily: 'Roboto, sans-serif',
-                            fontSize: "clamp(14px, 1.5vw, 22px)"
-                        }}>
-                            Ata Notarial
-                        </Typography>
-                    </StyledButton>
-                </Link>
-
-
-            </Stack>
+                                sx={{
+                                    color: "#237117",
+                                    '& input': {
+                                        color: 'success.main',
+                                    },
+                                }}
+                            />
+                        )}
+                    />
+                    <ButtonOpenModals onClick={handleOpen} />
+                </BoxSearch>
+                <DocList data={data} />
+            </BoxMain>
+            <Drawer anchor="left" open={open} onClose={handleClose}>
+                <CadastroNotas onClose={handleClose} />
+            </Drawer>
         </Box>
     );
 }

@@ -6,7 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import { CadastrarCartoesModal } from '@/Components/Modals/ModalCadastroCartoes';
 import { useState } from 'react';
-import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
+import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
 
 
 const PageAutographCards = ({ data }) => {

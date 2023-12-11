@@ -36,11 +36,11 @@ export const DocList = ({ data, onClick }) => {
                     sx={{
                         width: '100%',
                         display: 'flex',
-                        padding: '10px',
+                        padding: '0px',
                         justifyContent: 'center',
                     }}
                 >
-                    <List sx={{ width: '100%', padding: '0 10px' }}>
+                    <List sx={{ width: '100%', padding: '0' }}>
                         <ListItem onClick={() => onClick(index)} style={{ cursor: 'pointer' }}>
                             <ListItemAvatar>
                                 {/* Uncomment the next line if you have PictureAsPdfIcon component */}

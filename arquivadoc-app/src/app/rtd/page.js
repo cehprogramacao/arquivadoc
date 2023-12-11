@@ -10,7 +10,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ModalList from '../../Components/Modals/ModalList';
 import { useEffect, useState } from 'react';
 import { CadastroModalRTD } from '../../Components/Modals/ModalCadastroRTD';
-import { CadastroPartes } from '../../Components/Modals/ModalCadastroPartes';
+import { CadastroPartes } from '../../Components/ModalsRegistration/ModalCadastroPartes';
 import axios from 'axios'
 
 const top100Films = [

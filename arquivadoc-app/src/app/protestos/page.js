@@ -7,7 +7,7 @@ import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import Autocomplete from '@mui/material/Autocomplete';
 import { CadastroProtesto } from '@/Components/Modals/ModalCadastroProtesto';
 import { useState } from 'react';
-import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
+import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
 import ModalList from '@/Components/Modals/ModalList';
 
 const top100Films = [

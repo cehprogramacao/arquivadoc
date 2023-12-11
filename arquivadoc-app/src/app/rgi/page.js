@@ -10,7 +10,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ModalList from '@/Components/Modals/ModalList';
 import { useState } from 'react';
 import { CadastroModalRGI } from '@/Components/Modals/ModalCadastroRGI';
-import { CadastroPartes } from '@/Components/Modals/ModalCadastroPartes';
+import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
 
 const top100Films = [
     { label: 'Nome' },
