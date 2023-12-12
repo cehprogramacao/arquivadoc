@@ -160,19 +160,34 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
     }
   };
   const [open, setOpen] = useState(false);
-  const [input, setInput] = useState("");
-  const handleClose = () => setOpen(!open)
-  const handleChangeC = (event, nvalue) => {
-    if (!opt.includes(nvalue) && !handleService(nvalue)) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  }
-  const handleService = (servico) => {
-    return opt.some(item => item === servico)
+  
+
+  const [inputValue, setInputValue] = useState('');
+
+  const handleOpenModalTag = () => {
+    setOpen(!open)
+  };
+  const handleCloseModalTag = () => {
+    setOpen(!open)
   }
 
+  const handleInputChange = (event, newValue) => {
+    setInputValue(newValue);
+  };
+
+  const renderNoOptions = () => {
+    return (
+      <button onClick={handleOpenModalTag} style={{
+        background: "#237117",
+        border: 'none',
+        padding: '7px',
+        cursor: 'pointer',
+        borderRadius: '5px'
+      }} >
+        Cadastrar Tag
+      </button>
+    );
+  };
 
   return (
     <BoxMain>
@@ -200,27 +215,13 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
           disablePortal
           id="combo-box-demo"
           options={opt}
-          onBlur={e => handleChangeC(e, input)}
           sx={{ width: isSmallScreen ? '100%' : '360px' }}
-          renderInput={(params) => (
-            <TextField
-              color="success"
-              InputProps={{
-                ...params.InputProps,
-                classes: {
-                  root: 'no-options-input',
-                },
-              }}
-              {...params}
-              label="Tag"
-              sx={{
-                color: "#237117",
-                '& input': {
-                  color: 'success.main',
-                },
-              }}
-            />
-          )}
+          value={inputValue}
+          onChange={handleInputChange}
+          getOptionLabel={(option) => option}
+          renderInput={(params) => <TextField {...params} color="success" label="Tag" />}
+          renderOption={(props, option) => <li {...props}>{option}</li>}
+          noOptionsText={renderNoOptions()}
         />
 
         <Autocomplete
@@ -400,7 +401,7 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
         </ButtonCadastrar>
 
       </BoxInputs>
-      <ModalNotesTag onClose={handleClose} open={open} />
+      <ModalNotesTag open={open} onClose={handleCloseModalTag} />
     </BoxMain >
   );
 };

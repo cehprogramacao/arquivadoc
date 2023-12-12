@@ -37,6 +37,7 @@ export const ModalNotesTag = ({ onClose, open }) => {
         >
           <Typography
             sx={{
+              color: "#000",
               fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
             }}
           >
@@ -78,6 +79,7 @@ export const ModalNotesTag = ({ onClose, open }) => {
               color: '#237117',
             },
           }}
+          onClick={onClose}
         >
           Realizar Cadastro
         </Button>
