@@ -5,9 +5,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { useState } from "react";
-import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
-import { CadastroNotas } from "@/Components/Modals/ModalCadastroNotas";
 import { DocList } from "@/Components/List/DocList";
+import { Buttons } from "@/Components/Button/Button";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -18,10 +17,10 @@ const BoxMain = styled('section')({
 });
 
 
-const PageNotas = () => {
+const LixeiraNotas = () => {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
-    // const isSmallScreen = useMediaQuery('(max-width: 1067px)');
+    
     const [opt, setOpt] = useState(['Nome', 'CPF', 'Ordem', 'Livro', 'Livro Folha'])
     const [optService, setOptService] = useState(['Escrituras', 'Procuração', 'Substabelecimento', 'Divórcio',
         'Ata Notarial', 'Inventário'
@@ -60,7 +59,7 @@ const PageNotas = () => {
             gap: '10px'
         }}>
             <Typography fontSize={40} marginTop={13} fontWeight={'bold'} color={"black"}>
-                Notas
+                Lixeira Notas
             </Typography>
             <BoxMain >
                 <BoxSearch>
@@ -117,15 +116,12 @@ const PageNotas = () => {
                             />
                         )}
                     />
-                    <ButtonOpenModals onClick={handleOpen} />
+                    <Buttons color={"#237117"} title={'Buscar'} />
                 </BoxSearch>
                 <DocList data={data} />
             </BoxMain>
-            <Drawer anchor="left" open={open} onClose={handleClose}>
-                <CadastroNotas onClose={handleClose} />
-            </Drawer>
         </Box>
     );
 }
 
-export default PageNotas;
+export default LixeiraNotas;
