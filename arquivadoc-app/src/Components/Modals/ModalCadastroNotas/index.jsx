@@ -182,7 +182,8 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
         border: 'none',
         padding: '7px',
         cursor: 'pointer',
-        borderRadius: '5px'
+        borderRadius: '5px',
+        color:'#fff'
       }} >
         Cadastrar Tag
       </button>
@@ -229,7 +230,13 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
           id="combo-box-demo"
           options={optapresentante}
           autoHighlight
-          getOptionLabel={(option) => option.numero}
+          getOptionLabel={(option) => {
+            if (!isNaN(option.inputValue)) {
+              return option.numero;
+            } else {
+              return option.label;
+            }
+          }}
           renderOption={(props, option) => (
             <Box component="li" sx={{
               width: '100%',

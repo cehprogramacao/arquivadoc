@@ -121,7 +121,7 @@ const PageNotas = () => {
                 </BoxSearch>
                 <DocList data={data} />
             </BoxMain>
-            <Drawer anchor="left" open={open} onClose={handleClose}>
+            <Drawer anchor="left" open={true} onClose={handleClose}>
                 <CadastroNotas onClose={handleClose} />
             </Drawer>
         </Box>
