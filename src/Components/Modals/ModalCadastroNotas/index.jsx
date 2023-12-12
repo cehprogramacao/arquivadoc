@@ -3,7 +3,9 @@ import { ModalNotesTag } from "@/Components/ModalsRegistration/ModalNotesTag";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, styled } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
-
+import renderNoOptions from "@/Components/ButtonOpenModalCadastro";
+import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
+import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
 
 
 export const CadastroNotas = ({ onClose, onClickPartes }) => {
@@ -112,18 +114,7 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
       numero: '3333', label: 'Guaiuba Construtora'
     }
   ]
-  const handleChangeTypeService = (e) => {
-    const inputValue = e.target.value;
-    setValue(inputValue);
 
-    const exists = tipos_escrituras.includes(inputValue)
-
-    if (!exists && inputValue.trim() !== '') {
-      onClickPartes
-    } else {
-      return false
-    }
-  };
 
   const [outorgantes, setOutorgantes] = useState(['']);
   const [outorgados, setOutorgados] = useState(['']);
@@ -160,35 +151,28 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
     }
   };
   const [open, setOpen] = useState(false);
-  
+  const [openApresentante, setOpenApresentante] = useState(false);
 
   const [inputValue, setInputValue] = useState('');
-
+  const [inputValueApresentante, setInputValueApresentante] = useState('')
   const handleOpenModalTag = () => {
     setOpen(!open)
   };
   const handleCloseModalTag = () => {
     setOpen(!open)
   }
-
   const handleInputChange = (event, newValue) => {
     setInputValue(newValue);
   };
-
-  const renderNoOptions = () => {
-    return (
-      <button onClick={handleOpenModalTag} style={{
-        background: "#237117",
-        border: 'none',
-        padding: '7px',
-        cursor: 'pointer',
-        borderRadius: '5px',
-        color:'#fff'
-      }} >
-        Cadastrar Tag
-      </button>
-    );
+  const handleInputChangeApresentante = (event, newValue) => {
+    setInputValueApresentante(newValue);
   };
+  const handleOpenModalApresentante = () => {
+    setOpenApresentante(!openApresentante)
+  };
+  const handleCloseModalApresentante = () => {
+    setOpenApresentante(!openApresentante)
+  }
 
   return (
     <BoxMain>
@@ -222,7 +206,7 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
           getOptionLabel={(option) => option}
           renderInput={(params) => <TextField {...params} color="success" label="Tag" />}
           renderOption={(props, option) => <li {...props}>{option}</li>}
-          noOptionsText={renderNoOptions()}
+          noOptionsText={<RenderNoOptions onClick={handleOpenModalTag} title="Cadastrar Tag" />}
         />
 
         <Autocomplete
@@ -230,13 +214,10 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
           id="combo-box-demo"
           options={optapresentante}
           autoHighlight
-          getOptionLabel={(option) => {
-            if (!isNaN(option.inputValue)) {
-              return option.numero;
-            } else {
-              return option.label;
-            }
-          }}
+          value={inputValueApresentante}
+          onChange={handleInputChangeApresentante}
+          getOptionLabel={(option) => (option && option.numero ? option.numero : option ? option.label : "")}
+          noOptionsText={<RenderNoOptions onClick={handleOpenModalApresentante} title="Cadastrar Partes" />}
           renderOption={(props, option) => (
             <Box component="li" sx={{
               width: '100%',
@@ -254,6 +235,14 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
             </Box>
           )}
           sx={{ width: isSmallScreen ? '100%' : 360 }}
+          filterOptions={(options, { inputValue }) => {
+            const filteredOptions = options.filter(
+              (option) =>
+                option.label.toLowerCase().includes(inputValue.toLowerCase()) ||
+                option.numero.toString().includes(inputValue)
+            );
+            return filteredOptions;
+          }}
           renderInput={(params) => <TextField color="success" {...params}
 
 
@@ -285,8 +274,6 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
                 },
               }}
               {...params}
-              value={value}
-              onChange={handleChangeTypeService}
               label="Tipo de serviço"
               sx={{
                 color: "#237117",
@@ -334,17 +321,38 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
             gap: '8px',
             alignItems: 'start'
           }}>
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
 
-            <TextField sx={{
-              width: isSmallScreen ? '100%' : '360px',
-
-            }}
-              type="text"
-              label="Outorgantes"
-              color='success'
-              value={outorgante}
-
+              options={['kauan', 'ronaldo']}
+              value={outorgantes}
               onChange={(e) => handleChange('outorgante', index, e.target.value)}
+              autoHighlight
+
+
+              sx={{ width: isSmallScreen ? "100%" : 360 }}
+              renderInput={(params) => (
+                <TextField
+                  value={outorgante}
+                  onChange={(e) => handleChange('outorgante', index, e.target.value)}
+                  color="success"
+                  InputProps={{
+                    ...params.InputProps,
+                    classes: {
+                      root: 'no-options-input',
+                    },
+                  }}
+                  {...params}
+                  label="Tipo de serviço"
+                  sx={{
+                    color: "#237117",
+                    "& input": {
+                      color: "success.main",
+                    },
+                  }}
+                />
+              )}
             />
             <div style={{ display: 'flex', gap: '9px' }}>
               <button style={{
@@ -365,16 +373,37 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
             gap: '8px',
             alignItems: 'start'
           }}>
-            <TextField
-              sx={{
-                width: isSmallScreen ? '100%' : '360px',
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
 
-              }}
-              type="text"
-              label="Outorgados"
+              options={['kauan', 'ronaldo']}
               value={outorgado}
-              color="success"
-              onChange={(e) => handleChange('outorgado', index, e.target.value)}
+              onChange={(e) => handleChange('outorgante', index, e.target.value)}
+              autoHighlight
+
+              sx={{ width: isSmallScreen ? "100%" : 360 }}
+              renderInput={(params) => (
+                <TextField
+                  color="success"
+                  value={outorgado}
+                  onChange={(e) => handleChange('outorgante', index, e.target.value)}
+                  InputProps={{
+                    ...params.InputProps,
+                    classes: {
+                      root: 'no-options-input',
+                    },
+                  }}
+                  {...params}
+                  label="Tipo de serviço"
+                  sx={{
+                    color: "#237117",
+                    "& input": {
+                      color: "success.main",
+                    },
+                  }}
+                />
+              )}
             />
             <div style={{ display: 'flex', gap: '9px' }}>
               <button style={{
@@ -409,6 +438,7 @@ export const CadastroNotas = ({ onClose, onClickPartes }) => {
 
       </BoxInputs>
       <ModalNotesTag open={open} onClose={handleCloseModalTag} />
+      <CadastroPartes onClose={handleCloseModalApresentante} open={openApresentante} />
     </BoxMain >
   );
 };
