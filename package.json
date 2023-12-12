@@ -1,0 +1,35 @@
+{
+  "name": "arquivadoc-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/poppins": "^5.0.8",
+    "@fontsource/roboto": "^5.0.8",
+    "@mui/icons-material": "^5.14.11",
+    "@mui/material": "^5.14.18",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.6",
+    "@mui/system": "^5.14.18",
+    "@mui/x-date-pickers": "^6.18.2",
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/default-layout": "^3.12.0",
+    "@react-pdf-viewer/thumbnail": "^3.12.0",
+    "@react-pdf/renderer": "^3.1.14",
+    "axios": "^1.6.2",
+    "date-fns": "^2.30.0",
+    "lodash": "^4.17.21",
+    "next": "^14.0.1",
+    "pdfjs-dist": "^3.4.120",
+    "raw-loader": "^4.0.2",
+    "react": "latest",
+    "react-dom": "latest",
+    "styled-components": "^6.1.1"
+  }
+}
