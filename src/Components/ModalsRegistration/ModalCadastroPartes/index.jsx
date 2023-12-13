@@ -43,7 +43,7 @@ export const CadastroPartes = ({ open, onClose }) => {
         }}>
           <Typography sx={{
             fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
-          }}>
+          }} color={"black"}>
             Cadastro - Partes
           </Typography>
           <button style={{
