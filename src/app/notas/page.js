@@ -8,6 +8,7 @@ import { useState } from "react";
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
 import { CadastroNotas } from "@/Components/Modals/ModalCadastroNotas";
 import { DocList } from "@/Components/List/DocList";
+import { ButtonLixeira } from "@/Components/ButtonLixeira";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -118,6 +119,7 @@ const PageNotas = () => {
                         )}
                     />
                     <ButtonOpenModals onClick={handleOpen} />
+                    <ButtonLixeira href={"/notas/lixeira_notas"} />
                 </BoxSearch>
                 <DocList data={data} />
             </BoxMain>
