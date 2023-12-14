@@ -1,5 +1,7 @@
 
 
+import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
+import CadastroRGITypes from "@/Components/ModalsRegistration/ModalTypesRGI";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
@@ -11,6 +13,9 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
     const [tipo, setTipo] = useState(null);
     const [opcao, setOpcao] = useState(null);
+    const [openModalRGITypes,setOpenModalRGITypes] = useState(false)
+    const handleOpenModalRGITypes = () => setOpenModalRGITypes(!openModalRGITypes)
+    const handleCloseModalRGITypes = () => setOpenModalRGITypes(!openModalRGITypes)
     const tipos = [
         {
             nome: 'Averbação',
@@ -114,7 +119,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                     getOptionLabel={(tipo) => tipo.nome}
                     style={{ width: isSmallScreen ? '100%' : '360px', }}
                     renderInput={(params) => (
-                        <TextField {...params} label="Serviço" variant="outlined" color="success" />
+                        <TextField {...params} label="Tipo de Serviço" variant="outlined" color="success" />
                     )}
                 />
 
@@ -124,6 +129,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                         onChange={(event, newValue) => setOpcao(newValue)}
                         options={tipo.opcoes}
                         getOptionLabel={(opcao) => opcao}
+                        noOptionsText={<RenderNoOptions onClick={handleOpenModalRGITypes} title={'Cadastrar Tipo'} />}
                         style={{ width: isSmallScreen ? '100%' : '360px', marginTop: 0 }}
                         renderInput={(params) => (
                             <TextField {...params} label={`Selecione a opção de ${tipo.nome}`} color="success" variant="outlined" />
@@ -141,36 +147,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                 <TextField
                     sx={{
                         width: isSmallScreen ? '100%' : '360px',
-                        border: 'none',
-                        '::placeholder': {
-                            color: 'success.main',
-                        },
-                        '& .MuiInputBase-input': {
-                            display: 'block',
-                            width: '100%',
-                            padding: '0.9rem 0.75rem',
-                            fontSize: '1rem',
-                            fontWeight: 400,
-                            lineHeight: 1.5,
-                            backgroundColor: '#fff',
-                            backgroundClip: 'padding-box',
-                            border: '1px solid #ced4da',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none',
-                            appearance: 'none',
-                            borderRadius: '0.375rem',
-                            transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none',
-                            },
-                        },
-                        '& .MuiInput-underline': {
-                            '&:before, &:after': {
-                                borderBottom: 'none',
-                            },
-                        },
+                        border: 'none'
                     }}
                     type="file"
                     color='success'
@@ -216,6 +193,8 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                 </Button>
 
             </Box>
+            <CadastroRGITypes open={openModalRGITypes} onClose={handleCloseModalRGITypes} />
+
         </Box >
     );
 };

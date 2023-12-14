@@ -1,6 +1,9 @@
 
 
 
+import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
+import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
+import ModalTypesRTD from "@/Components/ModalsRegistration/ModalCadastroTypesRTD";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
@@ -43,6 +46,13 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
             numero: '3333', label: 'Guaiuba Construtora'
         }
     ]
+
+    const [openModalPresenter, setOpenModalPresenter] = useState('')
+    const handleOpenModalPresenter = () => setOpenModalPresenter(!openModalPresenter)
+    const handleCloseModalPresenter = () => setOpenModalPresenter(!openModalPresenter)
+    const [openModalCadastroTypes, setOpenModalCadastroTypes] = useState(false)
+    const handleOpenModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
+    const handleCloseModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
 
     return (
         <Box sx={{
@@ -108,6 +118,7 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
                     options={optapresentante}
                     autoHighlight
                     getOptionLabel={(option) => option.numero}
+                    noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title={'Cadastrar Apresentante'} />}
                     renderOption={(props, option) => (
                         <Box component="li" sx={{
                             width: '100%',
@@ -152,7 +163,7 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
                     disablePortal
                     id="combo-box-demo"
                     options={['Nada ainda']}
-                    noOptionsText=""
+                    noOptionsText={<RenderNoOptions onClick={handleOpenModalTypes} title={"Cadastrar Tipo"} />}
 
                     sx={{ width: isSmallScreen ? "100%" : 360 }}
                     renderInput={(params) => (
@@ -285,6 +296,8 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
                 </Button>
 
             </Box>
+            <CadastroPartes open={openModalPresenter} onClose={handleCloseModalPresenter} />
+            <ModalTypesRTD open={openModalCadastroTypes} onClose={handleCloseModalTypes} />
         </Box >
     );
 };

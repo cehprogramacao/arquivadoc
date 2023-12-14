@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
@@ -7,7 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 
-export const ModalNotesTag = ({ onClose, open }) => {
+const CadastroModalCallingTypes = ({ onClose, open }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   return (
@@ -43,7 +44,7 @@ export const ModalNotesTag = ({ onClose, open }) => {
               fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
             }}
           >
-            Cadastro - Tag
+            Cadastro - Tipos de Ofícios
           </Typography>
           <IconButton
             aria-label="close"
@@ -90,3 +91,4 @@ export const ModalNotesTag = ({ onClose, open }) => {
     </Modal>
   );
 };
+export default CadastroModalCallingTypes
