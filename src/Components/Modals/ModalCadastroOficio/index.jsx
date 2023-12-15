@@ -1,6 +1,10 @@
 
+import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
+import ModalCadastroCallingEntity from "@/Components/ModalsRegistration/ModalCadastroCallingEntity";
+import CadastroModalCallingTypes from "@/Components/ModalsRegistration/ModalCadastroCallingTypes";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
+import { useState } from "react";
 
 
 export const CadastroOficio = ({ onClose, onClickPartes }) => {
@@ -22,6 +26,15 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
       label: 'Jurídico'
     },
   ]
+
+  const [openModalCalling, setOpenModalCalling] = useState('')
+  const handleOpenModalCalling = () => setOpenModalCalling(!openModalCalling)
+  const handleCloseModalCalling = () => setOpenModalCalling(!openModalCalling)
+  const [openModalCadastroTypes, setOpenModalCadastroTypes] = useState(false)
+  const handleOpenModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
+  const handleCloseModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
+
+
   return (
     <Box sx={{
       width: isSmallScreen ? '300px' : "409px",
@@ -68,9 +81,9 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
         gap: isSmallScreen ? '20px' : '30px',
         height: "100vh",
         overflowY: 'auto',
-        padding:'5px 0'
+        padding: '5px 0'
       }}>
-       
+
         <TextField sx={{
           width: isSmallScreen ? '100%' : '360px',
           '& input': { color: 'success.main' },
@@ -89,19 +102,31 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
           type="number"
           color='success'
         />
-        <TextField sx={{
-          width: isSmallScreen ? '100%' : '360px',
-          '& input': { color: 'success.main' },
-
-
-        }}
-          label="Entidade"
-          color='success'
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={['Kauan','Ronaldo','Eduarda','Diego']}
+          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          noOptionsText={<RenderNoOptions onClick={handleOpenModalCalling} title={'Cadastrar Entidade'} />}
+          renderInput={(params) => (
+            <TextField
+              color="success"
+              {...params}
+              label="Entidade"
+              sx={{
+                color: "#237117",
+                '& input': {
+                  color: 'success.main',
+                },
+              }}
+            />
+          )}
         />
         <Autocomplete
           disablePortal
           id="combo-box-demo"
           options={opt}
+          noOptionsText={<RenderNoOptions onClick={handleOpenModalTypes} title={'Cadastrar Tipo'} />}
           sx={{ width: isSmallScreen ? '100%' : 360 }}
           renderInput={(params) => (
             <TextField
@@ -204,6 +229,8 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
         </Button>
 
       </Box>
+      <CadastroModalCallingTypes open={openModalCadastroTypes} onClose={handleCloseModalTypes} />
+      <ModalCadastroCallingEntity open={openModalCalling} onClose={handleCloseModalCalling} />
     </Box >
   );
 };

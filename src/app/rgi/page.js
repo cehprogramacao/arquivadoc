@@ -11,6 +11,7 @@ import ModalList from '@/Components/Modals/ModalList';
 import { useState } from 'react';
 import { CadastroModalRGI } from '@/Components/Modals/ModalCadastroRGI';
 import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
+import CadastroRGITypes from '@/Components/ModalsRegistration/ModalTypesRGI';
 
 const top100Films = [
     { label: 'Nome' },

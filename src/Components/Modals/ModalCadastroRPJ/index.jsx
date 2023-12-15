@@ -1,8 +1,9 @@
-
-
-
+import React, { useState } from 'react'
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
+import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
+import ModalTypesRPJ from '@/Components/ModalsRegistration/ModalCadastroTypesRPJ';
+import RenderNoOptions from '@/Components/ButtonOpenModalCadastro';
 
 
 export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
@@ -42,6 +43,14 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
             numero: '3333', label: 'Guaiuba Construtora'
         }
     ]
+
+    const [openModalPresenter, setOpenModalPresenter] = useState('')
+    const handleOpenModalPresenter = () => setOpenModalPresenter(!openModalPresenter)
+    const handleCloseModalPresenter = () => setOpenModalPresenter(!openModalPresenter)
+    const [openModalCadastroTypes, setOpenModalCadastroTypes] = useState(false)
+    const handleOpenModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
+    const handleCloseModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
+
 
     return (
         <Box sx={{
@@ -105,6 +114,7 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
                     disablePortal
                     id="combo-box-demo"
                     options={optapresentante}
+                    noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title={'Cadastrar Apresentante'} />}
                     autoHighlight
                     getOptionLabel={(option) => option.numero}
                     renderOption={(props, option) => (
@@ -152,7 +162,7 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
                     disablePortal
                     id="combo-box-demo"
                     options={['Nada ainda']}
-                    noOptionsText=""
+                    noOptionsText={<RenderNoOptions onClick={handleOpenModalTypes} title={'Cadastrar Tipo'} />}
 
                     sx={{ width: isSmallScreen ? "100%" : 360 }}
                     renderInput={(params) => (
@@ -201,39 +211,17 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
                     label="Folha final"
                     color='success'
                 />
+                <TextField sx={{
+                    '& input': { color: 'success.main' }
+                }}
+                    fullWidth
+                    label="Número da caixa"
+                    type="number"
+                    color='success'
+                />
                 <TextField
                     sx={{
                         width: isSmallScreen ? '100%' : '360px',
-                        border: 'none',
-                        '::placeholder': {
-                            color: 'success.main',
-                        },
-                        '& .MuiInputBase-input': {
-                            display: 'block',
-                            width: '100%',
-                            padding: '0.9rem 0.75rem',
-                            fontSize: '1rem',
-                            fontWeight: 400,
-                            lineHeight: 1.5,
-                            backgroundColor: '#fff',
-                            backgroundClip: 'padding-box',
-                            border: '1px solid #ced4da',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none',
-                            appearance: 'none',
-                            borderRadius: '0.375rem',
-                            transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none',
-                            },
-                        },
-                        '& .MuiInput-underline': {
-                            '&:before, &:after': {
-                                borderBottom: 'none',
-                            },
-                        },
                     }}
                     type="file"
                     color='success'
@@ -279,6 +267,8 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
                 </Button>
 
             </Box>
+            <CadastroPartes open={openModalPresenter} onClose={handleOpenModalPresenter} />
+            <ModalTypesRPJ open={openModalCadastroTypes} onClose={handleCloseModalTypes} />
         </Box >
     );
 };

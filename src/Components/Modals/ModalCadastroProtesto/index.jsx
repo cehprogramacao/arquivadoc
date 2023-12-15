@@ -1,7 +1,10 @@
 
 
+import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
+import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
+import { useState } from "react";
 
 
 export const CadastroProtesto = ({ onClose, onClickPartes }) => {
@@ -41,6 +44,9 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
       numero: '3333', label: 'Guaiuba Construtora'
     }
   ]
+  const [openPartsModal, setOpenPartsModal] = useState(false)
+  const handleOpenPartsModal = () => setOpenPartsModal(!openPartsModal)
+  const handleClosePartsModal = () => setOpenPartsModal(!openPartsModal)
 
   return (
     <Box sx={{
@@ -91,8 +97,9 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         padding:'5px 0'
       }}>
         
-        <TextField sx={{
-          width: isSmallScreen ? '100%' : '360px',
+        <TextField 
+        fullWidth
+        sx={{
           '& input': { color: 'success.main' },
 
 
@@ -101,8 +108,9 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           type="number"
           color='success'
         />
-        <TextField sx={{
-          width: isSmallScreen ? '100%' : '360px',
+        <TextField 
+        fullWidth
+        sx={{
           '& input': { color: 'success.main' }
         }}
           label="N° da Caixa"
@@ -117,6 +125,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           options={optapresentante}
           autoHighlight
           getOptionLabel={(option) => option.numero}
+          noOptionsText={<RenderNoOptions title={'Cadastrar Apresentante'} onClick={handleOpenPartsModal} />}
           renderOption={(props, option) => (
             <Box component="li" sx={{
               width: '100%',
@@ -133,7 +142,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
               </Typography>
             </Box>
           )}
-          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          fullWidth
           renderInput={(params) => <TextField color="success" {...params}
 
 
@@ -154,6 +163,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           id="combo-box-demo"
           options={optapresentante}
           autoHighlight
+          noOptionsText={<RenderNoOptions title={'Cadastrar Sacado'} onClick={handleOpenPartsModal} />}
           getOptionLabel={(option) => option.numero}
           renderOption={(props, option) => (
             <Box component="li" sx={{
@@ -171,7 +181,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
               </Typography>
             </Box>
           )}
-          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          fullWidth
           renderInput={(params) => <TextField color="success" {...params}
 
 
@@ -193,6 +203,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           options={optapresentante}
           autoHighlight
           getOptionLabel={(option) => option.numero}
+          noOptionsText={<RenderNoOptions title={'Cadastrar Devedor'} onClick={handleOpenPartsModal} />}
           renderOption={(props, option) => (
             <Box component="li" sx={{
               width: '100%',
@@ -209,7 +220,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
               </Typography>
             </Box>
           )}
-          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          fullWidth
           renderInput={(params) => <TextField color="success" {...params}
 
 
@@ -228,7 +239,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           disablePortal
           id="combo-box-demo"
           options={optipos}
-          sx={{ width: isSmallScreen ? '100%' : 360 }}
+          fullWidth
           renderInput={(params) => (
             <TextField
               color="success"
@@ -245,39 +256,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           )}
         />
         <TextField
-          sx={{
-            width: isSmallScreen ? '100%' : '360px',
-            border: 'none',
-            '::placeholder': {
-              color: 'success.main',
-            },
-            '& .MuiInputBase-input': {
-              display: 'block',
-              width: '100%',
-              padding: '0.9rem 0.75rem',
-              fontSize: '1rem',
-              fontWeight: 400,
-              lineHeight: 1.5,
-              backgroundColor: '#fff',
-              backgroundClip: 'padding-box',
-              border: '1px solid #ced4da',
-              WebkitAppearance: 'none',
-              MozAppearance: 'none',
-              appearance: 'none',
-              borderRadius: '0.375rem',
-              transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
-            },
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                border: 'none',
-              },
-            },
-            '& .MuiInput-underline': {
-              '&:before, &:after': {
-                borderBottom: 'none',
-              },
-            },
-          }}
+          fullWidth
           type="file"
           color='success'
           InputLabelProps={{
@@ -322,6 +301,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         </Button>
 
       </Box>
+      <CadastroPartes open={openPartsModal} onClose={handleClosePartsModal} />
     </Box >
   );
 };
