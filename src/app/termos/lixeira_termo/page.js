@@ -122,7 +122,6 @@ const LixeiraTermos = ({ data }) => {
             gap: '10px',
             placeItems: 'center'
         }}>
-            <Header />
             <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
                 Lixeira
             </Typography>

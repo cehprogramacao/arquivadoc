@@ -318,11 +318,11 @@ export const Sidebar = () => {
                 width: 'auto',
                 display: 'flex',
                 alignItems: 'center',
-                padding: '0 21px',
+                padding: '17px 21px',
                 backgroundColor: '#237117',
                 flexDirection: 'column',
-                gap: '20px',
-                height: isSmallScreen ? 'auto' : '219px',
+                gap: '0px',
+                height: 'auto',
                 placeContent: 'center'
             }}>
                 <ListItem>
@@ -334,23 +334,6 @@ export const Sidebar = () => {
                         padding: '10px 0',
                         margin: '0 auto'
                     }}>
-                        <button style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: "#fff",
-                            gap: '2px',
-                        }}>
-                            <SettingsOutlinedIcon sx={{
-                                width: '40px',
-                                height: '40px',
-                                flexShrink: 0,
-                                cursor: 'pointer'
-                            }} alt="" />
-                        </button>
                         <button style={{
                             display: 'flex',
                             flexDirection: 'column',

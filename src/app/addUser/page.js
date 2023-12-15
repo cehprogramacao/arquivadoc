@@ -105,7 +105,8 @@ const AddUser = () => {
                 placeItems: 'center',
                 border: '1px solid #237117',
                 borderRadius: '8px',
-                gap: '30px'
+                gap: '30px',
+                flexWrap:'wrap'
             }}>
                 <Typography variant="h5" sx={{
                     display: 'flex',
