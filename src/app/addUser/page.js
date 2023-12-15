@@ -18,15 +18,15 @@ import {
 import { styled, width } from '@mui/system';
 
 const StyledFormContainer = styled(Box)({
-    width: '50%',
-    maxWidth: '600px',
+    width: '70%',
+    maxWidth: '700px',
     height: '100vh',
     margin: 'auto',
-    padding: '160px 0',
+    padding: '130px 0',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: '40px'
+    gap: '0px'
 });
 
 const StyledContentContainer = styled(Box)({
@@ -42,16 +42,16 @@ const StyledButtonContainer = styled(Box)({
     display: 'flex',
     justifyContent: 'space-between',
     width: '300px',
-    position: 'fixed',
-    bottom: '90px'
 });
 
 const AddUser = () => {
     const [userData, setUserData] = useState({
-        firstName: '',
-        lastName: '',
+        username: '',
         email: '',
+        phone: '',
+        password: '',
     });
+
     const [permissions, setPermissions] = useState({
         view: false,
         edit: false,
@@ -75,20 +75,21 @@ const AddUser = () => {
     };
 
     const handleNext = () => {
-        if (!userData.firstName.trim() || !userData.lastName.trim() || !userData.email.trim()) {
-            setUserData([...userData, {
-                email: "",
-                firstName: "",
-                lastName: ""
-            }])
+        if (section === 'Dados' && (!userData.username.trim() || !userData.email.trim() || !userData.phone.trim() || !userData.password.trim())) {
+            // Adicione aqui a lógica para exibir uma mensagem de erro se necessário
             return;
         }
-
-        setSection(section === 'Dados' ? 'Permissoes' : 'Dados');
+        setSection('Permissoes');
     };
 
     const handleBack = () => {
-        setSection(section === 'Permissoes' ? 'Dados' : 'Permissoes');
+        setUserData({
+            username: '',
+            email: '',
+            phone: '',
+            password: '',
+        });
+        setSection('Dados');
     };
 
     return (
@@ -127,34 +128,21 @@ const AddUser = () => {
                     color: section === 'Permissoes' ? '#fff' : '#237117',
                 }}>
                     {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
-                    Permissoções
+                    Permissões
                 </Typography>
             </Box>
             <StyledContentContainer>
                 {section === 'Dados' && (
-                    <Box
-                        component="form"
-
-                    >
+                    <Box component="form">
                         <TextField
-                            label="First Name"
-                            name="firstName"
+                            label="Username"
+                            name="username"
                             variant="outlined"
-                            value={userData.firstName}
+                            value={userData.username}
                             onChange={handleChange}
                             fullWidth
                             sx={{ mb: 5 }}
                             required
-                        />
-                        <TextField
-                            label="Last Name"
-                            name="lastName"
-                            variant="outlined"
-                            value={userData.lastName}
-                            onChange={handleChange}
-                            required
-                            fullWidth
-                            sx={{ mb: 5 }}
                         />
                         <TextField
                             label="Email"
@@ -164,6 +152,28 @@ const AddUser = () => {
                             value={userData.email}
                             onChange={handleChange}
                             fullWidth
+                            sx={{ mb: 5 }}
+                            required
+                        />
+                        <TextField
+                            label="Phone"
+                            name="phone"
+                            variant="outlined"
+                            value={userData.phone}
+                            onChange={handleChange}
+                            fullWidth
+                            sx={{ mb: 5 }}
+                            required
+                        />
+                        <TextField
+                            label="Password"
+                            name="password"
+                            variant="outlined"
+                            type="password"
+                            value={userData.password}
+                            onChange={handleChange}
+                            fullWidth
+                            sx={{ mb: 5 }}
                             required
                         />
                     </Box>
@@ -181,24 +191,35 @@ const AddUser = () => {
                             <Table>
                                 <TableHead sx={{ background: '#237117' }}>
                                     <TableRow>
-                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} >Permissão</TableCell>
-                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Selecionar</TableCell>
+                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Permissão</TableCell>
+                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Visualizar</TableCell>
+                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Adicionar</TableCell>
+                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Editar</TableCell>
+                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Deletar</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {Object.keys(permissions).map((permission) => (
+                                    {['Notas', 'RGI', 'RTD', 'RPJ', 'Protestos', 'Oficios', 'Cadastro Geral'].map((permission) => (
                                         <TableRow key={permission}>
-                                            <TableCell sx={{ fontSize: "1.2rem" }} >{permission}</TableCell>
+                                            <TableCell sx={{ fontSize: "1.2rem" }} align="center">{permission}</TableCell>
                                             <TableCell align="center">
-                                                <FormControlLabel
-                                                    control={<Checkbox color='success' checked={permissions[permission]} onChange={() => handleCheckboxChange(permission)} />}
-                                                />
+                                                <Checkbox color='success' />
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Checkbox color='success' />
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Checkbox color='success' />
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Checkbox color='success' />
                                             </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
                         </TableContainer>
+
                     </Box>
                 )}
                 <StyledButtonContainer>
