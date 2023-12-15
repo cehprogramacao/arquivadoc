@@ -107,13 +107,10 @@ const PageUsuarios = ({ data }) => {
                     gap: isSmallScreen ? '20px' : '50px'
                 }}>
                     <Buttons color={'green'} title={'Buscar'} />
-                    <ButtonOpenModals onClick={handleOpen} />
+                    <ButtonOpenModals href={"/addUser"} />
                 </Box>
             </div>
             <UserTable data={rows} onClick={handleExcluir} />
-            <Drawer anchor="left" open={open} onClose={handleClose}>
-                <CadastroUsuarios onClose={handleClose} />
-            </Drawer>
         </Box>
     )
 }
