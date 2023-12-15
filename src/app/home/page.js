@@ -64,10 +64,9 @@ const Page = () => {
       sx={{
         display: "flex",
         placeContent: "center",
-        padding: "140px 0",
+        padding: "140px 250px",
         flexDirection: "column",
         gap: "30px",
-        alignItems: "center",
       }}
     >
       <Box
@@ -132,8 +131,6 @@ const Page = () => {
           height: "auto",
           display: "flex",
           flexDirection: "column",
-          placeContent: "center",
-          background: "red",
         }}
       >
         <Typography
