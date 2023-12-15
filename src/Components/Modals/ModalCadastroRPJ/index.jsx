@@ -211,6 +211,14 @@ export const CadastroModalRPJ = ({ onClose, onClickPartes }) => {
                     label="Folha final"
                     color='success'
                 />
+                <TextField sx={{
+                    '& input': { color: 'success.main' }
+                }}
+                    fullWidth
+                    label="Número da caixa"
+                    type="number"
+                    color='success'
+                />
                 <TextField
                     sx={{
                         width: isSmallScreen ? '100%' : '360px',

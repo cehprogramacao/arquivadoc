@@ -189,69 +189,37 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
                 />
 
                 <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
+                    fullWidth
                     label="Livro"
                     type="number"
                     color='success'
                 />
                 <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
+                    fullWidth
                     label="Folhas inicial"
                     color='success'
                 />
                 <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
+                    fullWidth
                     label="Folhas final"
                     color='success'
                 />
                 <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
+                    fullWidth
                     label="Número da caixa"
                     type="number"
                     color='success'
                 />
                 <TextField
-                    sx={{
-                        width: isSmallScreen ? '100%' : '360px',
-                        border: 'none',
-                        '::placeholder': {
-                            color: 'success.main',
-                        },
-                        '& .MuiInputBase-input': {
-                            display: 'block',
-                            width: '100%',
-                            padding: '0.9rem 0.75rem',
-                            fontSize: '1rem',
-                            fontWeight: 400,
-                            lineHeight: 1.5,
-                            backgroundColor: '#fff',
-                            backgroundClip: 'padding-box',
-                            border: '1px solid #ced4da',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none',
-                            appearance: 'none',
-                            borderRadius: '0.375rem',
-                            transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none',
-                            },
-                        },
-                        '& .MuiInput-underline': {
-                            '&:before, &:after': {
-                                borderBottom: 'none',
-                            },
-                        },
-                    }}
+                    fullWidth
                     type="file"
                     color='success'
                     InputLabelProps={{
