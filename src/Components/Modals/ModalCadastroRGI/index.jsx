@@ -1,5 +1,8 @@
 
 
+import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
+import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
+import CadastroRGITypes from "@/Components/ModalsRegistration/ModalTypesRGI";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
@@ -11,6 +14,9 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
     const [tipo, setTipo] = useState(null);
     const [opcao, setOpcao] = useState(null);
+    const [openModalRGITypes, setOpenModalRGITypes] = useState(false)
+    const handleOpenModalRGITypes = () => setOpenModalRGITypes(!openModalRGITypes)
+    const handleCloseModalRGITypes = () => setOpenModalRGITypes(!openModalRGITypes)
     const tipos = [
         {
             nome: 'Averbação',
@@ -33,6 +39,24 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
         },
 
     ];
+    const [valuePresenter, setValuePresenter] = useState('')
+    const [openModalPresenter, setOpenModalPresenter] = useState(false)
+    const handleOpenModalPresenter = () => {
+        setOpenModalPresenter(!openModalPresenter)
+    }
+    const handleCloseModalPresenter = () => {
+        setOpenModalPresenter(!openModalPresenter)
+    }
+    const [presenter, setPresenter] = useState([
+        {
+            id: 1,
+            label: 'Diego Corretor'
+        },
+        {
+            id: 2,
+            label: 'Juninho Capixaba'
+        }
+    ])
     return (
         <Box sx={{
             width: isSmallScreen ? '300px' : "409px",
@@ -83,7 +107,6 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
 
             }}>
                 <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' },
 
 
@@ -92,29 +115,40 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                     color='success'
                 />
                 <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
                     label="N° da Caixa"
                     color='success'
                 />
-                <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
-                    '& input': { color: 'success.main' },
-
-
-                }}
-                    label="Apresentante"
-                    color='success'
+                <Autocomplete
+                    value={valuePresenter}
+                    options={presenter}
+                    getOptionLabel={(option) => option.label || ''}
+                    onChange={(event, newValue) => {
+                        setValuePresenter(newValue);
+                    }}
+                    noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title="Cadastrar Apresentante" />}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Apresentante"
+                            color="success"
+                        />
+                    )}
+                    renderOption={(props, option) => (
+                        <li {...props} key={option.id}>
+                            {option.label}
+                        </li>
+                    )}
                 />
                 <Autocomplete
                     value={tipo}
                     onChange={(event, newValue) => setTipo(newValue)}
                     options={tipos}
                     getOptionLabel={(tipo) => tipo.nome}
-                    style={{ width: isSmallScreen ? '100%' : '360px', }}
+                    fullWidth
                     renderInput={(params) => (
-                        <TextField {...params} label="Serviço" variant="outlined" color="success" />
+                        <TextField {...params} label="Tipo de Serviço" variant="outlined" color="success" />
                     )}
                 />
 
@@ -124,14 +158,14 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                         onChange={(event, newValue) => setOpcao(newValue)}
                         options={tipo.opcoes}
                         getOptionLabel={(opcao) => opcao}
-                        style={{ width: isSmallScreen ? '100%' : '360px', marginTop: 0 }}
+                        noOptionsText={<RenderNoOptions onClick={handleOpenModalRGITypes} title={'Cadastrar Tipo'} />}
+                        style={{ marginTop: 0 }}
                         renderInput={(params) => (
                             <TextField {...params} label={`Selecione a opção de ${tipo.nome}`} color="success" variant="outlined" />
                         )}
                     />
                 )}
                 <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
 
                 }}
                     type="text"
@@ -140,37 +174,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                 />
                 <TextField
                     sx={{
-                        width: isSmallScreen ? '100%' : '360px',
-                        border: 'none',
-                        '::placeholder': {
-                            color: 'success.main',
-                        },
-                        '& .MuiInputBase-input': {
-                            display: 'block',
-                            width: '100%',
-                            padding: '0.9rem 0.75rem',
-                            fontSize: '1rem',
-                            fontWeight: 400,
-                            lineHeight: 1.5,
-                            backgroundColor: '#fff',
-                            backgroundClip: 'padding-box',
-                            border: '1px solid #ced4da',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none',
-                            appearance: 'none',
-                            borderRadius: '0.375rem',
-                            transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none',
-                            },
-                        },
-                        '& .MuiInput-underline': {
-                            '&:before, &:after': {
-                                borderBottom: 'none',
-                            },
-                        },
+                        border: 'none'
                     }}
                     type="file"
                     color='success'
@@ -216,6 +220,8 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                 </Button>
 
             </Box>
+            <CadastroRGITypes open={openModalRGITypes} onClose={handleCloseModalRGITypes} />
+            <CadastroPartes open={openModalPresenter} onClose={handleCloseModalPresenter} />
         </Box >
     );
 };
