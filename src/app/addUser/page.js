@@ -17,16 +17,26 @@ import {
 } from '@mui/material';
 import { styled, width } from '@mui/system';
 
+
+const fontBodyParams = {
+    fontSize: {lg:'.9rem', md: '1rem',sm: '.96rem', xs: '.55rem'},
+    lineHeight: {lg:'1rem', md: '.9rem',sm: '.89rem', xs: '.833rem'},
+}
+const fontParams = {
+    fontSize: {lg:'1.5rem', md: '1.5rem',sm: '1.3rem', xs: '1rem'},
+    lineHeight: {lg:'1.2rem', md: '1rem',sm: '.89rem', xs: '.833rem'},
+}
+
 const StyledFormContainer = styled(Box)({
-    width: '70%',
+    width: '100%',
     maxWidth: '700px',
-    height: '100vh',
+    height: 'auto',
     margin: 'auto',
-    padding: '130px 0',
+    padding: '80px 30px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: '0px'
+    gap: '0px',
 });
 
 const StyledContentContainer = styled(Box)({
@@ -38,10 +48,14 @@ const StyledContentContainer = styled(Box)({
 });
 
 const StyledButtonContainer = styled(Box)({
-    marginTop: '20px',
+    // marginTop: '10px',
     display: 'flex',
     justifyContent: 'space-between',
-    width: '300px',
+    width: '100%',
+    flexWrap: 'wrap',
+    gap: '8px',
+    alignItems:'center',
+    placeItems:"center"
 });
 
 const AddUser = () => {
@@ -105,28 +119,31 @@ const AddUser = () => {
                 placeItems: 'center',
                 border: '1px solid #237117',
                 borderRadius: '8px',
-                gap: '30px',
-                flexWrap:'wrap'
+                gap: {lg:'30px', md:'25px', sm:'20px', xs: '10px'},
+                flexWrap:'wrap',
+                marginTop:'40px'
             }}>
-                <Typography variant="h5" sx={{
+                <Typography sx={{
                     display: 'flex',
                     background: section === 'Dados' ? '#237117' : 'transparent',
                     border: '1px solid #237117',
-                    padding: '5px 40px',
+                    padding: '10px 40px',
                     color: section === 'Dados' ? '#fff' : '#237117',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
+                    ...fontParams
                 }}>
                     Dados
                     {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
                 </Typography>
-                <Typography variant="h5" sx={{
+                <Typography sx={{
                     display: 'flex',
                     border: '1px solid #237117',
-                    padding: '5px 26px',
+                    padding: '10px 26px',
                     color: '#237171',
                     borderRadius: '8px',
                     background: section === 'Permissoes' ? '#237117' : 'transparent',
                     color: section === 'Permissoes' ? '#fff' : '#237117',
+                    ...fontParams
                 }}>
                     {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
                     Permissões
@@ -188,9 +205,9 @@ const AddUser = () => {
                             '& .MuiFormControlLabel-root': { m: .8, },
                         }}
                     >
-                        <TableContainer component={Paper}>
+                        <TableContainer component={Paper} >
                             <Table>
-                                <TableHead sx={{ background: '#237117' }}>
+                                <TableHead sx={{ background: '#237117',  }}>
                                     <TableRow>
                                         <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Permissão</TableCell>
                                         <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Visualizar</TableCell>
@@ -227,6 +244,7 @@ const AddUser = () => {
                     <Button onClick={handleBack} variant="contained" disabled={section === 'Dados'} sx={{
                         background: "#237117",
                         color: '#fff',
+                        ...fontBodyParams,
                         ":hover": {
                             background: "#237117",
 
@@ -238,6 +256,7 @@ const AddUser = () => {
                     <Button onClick={handleNext} variant="contained" color="primary" sx={{
                         background: "#237117",
                         border: '1px solid #237117',
+                        ...fontBodyParams,
                         ":hover": {
                             background: "transparent",
 
