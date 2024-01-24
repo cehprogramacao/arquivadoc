@@ -64,9 +64,9 @@ const Page = () => {
       sx={{
         display: "flex",
         placeContent: "center",
-        padding: "140px 250px",
+        padding: "140px",
         flexDirection: "column",
-        gap: "30px",
+        gap: "20px",
       }}
     >
       <Box
@@ -80,19 +80,18 @@ const Page = () => {
           style={{
             width: "100%",
             display: "flex",
-            gap: "20px",
+            gap: "40px",
             alignItems: "center",
-            padding: "0 40px ",
             placeContent: "center",
             flexWrap: "wrap",
             flexDirection: isSmallScreenWrap ? "column" : "row",
-            padding: "0 20px",
+            padding: "0 15px",
           }}
         >
           <TextField
             label="Buscar"
             sx={{
-              width: isSmallScreen ? "100%" : 500,
+              width: isSmallScreen ? "100%" : 400,
               "& input": { color: "success.main" },
             }}
             color="success"
@@ -101,7 +100,7 @@ const Page = () => {
             disablePortal
             id="combo-box-demo"
             options={["CPF", "CNPJ"]}
-            sx={{ width: isSmallScreen ? "100%" : 500 }}
+            sx={{ width: isSmallScreen ? "100%" : 400 }}
             renderInput={(params) => (
               <TextField
                 color="success"

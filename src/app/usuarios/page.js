@@ -1,11 +1,11 @@
 "use client"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import { Autocomplete, Box, Button,Drawer, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
+import { Autocomplete, Box, Button, Drawer, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
 import { useState } from "react"
 import { Buttons } from "@/Components/Button/Button"
 import { UserTable } from "./tableUser/table"
-import { CadastroUsuarios } from "@/Components/Modals/ModalCadastroUsuario"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
+import Link from "next/link"
 
 
 const PageUsuarios = ({ data }) => {
@@ -16,7 +16,7 @@ const PageUsuarios = ({ data }) => {
     const handleClose = () => {
         setOpen(false)
     }
- 
+
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const top100Films = [
@@ -27,11 +27,11 @@ const PageUsuarios = ({ data }) => {
             label: 'Caixa'
         },
     ];
-    
+
     const [rows, setRows] = useState([
-        { id: 1, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'},
-        { id: 2, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'},
-        { id: 3, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin'}
+        { id: 1, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin' },
+        { id: 2, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin' },
+        { id: 3, nome: 'Kauan BrTech', email: 'kauandasilva@brtech.dev', setor: 'admin' }
     ]);
 
     const handleExcluir = (id) => {
@@ -107,7 +107,9 @@ const PageUsuarios = ({ data }) => {
                     gap: isSmallScreen ? '20px' : '50px'
                 }}>
                     <Buttons color={'green'} title={'Buscar'} />
-                    <ButtonOpenModals href={"/addUser"} />
+                    <Link href={"/addUser"}>
+                        <ButtonOpenModals />
+                    </Link>
                 </Box>
             </div>
             <UserTable data={rows} onClick={handleExcluir} />

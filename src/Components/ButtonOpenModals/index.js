@@ -3,9 +3,9 @@ import IconButton from '@mui/material/IconButton';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import Link from 'next/link';
 
-export const ButtonOpenModals = ({ onClick, href }) => {
+export const ButtonOpenModals = ({ onClick }) => {
   return (
-    <Link href={href}>
+
       <IconButton sx={{
         width: '60px',
         height: '50px',
@@ -23,6 +23,6 @@ export const ButtonOpenModals = ({ onClick, href }) => {
           fill: '#fff'
         }} />
       </IconButton>
-    </Link>
+
   );
 };
