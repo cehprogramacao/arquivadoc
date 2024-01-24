@@ -7,8 +7,13 @@ import { useRouter } from 'next/navigation';
 import Page from './home/page';
 
 const Home = () => {
-  const [login, setLogin] = useState(true)
   const router = useRouter()
+  const [login, setLogin] = useState(false)
+
+  if(!login) {
+    router.push("/login")
+  }
+  
   const theme = createTheme({
     palette: {
       primary: {
@@ -34,7 +39,7 @@ const Home = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <LoginPage />
+      <Page />
     </ThemeProvider>
   );
 }
