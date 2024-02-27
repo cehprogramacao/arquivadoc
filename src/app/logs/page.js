@@ -1,11 +1,15 @@
 "use client"
 import { Box,Typography} from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LogsTable } from "./tableLogs";
 
 
 const PageLogs = ({ data }) => {
-    
+    const [currentTime, setCurrentTime] = useState('');
+
+    useEffect(() => {
+        setCurrentTime(new Date());
+    }, []);
     const [rows, setRows] = useState([
         {
             id: 1,
@@ -13,7 +17,7 @@ const PageLogs = ({ data }) => {
             categoria: 'admin',
             registro: '9991',
             acao: 'Criação',
-            dataEhora: new Date().toLocaleString()
+            dataEhora: currentTime.toString()
         },
         {
             id: 2,
@@ -21,7 +25,7 @@ const PageLogs = ({ data }) => {
             categoria: 'admin',
             registro: '123',
             acao: 'Exclusão',
-            dataEhora: new Date().toLocaleString()
+            dataEhora: currentTime
         }
     ]);
 

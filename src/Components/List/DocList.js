@@ -5,6 +5,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import { useMediaQuery, useTheme } from '@mui/material';
+import Image from 'next/image';
 
 export const DocList = ({ data, onClick }) => {
     const theme = useTheme();
@@ -45,7 +46,7 @@ export const DocList = ({ data, onClick }) => {
                             <ListItemAvatar>
                                 {/* Uncomment the next line if you have PictureAsPdfIcon component */}
                                 {/* <PictureAsPdfIcon sx={{ fill: 'red' }} /> */}
-                                <img src="/image/pdf-icon.svg" alt="" />
+                                <Image width={50} height={50} src="/image/pdf-icon.svg" alt="" />
                             </ListItemAvatar>
                             <ListItemText
                                 primaryTypographyProps={{

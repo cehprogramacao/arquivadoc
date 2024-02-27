@@ -7,44 +7,45 @@ import { login } from "@/services/auth.service";
 const { Box } = require("@mui/system");
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [data, setData] = useState({
+    email: "",
+    password: ""
+  })
 
-  const handleLogin = async (email, password) => {
+
+  const handleOnChange = (event) => {
+    const { name, value } = event.target
+    setData({ ...data, [name]: value })
+  }
+
+  const handleLogin = async () => {
+    console.log(data)
     try {
-      // const { data } = await login({ email, password });
-      // console.log('Resposta do servidor:', data);
-
-      console.log({ email, password })
-
-      if (data) {
-        const { accessToken, refreshToken, auth } = data;
-
+      const loginUser = await login(data);
+      console.log('Resposta do servidor:', loginUser.data);
+      const { accessToken, refreshToken, auth } = loginUser.data
+      if (loginUser.data) {
         if (accessToken && refreshToken) {
           sessionStorage.setItem("accessToken", accessToken);
           sessionStorage.setItem("refreshToken", refreshToken);
-
           dispatch({ type: SET_LOGIN_DATA });
-
           if (auth) {
             router.push("/home");
           } else {
-            // Adicione lógica aqui para lidar com o caso em que o login não foi bem-sucedido
             console.log("Login não autorizado");
           }
         }
       } else {
-        // Adicione lógica aqui para lidar com o caso em que a resposta não contém dados
         console.log("Resposta de login inválida");
       }
     } catch (err) {
       console.log(err);
     }
   };
-
   const handleKeyUpEnter = (event) => {
     if (event.key.toLowerCase() === "enter") {
       handleLogin();
+      console.log(data)
     }
   };
 
@@ -116,7 +117,8 @@ const LoginPage = () => {
         >
           <TextField
             placeholder="Usuario/E-mail"
-            value={email}
+            value={data.email}
+            name="email"
             id="outlined-start-adornment"
             sx={{ width: "100%", background: "#FFFFFF", borderRadius: "8px" }}
             color="success"
@@ -125,11 +127,12 @@ const LoginPage = () => {
                 <PersonIcon sx={{ mr: 1, mb: 0.5, fill: "#237117" }} />
               ),
             }}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleOnChange}
           />
           <TextField
             placeholder="Senha"
-            value={password}
+            name="password"
+            value={data.password}
             id="outlined-start-adornment"
             sx={{ width: "100%", background: "#FFFFFF", borderRadius: "8px" }}
             color="success"
@@ -137,7 +140,7 @@ const LoginPage = () => {
             InputProps={{
               startAdornment: <KeyIcon sx={{ mr: 1, fill: "#237117" }} />,
             }}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleOnChange}
           />
         </Box>
         <Button
