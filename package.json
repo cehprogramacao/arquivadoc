@@ -24,6 +24,8 @@
     "@react-pdf/renderer": "^3.1.14",
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
+    "dotenv": "^16.3.1",
+    "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "next": "^14.0.1",
     "pdfjs-dist": "^3.4.120",
