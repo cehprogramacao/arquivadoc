@@ -41,7 +41,7 @@ export const isLoggedIn = (tokenType = 'refreshToken') => {
           ? jwtDecode(accessToken)
           : jwtDecode(refreshToken);
       return verifyJWTExpiration(decoded);
-    }
+    } 
 
     console.log('kkk20');
     return false;
@@ -71,6 +71,7 @@ export const extractDataFromSession = () => {
     if (!accessToken) throw new Error('Nao possui accessToken');
     const decoded = jwtDecode(accessToken);
     const { data } = decoded;
+    sessionStorage.setItem("isAdmin", data.is_admin)
     console.log(decoded, 7373731);
     return data;
   } catch (error) {

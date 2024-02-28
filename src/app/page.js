@@ -75,7 +75,7 @@ const Home = () => {
         placeContent: "center",
         flexDirection: "column",
         gap: "20px",
-        py: 5,
+        py: 15,
         px: 3
       }}
     >

@@ -4,10 +4,15 @@ import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/Key";
 import { useState } from "react";
 import { login } from "@/services/auth.service";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { SET_LOGIN_DATA } from "@/store/actions";
 const { Box } = require("@mui/system");
 
 const LoginPage = () => {
-  const [data, setData] = useState({
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const [dataUser, setDataUser] = useState({
     email: "",
     password: ""
   })
@@ -15,39 +20,35 @@ const LoginPage = () => {
 
   const handleOnChange = (event) => {
     const { name, value } = event.target
-    setData({ ...data, [name]: value })
+    setDataUser({ ...dataUser, [name]: value })
   }
 
   const handleLogin = async () => {
-    console.log(data)
+    console.log(dataUser)
     try {
-      const loginUser = await login(data);
-      console.log('Resposta do servidor:', loginUser.data);
-      const { accessToken, refreshToken, auth } = loginUser.data
-      if (loginUser.data) {
-        if (accessToken && refreshToken) {
-          sessionStorage.setItem("accessToken", accessToken);
-          sessionStorage.setItem("refreshToken", refreshToken);
-          dispatch({ type: SET_LOGIN_DATA });
-          if (auth) {
-            router.push("/home");
-          } else {
-            console.log("Login não autorizado");
-          }
-        }
+      const { data } = await login(dataUser);
+      console.log('Resposta do servidor:', data);
+      const { accessToken, refreshToken, auth } = data
+      console.log(accessToken, refreshToken, auth , '888888888888')
+
+      sessionStorage.setItem("accessToken", accessToken);
+      sessionStorage.setItem("refreshToken", refreshToken);
+      if (data.auth) {
+        router.push("/");
+        dispatch({type: SET_LOGIN_DATA})
       } else {
-        console.log("Resposta de login inválida");
+        console.log("Login não autorizado");
       }
     } catch (err) {
       console.log(err);
     }
   };
-  const handleKeyUpEnter = (event) => {
-    if (event.key.toLowerCase() === "enter") {
-      handleLogin();
-      console.log(data)
-    }
-  };
+  // const handleKeyUpEnter = (event) => {
+  //   if (event.key.toLowerCase() === "enter") {
+  //     handleLogin();
+  //     console.log(data)
+  //   }
+  // };
 
   return (
     <Box
@@ -62,7 +63,6 @@ const LoginPage = () => {
         padding: "20px",
         backgroundSize: "cover",
       }}
-      onKeyUp={handleKeyUpEnter}
     >
       <Box
         sx={{
@@ -117,7 +117,7 @@ const LoginPage = () => {
         >
           <TextField
             placeholder="Usuario/E-mail"
-            value={data.email}
+            value={dataUser.email}
             name="email"
             id="outlined-start-adornment"
             sx={{ width: "100%", background: "#FFFFFF", borderRadius: "8px" }}
@@ -132,7 +132,7 @@ const LoginPage = () => {
           <TextField
             placeholder="Senha"
             name="password"
-            value={data.password}
+            value={dataUser.password}
             id="outlined-start-adornment"
             sx={{ width: "100%", background: "#FFFFFF", borderRadius: "8px" }}
             color="success"

@@ -15,7 +15,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import Link from 'next/link';
 
 
-export const ModalOptions = ({ open, onClose, anchorEl }) => {
+export const ModalOptions = ({ data, open, logout, onClose, anchorEl }) => {
+
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
+  React.useEffect(() => {
+    const admin = sessionStorage.getItem("isAdmin");
+    if (admin === "1") {
+      setIsAdmin(true);
+    }
+  }, []);
+
 
   return (
     <React.Fragment>
@@ -78,15 +88,18 @@ export const ModalOptions = ({ open, onClose, anchorEl }) => {
             Logs
           </MenuItem>
         </Link>
-        <Link href={"/usuarios"}>
-          <MenuItem>
-            <ListItemIcon>
-              <GroupIcon fontSize="small" />
-            </ListItemIcon>
-            Usuários
-          </MenuItem>
-        </Link>
-        <MenuItem onClick={onClose}>
+        {isAdmin &&
+          <Link href={"/usuarios"}>
+            <MenuItem>
+              <ListItemIcon>
+                <GroupIcon fontSize="small" />
+              </ListItemIcon>
+              Usuários
+            </MenuItem>
+          </Link>
+        }
+
+        <MenuItem onClick={logout} >
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

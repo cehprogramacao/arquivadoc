@@ -14,7 +14,7 @@ const Header = () => {
 
     return (
         <>
-            <AppBar position="static" sx={{ backgroundColor: '#247117', height: '90px' }}>
+            <AppBar position="fixed" sx={{ backgroundColor: '#247117', height: '90px' }}>
                 <Toolbar sx={{ width: "100%" }}>
                     <IconButton
                         edge="start"

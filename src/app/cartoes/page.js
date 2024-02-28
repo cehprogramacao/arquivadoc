@@ -85,7 +85,7 @@ const PageAutographCards = ({ data }) => {
                 <Buttons color={'green'} title={'Buscar'} />
                 <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
                     <ButtonOpenModals onClick={handleOpen} />
-                    <ButtonLixeira href={"/notas/cartoes/lixeira_cartoes"} />
+                    <ButtonLixeira href={"/cartoes/lixeira_cartoes"} />
                 </Box>
             </div>
             <Drawer anchor='left' open={open} onClose={handleClose}>

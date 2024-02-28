@@ -17,15 +17,15 @@ export const DocList = ({ data, onClick }) => {
             container
             spacing={2}
             sx={{
+                width: "100%",
                 flexGrow: 1,
-                maxWidth: isSmallScreen ? '100%' : '1300px',
                 height: '450px',
                 margin: '0 auto',
                 position: 'relative',
                 overflowY: 'auto',
             }}
         >
-            {data.map((item, index) => (
+            {data && data.map((item, index) => (
                 <Grid
                     item
                     key={index}
@@ -44,8 +44,6 @@ export const DocList = ({ data, onClick }) => {
                     <List sx={{ width: '100%', padding: '0' }}>
                         <ListItem onClick={() => onClick(index)} style={{ cursor: 'pointer' }}>
                             <ListItemAvatar>
-                                {/* Uncomment the next line if you have PictureAsPdfIcon component */}
-                                {/* <PictureAsPdfIcon sx={{ fill: 'red' }} /> */}
                                 <Image width={50} height={50} src="/image/pdf-icon.svg" alt="" />
                             </ListItemAvatar>
                             <ListItemText

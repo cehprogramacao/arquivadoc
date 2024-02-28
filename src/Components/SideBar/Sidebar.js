@@ -8,23 +8,37 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ModalOptions } from '../Modals/modalOptions/modalOptions';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { SET_LOGOUT, SET_QUEUESIZE } from '@/store/actions';
 
 export const Sidebar = () => {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
+    const router = useRouter()
+    const dispatch = useDispatch()
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
+    const handleLogout = () => {
+        sessionStorage.removeItem("accessToken")
+        sessionStorage.removeItem("refreshToken")
+        sessionStorage.removeItem("isAdmin")
+        dispatch({type: SET_LOGOUT})
+        router.push("/login")
+    };
     const handleClose = () => {
         setAnchorEl(null);
-    };
+    }
 
+    useEffect(() => {
+        dispatch({type: SET_QUEUESIZE})
+    }, [])
     return (
 
         <Box sx={{
@@ -225,7 +239,7 @@ export const Sidebar = () => {
                                 RPJ
                             </button>
                         </Link>
-                        <Link href={"/notas/cartoes"}>
+                        <Link href={"/cartoes"}>
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -367,7 +381,7 @@ export const Sidebar = () => {
                 </Typography>
             </List>
 
-            <ModalOptions anchorEl={anchorEl} open={open} onClose={handleClose} />
+            <ModalOptions anchorEl={anchorEl} open={open} onClose={handleClose} logout={handleLogout} />
         </Box>
 
     );

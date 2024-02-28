@@ -1,11 +1,13 @@
 "use client"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import { Autocomplete, Box, Button, Drawer, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
+import { Autocomplete, Box, Button, Drawer, TextField, Typography, useTheme, useMediaQuery, Grid } from "@mui/material"
 import { useState } from "react"
 import { Buttons } from "@/Components/Button/Button"
 import { UserTable } from "./tableUser/table"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import Link from "next/link"
+import withIsAdmin from "@/utils/isAdmin"
+import CustomContainer from "@/Components/CustomContainer"
 
 
 const PageUsuarios = ({ data }) => {
@@ -43,78 +45,87 @@ const PageUsuarios = ({ data }) => {
         <Box sx={{
             width: '100%',
             height: '100vh',
-            marginTop: 11,
-            position: 'relative',
-            padding: '30px 0',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            alignItems: 'center'
+            py: 14,
+            px: 3
         }}>
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
-                Usuários
-            </Typography>
-            <div style={{
-                width: 'auto',
-                height: 'auto',
-                padding: '8px',
-                gap: '30px',
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                placeContent: 'space-evenly',
-                flexDirection: isSmallScreen ? 'column' : 'row'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
-                    <TextField label="Buscar"
-                        sx={{
-                            width: isSmallScreen ? '100%' : 400,
-                            '& input': {
-                                color: 'success.main',
-                            },
-                        }} color="success" />
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={top100Films}
-                        sx={{ width: isSmallScreen ? '100%' : 400 }}
-                        autoHighlight
-                        getOptionLabel={(option) => option.label}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                color="success"
-                                label="Buscar Por"
-                                onChange={(e) => {
-                                    const selected = top100Films.find(
-                                        (item) => item.label === e.target.value
-                                    );
-                                    setSelect(selected)
-                                }}
-                                sx={{
-                                    color: "#237117",
-                                    "& input": {
-                                        color: "success.main",
-                                    },
-                                }}
-                            />
-                        )}
-                    />
-                </div>
-                <Box sx={{
-                    display: 'flex',
-                    width: 'auto',
-                    gap: isSmallScreen ? '20px' : '50px'
-                }}>
-                    <Buttons color={'green'} title={'Buscar'} />
-                    <Link href={"/addUser"}>
-                        <ButtonOpenModals />
-                    </Link>
-                </Box>
-            </div>
-            <UserTable data={rows} onClick={handleExcluir} />
+            <CustomContainer>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} >
+                        <Box sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }}>
+                            <Typography fontSize={30} fontWeight={'bold'} color={"black"}>
+                                Usuários
+                            </Typography>
+
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} lg={5} md={5} sm={6}>
+                                <TextField label="Buscar"
+                                    fullWidth
+                                    sx={{
+                                        '& input': {
+                                            color: 'success.main',
+                                        },
+                                    }} color="success" />
+                            </Grid>
+                            <Grid item xs={12} lg={5} md={5} sm={6}>
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    options={top100Films}
+                                    fullWidth
+                                    autoHighlight
+                                    getOptionLabel={(option) => option.label}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            color="success"
+                                            label="Buscar Por"
+                                            onChange={(e) => {
+                                                const selected = top100Films.find(
+                                                    (item) => item.label === e.target.value
+                                                );
+                                                setSelect(selected)
+                                            }}
+                                            sx={{
+                                                color: "#237117",
+                                                "& input": {
+                                                    color: "success.main",
+                                                },
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid item xs={12} lg={2} md={2} sm={12} >
+                                <Box sx={{
+                                    display: 'flex',
+                                    width: '100%',
+                                    gap: "10px",
+                                    justifyContent:"center"
+                                }}>
+                                    <Buttons color={'green'} title={'Buscar'} />
+                                    <Link href={"/addUser"}>
+                                        <ButtonOpenModals />
+                                    </Link>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <UserTable data={rows} onClick={handleExcluir} />
+                    </Grid>
+                </Grid>
+            </CustomContainer>
         </Box>
     )
 }
 
-export default PageUsuarios
+export default withIsAdmin(PageUsuarios)

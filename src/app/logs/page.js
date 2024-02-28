@@ -1,7 +1,8 @@
 "use client"
-import { Box,Typography} from "@mui/material"
+import { Box, Grid, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { LogsTable } from "./tableLogs";
+import CustomContainer from "@/Components/CustomContainer";
 
 
 const PageLogs = ({ data }) => {
@@ -33,17 +34,32 @@ const PageLogs = ({ data }) => {
         <Box sx={{
             width: '100%',
             height: '100vh',
-            marginTop: 11,
             position: 'relative',
-            padding: '30px 20px',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
+            px: 3,
+            py: 15
         }}>
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
-                Visualizar Logs
-            </Typography>
-            <LogsTable data={rows} />
+            <CustomContainer >
+                <Grid container alignItems={"center"} justifyContent={"center"}>
+                    <Grid item xs={12} >
+                        <Box
+                            sx={{
+                                width:"100%",
+                                display:"flex",
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}
+                        >
+                            <Typography fontSize={30} fontWeight={'bold'} color={"black"}>
+                                Visualizar Logs
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <LogsTable data={rows} />
+                    </Grid>
+                </Grid>
+            </CustomContainer>
         </Box>
     )
 }

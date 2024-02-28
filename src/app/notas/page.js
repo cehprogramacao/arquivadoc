@@ -58,11 +58,11 @@ const PageNotas = () => {
             display: "flex",
             flexDirection: 'column',
             placeItems: 'center',
-            py: 5,
+            py: 12,
             px: 3
         }}>
             <CustomContainer >
-                <Grid container spacing={3}>
+                <Grid container spacing={2}>
                     <Grid item xs={12} >
                         <Box sx={{
                             width: "100%",
