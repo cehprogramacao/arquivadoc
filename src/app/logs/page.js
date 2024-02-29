@@ -3,6 +3,7 @@ import { Box, Grid, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { LogsTable } from "./tableLogs";
 import CustomContainer from "@/Components/CustomContainer";
+import withIsAdmin from "@/utils/isAdmin";
 
 
 const PageLogs = ({ data }) => {
@@ -63,4 +64,4 @@ const PageLogs = ({ data }) => {
         </Box>
     )
 }
-export default PageLogs
+export default withIsAdmin(PageLogs)

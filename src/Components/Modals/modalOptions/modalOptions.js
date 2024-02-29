@@ -80,14 +80,16 @@ export const ModalOptions = ({ data, open, logout, onClose, anchorEl }) => {
             </ListItemIcon> Editar Perfil
           </MenuItem>
         </Link>
-        <Link href={"/logs"}>
-          <MenuItem >
-            <ListItemIcon>
-              <HistoryIcon fontSize="small" />
-            </ListItemIcon>
-            Logs
-          </MenuItem>
-        </Link>
+        {isAdmin &&
+          <Link href={"/logs"}>
+            <MenuItem >
+              <ListItemIcon>
+                <HistoryIcon fontSize="small" />
+              </ListItemIcon>
+              Logs
+            </MenuItem>
+          </Link>
+        }
         {isAdmin &&
           <Link href={"/usuarios"}>
             <MenuItem>
