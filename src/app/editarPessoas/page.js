@@ -9,9 +9,9 @@ const PageEditarPessoas = () => {
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
-            gap: isSmallScreen ? '40px' : '50px',
             placeItems:'center',
-            padding: "5.1rem 0 "
+            padding: "5.1rem 0 ",
+            gap: 3
         }}>
             <Typography fontSize={40} fontWeight='bold' marginTop={isSmallScreen ? 3 : 5} color={"black"}>
                 Editar Pessoas
@@ -21,7 +21,7 @@ const PageEditarPessoas = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 width: 'auto',
-                gap: isSmallScreen ? '40px' : '60px',
+                gap: 3,
             }}>
                     <TextField sx={{
                         width: isSmallScreen ? '100%' : '400px',

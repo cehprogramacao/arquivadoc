@@ -30,7 +30,7 @@ customAxios.interceptors.response.use(
       sessionStorage.removeItem('refreshToken');
     } else if (response.status === 402) {
       console.log(767676);
-      window.location = '/pagamento';
+      window.location = '/';
     }
 
     return response;
@@ -60,7 +60,7 @@ customAxios.interceptors.response.use(
 
 customAxios.interceptors.request.use(
   async (request) => {
-    if (request.headers.isAuth) {
+    if (request.headers.auth) {
       process.env.NODE_ENV !== 'production' && console.log('kkk34');
       if (!isLoggedIn('accessToken')) {
         process.env.NODE_ENV !== 'production' && console.log('kkk35');
