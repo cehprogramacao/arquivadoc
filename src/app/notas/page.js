@@ -22,8 +22,7 @@ const BoxMain = styled('section')({
 
 const PageNotas = () => {
     const theme = useTheme()
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
-    // const isSmallScreen = useMediaQuery('(max-width: 1067px)');
+    
     const [opt, setOpt] = useState(['Nome', 'CPF', 'Ordem', 'Livro', 'Livro Folha'])
     const [optService, setOptService] = useState(['Escrituras', 'Procuração', 'Substabelecimento', 'Divórcio',
         'Ata Notarial', 'Inventário'
@@ -41,16 +40,10 @@ const PageNotas = () => {
     const handleOpen = () => setOpen(!open)
     const handleClose = () => setOpen(!open)
 
-    const BoxSearch = styled('div')({
-        maxWidth: '100%',
-        width: '100%',
-        padding: '0px',
-        display: "flex",
-        gap: "30px",
-        alignItems: 'center',
-        flexWrap: isSmallScreen ? 'wrap' : 'nowrap',
-        flexDirection: isSmallScreen ? 'column' : 'row'
-    });
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setNotesChange({...notesChange, [name]: value})
+    }
 
     return (
         <Box sx={{

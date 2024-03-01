@@ -18,7 +18,47 @@ import CadastroNotesType from "@/Components/ModalsRegistration/ModalNotesTypes";
 import CadastroNotesCurtomers from "@/Components/ModalsRegistration/ModalNotesCustomers";
 export const CadastroNotas = ({ onClose }) => {
   const theme = useTheme();
+  const [outorgantes, setOutorgantes] = useState([{ id: '', label: '' }]);
+  const [outorgados, setOutorgados] = useState([{ id: '', label: '' }]);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const file = useRef(null)
+  const [fileSelected, setFileSelected] = useState("")
+  const [formData, setFormData] = useState({
+    order_num: null,
+    tag: null,
+    presenter: '',
+    service_type: null,
+    book: null,
+    initial_sheet: null,
+    final_sheet: null,
+    box: null,
+    grantors: [],
+    granteds: [],
+    file_url: ""
+  });
+  const handleSelectedFile = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // const fileReader = new FileReader();
+      // file_url: fileReader.result
+      fileReader.onloadend = () => {
+        setFormData((prevFormData) => ({ ...prevFormData, file_url: file.name }));
+      };
+      fileReader.readAsDataURL(file);
+    }
+  };
+
+  // Função ajustada para tratar mudanças nos inputs
+  const handleChangeFile = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  };
+
+  // Função para tratar a seleção nos Autocompletes
+  const handleAutocompleteChange = (name, value) => {
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  };
+
 
   const BoxMain = styled("main")({
     width: isSmallScreen ? "100%" : "420px",
@@ -30,7 +70,7 @@ export const CadastroNotas = ({ onClose }) => {
     overflow: "hidden",
   });
 
-  const BoxSearchTitle = styled("div")({
+  const BoxSearchTitle = styled("Box")({
     maxWidth: "100%",
     display: "flex",
     justifyContent: "space-between",
@@ -74,7 +114,7 @@ export const CadastroNotas = ({ onClose }) => {
     }
   });
 
-  const BoxInputs = styled("div")({
+  const BoxInputs = styled("Box")({
     display: "flex",
     flexDirection: "column",
     width: "100%",
@@ -84,8 +124,7 @@ export const CadastroNotas = ({ onClose }) => {
     padding: "5px 8px",
   });
 
-  const [outorgantes, setOutorgantes] = useState([{ id: '', label: '' }]);
-  const [outorgados, setOutorgados] = useState([{ id: '', label: '' }]);
+
   const [outorganteArray, setOutorganteArray] = useState([
     { id: 1, label: "Kauan" },
     { id: 2, label: "Ronaldo" },
@@ -95,8 +134,6 @@ export const CadastroNotas = ({ onClose }) => {
     { id: 2, label: "Ronaldo" },
   ]);
   const boxInputsRef = useRef(null);
-
-
 
   const adicionarInput = (tipo, event) => {
     event.preventDefault();
@@ -181,7 +218,7 @@ export const CadastroNotas = ({ onClose }) => {
     },
     {
       id: 4,
-      label: 'Divórcio'
+      label: 'Boxórcio'
     },
     {
       id: 5,
@@ -234,20 +271,21 @@ export const CadastroNotas = ({ onClose }) => {
       <BoxInputs ref={boxInputsRef}>
         <TextField
           color="success" label="Ordem"
+          name="order_num"
+          value={formData.order_num}
+          onChange={handleChangeFile}
         />
         <Autocomplete
-          value={valueTag}
+          value={formData.tag}
           options={tag}
-          getOptionLabel={(option) => option.label || ''} // Garante que o label seja uma string
-          onChange={(event, newValue) => {
-            setValueTag(newValue);
-
-          }}
+          getOptionLabel={(option) => option.label || ''}
+          onChange={(event, newValue) => handleAutocompleteChange("tag", newValue)}
           noOptionsText={<RenderNoOptions onClick={handleOpenModalTag} title="Cadastrar Tag" />}
           renderInput={(params) => (
             <TextField
               {...params}
               label="Tag"
+              name="tag"
               color="success"
             />
           )}
@@ -259,18 +297,17 @@ export const CadastroNotas = ({ onClose }) => {
         />
 
         <Autocomplete
-          value={valuePresenter}
+          value={formData.presenter}
           options={presenter}
           getOptionLabel={(option) => option.label || ''}
-          onChange={(event, newValue) => {
-            setValuePresenter(newValue);
-          }}
+          onChange={(event, newValue) => handleAutocompleteChange("presenter", newValue)}
           noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title="Cadastrar Apresentante" />}
           renderInput={(params) => (
             <TextField
               {...params}
               label="Apresentante"
               color="success"
+              name="presenter"
             />
           )}
           renderOption={(props, option) => (
@@ -281,17 +318,15 @@ export const CadastroNotas = ({ onClose }) => {
         />
 
         <Autocomplete
-          value={valueNotesType}
+          value={formData.service_type}
           options={notesType}
           getOptionLabel={(option) => option.label || ''}
-          onChange={(event, newValue) => {
-            setValueNotesType(newValue);
-            setOption(null); // Resetar a opção quando o tipo de nota muda
-          }}
+          onChange={(event, newValue) => handleAutocompleteChange("service_type", newValue)}
           renderInput={(params) => (
             <TextField
               {...params}
               label="Tipo"
+              name="service_type"
               color="success"
             />
           )}
@@ -321,19 +356,29 @@ export const CadastroNotas = ({ onClose }) => {
           label="Livro"
           type="number"
           color="success"
+          name="book"
+          value={formData.book}
+          onChange={handleChangeFile}
         />
         <TextField
           label="Folha Inicial"
           type="number"
           color="success"
+          value={formData.initial_sheet}
+          onChange={handleChangeFile}
+          name="initial_sheet"
+
         />
         <TextField
           label="Folha Final"
           type="number"
+          onChange={handleChangeFile}
           color="success"
+          value={formData.final_sheet}
+          name="final_sheet"
         />
         {outorgantes.map((outorgante, index) => (
-          <div key={`outorgante-${index}-${outorgantes.length}`} >
+          <Box key={`outorgante-${index}-${outorgantes.length}`} >
             <Autocomplete
               value={outorgante}
               options={outorganteArray}
@@ -343,6 +388,7 @@ export const CadastroNotas = ({ onClose }) => {
                   {...params}
                   label="Outorgantes"
                   color="success"
+                  name="grantors"
                 />
               )}
               renderOption={(props, option) => (
@@ -350,12 +396,12 @@ export const CadastroNotas = ({ onClose }) => {
                   {option.label}
                 </li>
               )}
-              onChange={(_, value) => handleChange("outorgante", index, value)}
+              onChange={(event, newValue) => handleAutocompleteChange("grantors", newValue)}
               onInputChange={(event, value) => {
                 // Lógica de pesquisa, se necessário
               }}
             />
-            <div style={{ display: "flex", gap: "9px", marginTop: '8px' }}>
+            <Box sx={{ display: "flex", gap: "9px", marginTop: '8px' }}>
               <button
                 type="button"
                 style={{
@@ -384,12 +430,12 @@ export const CadastroNotas = ({ onClose }) => {
               >
                 -
               </button>
-            </div>
-          </div>
+            </Box>
+          </Box>
         ))}
 
         {outorgados.map((outorgado, index) => (
-          <div key={`outorgado-${index}-${outorgados.length}`}>
+          <Box key={`outorgado-${index}-${outorgados.length}`}>
             <Autocomplete
               value={outorgado}
               options={outorgadoArray}
@@ -399,6 +445,7 @@ export const CadastroNotas = ({ onClose }) => {
                   {...params}
                   label="Outorgados"
                   color="success"
+                  name="granteds"
                 />
               )}
               renderOption={(props, option) => (
@@ -406,12 +453,12 @@ export const CadastroNotas = ({ onClose }) => {
                   {option.label}
                 </li>
               )}
-              onChange={(_, value) => handleChange("outorgado", index, value)}
+              onChange={(event, newValue) => handleAutocompleteChange("granteds", newValue)}
               onInputChange={(event, value) => {
                 // Lógica de pesquisa, se necessário
               }}
             />
-            <div style={{ display: "flex", gap: "9px", marginTop: '8px' }}>
+            <Box sx={{ display: "flex", gap: "9px", marginTop: '8px' }}>
               <button
                 type="button"
                 style={{
@@ -440,8 +487,8 @@ export const CadastroNotas = ({ onClose }) => {
               >
                 -
               </button>
-            </div>
-          </div>
+            </Box>
+          </Box>
         ))}
         <TextField
 
@@ -449,18 +496,12 @@ export const CadastroNotas = ({ onClose }) => {
           color="success"
           type="number"
         />
-        <TextField type="file" color="success" />
+        <TextField type="file" ref={file} onChange={handleSelectedFile} color="success" />
         <Stack sx={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
           <ButtonScanner>
             Scannear Arquivo
           </ButtonScanner>
-          <ButtonCadastrar onClick={() => {
-            alert('oii')
-            console.log(valueTag)
-            console.log(valuePresenter)
-            console.table(presenter)
-            console.table(tag)
-          }}>
+          <ButtonCadastrar onClick={() => console.log(formData)}>
             Cadastrar
           </ButtonCadastrar>
 
