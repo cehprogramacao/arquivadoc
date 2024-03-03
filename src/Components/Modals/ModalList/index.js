@@ -71,7 +71,7 @@ const ModalList = ({ open, onClose, data, link }) => {
                         }}>
                             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                                 <Viewer fileUrl={`data:application/pdf;base64,${link}`} plugins={[defaultLayoutPluginInstance]} />
-
+                        
                             </Worker>
                         </Box>
 

@@ -1,22 +1,72 @@
-
-
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
 import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
 import CadastroRGITypes from "@/Components/ModalsRegistration/ModalTypesRGI";
+import Customer from "@/services/customer.service";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+    // States
     const [tipo, setTipo] = useState(null);
-    const [opcao, setOpcao] = useState(null);
-    const [openModalRGITypes, setOpenModalRGITypes] = useState(false)
-    const handleOpenModalRGITypes = () => setOpenModalRGITypes(!openModalRGITypes)
-    const handleCloseModalRGITypes = () => setOpenModalRGITypes(!openModalRGITypes)
+    const [data, setData] = useState({
+        prenotation: 0,
+        presenter: "",
+        service_type: "",
+        box: 0,
+        registration: "",
+        file_url: ""
+    });
+    const [openModalRGITypes, setOpenModalRGITypes] = useState(false);
+    const [openModalPresenter, setOpenModalPresenter] = useState(false);
+    const [presenter, setPresenter] = useState([]);
+
+    // Functions
+    const handleOpenModalPresenter = () => {
+        setOpenModalPresenter(!openModalPresenter);
+    }
+    const handleCloseModalPresenter = () => {
+        setOpenModalPresenter(!openModalPresenter);
+    }
+    const handleOpenModalRGITypes = () => {
+        setOpenModalRGITypes(!openModalRGITypes);
+    }
+    const handleCloseModalRGITypes = () => {
+        setOpenModalRGITypes(!openModalRGITypes);
+    }
+    const handleChangeFile = (e) => {
+        const files = e.target.files[0];
+        setData({ ...data, file_url: files.name });
+        console.log(files);
+    }
+
+
+
+    const getCustomersPresenter = async () => {
+        const customer = new Customer();
+        try {
+            const accessToken = sessionStorage.getItem("accessToken");
+            const { data } = await customer.customers(accessToken);
+            const newData = Object.values(data);
+            setPresenter(newData);
+            console.log(data);
+            return data;
+        } catch (error) {
+            console.error("Error when listing presenters", error);
+            throw error;
+        }
+    };
+
+    const handleCreateRGI = () => {
+        console.log(data);
+    }
+
+    // Data
     const tipos = [
         {
             nome: 'Averbação',
@@ -37,29 +87,16 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                 'Esc. de Inventário'
             ],
         },
-
     ];
-    const [valuePresenter, setValuePresenter] = useState('')
-    const [openModalPresenter, setOpenModalPresenter] = useState(false)
-    const handleOpenModalPresenter = () => {
-        setOpenModalPresenter(!openModalPresenter)
-    }
-    const handleCloseModalPresenter = () => {
-        setOpenModalPresenter(!openModalPresenter)
-    }
-    const [presenter, setPresenter] = useState([
-        {
-            id: 1,
-            label: 'Diego Corretor'
-        },
-        {
-            id: 2,
-            label: 'Juninho Capixaba'
-        }
-    ])
+
+    // useEffect
+    useEffect(() => {
+        getCustomersPresenter();
+    }, []);
+
     return (
         <Box sx={{
-            width: isSmallScreen ? '300px' : "409px",
+            width: { lg: 409, md: 409, sm: 380, xs: 300 },
             height: '100vh',
             padding: '8px 10px',
             display: 'flex',
@@ -108,24 +145,26 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
             }}>
                 <TextField sx={{
                     '& input': { color: 'success.main' },
-
-
                 }}
                     label="Prenotação"
+                    value={data.prenotation}
+                    onChange={(e) => setData({ ...data, prenotation: e.target.value })}
                     color='success'
                 />
                 <TextField sx={{
                     '& input': { color: 'success.main' }
                 }}
+                    value={data.box}
+                    onChange={(e) => setData({ ...data, box: e.target.value })}
                     label="N° da Caixa"
                     color='success'
                 />
                 <Autocomplete
-                    value={valuePresenter}
+                    value={data.presenter}
                     options={presenter}
-                    getOptionLabel={(option) => option.label || ''}
+                    getOptionLabel={(option) => (option && option.name) ? option.name : ''}
                     onChange={(event, newValue) => {
-                        setValuePresenter(newValue);
+                        setData({ ...data, presenter: (newValue && newValue.name) ? newValue.name : '' });
                     }}
                     noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title="Cadastrar Apresentante" />}
                     renderInput={(params) => (
@@ -133,14 +172,21 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                             {...params}
                             label="Apresentante"
                             color="success"
+                            value={data.presenter}  // Adiciona esta linha para exibir corretamente o valor selecionado na input
                         />
                     )}
                     renderOption={(props, option) => (
-                        <li {...props} key={option.id}>
-                            {option.label}
+                        <li {...props} key={option.cpfcnpj}>
+                            {option.name}
                         </li>
                     )}
+                    isOptionEqualToValue={(option, value) => option.name === value}
                 />
+
+
+
+
+
                 <Autocomplete
                     value={tipo}
                     onChange={(event, newValue) => setTipo(newValue)}
@@ -154,8 +200,8 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
 
                 {tipo && (
                     <Autocomplete
-                        value={opcao}
-                        onChange={(event, newValue) => setOpcao(newValue)}
+                        value={data.service_type}
+                        onChange={(event, newValue) => setData({ ...data, service_type: newValue })}
                         options={tipo.opcoes}
                         getOptionLabel={(opcao) => opcao}
                         noOptionsText={<RenderNoOptions onClick={handleOpenModalRGITypes} title={'Cadastrar Tipo'} />}
@@ -171,11 +217,14 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                     type="text"
                     label="Número da matrícula"
                     color='success'
+                    value={data.registration}
+                    onChange={(e) => setData({ ...data, registration: e.target.value })}
                 />
                 <TextField
                     sx={{
                         border: 'none'
                     }}
+                    onChange={handleChangeFile}
                     type="file"
                     color='success'
                     InputLabelProps={{
@@ -215,7 +264,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                         color: '#237117',
 
                     }
-                }}>
+                }} onClick={handleCreateRGI}>
                     Realizar Cadastro
                 </Button>
 

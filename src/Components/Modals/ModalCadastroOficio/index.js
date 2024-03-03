@@ -2,7 +2,7 @@
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
 import ModalCadastroCallingEntity from "@/Components/ModalsRegistration/ModalCadastroCallingEntity";
 import CadastroModalCallingTypes from "@/Components/ModalsRegistration/ModalCadastroCallingTypes";
-import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
+import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
 
@@ -56,7 +56,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
         }}>
           Cadastro - Oficio
         </Typography>
-        <button style={{
+        <IconButton style={{
           boxSizing: 'content-box',
           width: '1em',
           height: '1em',
@@ -72,7 +72,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
           },
         }} onClick={onClose} >
 
-        </button>
+        </IconButton>
       </Box>
       <Box sx={{
         display: 'flex',

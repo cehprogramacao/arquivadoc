@@ -402,34 +402,32 @@ export const CadastroNotas = ({ onClose }) => {
               }}
             />
             <Box sx={{ display: "flex", gap: "9px", marginTop: '8px' }}>
-              <button
+              <Button
                 type="button"
                 style={{
                   background: "#237117",
                   color: "#fff",
                   border: "none",
-                  padding: "5px 13px",
                   borderRadius: "3px",
                   cursor: 'pointer'
                 }}
                 onClick={(e) => adicionarInput("outorgante", e)}
               >
                 +
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 style={{
                   background: "#237117",
                   color: "#fff",
                   border: "none",
-                  padding: "5px 13px",
                   borderRadius: "3px",
                   cursor: 'pointer'
                 }}
                 onClick={() => removerInput("outorgante", index)}
               >
                 -
-              </button>
+              </Button>
             </Box>
           </Box>
         ))}
@@ -459,34 +457,32 @@ export const CadastroNotas = ({ onClose }) => {
               }}
             />
             <Box sx={{ display: "flex", gap: "9px", marginTop: '8px' }}>
-              <button
+              <Button
                 type="button"
                 style={{
                   background: "#237117",
                   color: "#fff",
                   border: "none",
-                  padding: "5px 13px",
                   borderRadius: "3px",
                   cursor: 'pointer'
                 }}
                 onClick={(e) => adicionarInput("outorgado", e)}
               >
                 +
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 style={{
                   background: "#237117",
                   color: "#fff",
                   border: "none",
-                  padding: "5px 13px",
                   borderRadius: "3px",
                   cursor: 'pointer'
                 }}
                 onClick={() => removerInput("outorgado", index)}
               >
                 -
-              </button>
+              </Button>
             </Box>
           </Box>
         ))}

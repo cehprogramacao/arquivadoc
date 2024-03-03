@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { isLoggedIn, isclientCredentialsExpired } from '../utils/auth';
+import { isLoggedIn } from '../utils/auth';
 import ServiceError from './service.error';
 
 const customAxios = axios.create({
@@ -23,7 +23,6 @@ let isclientCredentialsRefreshed = false;
 
 customAxios.interceptors.response.use(
   (response) => {
-    process.env.NODE_ENV !== 'production' && console.log('kkk2');
     if (response.status === 401) {
       window.location = '/login';
       sessionStorage.removeItem('accessToken');
@@ -37,7 +36,6 @@ customAxios.interceptors.response.use(
   },
   async (error) => {
     if (error.response?.data.code === 401) {
-      process.env.NODE_ENV !== 'production' && console.log('kkk');
       if (error.response?.data.data.error === 'invalid client_token') {
         if (!isclientCredentialsRefreshed) {
           await setclientCredentials();
@@ -61,9 +59,7 @@ customAxios.interceptors.response.use(
 customAxios.interceptors.request.use(
   async (request) => {
     if (request.headers.auth) {
-      process.env.NODE_ENV !== 'production' && console.log('kkk34');
       if (!isLoggedIn('accessToken')) {
-        process.env.NODE_ENV !== 'production' && console.log('kkk35');
         const refreshToken = sessionStorage.getItem('refreshToken');
         if (refreshToken) {
           try {
@@ -72,18 +68,9 @@ customAxios.interceptors.request.use(
               { refreshToken: refreshToken },
               { headers: { isClientCredentials: true } }
             );
-            process.env.NODE_ENV !== 'production' &&
-              console.log(refreshToken, 1);
-            process.env.NODE_ENV !== 'production' && console.log(data, 'data');
-            process.env.NODE_ENV !== 'production' &&
-              console.log(data.accessToken, 100);
-            process.env.NODE_ENV !== 'production' &&
-              console.log(data.refreshToken, 200);
             sessionStorage.setItem('accessToken', data.accessToken);
-            sessionStorage.setItem('refreshToken', data.refreshToken);
           } catch (e) {
-            process.env.NODE_ENV !== 'production' &&
-              console.log('erro refreshtoken', e);
+            console.error('Erro ao renovar o token:', e);
             sessionStorage.removeItem('accessToken');
             sessionStorage.removeItem('refreshToken');
             sessionStorage.setItem('redirectUrl', window.location.pathname);
@@ -96,10 +83,8 @@ customAxios.interceptors.request.use(
           throw new ServiceError('Usuário não autenticado', 'not_auth');
         }
       }
-      process.env.NODE_ENV !== 'production' && console.log('kkk19');
-      request.headers.Authorization = `Bearer ${sessionStorage.getItem(
-        'accessToken'
-      )}`;
+
+      request.headers.Authorization = `Bearer ${sessionStorage.getItem('accessToken')}`;
       return request;
     }
     return request;
