@@ -96,7 +96,7 @@ const TableComponente = ({ data, onClick }) => {
                                 </Button>
                             </StyledTableCell>
                             <StyledTableCell align='center'>
-                                <Link href={"/editarUsuario"}>
+                                <Link href={`/usuarios/[id]`} as={`/usuarios/${row.id}`}>
                                     <Button sx={{
                                         fontSize: '15px',
                                         textTransform: 'none',

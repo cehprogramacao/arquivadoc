@@ -129,7 +129,7 @@ export const UserTable = ({ data, onClick }) => {
                   </Button>
                 </StyledTableCell>
                 <StyledTableCell align='center' >
-                  <Link href={"/editarSolicitantes"}>
+                  <Link href={`/solicitantes/[id]`} as={`/solicitantes/${row.id}`}>
                     <Button sx={{
                       fontSize: '15px',
                       textTransform: 'none',
