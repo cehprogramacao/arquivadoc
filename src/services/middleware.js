@@ -70,7 +70,7 @@ customAxios.interceptors.request.use(
             );
             sessionStorage.setItem('accessToken', data.accessToken);
           } catch (e) {
-            console.error('Erro ao renovar o token:', e);
+            console.error('Erro ao renovar o token:', e, '88888888888888llllllllllllllll');
             sessionStorage.removeItem('accessToken');
             sessionStorage.removeItem('refreshToken');
             sessionStorage.setItem('redirectUrl', window.location.pathname);
@@ -92,4 +92,4 @@ customAxios.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export default customAxios;
+export default customAxios; 

@@ -12,7 +12,9 @@ export const DocList = ({ data, onClick }) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
     const columns = isSmallScreen ? 1 : 4;
 
-    return (
+
+    console.log(data,90901)
+    return (    
         <Grid
             container
             spacing={2}
@@ -51,8 +53,8 @@ export const DocList = ({ data, onClick }) => {
                                     color: 'black',
                                     fontWeight: 'bold',
                                 }}
-                                primary={item.NomeFile}
-                                secondary={`por ${item.nameUser}`}
+                                primary={item.prenotation}
+                                secondary={`por ${item.presenterName}`}
                             />
                         </ListItem>
                     </List>

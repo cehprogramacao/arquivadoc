@@ -8,9 +8,9 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
-const ModalList = ({ open, onClose, data, link }) => {
+const ModalList = ({ open, data, onClose, link }) => {
 
-
+    console.log(data, '696969696996969696')
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'))
     const handlePrintFile = () => {

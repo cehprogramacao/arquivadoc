@@ -95,7 +95,7 @@ const PagePessoas = () => {
                             </Grid>
                             <Grid item xs={12} >
                                 <Grid container spacing={2}>
-                                    <Grid item xs={12} md={5} sm={6} lg={5}>
+                                    <Grid item xs={12} md={6} sm={6} lg={5}>
                                         <TextField label="Buscar"
                                             fullWidth
                                             sx={{
@@ -104,7 +104,7 @@ const PagePessoas = () => {
                                                 },
                                             }} color="success" />
                                     </Grid>
-                                    <Grid item xs={12} md={5} sm={6} lg={5}>
+                                    <Grid item xs={12} md={6} sm={6} lg={5}>
                                         <Autocomplete
                                             disablePortal
                                             id="combo-box-demo"
@@ -133,12 +133,13 @@ const PagePessoas = () => {
                                             )}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} md={12} sm={2} lg={2}>
+                                    <Grid item xs={12} md={12} sm={12} lg={2}>
                                         <Box sx={{
                                             display: 'flex',
                                             width: '100%',
-                                            justifyContent: "space-between",
-                                            alignItems: "center"
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 3
                                         }}>
                                             <Buttons color={'green'} title={'Buscar'} />
                                             <ButtonOpenModals onClick={handleOpenModal} />

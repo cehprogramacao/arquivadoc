@@ -3,6 +3,7 @@ import CustomContainer from '@/Components/CustomContainer';
 import Loading from '@/Components/loading';
 import Customer from '@/services/customer.service';
 import { Box, TextField, Typography, Button, Autocomplete, FormControl, FormLabel, FormHelperText, OutlinedInput, Grid } from "@mui/material";
+import { useRouter } from 'next/navigation';
 import { useState } from "react";
 import ReactInputMask from 'react-input-mask';
 // const cpfMask = '999.999.999-99';
@@ -14,6 +15,7 @@ const PageEditarPessoas = ({ params }) => {
     // const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
     // const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
     const [data, setData] = useState({
         // cpfcnpj: "",
         // type: "",
@@ -50,6 +52,7 @@ const PageEditarPessoas = ({ params }) => {
             }
             const customer = await customers.editCustomer(params.cpfcnpj, data, accessToken)
             console.log(customer.data)
+            router.push("/pessoas")
             return customer.data
         } catch (error) {
             console.error("Error when editing client", error)

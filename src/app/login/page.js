@@ -17,39 +17,51 @@ const LoginPage = () => {
     password: ""
   })
 
+  const [alert, setAlert] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   const handleOnChange = (event) => {
     const { name, value } = event.target
     setDataUser({ ...dataUser, [name]: value })
   }
 
-  const handleLogin = async () => {
-    console.log(dataUser)
-    try {
-      const { data } = await login(dataUser);
-      console.log('Resposta do servidor:', data);
-      const { accessToken, refreshToken, auth } = data
-      console.log(accessToken, refreshToken, auth , '888888888888')
+  const [error, setError] = useState('');
 
-      sessionStorage.setItem("accessToken", accessToken);
-      sessionStorage.setItem("refreshToken", refreshToken);
+
+  const handleSubmit = async (event) => {
+    try {
+      //const userData = {
+      //  email: values.user,
+      //  password: values.password,
+      //};
+      const { data } = await login(dataUser);
+      const { accessToken, refreshToken } = data;
+      sessionStorage.setItem('accessToken', accessToken);
+      sessionStorage.setItem('refreshToken', refreshToken);
+      dispatch({ type: SET_LOGIN_DATA });
+      setAlert({ message: data.message, severity: 'success', open: true });
+
+
+
       if (data.auth) {
-        router.push("/");
-        dispatch({type: SET_LOGIN_DATA})
-      } else {
-        console.log("Login não autorizado");
+        //setSnackbarOpen(true);
+
+          router.push('/'); // Recarrega a página
       }
     } catch (err) {
-      console.log(err);
-    }
+      const errorMessage = err.message || "An unexpected error occurred";
+      setAlert({ message: errorMessage, severity: 'error', open: true });
+    } 
+  
   };
-  // const handleKeyUpEnter = (event) => {
-  //   if (event.key.toLowerCase() === "enter") {
-  //     handleLogin();
-  //     console.log(data)
-  //   }
-  // };
+  
+  
 
+
+  
   return (
     <Box
       sx={{
@@ -157,7 +169,7 @@ const LoginPage = () => {
               background: "#237117",
             },
           }}
-          onClick={handleLogin}
+          onClick={handleSubmit}
         >
           Entrar
         </Button>
