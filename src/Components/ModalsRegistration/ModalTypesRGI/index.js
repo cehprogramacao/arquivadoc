@@ -83,8 +83,8 @@ const CadastroRGITypes = ({ open, onClose }) => {
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
                         borderRadius: '10px',
-                        px: 5,
-                        py: 4
+                        px: 2,
+                        py: 3
                     }}>
                         <Box sx={{
                             width: "100%",

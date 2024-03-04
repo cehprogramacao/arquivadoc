@@ -8,11 +8,12 @@ import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import { Stack, Grid } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
 import ModalList from '@/Components/Modals/ModalList';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CadastroModalRGI } from '@/Components/Modals/ModalCadastroRGI';
 import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
 import CadastroRGITypes from '@/Components/ModalsRegistration/ModalTypesRGI';
 import CustomContainer from '@/Components/CustomContainer';
+import RGI from '@/services/rgi.service';
 
 const top100Films = [
     { label: 'Nome' },
@@ -37,6 +38,7 @@ const PageRGI = () => {
 
     const [open, setOpen] = useState(false);
     const [openModalRGI, setOpenModalRGI] = useState(false)
+    const [data, setData] = useState([])
     const [openModalPartes, setOpenModalPartes] = useState(false)
     const handleOpenModalRGI = () => setOpenModalRGI(true)
     const handleCloseModalRGI = () => setOpenModalRGI(false)
@@ -51,7 +53,22 @@ const PageRGI = () => {
     const handleClose = () => {
         setOpen(false);
     };
-
+    const getDataRGI = async () => {
+        const { getData } = new RGI()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await getData(accessToken)
+            console.log(response.data, 'Kauannnnnnnnnnnnnnnn')
+            setData(Object.values(response.data))
+            return response.data
+        } catch (error) {
+            console.error("error listing all rgi files", error)
+            throw error;
+        }
+    }
+    useEffect(() => {
+        getDataRGI()
+    }, [])
     return (
         <Box
             sx={{
@@ -120,7 +137,7 @@ const PageRGI = () => {
                 </Grid>
             </CustomContainer>
 
-            <ModalList onClose={handleClose} open={open} data={docs} link={docs[0].link} />
+            <ModalList onClose={handleClose} open={open} data={docs} />
             <Drawer anchor='left' open={openModalRGI} onClose={handleCloseModalRGI} >
                 <CadastroModalRGI onClose={handleCloseModalRGI} onClickPartes={handleOpenModalPartes} />
             </Drawer>
