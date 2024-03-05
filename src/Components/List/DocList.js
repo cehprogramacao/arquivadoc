@@ -13,8 +13,9 @@ export const DocList = ({ data, onClick }) => {
     const columns = isSmallScreen ? 1 : 4;
 
 
-    console.log(data,90901)
-    return (    
+    console.log(data, 90901)
+
+    return (
         <Grid
             container
             spacing={2}

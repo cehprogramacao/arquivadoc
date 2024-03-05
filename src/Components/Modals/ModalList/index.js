@@ -8,28 +8,42 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
-const ModalList = ({ open, data, onClose, link }) => {
+const ModalList = ({ open, data, onClose }) => {
 
     console.log(data, '696969696996969696')
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'))
+    const createBlobUrl = (base64Data) => {
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        return URL.createObjectURL(blob);
+    };
     const handlePrintFile = () => {
-        const base64Data = link;
+        const base64Data = data[0]?.file;
         const byteCharacters = atob(base64Data);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'application/pdf' });
-        
+
         // Criar uma URL do Blob e abrir em uma nova janela
         const blobUrl = URL.createObjectURL(blob);
         window.open(blobUrl, '_blank');
     }
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
-
+    console.log(data, 'ModalListaaaaaaaaaaaaaaaaaaaaaaa')
+    console.log(data[0]?.file, 'Index e Filllllllllllllllllllllllle')
 
 
     return (
@@ -70,8 +84,9 @@ const ModalList = ({ open, data, onClose, link }) => {
                             padding: '20px'
                         }}>
                             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                <Viewer fileUrl={`data:application/pdf;base64,${link}`} plugins={[defaultLayoutPluginInstance]} />
-                        
+                                {/* <Viewer fileUrl={`data:application/pdf;base64,${data[index]?.file}`} plugins={[defaultLayoutPluginInstance]} /> */}
+                                {/* <Viewer fileUrl={createBlobUrl(data[index]?.file)} plugins={[defaultLayoutPluginInstance]} /> */}
+                                <Viewer fileUrl={data[0]?.file && createBlobUrl(data[0]?.file)} plugins={[defaultLayoutPluginInstance]} />
                             </Worker>
                         </Box>
 

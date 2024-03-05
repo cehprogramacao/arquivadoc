@@ -36,7 +36,7 @@ const PageRGI = () => {
     const [open, setOpen] = useState(false);
     const [openModalRGI, setOpenModalRGI] = useState(false)
     const [data, setData] = useState([])
-    const [indexFile, setIndexFile] = useState(0)
+    const [indexFile, setIndexFile] = useState(null)
     const [openFilterModalPDF, setOpenFilterModalPDF] = useState(false)
     const [openModalPartes, setOpenModalPartes] = useState(false)
     const handleOpenModalRGI = () => setOpenModalRGI(true)
@@ -49,14 +49,16 @@ const PageRGI = () => {
     const handlePrenotationFilter = async (value, accessToken) => {
         console.log('Filtrando por Prenotação com valor:', value);
         const { getByPrenotation } = new RGI();
-
+        let newData = [];
         try {
             setLoading(true);
             const response = await getByPrenotation(value, accessToken);
             console.log('Resposta da Prenotação:', response.data);
             setOpenFilterModalPDF(!openFilterModalPDF)
-            setData(Object.values(response.data) || [])
-             console.log(data,9090)
+            console.log(data, 9090)
+            newData.push(response.data)
+            setData(newData)
+            return response
         } catch (error) {
             console.error("Erro ao filtrar por Prenotação", error);
         } finally {
@@ -64,19 +66,20 @@ const PageRGI = () => {
         }
     };
 
-    console.log(data,9090)
+    console.log(data, 9090)
 
     // Função para tratar o filtro de Apresentante
     const handlePresenterFilter = async (value, accessToken) => {
         console.log('Filtrando por Apresentante com valor:', value);
         const { getByPresenter } = new RGI();
-
+        let newData = [];
         try {
             setLoading(true);
             const response = await getByPresenter(value, accessToken);
             console.log('Resposta do Apresentante:', response.data);
             setOpenFilterModalPDF(!openFilterModalPDF)
-            setData(Object.values(response.data) || [])
+            newData.push(response.data)
+            setData(newData)
             return response.data
         } catch (error) {
             console.error("Erro ao filtrar por Apresentante", error);
@@ -94,10 +97,15 @@ const PageRGI = () => {
         if (value.option && value.value) {
             console.log('Opção selecionada:', value.option.label);
 
-            if (value.option.label === "Prenotação") {
-                await handlePrenotationFilter(value.value, accessToken);
-            } else if (value.option.label === "Apresentante") {
-                await handlePresenterFilter(value.value, accessToken);
+            try {
+                if (value.option.label === "Prenotação") {
+                    await handlePrenotationFilter(value.value, accessToken);
+                } else if (value.option.label === "Apresentante") {
+                    await handlePresenterFilter(value.value, accessToken);
+                }
+
+            } catch (error) {
+                console.error("Erro ao filtrar", error);
             }
         } else {
             console.error("Opção ou valor não definidos.");
@@ -107,8 +115,6 @@ const PageRGI = () => {
 
     const handleOpen = (index) => {
         setOpen(true);
-        setIndexFile(index)
-        console.log(index, 'Filterkkkkkkkkkkkk')
     };
 
     const handleClose = () => {
@@ -134,6 +140,7 @@ const PageRGI = () => {
     useEffect(() => {
         getDataRGI()
         console.log(payload, '2002010kkkakakkakakakak')
+
     }, [])
     return (
         <>
@@ -220,7 +227,7 @@ const PageRGI = () => {
                         </Grid>
                     </CustomContainer>
 
-                    {openFilterModalPDF && <ModalList onClose={handleClose} data={data} open={open} link={data[indexFile]?.file} />}
+                    {openFilterModalPDF && <ModalList onClose={handleClose} data={data} open={open} />}
                     <Drawer anchor='left' open={openModalRGI} onClose={handleCloseModalRGI} >
                         <CadastroModalRGI onClose={handleCloseModalRGI} onClickPartes={handleOpenModalPartes} />
                     </Drawer>
