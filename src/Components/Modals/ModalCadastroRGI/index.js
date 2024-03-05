@@ -46,11 +46,29 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
     const handleCloseModalRGITypes = () => {
         setOpenModalRGITypes(!openModalRGITypes);
     }
+    // const handleChangeFile = (e) => {
+    //     const files = e.target.files[0];
+    //     if (files) {
+    //         const fileReader = new FileReader();
+    //         fileReader.onloadend = () => {
+    //             setData((prevFormData) => ({ ...prevFormData, file_url: fileReader.result }));
+    //         };
+    //         fileReader.readAsDataURL(files);    
+    //         console.log(fileReader,'888');
+    //     }
+    // };
     const handleChangeFile = (e) => {
         const files = e.target.files[0];
-        setData({ ...data, file_url: files.name });
-        console.log(files);
-    }
+        if (files) {
+            const fileReader = new FileReader();
+            fileReader.onloadend = () => {
+                let base64String = fileReader.result.split(',')[1];
+                setData((prevFormData) => ({ ...prevFormData, file_url: base64String }));
+            };
+            fileReader.readAsDataURL(files);
+            console.log(fileReader, '888');
+        }
+    };
 
 
 

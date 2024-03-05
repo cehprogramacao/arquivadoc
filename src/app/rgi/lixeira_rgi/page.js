@@ -33,38 +33,11 @@ const LixeiraRGI = ({ data }) => {
     ];
     
     
-    const [rows, setRows] = useState([
-        { 
-          id: 1, 
-          prenotacao: '000001',
-          caixa: 1,
-          apresentante: '14276348000110',
-          servico: 'Serviço 1',
-          matricula: '14276348000110',
-          arquivo: 'https://drive.google.com/file/d/1Uw9X7wXwXigimanH2d-G5rY4Uo-OOX3L/view?pli=1'
-        },
-        { 
-          id: 2, 
-          prenotacao: '000002',
-          caixa: 2,
-          apresentante: '14276348000110',
-          servico: 'Serviço 2',
-          matricula: '14276348000110',
-          arquivo: 'https://drive.google.com/file/d/1xV4ubFGKXhluQtVUZEUROEK4_KxxF5OV/view'
-        },
-        { 
-          id: 3, 
-          prenotacao: '000003',
-          caixa: 3,
-          apresentante: '14276348000110',
-          servico: 'Serviço 3',
-          matricula: '14276348000110',
-          arquivo: 'https://drive.google.com/file/d/1Uw9X7wXwXigimanH2d-G5rY4Uo-OOX3L/view'
-        },
-        // Adicione mais objetos conforme necessário
-      ]);
+    const [rows, setRows] = useState([]);
       
-      
+    const getData = () => {
+        
+    }
 
     const handleExcluir = (id) => {
         const updatedRows = rows.filter((row) => row.id !== id);
@@ -72,9 +45,7 @@ const LixeiraRGI = ({ data }) => {
     };
     const [select, setSelect] = useState(null);
     const [valueInput, setValueInput] = useState('')
-    const handleBuscar = () => {
-
-    };
+    
 
     return (
         <Box sx={{
@@ -91,7 +62,7 @@ const LixeiraRGI = ({ data }) => {
             <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
                 Lixeira
             </Typography>
-            <div style={{
+            <Box sx={{
                 maxWidth: '1200px',
                 height: 'auto',
                 padding: '8px',
@@ -102,7 +73,7 @@ const LixeiraRGI = ({ data }) => {
                 placeContent: 'center',
                 flexDirection: isSmallScreen ? 'column' : 'row'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
                 <TextField
                         label="Buscar"
                         sx={{ width: isSmallScreen ? '100%' : 450, '& input': { color: 'success.main' } }}
@@ -127,7 +98,7 @@ const LixeiraRGI = ({ data }) => {
                                 />
                             )}
                         />
-                </div>
+                </Box>
                 <Button variant="contained" onClick={handleBuscar} sx={{
                     background: '#247117',
                     padding: '14px 10px',
@@ -137,7 +108,7 @@ const LixeiraRGI = ({ data }) => {
                 }}>
                     BUSCAR
                 </Button>
-            </div>
+            </Box>
             <LixeiraTable data={rows} onClick={handleExcluir}/>
         </Box>
     )

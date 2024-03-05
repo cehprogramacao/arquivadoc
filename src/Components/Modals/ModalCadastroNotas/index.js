@@ -39,8 +39,8 @@ export const CadastroNotas = ({ onClose }) => {
   const handleSelectedFile = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // const fileReader = new FileReader();
-      // file_url: fileReader.result
+      const fileReader = new FileReader();
+      file_url: fileReader.result
       fileReader.onloadend = () => {
         setFormData((prevFormData) => ({ ...prevFormData, file_url: file.name }));
       };

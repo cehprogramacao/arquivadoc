@@ -12,8 +12,8 @@ export const DocList = ({ data, onClick }) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
     const columns = isSmallScreen ? 1 : 4;
 
-
     console.log(data, 90901)
+
 
     return (
         <Grid

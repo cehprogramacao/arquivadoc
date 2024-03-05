@@ -62,11 +62,12 @@ export const LixeiraTable = ({ data, onClick }) => {
         <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
           {data.map((row, index) => (
             <StyledTableRow key={index}>
-              <StyledTableCell align='left'>{row.prenotacao}</StyledTableCell>
-              <StyledTableCell align='center'>{row.caixa}</StyledTableCell>
-              <StyledTableCell align='center' >{row.apresentante}</StyledTableCell>
-              <StyledTableCell align='center'>{row.servico}</StyledTableCell>
-              <StyledTableCell align='center'>{row.matricula}</StyledTableCell>
+              <StyledTableCell align='left'>{row.prenotation}</StyledTableCell>
+              <StyledTableCell align='center'>{row.box}</StyledTableCell>
+              <StyledTableCell align='center' >{row.presenterDocument}</StyledTableCell>
+              <StyledTableCell align='center' >{row.presenterName}</StyledTableCell>
+              <StyledTableCell align='center'>{row.typeName}</StyledTableCell>
+              <StyledTableCell align='center'>{row.registration}</StyledTableCell>
               <StyledTableCell align='center'>
                 <Button sx={{
                   fontSize: '12px',
@@ -81,7 +82,7 @@ export const LixeiraTable = ({ data, onClick }) => {
                     background: 'transparent',
                     color: '#237117'
                   }
-                }} onClick={() => handleOpen(row.arquivo)}>
+                }} >
                   Ver Arquivo
                 </Button>
               </StyledTableCell>
@@ -98,7 +99,7 @@ export const LixeiraTable = ({ data, onClick }) => {
                     background: '#dc3545',
                     color: '#fff'
                   }
-                }} onClick={() => onClick(row.id)}>
+                }} >
                   Excluir
                 </Button>
               </StyledTableCell>
