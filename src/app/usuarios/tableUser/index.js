@@ -15,27 +15,27 @@ import Link from 'next/link'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-        backgroundColor: '#E9E9E9',
+        backgroundColor: "#E9E9E9",
         color: theme.palette.common.black,
-        fontWeight: "bold"
+        fontWeight: 'bold',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1,
     },
     [`&.${tableCellClasses.body}`]: {
-        fontSize: 15,
-        color: '#000',
+        fontSize: 14,
     },
-}))
+    padding: '10px 22px'
+}));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: theme.palette.action.hover,
-
     },
-
+    // hide last border
     '&:last-child td, &:last-child th': {
         border: 0,
-
     },
-    background: '#E9E9E9'
 }));
 
 const TableComponente = ({ data, onClick }) => {
@@ -49,7 +49,7 @@ const TableComponente = ({ data, onClick }) => {
 
     return (
         <TableContainer component={Paper} sx={{
-            maxHeight: 520,
+            height: 340,
             width: "100%",
             overflowY: 'auto',
         }}>

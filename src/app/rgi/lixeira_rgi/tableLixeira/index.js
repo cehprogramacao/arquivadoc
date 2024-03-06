@@ -45,16 +45,17 @@ export const LixeiraTable = ({ data, onClick }) => {
   
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: '1200px',marginTop: '30px' }}>
+    <TableContainer component={Paper} sx={{ width: '100%', height: 500 }}>
       <Table sx={{ maxWidth: '100%' }} >
         <TableHead>
           <TableRow>
             <StyledTableCell>Prenotação</StyledTableCell>
             <StyledTableCell align='center'>Caixa</StyledTableCell>
             <StyledTableCell align='center'>Apresentante</StyledTableCell>
+            <StyledTableCell align='center'>Nome</StyledTableCell>
             <StyledTableCell align='center'>Serviço</StyledTableCell>
             <StyledTableCell align='center'>Matrícula</StyledTableCell>
-            <StyledTableCell align='center'>Arquivo</StyledTableCell>
+            {/* <StyledTableCell align='center'>Arquivo</StyledTableCell> */}
             <StyledTableCell align='right'>Excluir</StyledTableCell>
             <StyledTableCell align='right'>Restaurar</StyledTableCell>
           </TableRow>
@@ -68,7 +69,7 @@ export const LixeiraTable = ({ data, onClick }) => {
               <StyledTableCell align='center' >{row.presenterName}</StyledTableCell>
               <StyledTableCell align='center'>{row.typeName}</StyledTableCell>
               <StyledTableCell align='center'>{row.registration}</StyledTableCell>
-              <StyledTableCell align='center'>
+              {/* <StyledTableCell align='center'>
                 <Button sx={{
                   fontSize: '12px',
                   textTransform: 'none',
@@ -85,7 +86,7 @@ export const LixeiraTable = ({ data, onClick }) => {
                 }} >
                   Ver Arquivo
                 </Button>
-              </StyledTableCell>
+              </StyledTableCell> */}
               <StyledTableCell align='right'>
                 <Button sx={{
                   fontSize: '15px',

@@ -67,7 +67,7 @@ const PageUsuarios = () => {
                     width: '100%',
                     height: '100vh',
                     display: 'flex',
-                    py: 14,
+                    py: 12,
                     px: 3
                 }}>
                     <CustomContainer>

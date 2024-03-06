@@ -83,6 +83,7 @@ const PageRGI = () => {
             return response.data
         } catch (error) {
             console.error("Erro ao filtrar por Apresentante", error);
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -113,7 +114,7 @@ const PageRGI = () => {
     };
 
 
-    const handleOpen = (index) => {
+    const handleOpen = () => {
         setOpen(true);
     };
 
