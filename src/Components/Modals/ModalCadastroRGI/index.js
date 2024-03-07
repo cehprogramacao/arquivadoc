@@ -91,7 +91,6 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
         console.log(data);
         const { create } = new RGI()
         try {
-            onClose()
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await create(data, accessToken)
@@ -103,6 +102,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
         }
         finally {
             setLoading(false)
+            onClose()
         }
     }
 

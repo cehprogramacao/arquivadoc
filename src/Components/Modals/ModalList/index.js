@@ -9,10 +9,12 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import RGI from '@/services/rgi.service';
 import CustomContainer from '@/Components/CustomContainer';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-const ModalList = ({ open, data, onClose }) => {
-
-    console.log(data, '696969696996969696')
+const ModalList = ({ open, data, onClose, prenotation }) => {
+    const path = usePathname().split("/")[1]
+    // console.log(data, '696969696996969696')
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'))
     const createBlobUrl = (base64Data) => {
@@ -44,16 +46,15 @@ const ModalList = ({ open, data, onClose }) => {
     }
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
-    console.log(data, 'ModalListaaaaaaaaaaaaaaaaaaaaaaa')
-    console.log(data[0]?.file, 'Index e Filllllllllllllllllllllllle')
+    // console.log(data, 'ModalListaaaaaaaaaaaaaaaaaaaaaaa')
+    // console.log(data.file, 'Index e Filllllllllllllllllllllllle')
 
     const handleDeleteByPrenotation = async () => {
         console.log(data[0].prenotation)
         const { deleteByPrenotation } = new RGI()
         try {
             const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteByPrenotation(data[0].prenotation, accessToken)
-
+            const response = await deleteByPrenotation(prenotation, accessToken)
             console.log(response.data)
             window.location.reload()
             return response.data
@@ -95,7 +96,7 @@ const ModalList = ({ open, data, onClose }) => {
                                 height: { lg: 500, md: 500, sm: 400, xs: 350 }
                             }}>
                                 <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                    <Viewer fileUrl={`data:application/pdf;base64,${data[0]?.file}`} plugins={[defaultLayoutPluginInstance]} />
+                                    <Viewer fileUrl={`data:application/pdf;base64,${data.file}`} plugins={[defaultLayoutPluginInstance]} />
                                     {/* <Viewer fileUrl={createBlobUrl(data[index]?.file)} plugins={[defaultLayoutPluginInstance]} /> */}
                                     {/* <Viewer fileUrl={data[0]?.file} plugins={[defaultLayoutPluginInstance]} /> */}
                                 </Worker>
@@ -112,6 +113,8 @@ const ModalList = ({ open, data, onClose }) => {
                                 justifyContent: {lg: "flex-end", md: "flex-end", sm:"center", xs: "center"}
                             }}>
                                 {/* Add your buttons here */}
+                                <Link href={`/${path}/[prenotation]`} as={`/${path}/${prenotation}`}>
+                                </Link>
                                 <Button variant="outlined" color='inherit' sx={{
                                     color: '#FFD500',
                                     ":hover": {

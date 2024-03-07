@@ -30,20 +30,15 @@ const PageRGI = () => {
         option: "",
         value: ""
     })
-
-
     const [loading, setLoading] = useState(false)
-    const [open, setOpen] = useState(false);
     const [openModalRGI, setOpenModalRGI] = useState(false)
     const [data, setData] = useState([])
-    const [indexFile, setIndexFile] = useState(null)
     const [openFilterModalPDF, setOpenFilterModalPDF] = useState(false)
     const [openModalPartes, setOpenModalPartes] = useState(false)
     const handleOpenModalRGI = () => setOpenModalRGI(true)
     const handleCloseModalRGI = () => setOpenModalRGI(false)
     const handleOpenModalPartes = () => setOpenModalPartes(true)
     const handleCloseModalPartes = () => setOpenModalPartes(false)
-
 
     // Função para tratar o filtro de Prenotação
     const handlePrenotationFilter = async (value, accessToken) => {
@@ -111,16 +106,7 @@ const PageRGI = () => {
         } else {
             console.error("Opção ou valor não definidos.");
         }
-    };
-
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
+    }
     const getDataRGI = async () => {
         const { getData } = new RGI()
         try {
@@ -223,12 +209,12 @@ const PageRGI = () => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} >
-                                <DocList onClick={handleOpen} data={data} />
+                                <DocList data={data} />
                             </Grid>
                         </Grid>
                     </CustomContainer>
 
-                    {openFilterModalPDF && <ModalList onClose={handleClose} data={data} open={open} />}
+                    {/* {openFilterModalPDF && <ModalList onClose={handleClose} data={data} open={open} />} */}
                     <Drawer anchor='left' open={openModalRGI} onClose={handleCloseModalRGI} >
                         <CadastroModalRGI onClose={handleCloseModalRGI} onClickPartes={handleOpenModalPartes} />
                     </Drawer>
