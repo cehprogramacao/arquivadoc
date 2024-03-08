@@ -1,3 +1,4 @@
+import User from '@/services/user.service';
 import {
     Table,
     TableBody,
@@ -12,6 +13,8 @@ import {
     Button
 } from '@mui/material'
 import Link from 'next/link'
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -38,15 +41,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const TableComponente = ({ data, onClick }) => {
-    console.log(data, 'kkkkkkkkkk912912129');
-
+const TableComponente = ({ data, handleDeleteByID, handleSetAdmin, handleUnsetAdmin,handleEnable, handleDisabled }) => {
     const dataArray = Array.isArray(data) ? data : Object.values(data);
 
-    console.log("Transformado em array:", dataArray);
-    dataArray.forEach(item => console.log(item, 'MMMMMMMMMMMMMMMMMMMMMMkkkk'));
+    // console.log("Transformado em array:", dataArray);
+    // dataArray.forEach(item => console.log(item, 'MMMMMMMMMMMMMMMMMMMMMMkkkk'));
 
-
+    
     return (
         <TableContainer component={Paper} sx={{
             height: 340,
@@ -66,13 +67,17 @@ const TableComponente = ({ data, onClick }) => {
                         <StyledTableCell align='center'>Setor</StyledTableCell>
                         <StyledTableCell align='center'>Excluir</StyledTableCell>
                         <StyledTableCell align='center'>Editar</StyledTableCell>
+                        <StyledTableCell align='center'>Tornar Admin</StyledTableCell>
+                        <StyledTableCell align='center'>Habilitar/Desabilitar</StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {dataArray.length > 0 && dataArray.map((row, index) => (
                         <StyledTableRow
                             key={index}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 },
+                            background: row?.active === 0 ? "#e6e5e5" : ""
+                        }}
                         >
                             <StyledTableCell align='left'>{row?.id}</StyledTableCell>
                             <StyledTableCell align='center'>{row?.name}</StyledTableCell>
@@ -91,8 +96,8 @@ const TableComponente = ({ data, onClick }) => {
                                         background: '#EA1010',
                                         color: '#fff'
                                     }
-                                }} >
-                                    Excluir
+                                }} onClick={() => handleDeleteByID(row?.id)}>
+                                    Excluir 
                                 </Button>
                             </StyledTableCell>
                             <StyledTableCell align='center'>
@@ -112,6 +117,76 @@ const TableComponente = ({ data, onClick }) => {
                                         Editar
                                     </Button>
                                 </Link>
+                            </StyledTableCell>
+                            <StyledTableCell align='center'>
+                                {row?.is_admin !== 1 ?
+                                    <Button sx={{
+                                        fontSize: '15px',
+                                        textTransform: 'none',
+                                        color: 'black',
+                                        background: 'transparent',
+                                        border: '1px solid #0dcaf0',
+                                        px: 1.8,
+                                        color: '#0dcaf0',
+                                        ":hover": {
+                                            background: '#0dcaf0',
+                                            color: '#fff'
+                                        }
+                                    }} onClick={() => handleSetAdmin(row?.id)}>
+                                        Tornar Admin
+                                    </Button>
+                                    :
+                                    <Button sx={{
+                                        fontSize: '15px',
+                                        textTransform: 'none',
+                                        color: 'black',
+                                        background: 'transparent',
+                                        // px: 2,
+                                        border: '1px solid #0dcaf0',
+                                        color: '#0dcaf0',
+                                        ":hover": {
+                                            background: '#0dcaf0',
+                                            color: '#fff'
+                                        }
+                                    }} onClick={() => handleUnsetAdmin(row?.id)}>
+                                        Tornar Usuário
+                                    </Button>
+                                }
+                            </StyledTableCell>
+                            <StyledTableCell align='center'>
+                                {row?.active !== 1 ?
+                                    <Button sx={{
+                                        fontSize: '15px',
+                                        textTransform: 'none',
+                                        color: 'black',
+                                        background: 'transparent',
+                                        border: '1px solid #0dcaf0',
+                                        px: 1.8,
+                                        color: '#0dcaf0',
+                                        ":hover": {
+                                            background: '#0dcaf0',
+                                            color: '#fff'
+                                        }
+                                    }} onClick={() => handleEnable(row?.id)}>
+                                        Habilitar
+                                    </Button>
+                                    :
+                                    <Button sx={{
+                                        fontSize: '15px',
+                                        textTransform: 'none',
+                                        color: 'black',
+                                        background: 'transparent',
+                                        // px: 2,
+                                        border: '1px solid #0dcaf0',
+                                        color: '#0dcaf0',
+                                        ":hover": {
+                                            background: '#0dcaf0',
+                                            color: '#fff'
+                                        }
+                                    }} onClick={() => handleDisabled(row?.id)}>
+                                        Desabilitar
+                                    </Button>
+                                }
                             </StyledTableCell>
                         </StyledTableRow>
                     ))}

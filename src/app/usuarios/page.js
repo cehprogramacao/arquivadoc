@@ -10,6 +10,7 @@ import CustomContainer from "@/Components/CustomContainer"
 import User from "@/services/user.service"
 import TableComponente, { UserTable } from "./tableUser"
 import Loading from "@/Components/loading"
+import SnackBar from "@/Components/SnackBar"
 
 
 const PageUsuarios = () => {
@@ -45,20 +46,112 @@ const PageUsuarios = () => {
         },
     ];
 
+    const [alert, setAlert] = useState({
+        open: false,
+        type: "",
+        text: "",
+        severity: ""
+    })
+    const handleDeleteByID = async (userId) => {
+        const { deleteUser } = new User()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteUser(userId, accessToken)
+            setAlert({open: true, type: "user", text: response.data.message, severity: "success"})
+            return response.data
+        } catch (error) {
+            setAlert({open: true, type: "user", text: error.message, severity: "error"})
+            console.error("Erro ao excluir usuário!",error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
 
-    // const dadosFicticios = [
-    //     { id: 1, name: 'João Silva', email: 'joao.silva@example.com', setor: 'TI' },
-    //     { id: 2, name: 'Maria Oliveira', email: 'maria.oliveira@example.com', setor: 'RH' },
-    //     { id: 3, name: 'Carlos Pereira', email: 'carlos.pereira@example.com', setor: 'Financeiro' },
-    //     { id: 4, name: 'Ana Costa', email: 'ana.costa@example.com', setor: 'Marketing' },
-    //     { id: 5, name: 'Felipe Dias', email: 'felipe.dias@example.com', setor: 'Vendas' }
-    //   ];
+    const handleClose = () => {
+        setAlert({...alert,open: false})
+    }
 
+    const handleSetAdmin = async (userId) => {
+        const { setAdmin } = new User()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await setAdmin(userId,accessToken)
+            setAlert({open: true, text: response.data.message, severity: "success", type: "user"})
+            console.log(response.data, '77777')
+            getUsers()
+            return response.data
+        } catch (error) {
+            setAlert({open: true, text: error.message, severity: "error", type: "user"})
+            console.error("Erro ao tornar admin", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
 
-    const handleExcluir = (id) => {
-        const updatedRows = rows.filter((row) => row.id !== id);
-        setRows(updatedRows);
-    };
+    const handleUnsetAdmin = async (userId) => {
+        const { unsetAdmin } = new User()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await unsetAdmin(userId,accessToken)
+            setAlert({open: true, text: response.data.message, severity: "success", type: "user"})
+            console.log(response.data, '77777')
+            getUsers()
+            return response.data
+        } catch (error) {
+            setAlert({open: true, text: error.message, severity: "error", type: "user"})
+            console.error("Erro ao tornar usuário", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    const handleEnable = async (userId) => {
+        const { enableUser } = new User()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await enableUser(userId,accessToken)
+            setAlert({open: true, text: response.data.message, severity: "success", type: "user"})
+            console.log(response.data, '77777')
+            getUsers()
+            return response.data
+        } catch (error) {
+            setAlert({open: true, text: error.message, severity: "error", type: "user"})
+            console.error("Erro ao habilitar usuário", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+    const handleDisabled = async (userId) => {
+        const { disableUser } = new User()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await disableUser(userId,accessToken)
+            setAlert({open: true, text: response.data.message, severity: "success", type: "user"})
+            console.log(response.data, '77777')
+            getUsers()
+            return response.data
+        } catch (error) {
+            setAlert({open: true, text: error.message, severity: "error", type: "user"})
+            console.error("Erro ao desabilitar usuário", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <>
@@ -141,8 +234,14 @@ const PageUsuarios = () => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} >
-                                <TableComponente data={dataRows} />
-
+                                <TableComponente 
+                                data={dataRows} 
+                                handleDeleteByID={handleDeleteByID} 
+                                handleSetAdmin={handleSetAdmin}
+                                handleUnsetAdmin={handleUnsetAdmin}
+                                handleEnable={handleEnable}
+                                handleDisabled={handleDisabled}
+                                />
                             </Grid>
                         </Grid>
                     </CustomContainer>
@@ -150,7 +249,7 @@ const PageUsuarios = () => {
                 :
                 <Loading />
             }
-
+            <SnackBar data={alert} handleClose={handleClose} />
         </>
     )
 }

@@ -16,6 +16,7 @@ import CustomContainer from '@/Components/CustomContainer';
 import RGI from '@/services/rgi.service';
 import { useSelector } from 'react-redux';
 import Loading from '@/Components/loading';
+import SnackBar from '@/Components/SnackBar';
 
 const optionsFilter = [
     { label: 'Prenotação' },
@@ -60,7 +61,15 @@ const PageRGI = () => {
             setLoading(false);
         }
     };
-
+    const [alert, setAlert] = useState({
+        open: false,
+        text: '',
+        type: '',
+        severity: ''
+    });
+    const handleCloseSnackBar = () => {
+        setAlert({...alert, open: false})
+    }
     console.log(data, 9090)
 
     // Função para tratar o filtro de Apresentante
@@ -115,6 +124,7 @@ const PageRGI = () => {
             const response = await getData(accessToken)
             console.log(response.data, 'Kauannnnnnnnnnnnnnnn')
             setData(Object.values(response.data))
+            setAlert({...alert, open: true, text: `Total de arquivos:${Object.values(response.data).length}`, type: "file",severity: "success"})
             return response.data
         } catch (error) {
             console.error("error listing all rgi files", error)
@@ -223,6 +233,8 @@ const PageRGI = () => {
                     </Drawer>
                 </Box>
             }
+            <SnackBar data={alert} handleClose={handleCloseSnackBar} />
+
         </>
     );
 };

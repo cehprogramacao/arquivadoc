@@ -7,6 +7,8 @@ import { login } from "@/services/auth.service";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { SET_LOGIN_DATA } from "@/store/actions";
+import Snackbar from "@/Components/SnackBar";
+import SnackBar from "@/Components/SnackBar";
 const { Box } = require("@mui/system");
 
 const LoginPage = () => {
@@ -19,49 +21,41 @@ const LoginPage = () => {
 
   const [alert, setAlert] = useState({
     open: false,
-    message: '',
-    severity: 'success',
+    text: '',
+    type: '',
+    severity: ''
   });
-
+  
   const handleOnChange = (event) => {
     const { name, value } = event.target
     setDataUser({ ...dataUser, [name]: value })
   }
 
-  const [error, setError] = useState('');
-
 
   const handleSubmit = async (event) => {
     try {
-      //const userData = {
-      //  email: values.user,
-      //  password: values.password,
-      //};
       const { data } = await login(dataUser);
       const { accessToken, refreshToken } = data;
       sessionStorage.setItem('accessToken', accessToken);
       sessionStorage.setItem('refreshToken', refreshToken);
-      dispatch({ type: SET_LOGIN_DATA });
-      setAlert({ message: data.message, severity: 'success', open: true });
-
-
-
+      dispatch({ type: SET_LOGIN_DATA});
+      setAlert({ text: data.message, type: "success",severity: "success", open: true });
       if (data.auth) {
-        //setSnackbarOpen(true);
-
-          router.push('/'); // Recarrega a página
+        router.push('/'); 
       }
     } catch (err) {
       const errorMessage = err.message || "An unexpected error occurred";
-      setAlert({ message: errorMessage, severity: 'error', open: true });
-    } 
-  
+      setAlert({ text: errorMessage, type: 'error', open: true, severity:"error" });
+    }
+
   };
-  
-  
 
 
-  
+  const handleClose = () => {
+    setAlert({...alert, open: false})
+  }
+
+
   return (
     <Box
       sx={{
@@ -174,6 +168,7 @@ const LoginPage = () => {
           Entrar
         </Button>
       </Box>
+      <SnackBar data={alert} handleClose={handleClose} />
     </Box>
   );
 };
