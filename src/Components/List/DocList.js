@@ -10,20 +10,7 @@ import MenuOptionsFile from '../MenuPopUp';
 import RGI from '@/services/rgi.service';
 import { constant } from 'lodash';
 
-export const DocList = ({ data, onClick }) => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-    const [prenotation, setPrenotation] = useState("")
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-    
-
+export const DocList = ({ data, setPrenotation, handleClick }) => {
     return (
         <>
             <Grid
@@ -61,7 +48,7 @@ export const DocList = ({ data, onClick }) => {
                                 </ListItemAvatar>
                                 <ListItemText
                                 onClick={(event) => {
-                                    handleClick(event),
+                                    handleClick(event)
                                     setPrenotation(item.prenotation)
                                 }}
                                     primaryTypographyProps={{
@@ -77,7 +64,6 @@ export const DocList = ({ data, onClick }) => {
                 ))}
             </Grid>
 
-            <MenuOptionsFile anchorEl={anchorEl} data={data} open={open} handleClose={handleClose} prenotation={prenotation}  />
         </>
 
     );

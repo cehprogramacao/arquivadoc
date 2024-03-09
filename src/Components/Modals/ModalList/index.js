@@ -16,7 +16,6 @@ const ModalList = ({ open, data, onClose, prenotation }) => {
     const path = usePathname().split("/")[1]
     // console.log(data, '696969696996969696')
     const theme = useTheme()
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'))
     const createBlobUrl = (base64Data) => {
         const byteCharacters = atob(base64Data);
         const byteNumbers = new Array(byteCharacters.length);
@@ -31,7 +30,7 @@ const ModalList = ({ open, data, onClose, prenotation }) => {
         return URL.createObjectURL(blob);
     };
     const handlePrintFile = () => {
-        const base64Data = data[0]?.file;
+        const base64Data = data.file;
         const byteCharacters = atob(base64Data);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
@@ -50,7 +49,6 @@ const ModalList = ({ open, data, onClose, prenotation }) => {
     // console.log(data.file, 'Index e Filllllllllllllllllllllllle')
 
     const handleDeleteByPrenotation = async () => {
-        console.log(data[0].prenotation)
         const { deleteByPrenotation } = new RGI()
         try {
             const accessToken = sessionStorage.getItem("accessToken")
@@ -107,10 +105,10 @@ const ModalList = ({ open, data, onClose, prenotation }) => {
                                 width: "100%",
                                 display: 'flex',
                                 gap: '25px',
-                                alignItems: {lg: "flex-end", md: "flex-end", sm:"center", xs: "center"},
-                                flexDirection: {lg: "column", md: "column", sm:"row", xs: "row"},
+                                alignItems: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" },
+                                flexDirection: { lg: "column", md: "column", sm: "row", xs: "row" },
                                 py: 2,
-                                justifyContent: {lg: "flex-end", md: "flex-end", sm:"center", xs: "center"}
+                                justifyContent: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" }
                             }}>
                                 {/* Add your buttons here */}
                                 <Link href={`/${path}/[prenotation]`} as={`/${path}/${prenotation}`}>
@@ -128,7 +126,7 @@ const ModalList = ({ open, data, onClose, prenotation }) => {
                                     ":hover": {
                                         color: "#0DCAF0"
                                     }
-                                }} onClick={handlePrintFile} >
+                                }} onClick={() => handlePrintFile()} >
                                     <PrintIcon />
                                 </Button>
                                 <Button variant="outlined" color='error' onClick={handleDeleteByPrenotation}>

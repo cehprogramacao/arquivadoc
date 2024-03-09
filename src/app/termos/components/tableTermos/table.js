@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import { useMediaQuery, useTheme } from '@mui/material';
 import Image from 'next/image';
 
-export const DocList = ({ data, onClick }) => {
+export const DocList = ({ data, setCPF, handleClick }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
     const columns = isSmallScreen ? 1 : 4;
@@ -45,7 +45,10 @@ export const DocList = ({ data, onClick }) => {
                     }}
                 >
                     <List sx={{ width: '100%', padding: '0' }}>
-                        <ListItem onClick={() => onClick(index)} style={{ cursor: 'pointer' }}>
+                        <ListItem onClick={(event) => {
+                            handleClick(event)
+                            setCPF(item.cpf)
+                        }} style={{ cursor: 'pointer' }}>
                             <ListItemAvatar>
                                 <Image width={50} height={50} src="/image/pdf-icon.svg" alt="" />
                             </ListItemAvatar>

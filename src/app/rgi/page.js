@@ -17,6 +17,7 @@ import RGI from '@/services/rgi.service';
 import { useSelector } from 'react-redux';
 import Loading from '@/Components/loading';
 import SnackBar from '@/Components/SnackBar';
+import MenuOptionsFile from '@/Components/MenuPopUp';
 
 const optionsFilter = [
     { label: 'Prenotação' },
@@ -36,6 +37,38 @@ const PageRGI = () => {
     const [data, setData] = useState([])
     const [openFilterModalPDF, setOpenFilterModalPDF] = useState(false)
     const [openModalPartes, setOpenModalPartes] = useState(false)
+    const [prenotation, setPrenotation] = useState("")
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
+    const [openPDF, setOpenPDF] = useState(false)
+    const [dataFile, setDataFile] = useState([])
+
+    const handleOpenModalPDF = async () => {
+        const { getByPrenotation } = new RGI()
+        try {
+            setOpenPDF(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await getByPrenotation(prenotation, accessToken)
+            console.log(response.data, 'PDFF')
+            setDataFile(response.data)
+            return response.data
+        } catch (error) {
+            console.error("Erro ao listar dados!", error)
+            throw error;
+        }
+    }
+
+    const handleCloseModalPDF = async () => {
+        setOpenPDF(false)
+    }
+
+    const handleClickMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+    };
     const handleOpenModalRGI = () => setOpenModalRGI(true)
     const handleCloseModalRGI = () => setOpenModalRGI(false)
     const handleOpenModalPartes = () => setOpenModalPartes(true)
@@ -68,7 +101,7 @@ const PageRGI = () => {
         severity: ''
     });
     const handleCloseSnackBar = () => {
-        setAlert({...alert, open: false})
+        setAlert({ ...alert, open: false })
     }
     console.log(data, 9090)
 
@@ -92,7 +125,19 @@ const PageRGI = () => {
             setLoading(false);
         }
     };
-
+    const handleDeleteByPrenotation = async () => {
+        const { deleteByPrenotation } = new RGI()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteByPrenotation(prenotation, accessToken)
+            console.log(response.data)
+            window.location.reload()
+            return response.data
+        } catch (error) {
+            console.error("Error ao deletar arquivo rgi!", error)
+            throw error;
+        }
+    }
     const handleFilter = async () => {
         console.log('Iniciando filtragem com valor:', value);
 
@@ -124,7 +169,7 @@ const PageRGI = () => {
             const response = await getData(accessToken)
             console.log(response.data, 'Kauannnnnnnnnnnnnnnn')
             setData(Object.values(response.data))
-            setAlert({...alert, open: true, text: `Total de arquivos:${Object.values(response.data).length}`, type: "file",severity: "success"})
+            setAlert({ ...alert, open: true, text: `Total de arquivos:${Object.values(response.data).length}`, type: "file", severity: "success" })
             return response.data
         } catch (error) {
             console.error("error listing all rgi files", error)
@@ -134,6 +179,9 @@ const PageRGI = () => {
             setLoading(false)
         }
     }
+
+
+
     useEffect(() => {
         getDataRGI()
         console.log(payload, '2002010kkkakakkakakakak')
@@ -219,7 +267,7 @@ const PageRGI = () => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} >
-                                <DocList data={data} />
+                                <DocList data={data} setPrenotation={(prenotation) => setPrenotation(prenotation)} handleClick={handleClickMenu} />
                             </Grid>
                         </Grid>
                     </CustomContainer>
@@ -234,7 +282,8 @@ const PageRGI = () => {
                 </Box>
             }
             <SnackBar data={alert} handleClose={handleCloseSnackBar} />
-
+            <MenuOptionsFile anchorEl={anchorEl} data={data} open={open} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={prenotation} handleDelete={handleDeleteByPrenotation} />
+            <ModalList data={dataFile} onClose={handleCloseModalPDF} open={openPDF} prenotation={prenotation}  />
         </>
     );
 };

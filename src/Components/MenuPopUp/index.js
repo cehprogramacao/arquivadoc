@@ -57,29 +57,9 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-const MenuOptionsFile = ({ open, anchorEl,  handleClose, data, prenotation }) => {
+const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenModalPDF, type, handleDelete }) => {
   const path = usePathname().split("/")[1]
-  const [openPDF, setOpenPDF] = useState(false)
-  const [dataFile, setDataFile] = useState([])
-
-  const handleOpenModalPDF = async () => {
-    const { getByPrenotation } = new RGI()
-    try {
-      setOpenPDF(true)
-      const accessToken = sessionStorage.getItem("accessToken")
-      const response = await getByPrenotation(prenotation, accessToken)
-      console.log(response.data, 'PDFF')
-      setDataFile(response.data)
-      return response.data
-    } catch (error) {
-        console.error("Erro ao listar dados!", error)
-        throw error;
-    }
-  }
-
-  const handleCloseModalPDF = async () => {
-    setOpenPDF(false)
-  }
+  
 
   return (
     <>
@@ -93,7 +73,7 @@ const MenuOptionsFile = ({ open, anchorEl,  handleClose, data, prenotation }) =>
           open={open}
           onClose={handleClose}
         >
-          <Link href={`/${path}/[prenotation]`} as={`/${path}/${prenotation}`}>
+          <Link href={`/${path}/${[type]}`} as={`/${path}/${type}`}>
             <MenuItem sx={{color: "#FFD500"}} onClick={handleClose} disableRipple >
               <EditIcon sx={{ fill: '#FFD500' }} />
               Editar
@@ -107,13 +87,16 @@ const MenuOptionsFile = ({ open, anchorEl,  handleClose, data, prenotation }) =>
             Abrir Arquivo
           </MenuItem>
           <Divider sx={{ my:0 }} />
-          <MenuItem sx={{color: '#dc3545'}} onClick={handleClose} disableRipple>
+          <MenuItem sx={{color: '#dc3545'}} onClick={() => {
+            handleClose()
+            handleDelete()
+          }} disableRipple>
             <Delete sx={{ fill: '#dc3545' }} />
             Deletar
           </MenuItem>
         </StyledMenu>
       </Box>
-      <ModalList data={dataFile} onClose={handleCloseModalPDF} open={openPDF} prenotation={prenotation} />
+      
     </>
   );
 }

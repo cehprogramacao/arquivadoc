@@ -13,13 +13,15 @@ import {
     TableRow,
     Paper,
     Checkbox,
-    FormControlLabel,
+    FormControl, 
+    OutlinedInput,
 } from '@mui/material';
 import { styled, width } from '@mui/system';
 import CustomContainer from '@/Components/CustomContainer';
 import withIsAdmin from '@/utils/isAdmin';
 import User from '@/services/user.service';
 import Loading from '@/Components/loading';
+import ReactInputMask from 'react-input-mask';
 
 const StyledFormContainer = styled(Box)({
     width: '70%',
@@ -46,8 +48,10 @@ const StyledButtonContainer = styled(Box)({
     justifyContent: 'space-between',
     width: "100%",
 });
-
+const numberMaskEstruct = '(99) 99999-9999'
 const AddUser = () => {
+    const [numberMask, setNumberMask] = useState(numberMaskEstruct)
+    const [errors, setErrors] = useState({});
     const [userData, setUserData] = useState({
         name: '',
         email: '',
@@ -76,7 +80,16 @@ const AddUser = () => {
     };
 
 
+    const handleInputChange = (e) => {
+        e.target.value?.replace(/\D/g, '').length < 11
+            ? setNumberMask(numberMask)
+            : setNumberMask(numberMask);
+        setUserData({ ...userData, phone: e.target.value });
+    };
 
+    const handleInputBlur = () => {
+        userData.phone?.replace(/\D/g, '').length === 11 && setNumberMask(numberMask);
+    };
 
 
     const handleNext = () => {
@@ -161,7 +174,12 @@ const AddUser = () => {
                         </Box>
                         <StyledContentContainer>
                             {section === 'Dados' && (
-                                <Box component="form">
+                                <Box component="form" sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: 5,
+                                    width: "100%"
+                                }}>
                                     <TextField
                                         label="Name"
                                         name="name"
@@ -169,7 +187,6 @@ const AddUser = () => {
                                         value={userData.username}
                                         onChange={handleChange}
                                         fullWidth
-                                        sx={{ mb: 5 }}
                                         required
                                     />
                                     <TextField
@@ -180,19 +197,32 @@ const AddUser = () => {
                                         value={userData.email}
                                         onChange={handleChange}
                                         fullWidth
-                                        sx={{ mb: 5 }}
                                         required
                                     />
-                                    <TextField
-                                        label="Phone"
-                                        name="phone"
-                                        variant="outlined"
-                                        value={userData.phone}
-                                        onChange={handleChange}
-                                        fullWidth
-                                        sx={{ mb: 5 }}
-                                        required
-                                    />
+                                    <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
+                                        <ReactInputMask
+                                            mask={numberMask}
+                                            value={userData.phone}
+                                            onChange={handleInputChange}
+                                            onBlur={handleInputBlur}
+                                            name="phone"
+                                        >
+                                            {(inputProps) => (
+                                                <OutlinedInput
+                                                    {...inputProps}
+                                                    id={'id-documento'}
+                                                    color="success"
+                                                    placeholder={'Número de Telefone'}
+                                                    sx={{
+                                                        borderRadius: '12.5px',
+                                                        '& .MuiOutlinedInput-notchedOutline': {
+                                                            borderRadius: '4px',
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        </ReactInputMask>
+                                    </FormControl>
                                     <TextField
                                         label="Password"
                                         name="password"
@@ -201,7 +231,6 @@ const AddUser = () => {
                                         value={userData.password}
                                         onChange={handleChange}
                                         fullWidth
-                                        sx={{ mb: 5 }}
                                         required
                                     />
                                 </Box>

@@ -15,6 +15,10 @@ import SnackBar from "@/Components/SnackBar"
 
 const PageUsuarios = () => {
     const [dataRows, setDataRows] = useState([])
+    const [filter, setFilter] = useState({
+        userId: "",
+        option: ""
+    })
     const [loading, setLoading] = useState(false)
     const getUsers = async () => {
         const user = new User();
@@ -39,10 +43,8 @@ const PageUsuarios = () => {
 
     const top100Films = [
         {
-            label: 'Número'
-        },
-        {
-            label: 'Caixa'
+            id: 1,
+            label: 'ID'
         },
     ];
 
@@ -58,11 +60,11 @@ const PageUsuarios = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await deleteUser(userId, accessToken)
-            setAlert({open: true, type: "user", text: response.data.message, severity: "success"})
+            setAlert({ open: true, type: "user", text: response.data.message, severity: "success" })
             return response.data
         } catch (error) {
-            setAlert({open: true, type: "user", text: error.message, severity: "error"})
-            console.error("Erro ao excluir usuário!",error)
+            setAlert({ open: true, type: "user", text: error.message, severity: "error" })
+            console.error("Erro ao excluir usuário!", error)
             throw error;
         }
         finally {
@@ -71,7 +73,7 @@ const PageUsuarios = () => {
     }
 
     const handleClose = () => {
-        setAlert({...alert,open: false})
+        setAlert({ ...alert, open: false })
     }
 
     const handleSetAdmin = async (userId) => {
@@ -79,13 +81,13 @@ const PageUsuarios = () => {
         try {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
-            const response = await setAdmin(userId,accessToken)
-            setAlert({open: true, text: response.data.message, severity: "success", type: "user"})
+            const response = await setAdmin(userId, accessToken)
+            setAlert({ open: true, text: response.data.message, severity: "success", type: "user" })
             console.log(response.data, '77777')
             getUsers()
             return response.data
         } catch (error) {
-            setAlert({open: true, text: error.message, severity: "error", type: "user"})
+            setAlert({ open: true, text: error.message, severity: "error", type: "user" })
             console.error("Erro ao tornar admin", error)
             throw error;
         }
@@ -99,13 +101,13 @@ const PageUsuarios = () => {
         try {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
-            const response = await unsetAdmin(userId,accessToken)
-            setAlert({open: true, text: response.data.message, severity: "success", type: "user"})
+            const response = await unsetAdmin(userId, accessToken)
+            setAlert({ open: true, text: response.data.message, severity: "success", type: "user" })
             console.log(response.data, '77777')
             getUsers()
             return response.data
         } catch (error) {
-            setAlert({open: true, text: error.message, severity: "error", type: "user"})
+            setAlert({ open: true, text: error.message, severity: "error", type: "user" })
             console.error("Erro ao tornar usuário", error)
             throw error;
         }
@@ -119,13 +121,13 @@ const PageUsuarios = () => {
         try {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
-            const response = await enableUser(userId,accessToken)
-            setAlert({open: true, text: response.data.message, severity: "success", type: "user"})
+            const response = await enableUser(userId, accessToken)
+            setAlert({ open: true, text: response.data.message, severity: "success", type: "user" })
             console.log(response.data, '77777')
             getUsers()
             return response.data
         } catch (error) {
-            setAlert({open: true, text: error.message, severity: "error", type: "user"})
+            setAlert({ open: true, text: error.message, severity: "error", type: "user" })
             console.error("Erro ao habilitar usuário", error)
             throw error;
         }
@@ -138,14 +140,33 @@ const PageUsuarios = () => {
         try {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
-            const response = await disableUser(userId,accessToken)
-            setAlert({open: true, text: response.data.message, severity: "success", type: "user"})
+            const response = await disableUser(userId, accessToken)
+            setAlert({ open: true, text: response.data.message, severity: "success", type: "user" })
             console.log(response.data, '77777')
             getUsers()
             return response.data
         } catch (error) {
-            setAlert({open: true, text: error.message, severity: "error", type: "user"})
+            setAlert({ open: true, text: error.message, severity: "error", type: "user" })
             console.error("Erro ao desabilitar usuário", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+    const handleFilterById = async () => {
+        const { getUserById } = new User()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getUserById(filter.userId, accessToken)
+            setAlert({ open: true, severity: "success", type: "user", text: `Usuário ${data.user[0].email}` })
+            console.log(data.user[0].email)
+            setDataRows(data.user)
+            return data
+        } catch (error) {
+            setAlert({ open: true, severity: "error", type: "user", text: error.message })
+            console.error("Erro ao filter usuário!", error)
             throw error;
         }
         finally {
@@ -183,6 +204,8 @@ const PageUsuarios = () => {
                                     <Grid item xs={12} lg={5} md={5} sm={6}>
                                         <TextField label="Buscar"
                                             fullWidth
+                                            value={filter.userId}
+                                            onChange={(e) => setFilter({ ...filter, userId: e.target.value })}
                                             sx={{
                                                 '& input': {
                                                     color: 'success.main',
@@ -195,6 +218,7 @@ const PageUsuarios = () => {
                                             id="combo-box-demo"
                                             options={top100Films}
                                             fullWidth
+                                            // value={filter.option}
                                             autoHighlight
                                             getOptionLabel={(option) => option.label}
                                             renderInput={(params) => (
@@ -202,12 +226,7 @@ const PageUsuarios = () => {
                                                     {...params}
                                                     color="success"
                                                     label="Buscar Por"
-                                                    onChange={(e) => {
-                                                        const selected = top100Films.find(
-                                                            (item) => item.label === e.target.value
-                                                        );
-                                                        setSelect(selected)
-                                                    }}
+                                                    onChange={(e, newValue) => setFilter({ ...filter, option: newValue.label })}
                                                     sx={{
                                                         color: "#237117",
                                                         "& input": {
@@ -225,7 +244,7 @@ const PageUsuarios = () => {
                                             gap: "10px",
                                             justifyContent: "center"
                                         }}>
-                                            <Buttons color={'green'} title={'Buscar'} />
+                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFilterById} />
                                             <Link href={"/addUser"}>
                                                 <ButtonOpenModals />
                                             </Link>
@@ -234,13 +253,13 @@ const PageUsuarios = () => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} >
-                                <TableComponente 
-                                data={dataRows} 
-                                handleDeleteByID={handleDeleteByID} 
-                                handleSetAdmin={handleSetAdmin}
-                                handleUnsetAdmin={handleUnsetAdmin}
-                                handleEnable={handleEnable}
-                                handleDisabled={handleDisabled}
+                                <TableComponente
+                                    data={dataRows}
+                                    handleDeleteByID={handleDeleteByID}
+                                    handleSetAdmin={handleSetAdmin}
+                                    handleUnsetAdmin={handleUnsetAdmin}
+                                    handleEnable={handleEnable}
+                                    handleDisabled={handleDisabled}
                                 />
                             </Grid>
                         </Grid>
