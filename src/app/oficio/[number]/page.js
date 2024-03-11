@@ -1,137 +1,208 @@
 "use client"
-import CustomContainer from '@/Components/CustomContainer';
-import Loading from '@/Components/loading';
-import Customer from '@/services/customer.service';
-import { Box, TextField, Typography, Button, Autocomplete, FormControl, FormLabel, FormHelperText, OutlinedInput, Grid } from "@mui/material";
-import { useRouter } from 'next/navigation';
-import { useState } from "react";
-import ReactInputMask from 'react-input-mask';
+import CustomContainer from "@/Components/CustomContainer"
+import SnackBar from "@/Components/SnackBar"
+import Loading from "@/Components/loading"
+import Calling from "@/services/calling.service"
+import RGI from "@/services/rgi.service"
+import { Grid, Box, TextField, Container, Button, Autocomplete } from "@mui/material"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
-
-const PageEditarPessoas = ({ params }) => {
-
+const EditCallingByNumber = ({ params }) => {
     const [loading, setLoading] = useState(false)
-    console.log(params, 'paraaaaaaaaaaaaaaaaaa')
+    const router = useRouter()
+    const [alert, setAlert] = useState({
+        open: false,
+        text: "",
+        type:"",
+        severity:""
+    })
+    const [types, setTypes] = useState([])
+    const [entity, setEntity] = useState([])
+    const [entityOption, setEntityOption] = useState(null)
+    const [typesOption, setTypesOption] = useState(null)
+    const [dataCalling, setDataCalling] = useState({
+        entity: "",
+        calling_type: "",
+        box: "",
+        date: "",
+        file_url: ""
+    })
+
+    const getTypes = async () => {
+        const { getAllCallingTypes } = new Calling()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getAllCallingTypes(accessToken)
+            console.log(data)
+            setTypes(Object.values(data))
+            return data
+        } catch (error) {
+            console.error("Erro ao buscar types!", error)
+            throw error;
+        }
+    }
+    const getEntity = async () => {
+        const { getAllCallingEntities } = new Calling()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getAllCallingEntities(accessToken)
+            console.log(data)
+            setEntity(Object.values(data))
+            return data
+        } catch (error) {
+            console.error("Erro ao buscar entidades!", error)
+            throw error;
+        }
+    }
+    const handleChangeFile = (e) => {
+        const file = e.target.files[0]
+        if (file) {
+            const fileReader = new FileReader()
+            fileReader.onloadend = () => {
+                const fileResult = fileReader.result.split(",")[1]
+                setDataCalling({ ...dataCalling, file_url: fileResult })
+            }
+            fileReader.readAsDataURL(file)
+        }
+    }
+    useEffect(() => {
+        getTypes()
+        getEntity()
+    }, [])
+
+    const handleToUpdateCalling = async () => {
+        console.log(dataCalling)
+        const { updateCallingByNumber } = new Calling()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await updateCallingByNumber(params.number, dataCalling, accessToken)
+            setAlert({open: true, severity: "success", text: data.message,type: "file"})
+            console.log(data)
+            return data
+        } catch (error) {
+            setAlert({open: true, severity: "error", text: error.msg,type: "file"})
+            console.error("Erro ao editar ofício!",error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+            router.push("/oficio")
+        }
+    }
+
+
+
     return (
         <>
-            {loading ?
-                <Loading />
+            {loading ? <Loading />
                 :
                 <Box sx={{
-                    width: '100vw',
+                    width: "100%",
                     height: "100vh",
-                    py: 14,
-                    px: 4
+                    py: { xs: 8, sm: 12 },
+                    px: { xs: 0, sm: 2 }
                 }}>
                     <CustomContainer >
-                        <Grid container spacing={2} alignItems="center" justifyContent="center">
-                            <Grid item xs={12} >
-                                <Box sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                }}>
-                                    <Typography fontSize={40} fontWeight='bold' color={"black"}>
-                                        Editar Pessoas
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} >
-                                <Box sx={{
-                                    width: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 6,
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }}>
-                                    <TextField
-                                        sx={{
-                                            '& input': { color: 'success.main' },
-                                            width: { lg: 400, md: 400, sm: 300, xs: "100%" },
-                                        }}
-                                        // value={data.name}
-                                        // onChange={(e) => setData({ ...data, name: e.target.value })}
-                                        name="name"
-                                        label="Nome completo"
-                                        color='success'
-                                    />
-                                    {/* <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        options={opt}
-                                        getOptionLabel={(opt) => opt.label}
-                                        onChange={(e, value) => setData({ ...data, type: value.label })}
-                                        isOptionEqualToValue={(option, value) => option.label === value.label}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                color="success"
-                                                {...params}
-                                                name="type"
-                                                label="Tipo de pessoa"
-                                                sx={{
-                                                    width: { lg: 400, md: 400, sm: 300, xs: "100%" },
-                                                    color: "#237117",
-                                                    '& input': {
-                                                        color: 'success.main',
-                                                    },
+                        <Container maxWidth={"sm"} sx={{ py: 5 }}>
+                            <Grid container spacing={3} >
+                                <Grid item xs={12}>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={12} lg={12} md={12} sm={12}>
+                                            <Autocomplete
+                                                fullWidth
+                                                value={entity.find(option => option.name === entityOption) || null}
+                                                options={entity}
+                                                getOptionLabel={(option) => option.name}
+                                                onChange={(e, value) => {
+                                                    setEntityOption(value ? value.name : null);
+                                                    setDataCalling({ ...dataCalling, entity: value ? value.id : null });
                                                 }}
+                                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                                renderInput={(params) => (
+                                                    <TextField {...params} label="Entidade" variant="outlined" color="success" />
+                                                )}
                                             />
-                                        )}
-                                    />
-                                    <FormControl error={Boolean(errors['cpfcnpj'])}>
-                                        <ReactInputMask
-                                            mask={cpfCnpjMask}
-                                            value={data.cpfcnpj}
-                                            onChange={handleInputChange}
-                                            onBlur={handleInputBlur}
-                                            name="cpfcnpj"
-                                        >
-                                            {(inputProps) => (
-                                                <OutlinedInput
-                                                    color='success'
-                                                    {...inputProps}
-                                                    id={'id-documento'}
-                                                    placeholder='CPF/CNPJ'
-                                                    sx={{
-                                                        width: { lg: 400, md: 400, sm: 300, xs: "100%" },
-                                                        borderRadius: '12.5px',
+                                        </Grid>
+                                        <Grid item xs={12} lg={6} md={6} sm={6}>
+                                            <TextField
+                                                id=""
+                                                name="box"
+                                                type="number"
+                                                label="Caixa"
+                                                value={dataCalling.box}
+                                                onChange={(e) => {
+                                                    setDataCalling({ ...dataCalling, box: e.target.valueAsNumber })
+                                                }}
+                                                color="success"
+                                                fullWidth
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} lg={6} md={6} sm={6}>
+                                            <Autocomplete
+                                                fullWidth
+                                                value={types.find(option => option.name === typesOption) || null}
+                                                options={types}
+                                                getOptionLabel={(option) => option.name}
+                                                onChange={(e, value) => {
+                                                    setTypesOption(value ? value.name : null);
+                                                    setDataCalling({ ...dataCalling, calling_type: value ? value.id : null });
+                                                }}
+                                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                                renderInput={(params) => (
+                                                    <TextField {...params} label="Serviço" variant="outlined" color="success" />
+                                                )}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} lg={12} md={12} sm={12}>
+                                            <TextField
+                                                id=""
+                                                type="date"
+                                                label="date"
+                                                name="date"
+                                                color="success"
+                                                value={dataCalling.date}
+                                                onChange={(e) => {
+                                                    setDataCalling({ ...dataCalling, date: e.target.value })
+                                                }}
+                                                fullWidth
 
-                                                        '& .MuiOutlinedInput-notchedOutline': {
-                                                            borderRadius: '4px',
-                                                        },
-                                                        '& input': {
-                                                            color: 'success.main',
-                                                        },
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} lg={12} md={12} sm={12}>
+                                            <TextField
+                                                type="file"
+                                                color="success"
+                                                fullWidth
+                                                onChange={handleChangeFile}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12} >
+                                    <Box sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "space-between",
 
-                                                    }}
-                                                />
-                                            )}
-                                        </ReactInputMask>
-                                    </FormControl> */}
-                                    <Button sx={{
-                                        display: 'flex',
-                                        alignSelf: "center",
-                                        width: 'max-content',
-                                        background: "#237117",
-                                        color: '#fff',
-                                        border: '1px solid #237117',
-                                        padding: '7px 30px',
-                                        ":hover": {
-                                            background: 'transparent',
-                                            color: '#237117',
-
-                                        }
-                                    }} >
-                                        Atualizar
-                                    </Button>
-                                </Box>
+                                    }}>
+                                        <Button LinkComponent={"a"} href="/rgi" variant="contained" color="success">
+                                            Voltar
+                                        </Button>
+                                        <Button variant="contained" color="success" onClick={handleToUpdateCalling} >
+                                            Atualizar
+                                        </Button>
+                                    </Box>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        </Container>
                     </CustomContainer>
                 </Box>
             }
+            <SnackBar data={alert} handleClose={() => setAlert({...alert, open: false})} />
         </>
     )
 }
-export default PageEditarPessoas
+
+export default EditCallingByNumber

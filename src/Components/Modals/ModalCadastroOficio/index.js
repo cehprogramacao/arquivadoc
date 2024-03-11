@@ -4,8 +4,8 @@ import ModalCadastroCallingEntity from "@/Components/ModalsRegistration/ModalCad
 import CadastroModalCallingTypes from "@/Components/ModalsRegistration/ModalCadastroCallingTypes";
 import SnackBar from "@/Components/SnackBar";
 import Calling from "@/services/calling.service";
-import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton } from "@mui/material";
-import { Box } from "@mui/system";
+import { CloseOutlined } from "@mui/icons-material";
+import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton, Box, List, ListItem, ListItemText, ListItemButton, ListItemIcon, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 
 
@@ -93,6 +93,30 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
     } catch (error) {
       setAlert({ open: true, text: error.mesg, severity: "error", type: "file" })
       console.error("Error ao adicionar arquivo!", error)
+      throw error;
+    }
+  }
+  const handleDeleteEntityById = async (entityId) => {
+    const { deleteCallingEntity } = new Calling()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const { data } = await deleteCallingEntity(entityId, accessToken)
+      console.log(data)
+      return data
+    } catch (error) {
+      console.error("Erro ao deletar entidade", error)
+      throw error;
+    }
+  }
+  const handleDeleteByTypeId = async (typeId) => {
+    const { deleteCallingType } = new Calling()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const { data } = await deleteCallingType(typeId, accessToken)
+      console.log(data)
+      return data
+    } catch (error) {
+      console.error("Erro ao deletar entidade", error)
       throw error;
     }
   }
@@ -186,7 +210,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
             getOptionLabel={(option) => option.name}
             onChange={(e, value) => {
               setEntityOption(value)
-              setDataCalling({ ...dataCalling, entity: value.id })
+              setDataCalling({ ...dataCalling, entity: value.id || "" })
             }}
             renderInput={(params) => (
               <TextField
@@ -201,6 +225,37 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
                 }}
               />
             )}
+            renderOption={(props, option) => (
+              <Box
+                {...props}
+                key={option.id}
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center"
+                }}
+              >
+                <Grid container alignItems={"center"} justifyContent="space-between" px={1}>
+                  <Grid item xs={10} lg={10} md={10} sm={10}>
+                    <Typography >
+                      {option.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={2} lg={2} md={2} sm={2}>
+                    <Box sx={{
+                      width: "100%",
+                      display: 'flex',
+                      justifyContent: "flex-end"
+                    }}>
+                      <IconButton onClick={() => handleDeleteEntityById(option.id)}>
+                        <CloseOutlined />
+                      </IconButton>
+                    </Box>
+                  </Grid>
+                </Grid>
+
+              </Box>
+            )}
           />
           <Autocomplete
             disablePortal
@@ -210,7 +265,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
             getOptionLabel={(option) => option.name}
             onChange={(e, value) => {
               setGroupOption(value)
-              setDataCalling({ ...dataCalling, calling_type: value.id })
+              setDataCalling({ ...dataCalling, calling_type: value.id || "" })
             }}
             noOptionsText={<RenderNoOptions onClick={handleOpenModalTypes} title={'Cadastrar Tipo'} />}
             fullWidth
@@ -227,6 +282,38 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
                 }}
               />
             )}
+            renderOption={(props, option) => (
+              <Box
+                {...props}
+                key={option.id}
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center"
+                }}
+              >
+                <Grid container alignItems={"center"} justifyContent="space-between" px={1}>
+                  <Grid item xs={10} lg={10} md={10} sm={10}>
+                    <Typography >
+                      {option.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={2} lg={2} md={2} sm={2}>
+                    <Box sx={{
+                      width: "100%",
+                      display: 'flex',
+                      justifyContent: "flex-end"
+                    }}>
+                      <IconButton onClick={() => handleDeleteByTypeId(option.id)}>
+                        <CloseOutlined />
+                      </IconButton>
+                    </Box>
+                  </Grid>
+                </Grid>
+
+              </Box>
+            )}
+
           />
           <TextField
             value={dataCalling.date}
@@ -238,8 +325,9 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
             InputLabelProps={{ shrink: true }}
           />
           <TextField
+            fullWidth
             sx={{
-              width: isSmallScreen ? '100%' : '360px',
+
               border: 'none',
               '::placeholder': {
                 color: 'success.main',
