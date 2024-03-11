@@ -8,6 +8,7 @@ import {
   Box,
   Stack,
   styled,
+  IconButton
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
@@ -16,13 +17,85 @@ import { ModalNotesTag } from "@/Components/ModalsRegistration/ModalNotesTag";
 import CloseIcon from '@mui/icons-material/Close';
 import CadastroNotesType from "@/Components/ModalsRegistration/ModalNotesTypes";
 import CadastroNotesCurtomers from "@/Components/ModalsRegistration/ModalNotesCustomers";
+
+
+
+const BoxSearchTitle = styled(Box)({
+  maxWidth: "100%",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+});
+
+const ButtonClose = styled("button")({
+  border: 'none',
+  background: 'transparent',
+  cursor: 'pointer'
+});
+
+const ButtonScanner = styled("button")({
+  width: "max-content",
+  background: 'transparent',
+  padding: '10px 20px',
+  color: '#FED70B',
+  borderRadius: "7px",
+  border: '1px solid #FED70B',
+  cursor: 'pointer',
+  ":hover": {
+    background: '#FED70B',
+    border: '1px solid #FED70B',
+    color: '#fff'
+  }
+});
+
+
+const ButtonCadastrar = styled("button")({
+  width: "max-content",
+  background: '#237117',
+  padding: '10px 45px',
+  color: '#fff',
+  borderRadius: "7px",
+  border: 'none',
+  cursor: 'pointer',
+  ":hover": {
+    background: 'transparent',
+    border: '1px solid #237171',
+    color: '#237117'
+  }
+});
+
+const BoxInputs = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+  gap: '30px',
+  height: "100vh",
+  overflowY: "auto",
+  padding: "5px 8px",
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const CadastroNotas = ({ onClose }) => {
   const theme = useTheme();
-  const [outorgantes, setOutorgantes] = useState([{ id: '', label: '' }]);
-  const [outorgados, setOutorgados] = useState([{ id: '', label: '' }]);
+
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const file = useRef(null)
   const [fileSelected, setFileSelected] = useState("")
+  const [outorgantes, setOutorgantes] = useState([{ id: '', label: '' }]);
+  const [outorgados, setOutorgados] = useState([{ id: '', label: '' }]);
+  const [valueOutorgante, setValueOutorgante] = useState(Array(outorgantes.length).fill(''));
+  const [valueOutorgado, setValueOutorgado] = useState(Array(outorgados.length).fill(''));
   const [formData, setFormData] = useState({
     order_num: null,
     tag: null,
@@ -60,88 +133,25 @@ export const CadastroNotas = ({ onClose }) => {
   };
 
 
-  const BoxMain = styled("main")({
-    width: isSmallScreen ? "100%" : "420px",
-    height: "100vh",
-    padding: "8px 10px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "30px",
-    overflow: "hidden",
-  });
-
-  const BoxSearchTitle = styled("Box")({
-    maxWidth: "100%",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  });
-
-  const ButtonClose = styled("button")({
-    border: 'none',
-    background: 'transparent',
-    cursor: 'pointer'
-  });
-
-  const ButtonScanner = styled("button")({
-    width: "max-content",
-    background: 'transparent',
-    padding: '10px 20px',
-    color: '#FED70B',
-    borderRadius: "7px",
-    border: '1px solid #FED70B',
-    cursor: 'pointer',
-    ":hover": {
-      background: '#FED70B',
-      border: '1px solid #FED70B',
-      color: '#fff'
-    }
-  });
 
 
-  const ButtonCadastrar = styled("button")({
-    width: "max-content",
-    background: '#237117',
-    padding: '10px 45px',
-    color: '#fff',
-    borderRadius: "7px",
-    border: 'none',
-    cursor: 'pointer',
-    ":hover": {
-      background: 'transparent',
-      border: '1px solid #237171',
-      color: '#237117'
-    }
-  });
-
-  const BoxInputs = styled("Box")({
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",
-    gap: isSmallScreen ? "20px" : "30px",
-    height: "100vh",
-    overflowY: "auto",
-    padding: "5px 8px",
-  });
-
-
-  const [outorganteArray, setOutorganteArray] = useState([
+  const outorganteArray = [
     { id: 1, label: "Kauan" },
-    { id: 2, label: "Ronaldo" },
-  ]);
-  const [outorgadoArray, setOutorgadoArray] = useState([
+    { id: 2, label: "Ronaldo" },]
+  const outorgadoArray = [
     { id: 1, label: "Kauan" },
-    { id: 2, label: "Ronaldo" },
-  ]);
+    { id: 2, label: "Ronaldo" }]
   const boxInputsRef = useRef(null);
 
   const adicionarInput = (tipo, event) => {
     event.preventDefault();
     const currentScrollPosition = boxInputsRef.current.scrollTop;
     if (tipo === "outorgante") {
-      setOutorgantes((prev) => [...prev, ""]);
+      setOutorgantes((prev) => [...prev, { id: '', label: '' }]);
+      setValueOutorgante((prev) => [...prev, null]);
     } else if (tipo === "outorgado") {
-      setOutorgados((prev) => [...prev, ""]);
+      setOutorgados((prev) => [...prev, { id: '', label: '' }]);
+      setValueOutorgado((prev) => [...prev, null]);
     }
     setTimeout(() => {
       boxInputsRef.current.scrollTop = currentScrollPosition;
@@ -152,13 +162,22 @@ export const CadastroNotas = ({ onClose }) => {
     const currentScrollPosition = boxInputsRef.current.scrollTop;
     if (tipo === "outorgante" && outorgantes.length >= 2) {
       setOutorgantes((prev) => prev.filter((_, i) => i !== index));
+      setValueOutorgante((prev) => prev.filter((_, i) => i !== index));
     } else if (tipo === "outorgado" && outorgados.length >= 2) {
       setOutorgados((prev) => prev.filter((_, i) => i !== index));
+      setValueOutorgado((prev) => prev.filter((_, i) => i !== index));
     }
     setTimeout(() => {
       boxInputsRef.current.scrollTop = currentScrollPosition;
     }, 0);
   };
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      grantors: valueOutorgante.filter(Boolean),
+      granteds: valueOutorgado.filter(Boolean),
+    }));
+  }, [valueOutorgante, valueOutorgado]);
 
   const handleChange = (tipo, index, valor) => {
     if (tipo === "outorgante") {
@@ -199,7 +218,7 @@ export const CadastroNotas = ({ onClose }) => {
     }
   ])
 
-  const [valueNotesType, setValueNotesType] = useState('')
+  const [valueNotesType, setValueNotesType] = useState(null)
   const [option, setOption] = useState(null)
   const notesType = [
     {
@@ -258,8 +277,21 @@ export const CadastroNotas = ({ onClose }) => {
   const handleCloseNotesCustomers = () => {
     setOpenModalNotesCustomers(!openModalNotesCustomers)
   }
+
+  const handleRegister = () => {
+    console.log(formData.grantors, 'graaa')
+    console.log(formData.granteds, 'grentttt')
+  }
   return (
-    <BoxMain >
+    <Box sx={{
+      width: { lg: 420, md: 390, sm: 350, xs: 320 },
+      height: "100vh",
+      padding: "8px 10px",
+      display: "flex",
+      flexDirection: "column",
+      gap: "30px",
+      overflow: "hidden",
+    }} >
       <BoxSearchTitle>
         <Typography sx={{ fontSize: "clamp(1.3rem, 1rem, 1.7rem)" }}>
           Cadastro - Notas Escrituras
@@ -321,7 +353,10 @@ export const CadastroNotas = ({ onClose }) => {
           value={formData.service_type}
           options={notesType}
           getOptionLabel={(option) => option.label || ''}
-          onChange={(event, newValue) => handleAutocompleteChange("service_type", newValue)}
+          onChange={(event, newValue) => {
+            handleAutocompleteChange("service_type", newValue)
+            setValueNotesType(newValue)
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -380,9 +415,16 @@ export const CadastroNotas = ({ onClose }) => {
         {outorgantes.map((outorgante, index) => (
           <Box key={`outorgante-${index}-${outorgantes.length}`} >
             <Autocomplete
-              value={outorgante}
+              value={valueOutorgante[outorgante[index]]}
               options={outorganteArray}
-              noOptionsText={<RenderNoOptions title={'Cadastrar Outorgantep'} onClick={handleOpenNotesCustomers} />}
+              getOptionLabel={(option) => option.label || ''}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              noOptionsText={<RenderNoOptions title={'Cadastrar Outorgante'} onClick={handleOpenNotesCustomers} />}
+              onChange={(e, value) => {
+                const updatedValues = [...valueOutorgante];
+                updatedValues[index] = value ? value.label : ''; // Ensure value is a valid object
+                setValueOutorgante(updatedValues);
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -396,15 +438,13 @@ export const CadastroNotas = ({ onClose }) => {
                   {option.label}
                 </li>
               )}
-              onChange={(event, newValue) => handleAutocompleteChange("grantors", newValue)}
-              onInputChange={(event, value) => {
-                // Lógica de pesquisa, se necessário
-              }}
             />
             <Box sx={{ display: "flex", gap: "9px", marginTop: '8px' }}>
-              <Button
+              <IconButton
                 type="button"
-                style={{
+                sx={{
+                  width: 30,
+                  height: 30,
                   background: "#237117",
                   color: "#fff",
                   border: "none",
@@ -414,10 +454,12 @@ export const CadastroNotas = ({ onClose }) => {
                 onClick={(e) => adicionarInput("outorgante", e)}
               >
                 +
-              </Button>
-              <Button
+              </IconButton>
+              <IconButton
                 type="button"
-                style={{
+                sx={{
+                  width: 30,
+                  height: 30,
                   background: "#237117",
                   color: "#fff",
                   border: "none",
@@ -427,7 +469,7 @@ export const CadastroNotas = ({ onClose }) => {
                 onClick={() => removerInput("outorgante", index)}
               >
                 -
-              </Button>
+              </IconButton>
             </Box>
           </Box>
         ))}
@@ -435,8 +477,15 @@ export const CadastroNotas = ({ onClose }) => {
         {outorgados.map((outorgado, index) => (
           <Box key={`outorgado-${index}-${outorgados.length}`}>
             <Autocomplete
-              value={outorgado}
+              value={valueOutorgado[outorgado[index]]}
               options={outorgadoArray}
+              getOptionLabel={(option) => option.label || ''}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(e, value) => {
+                const updatedValues = [...valueOutorgante];
+                updatedValues[index] = value ? value.label : ''; // Ensure value is a valid object
+                setValueOutorgado(updatedValues);
+              }}
               noOptionsText={<RenderNoOptions title={'Cadastrar Outorgado'} onClick={handleOpenNotesCustomers} />}
               renderInput={(params) => (
                 <TextField
@@ -451,15 +500,13 @@ export const CadastroNotas = ({ onClose }) => {
                   {option.label}
                 </li>
               )}
-              onChange={(event, newValue) => handleAutocompleteChange("granteds", newValue)}
-              onInputChange={(event, value) => {
-                // Lógica de pesquisa, se necessário
-              }}
             />
             <Box sx={{ display: "flex", gap: "9px", marginTop: '8px' }}>
-              <Button
+              <IconButton
                 type="button"
-                style={{
+                sx={{
+                  width: 30,
+                  height: 30,
                   background: "#237117",
                   color: "#fff",
                   border: "none",
@@ -469,10 +516,12 @@ export const CadastroNotas = ({ onClose }) => {
                 onClick={(e) => adicionarInput("outorgado", e)}
               >
                 +
-              </Button>
-              <Button
+              </IconButton>
+              <IconButton
                 type="button"
-                style={{
+                sx={{
+                  width: 30,
+                  height: 30,
                   background: "#237117",
                   color: "#fff",
                   border: "none",
@@ -482,7 +531,7 @@ export const CadastroNotas = ({ onClose }) => {
                 onClick={() => removerInput("outorgado", index)}
               >
                 -
-              </Button>
+              </IconButton>
             </Box>
           </Box>
         ))}
@@ -497,7 +546,7 @@ export const CadastroNotas = ({ onClose }) => {
           <ButtonScanner>
             Scannear Arquivo
           </ButtonScanner>
-          <ButtonCadastrar onClick={() => console.log(formData)}>
+          <ButtonCadastrar onClick={handleRegister}>
             Cadastrar
           </ButtonCadastrar>
 
@@ -508,6 +557,6 @@ export const CadastroNotas = ({ onClose }) => {
       <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} />
       <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} />
       <CadastroNotesCurtomers open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
-    </BoxMain>
+    </Box >
   );
 };

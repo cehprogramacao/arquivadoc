@@ -8,7 +8,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 
-const SnackBar = ({ data, handleClose }) => {
+const SnackBar = ({ data, handleClose, }) => {
   const getIcon = () => {
     switch (data.type) {
       case 'user':
@@ -24,10 +24,10 @@ const SnackBar = ({ data, handleClose }) => {
     }
   };
   return (
-    <Snackbar open={data.open} autoHideDuration={6000} onClose={handleClose}>
+    <Snackbar open={data.open} autoHideDuration={6000} onClose={handleClose} >
       <Alert
         onClose={handleClose}
-        severity={data.severity}
+        severity={data.severity === "success" ? "success" : "error"}
         icon={getIcon()}
         action={
           <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
