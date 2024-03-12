@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Calling from '@/services/calling.service';
 
-const CadastroModalCallingTypes = ({ onClose, open }) => {
+const CadastroModalCallingTypes = ({ onClose, open,getTypes }) => {
 
 
 
@@ -21,6 +21,7 @@ const CadastroModalCallingTypes = ({ onClose, open }) => {
     try {
       const accessToken = sessionStorage.getItem("accessToken")
       const response = await createCallingType(data, accessToken)
+      getTypes()
       console.log(response.data)
       return response.data
     } catch (error) {

@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Calling from '@/services/calling.service';
 
-const ModalCalling = ({ open, data, onClose, number }) => {
+const ModalCalling = ({ open, data, onClose, number,handleDeleteByNumber }) => {
     const path = usePathname().split("/")[1]
     // console.log(data, '696969696996969696')
     const theme = useTheme()
@@ -49,19 +49,7 @@ const ModalCalling = ({ open, data, onClose, number }) => {
     // console.log(data, 'ModalListaaaaaaaaaaaaaaaaaaaaaaa')
     // console.log(data.file, 'Index e Filllllllllllllllllllllllle')
 
-    const handleDeleteByNumber = async () => {
-        const { deleteCallingByNumber } = new Calling()
-        try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteCallingByNumber(number, accessToken)
-            console.log(response.data)
-            window.location.reload()
-            return response.data
-        } catch (error) {
-            console.error("Error ao deletar arquivo rgi!", error)
-            throw error;
-        }
-    }
+    
 
     return (
         <>

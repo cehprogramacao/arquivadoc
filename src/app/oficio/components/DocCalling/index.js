@@ -26,9 +26,9 @@ export const DocCalling = ({ data, setNumber, handleClick }) => {
                     <Grid
                         item
                         key={index}
-                        xs={12}
-                        columns={4}
-                        sm={6}
+                        xs={6}
+                        columns={6}
+                        sm={4}
                         md={3}
                         lg={3}
                         
@@ -37,7 +37,6 @@ export const DocCalling = ({ data, setNumber, handleClick }) => {
                             display: 'flex',
                             width: "100%",
                             justifyContent: 'center',
-                            px: 2
                         }}>
                             <List sx={{ width: '100%' }}>
                                 <ListItem sx={{ cursor: 'pointer' }}>

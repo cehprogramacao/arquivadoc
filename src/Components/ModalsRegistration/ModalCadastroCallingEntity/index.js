@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Calling from '@/services/calling.service';
 
-const ModalCadastroCallingEntity = ({ onClose, open }) => {
+const ModalCadastroCallingEntity = ({ onClose, open, getEntity }) => {
 
   const [data, setData] = useState({
     name:""
@@ -19,6 +19,7 @@ const ModalCadastroCallingEntity = ({ onClose, open }) => {
     try {
       const accessToken = sessionStorage.getItem("accessToken")
       const response = await createCallingEntity(data, accessToken)
+      getEntity()
       console.log(response.data)
       return response.data
     } catch (error) {

@@ -184,22 +184,22 @@ const AddUser = () => {
                                         label="Name"
                                         name="name"
                                         variant="outlined"
+                                        color="success"
                                         value={userData.username}
                                         onChange={handleChange}
                                         fullWidth
-                                        required
                                     />
                                     <TextField
                                         label="Email"
                                         name="email"
                                         variant="outlined"
                                         type="email"
+                                        color="success"
                                         value={userData.email}
                                         onChange={handleChange}
                                         fullWidth
-                                        required
                                     />
-                                    <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
+                                    <FormControl fullWidth error={Boolean(errors['phone'])}>
                                         <ReactInputMask
                                             mask={numberMask}
                                             value={userData.phone}
@@ -228,10 +228,10 @@ const AddUser = () => {
                                         name="password"
                                         variant="outlined"
                                         type="password"
+                                        color="success"
                                         value={userData.password}
                                         onChange={handleChange}
                                         fullWidth
-                                        required
                                     />
                                 </Box>
                             )}

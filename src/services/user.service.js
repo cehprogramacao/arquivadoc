@@ -71,7 +71,7 @@ class User {
         });
     }
 
-    getUserById(userId, accessToken) {
+    getUserById(userId, accessToken) {  
         return customAxios.get(`/user/${userId}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`

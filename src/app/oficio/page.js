@@ -180,6 +180,20 @@ const PageOficio = () => {
         }
     }
 
+    const handleDeleteByNumber = async () => {
+        const { deleteCallingByNumber } = new Calling()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteCallingByNumber(number, accessToken)
+            console.log(response.data)
+            window.location.reload()
+            return response.data
+        } catch (error) {
+            console.error("Error ao deletar arquivo rgi!", error)
+            throw error;
+        }
+    }
+
     return (
         <>
             {loading
@@ -262,13 +276,13 @@ const PageOficio = () => {
                 </Box>
             }
             <Drawer anchor='left' open={open} onClose={handleClose}>
-                <CadastroOficio onClose={handleClose} onClickPartes={handleOpenPartes} />
+                <CadastroOficio getData={getCallingData} onClose={handleClose} onClickPartes={handleOpenPartes} />
             </Drawer>
             <Drawer anchor='right' open={openPartes} onClose={handleClosePartes}>
                 <CadastroPartes onClose={handleClosePartes} />
             </Drawer>
-            <MenuOptionsFile open={openMenu} anchorEl={anchorEl} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={number} handleDelete={handleCloseMenu} />
-            <ModalCalling open={openPDF} data={dataFile} number={number} onClose={handleCloseModalPDF} />
+            <MenuOptionsFile open={openMenu} anchorEl={anchorEl} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={number} handleDelete={handleDeleteByNumber} />
+            <ModalCalling open={openPDF} data={dataFile} number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />
             <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
         </>
     );

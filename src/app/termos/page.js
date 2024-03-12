@@ -15,6 +15,7 @@ import ModalListTerm from "./components/modalList"
 import { MenuItem } from "@react-pdf-viewer/core"
 import MenuOptionsFile from "@/Components/MenuPopUp"
 import SnackBar from "@/Components/SnackBar"
+import Loading from "@/Components/loading"
 
 
 const cpfMask = '999.999.999-99';
@@ -138,103 +139,106 @@ const PageTermos = () => {
 
     return (
         <>
-            <Box sx={{
-                width: '100%',
-                height: '100vh',
-                py: 12,
-                px: 3
-            }}>
+            {loading ? <Loading />
+                :
+                <Box sx={{
+                    width: '100%',
+                    height: '100vh',
+                    py: 12,
+                    px: 3
+                }}>
 
-                <CustomContainer>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <Box sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center"
-                            }}>
-                                <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
-                                    TERMOS
-                                </Typography>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} >
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} lg={4} md={6} sm={12}>
-                                    <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
-                                        <ReactInputMask
-                                            mask={cpfCnpjMask}
-                                            value={dataOptions.cpfcnpj}
-                                            onChange={handleInputChange}
-                                            onBlur={handleInputBlur}
-                                            name="cpfcnpj"
-                                        >
-                                            {(inputProps) => (
-                                                <OutlinedInput
-                                                    {...inputProps}
-                                                    id={'id-documento'}
+                    <CustomContainer>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <Box sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}>
+                                    <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
+                                        TERMOS
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} >
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} lg={4} md={6} sm={12}>
+                                        <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
+                                            <ReactInputMask
+                                                mask={cpfCnpjMask}
+                                                value={dataOptions.cpfcnpj}
+                                                onChange={handleInputChange}
+                                                onBlur={handleInputBlur}
+                                                name="cpfcnpj"
+                                            >
+                                                {(inputProps) => (
+                                                    <OutlinedInput
+                                                        {...inputProps}
+                                                        id={'id-documento'}
+                                                        color="success"
+                                                        placeholder={'CPF/CNPJ'}
+                                                        sx={{
+                                                            borderRadius: '12.5px',
+                                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                                borderRadius: '4px',
+                                                            },
+                                                        }}
+                                                    />
+                                                )}
+                                            </ReactInputMask>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12} lg={4} md={6} sm={12}>
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={top100Films}
+                                            fullWidth
+                                            autoHighlight
+                                            value={dataOptions.option}
+                                            getOptionLabel={(option) => option.label || ""}
+                                            onChange={(e, newValue) => setDataOptions({ ...dataOptions, option: newValue })}
+                                            isOptionEqualToValue={(option, value) => option.label === value.label}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
                                                     color="success"
-                                                    placeholder={'CPF/CNPJ'}
+                                                    label="Buscar Por"
                                                     sx={{
-                                                        borderRadius: '12.5px',
-                                                        '& .MuiOutlinedInput-notchedOutline': {
-                                                            borderRadius: '4px',
+                                                        color: "#237117",
+                                                        "& input": {
+                                                            color: "success.main",
                                                         },
                                                     }}
                                                 />
                                             )}
-                                        </ReactInputMask>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={12} lg={4} md={6} sm={12}>
-                                    <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        options={top100Films}
-                                        fullWidth
-                                        autoHighlight
-                                        value={dataOptions.option}
-                                        getOptionLabel={(option) => option.label || ""}
-                                        onChange={(e, newValue) => setDataOptions({ ...dataOptions, option: newValue })}
-                                        isOptionEqualToValue={(option, value) => option.label === value.label}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                color="success"
-                                                label="Buscar Por"
-                                                sx={{
-                                                    color: "#237117",
-                                                    "& input": {
-                                                        color: "success.main",
-                                                    },
-                                                }}
-                                            />
-                                        )}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} lg={4} md={12} sm={12}>
-                                    <Box sx={{ display: 'flex', justifyContent: "center", width: '100%', gap: '30px' }}>
-                                        <Buttons color={'green'} title={'Buscar'} onClick={handleFilterTermLGPD} />
-                                        <ButtonOpenModals onClick={handleOpen} />
-                                        <ButtonLixeira href={"/termos/lixeira_termo"} />
-                                    </Box>
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={4} md={12} sm={12}>
+                                        <Box sx={{ display: 'flex', justifyContent: "center", width: '100%', gap: '30px' }}>
+                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFilterTermLGPD} />
+                                            <ButtonOpenModals onClick={handleOpen} />
+                                            <ButtonLixeira href={"/termos/lixeira_termo"} />
+                                        </Box>
+                                    </Grid>
                                 </Grid>
                             </Grid>
+                            <Grid item xs={12} >
+                                <DocList data={data} setCPF={(cpf) => setCpfcnpj(cpf)} handleClick={handleClickMenu} />
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12} >
-                            <DocList data={data} setCPF={(cpf) => setCpfcnpj(cpf)} handleClick={handleClickMenu} />
-                        </Grid>
-                    </Grid>
-                </CustomContainer>
-                <ModalListTerm onClose={handleCloseList} open={openList} data={data} />
-                <Drawer anchor="left" open={open} onClose={handleClose} >
-                    <CadastroTermosModal onClose={handleClose} onClickPartes={handleOpenPartes} />
-                </Drawer>
-                <Drawer anchor="right" open={openPartes} onClose={handleClosePartes}>
-                    <CadastroPartes onClose={handleClosePartes} />
-                </Drawer>
+                    </CustomContainer>
+                    <ModalListTerm onClose={handleCloseList} open={openList} data={data} />
+                    <Drawer anchor="left" open={open} onClose={handleClose} >
+                        <CadastroTermosModal onClose={handleClose} onClickPartes={handleOpenPartes} />
+                    </Drawer>
+                    <Drawer anchor="right" open={openPartes} onClose={handleClosePartes}>
+                        <CadastroPartes onClose={handleClosePartes} />
+                    </Drawer>
 
-            </Box>
+                </Box>
+            }
             <MenuOptionsFile anchorEl={anchorEl} data={data} open={openMenu} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={cpfcnpj} handleDelete={handleDeleteByCPFCNPJ} />
             <ModalListTerm data={dataFile} onClose={handleCloseModalPDF} open={openPDF} cpfcnpj={cpfcnpj} />
             <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />

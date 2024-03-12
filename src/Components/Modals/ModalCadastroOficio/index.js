@@ -9,7 +9,7 @@ import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, I
 import { useEffect, useState } from "react";
 
 
-export const CadastroOficio = ({ onClose, onClickPartes }) => {
+export const CadastroOficio = ({ onClose, getData }) => {
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -88,6 +88,8 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
       const accessToken = sessionStorage.getItem("accessToken")
       const { data } = await createCalling(dataCalling, accessToken)
       setAlert({ open: true, text: data.message, severity: "success", type: "file" })
+      getData()
+      onClose()
       console.log(data)
       return data
     } catch (error) {
@@ -101,6 +103,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
     try {
       const accessToken = sessionStorage.getItem("accessToken")
       const { data } = await deleteCallingEntity(entityId, accessToken)
+      getDataEntity()
       console.log(data)
       return data
     } catch (error) {
@@ -112,6 +115,7 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
     const { deleteCallingType } = new Calling()
     try {
       const accessToken = sessionStorage.getItem("accessToken")
+      getDataTypes()
       const { data } = await deleteCallingType(typeId, accessToken)
       console.log(data)
       return data
@@ -406,8 +410,8 @@ export const CadastroOficio = ({ onClose, onClickPartes }) => {
         </Box>
 
       </Box >
-      <CadastroModalCallingTypes open={openModalCadastroTypes} onClose={handleCloseModalTypes} />
-      <ModalCadastroCallingEntity open={openModalCalling} onClose={handleCloseModalCalling} />
+      <CadastroModalCallingTypes open={openModalCadastroTypes} onClose={handleCloseModalTypes} getTypes={getDataTypes} />
+      <ModalCadastroCallingEntity open={openModalCalling} onClose={handleCloseModalCalling} getEntity={getDataEntity} />
       <SnackBar data={alert} handleClose={(e) => setAlert({ ...alert, open: false })} />
     </>
   );
