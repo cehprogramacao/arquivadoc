@@ -57,7 +57,7 @@ const AddUser = () => {
         email: '',
         phone: '',
         password: '',
-        permissions: Array(6).fill().map(() => Array(4).fill(0)),
+        permissions: Array(7).fill().map(() => Array(4).fill(0)),
     });
     const [loading, setLoading] = useState(false)
     const handleCheckedPermission = (permIndex, checkboxIndex) => {
@@ -106,7 +106,6 @@ const AddUser = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await user.addUserByAdmin(userData, accessToken)
             console.log(data)
-            window.location.reload()
             return data
         } catch (error) {
             console.log('Erro ao adicionar usuário!', error)
@@ -256,7 +255,7 @@ const AddUser = () => {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {['Notas', 'RGI', 'RTD', 'RPJ', 'Protestos', 'Ofícios'].map((permission, permIndex) => (
+                                                {['Protesto', 'RGI', 'RTD', 'RPJ','Ofício','Cadastros','Notas'].map((permission, permIndex) => (
                                                     <TableRow key={permission}>
                                                         <TableCell sx={{ fontSize: "1.2rem" }} align="center">{permission}</TableCell>
                                                         {userData.permissions[permIndex].map((value, checkboxIndex) => (

@@ -17,6 +17,8 @@ import { ModalNotesTag } from "@/Components/ModalsRegistration/ModalNotesTag";
 import CloseIcon from '@mui/icons-material/Close';
 import CadastroNotesType from "@/Components/ModalsRegistration/ModalNotesTypes";
 import CadastroNotesCurtomers from "@/Components/ModalsRegistration/ModalNotesCustomers";
+import NoteService from "@/services/notes.service";
+import Customer from "@/services/customer.service";
 
 
 
@@ -87,13 +89,10 @@ const BoxInputs = styled(Box)({
 
 
 export const CadastroNotas = ({ onClose }) => {
-  const theme = useTheme();
-
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const file = useRef(null)
-  const [fileSelected, setFileSelected] = useState("")
-  const [outorgantes, setOutorgantes] = useState([{ id: '', label: '' }]);
-  const [outorgados, setOutorgados] = useState([{ id: '', label: '' }]);
+
+  const [outorgantes, setOutorgantes] = useState([]);
+  const [outorgados, setOutorgados] = useState([]);
   const [valueOutorgante, setValueOutorgante] = useState(Array(outorgantes.length).fill(''));
   const [valueOutorgado, setValueOutorgado] = useState(Array(outorgados.length).fill(''));
   const [formData, setFormData] = useState({
@@ -120,21 +119,13 @@ export const CadastroNotas = ({ onClose }) => {
       fileReader.readAsDataURL(file);
     }
   };
-
-  // Função ajustada para tratar mudanças nos inputs
   const handleChangeFile = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
-
-  // Função para tratar a seleção nos Autocompletes
   const handleAutocompleteChange = (name, value) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
-
-
-
-
   const outorganteArray = [
     { id: 1, label: "Kauan" },
     { id: 2, label: "Ronaldo" },]
@@ -147,10 +138,10 @@ export const CadastroNotas = ({ onClose }) => {
     event.preventDefault();
     const currentScrollPosition = boxInputsRef.current.scrollTop;
     if (tipo === "outorgante") {
-      setOutorgantes((prev) => [...prev, { id: '', label: '' }]);
+      setOutorgantes((prev) => [...prev, ""]);
       setValueOutorgante((prev) => [...prev, null]);
     } else if (tipo === "outorgado") {
-      setOutorgados((prev) => [...prev, { id: '', label: '' }]);
+      setOutorgados((prev) => [...prev, ""]);
       setValueOutorgado((prev) => [...prev, null]);
     }
     setTimeout(() => {
@@ -192,62 +183,62 @@ export const CadastroNotas = ({ onClose }) => {
       setOutorgados(novosOutorgados);
     }
   };
-
-
-
-  const [valueTag, setValueTag] = useState('')
-  const [tag, setTag] = useState([
-    {
-      id: 1,
-      label: 'Diego Corretor'
-    },
-    {
-      id: 2,
-      label: 'Juninho Capixaba'
+  const [tag, setTag] = useState([])
+  const [presenter, setPresenter] = useState([])
+  const getAllNotesTag = async () => {
+    const { getAllNoteTags } = new NoteService()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const allTags = await getAllNoteTags(accessToken)
+      setTag(Object.values(allTags.data))
+      console.log(allTags.data, '99999999999')
+      return allTags.data
+    } catch (error) {
+      console.error("Error list of tags", error)
+      throw error;
     }
-  ])
-  const [valuePresenter, setValuePresenter] = useState('')
-  const [presenter, setPresenter] = useState([
-    {
-      id: 1,
-      label: 'Diego Corretor'
-    },
-    {
-      id: 2,
-      label: 'Juninho Capixaba'
-    }
-  ])
+  }
 
-  const [valueNotesType, setValueNotesType] = useState(null)
-  const [option, setOption] = useState(null)
-  const notesType = [
-    {
-      id: 1,
-      label: 'Escrituras',
-      opcoes: ['Compra e Venda', 'Revogação', 'Declaratória', 'Rerratificação']
-    },
-    {
-      id: 2,
-      label: 'Procurações'
-    },
-    {
-      id: 3,
-      label: 'Inventário',
-      opcoes: ['Inventário e Partilha', 'Inventário e Sobrepartilha']
-    },
-    {
-      id: 4,
-      label: 'Boxórcio'
-    },
-    {
-      id: 5,
-      label: 'Ata Notarial'
-    },
-    {
-      id: 6,
-      label: 'Substabelecimento'
+  const getCustomersPresenter = async () => {
+    const customer = new Customer();
+    try {
+      const accessToken = sessionStorage.getItem("accessToken");
+      const allPresenter = await customer.customers(accessToken);
+      const newData = Object.values(allPresenter.data);
+      setPresenter(newData);
+      console.log(allPresenter.data);
+      return allPresenter.data;
+    } catch (error) {
+      console.error("Error when listing presenters", error);
+      throw error;
     }
-  ]
+  };
+  
+  const [notesType, setNotesType] = useState([]);
+  const [valueNotesType, setValueNotesType] = useState(null);
+  const [typesGroup, setTypesGroup] = useState([])
+  const [option, setOption] = useState(null);
+  const getTypeAndGroup = async () => {
+    const { getAllNoteGroups, getAllNoteTypes } = new NoteService();
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const groups = await getAllNoteGroups(accessToken);
+      const types = await getAllNoteTypes(accessToken);
+      setNotesType(Object.values(groups.data))
+      setTypesGroup(Object.values(types.data))
+      console.log(groups.data,types.data, '88888')
+      return groups.data && types.data
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    getAllNotesTag()
+    getCustomersPresenter()
+    getTypeAndGroup()
+  }, [])
+
+
 
   const [openModalTag, setOpenModalTag] = useState(false)
   const [openModalPresenter, setOpenModalPresenter] = useState(false)
@@ -281,6 +272,7 @@ export const CadastroNotas = ({ onClose }) => {
   const handleRegister = () => {
     console.log(formData.grantors, 'graaa')
     console.log(formData.granteds, 'grentttt')
+    console.log(valueNotesType)
   }
   return (
     <Box sx={{
@@ -310,7 +302,7 @@ export const CadastroNotas = ({ onClose }) => {
         <Autocomplete
           value={formData.tag}
           options={tag}
-          getOptionLabel={(option) => option.label || ''}
+          getOptionLabel={(option) => option.name || ''}
           onChange={(event, newValue) => handleAutocompleteChange("tag", newValue)}
           noOptionsText={<RenderNoOptions onClick={handleOpenModalTag} title="Cadastrar Tag" />}
           renderInput={(params) => (
@@ -323,7 +315,7 @@ export const CadastroNotas = ({ onClose }) => {
           )}
           renderOption={(props, option) => (
             <li {...props} key={option.id}>
-              {option.label}
+              {option.name}
             </li>
           )}
         />
@@ -331,7 +323,7 @@ export const CadastroNotas = ({ onClose }) => {
         <Autocomplete
           value={formData.presenter}
           options={presenter}
-          getOptionLabel={(option) => option.label || ''}
+          getOptionLabel={(option) => option.name || ''}
           onChange={(event, newValue) => handleAutocompleteChange("presenter", newValue)}
           noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title="Cadastrar Apresentante" />}
           renderInput={(params) => (
@@ -344,19 +336,16 @@ export const CadastroNotas = ({ onClose }) => {
           )}
           renderOption={(props, option) => (
             <li {...props} key={option.id}>
-              {option.label}
+              {option.name}
             </li>
           )}
         />
 
         <Autocomplete
-          value={formData.service_type}
+          // value={formData.service_type}
           options={notesType}
-          getOptionLabel={(option) => option.label || ''}
-          onChange={(event, newValue) => {
-            handleAutocompleteChange("service_type", newValue)
-            setValueNotesType(newValue)
-          }}
+          getOptionLabel={(option) => option.name || ''}
+          onChange={(e,newValue) => setValueNotesType(newValue)}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -367,23 +356,23 @@ export const CadastroNotas = ({ onClose }) => {
           )}
           renderOption={(props, option) => (
             <li {...props} key={option.id}>
-              {option.label}
+              {option.name}
             </li>
           )}
         />
 
-        {valueNotesType && valueNotesType.opcoes && (
+        {valueNotesType && (
           <Autocomplete
             value={option}
             onChange={(event, newValue) => setOption(newValue)}
-            options={valueNotesType.opcoes} // Assegurar que as opções sejam baseadas na seleção de valueNotesType
-            getOptionLabel={(opcao) => opcao || ''} // Como opcao é uma string, apenas a retornamos
+            options={typesGroup.filter(item => item.id === valueNotesType.id)} // Assegurar que as opções sejam baseadas na seleção de valueNotesType
+            getOptionLabel={(opcao) => opcao.name || ''} // Como opcao é uma string, apenas a retornamos
             fullWidth
             noOptionsText={<RenderNoOptions onClick={handleOpenNotesType}
-              title={`Cadastrar Tipo de ${valueNotesType.label}`}
+              title={`Cadastrar Tipo de ${valueNotesType.name}`}
             />}
             renderInput={(params) => (
-              <TextField {...params} label={`Selecione o tipo de ${valueNotesType.label}`} color="success" variant="outlined" />
+              <TextField {...params} label={`Selecione o tipo de ${valueNotesType.name}`} color="success" variant="outlined" />
             )}
           />
         )}

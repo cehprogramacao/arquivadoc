@@ -43,7 +43,7 @@ export const UserTable = ({ data, onClick }) => {
 
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: '1080px', margin: '0 auto', marginTop: '30px' }}>
+    <TableContainer component={Paper} sx={{ maxWidth: '100%', height: "350px" }}>
       {isSmallScreen ?
         <Table sx={{ maxWidth: '100%' }} >
           <TableBody >
@@ -75,22 +75,6 @@ export const UserTable = ({ data, onClick }) => {
                       Excluir
                     </Button>
                   </TableCell>
-
-                  <TableCell>
-                    <Button sx={{
-                      fontSize: '15px',
-                      textTransform: 'none',
-                      color: '#ffd500',
-                      background: 'transparent',
-                      border: '1px solid #FFD500',
-                      ":hover": {
-                        background: '#FFD500',
-                        color: '#fff'
-                      }
-                    }} onClick={() => onClick(row.id)}>
-                      Editar
-                    </Button>
-                  </TableCell>
                 </TableRow>
               </React.Fragment>
             ))}
@@ -103,14 +87,13 @@ export const UserTable = ({ data, onClick }) => {
               <StyledTableCell>ID</StyledTableCell>
               <StyledTableCell align='center'>Nome</StyledTableCell>
               <StyledTableCell align='center'>Excluir</StyledTableCell>
-              <StyledTableCell align='center'>Editar</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
             {data.map((row, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell align='left'>{row.id}</StyledTableCell>
-                <StyledTableCell align='center'>{row.nome}</StyledTableCell>
+                <StyledTableCell align='center'>{row.name}</StyledTableCell>
                 <StyledTableCell align='center'>
                   <Button sx={{
                     fontSize: '15px',
@@ -128,24 +111,7 @@ export const UserTable = ({ data, onClick }) => {
                     Excluir
                   </Button>
                 </StyledTableCell>
-                <StyledTableCell align='center' >
-                  <Link href={`/solicitantes/[id]`} as={`/solicitantes/${row.id}`}>
-                    <Button sx={{
-                      fontSize: '15px',
-                      textTransform: 'none',
-                      color: 'black',
-                      background: 'transparent',
-                      border: '1px solid #FFD500',
-                      color: '#FFD500',
-                      ":hover": {
-                        background: '#FFD500',
-                        color: '#fff'
-                      }
-                    }}>
-                      Editar
-                    </Button>
-                  </Link>
-                </StyledTableCell>
+  
               </StyledTableRow>
             ))}
           </TableBody>
