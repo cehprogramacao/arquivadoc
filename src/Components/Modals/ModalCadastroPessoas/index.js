@@ -1,6 +1,7 @@
 import Loading from "@/Components/loading";
 import Customer from "@/services/customer.service";
-import { useMediaQuery, useTheme, Box, TextField, Typography, Button, Autocomplete, FormControl, FormLabel, FormHelperText, OutlinedInput } from "@mui/material";
+import { CloseOutlined } from "@mui/icons-material";
+import { useMediaQuery, useTheme, Box, TextField, Typography, Button, Autocomplete, FormControl, FormLabel, FormHelperText, OutlinedInput, IconButton } from "@mui/material";
 import { useRef, useState } from "react";
 import ReactInputMask from 'react-input-mask';
 
@@ -28,15 +29,20 @@ export const CadastroPessoas = ({ onClose }) => {
     ]
 
     const handleInputChange = (e) => {
-        e.target.value?.replace(/\D/g, '').length < 11
+        const onlyDigits = e.target.value?.replace(/\D/g, '');
+        console.log(onlyDigits);
+        onlyDigits.length < 11
             ? setCpfCnpjMask(cpfMask)
             : setCpfCnpjMask(cnpjMask);
-        setData({ ...data, cpfcnpj: e.target.value });
+        setData({ ...data, cpfcnpj: onlyDigits });
     };
 
     const handleInputBlur = () => {
-        data.cpfcnpj?.replace(/\D/g, '').length === 11 && setCpfCnpjMask(cpfMask);
+        if (data.cpfcnpj?.replace(/\D/g, '').length === 11) {
+            setCpfCnpjMask(cpfMask);
+        }
     };
+
     const handleCreateCustomers = async () => {
         console.log(data)
         try {
@@ -69,7 +75,7 @@ export const CadastroPessoas = ({ onClose }) => {
                 < Loading />
                 :
                 <Box sx={{
-                    width: isSmallScreen ? '400px' : "440px",
+                    width: { g: 440, md: 440, sm: 400, xs: 320 },
                     height: '100vh',
                     padding: '20px 20px',
                     display: 'flex',
@@ -83,27 +89,13 @@ export const CadastroPessoas = ({ onClose }) => {
                         alignItems: 'center',
                     }}>
                         <Typography sx={{
-                            fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
+                            fontSize: { lg: "1.4rem", md: "1.4rem", sm: "1.2rem", xs: '1rem' }
                         }}>
                             Cadastro - Pessoas
                         </Typography>
-                        <button style={{
-                            boxSizing: 'content-box',
-                            width: '1em',
-                            height: '1em',
-                            padding: '0.25em 0.25em',
-                            color: '#000',
-                            border: 0,
-                            background: 'transparent url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23000\'%3e%3cpath d=\'M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z\'/%3e%3c/svg%3e")',
-                            borderRadius: '0.375rem',
-                            opacity: '.5',
-                            cursor: 'pointer',
-                            '&:hover': {
-                                opacity: '1',
-                            },
-                        }} onClick={onClose} >
-
-                        </button>
+                        <IconButton onClick={onClose}>
+                            <CloseOutlined />
+                        </IconButton>
                     </Box>
 
                     <TextField

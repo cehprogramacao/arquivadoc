@@ -89,21 +89,21 @@ const BoxInputs = styled(Box)({
 
 
 export const CadastroNotas = ({ onClose }) => {
-  const file = useRef(null)
-
-  const [outorgantes, setOutorgantes] = useState([]);
-  const [outorgados, setOutorgados] = useState([]);
+  const [outorgantes, setOutorgantes] = useState([""]);
+  const [outorgados, setOutorgados] = useState([""]);
+  const [valuePresenter,setValuePresenter] = useState("")
+  const [valueTag, setValueTag] = useState("")
   const [valueOutorgante, setValueOutorgante] = useState(Array(outorgantes.length).fill(''));
   const [valueOutorgado, setValueOutorgado] = useState(Array(outorgados.length).fill(''));
   const [formData, setFormData] = useState({
-    order_num: null,
-    tag: null,
+    order_num: 0,
+    tag: 0,
     presenter: '',
-    service_type: null,
-    book: null,
-    initial_sheet: null,
-    final_sheet: null,
-    box: null,
+    service_type: 0,
+    book: 0,
+    initial_sheet: 0,
+    final_sheet: 0,
+    box: 0,
     grantors: [],
     granteds: [],
     file_url: ""
@@ -112,9 +112,9 @@ export const CadastroNotas = ({ onClose }) => {
     const file = e.target.files[0];
     if (file) {
       const fileReader = new FileReader();
-      file_url: fileReader.result
       fileReader.onloadend = () => {
-        setFormData((prevFormData) => ({ ...prevFormData, file_url: file.name }));
+        const fileResult = fileReader.result.split(",")[1]
+        setFormData((prevFormData) => ({ ...prevFormData, file_url: fileResult }));
       };
       fileReader.readAsDataURL(file);
     }
@@ -126,12 +126,24 @@ export const CadastroNotas = ({ onClose }) => {
   const handleAutocompleteChange = (name, value) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
-  const outorganteArray = [
-    { id: 1, label: "Kauan" },
-    { id: 2, label: "Ronaldo" },]
-  const outorgadoArray = [
-    { id: 1, label: "Kauan" },
-    { id: 2, label: "Ronaldo" }]
+  const [outorganteArray, setOutorganteArray] = useState([])
+  const [outorgadoArray, setOutorgadoArray] = useState([])
+
+
+  const getCustumers = async () => {
+    const { customers } = new Customer()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const allData = await customers(accessToken)
+      setOutorganteArray(Object.values(allData.data))
+      setOutorgadoArray(Object.values(allData.data))
+      console.log(allData.data)
+      return allData.data
+    } catch (error) {
+      console.error("Erro ao listar cliente!", error)
+      throw error;
+    }
+  }
   const boxInputsRef = useRef(null);
 
   const adicionarInput = (tipo, event) => {
@@ -213,7 +225,7 @@ export const CadastroNotas = ({ onClose }) => {
       throw error;
     }
   };
-  
+
   const [notesType, setNotesType] = useState([]);
   const [valueNotesType, setValueNotesType] = useState(null);
   const [typesGroup, setTypesGroup] = useState([])
@@ -226,7 +238,7 @@ export const CadastroNotas = ({ onClose }) => {
       const types = await getAllNoteTypes(accessToken);
       setNotesType(Object.values(groups.data))
       setTypesGroup(Object.values(types.data))
-      console.log(groups.data,types.data, '88888')
+      console.log(groups.data, types.data, '88888')
       return groups.data && types.data
     } catch (error) {
       console.error(error);
@@ -236,6 +248,7 @@ export const CadastroNotas = ({ onClose }) => {
     getAllNotesTag()
     getCustomersPresenter()
     getTypeAndGroup()
+    getCustumers()
   }, [])
 
 
@@ -269,10 +282,18 @@ export const CadastroNotas = ({ onClose }) => {
     setOpenModalNotesCustomers(!openModalNotesCustomers)
   }
 
-  const handleRegister = () => {
-    console.log(formData.grantors, 'graaa')
-    console.log(formData.granteds, 'grentttt')
-    console.log(valueNotesType)
+  const handleCreateNotes = async () => {
+    const { createNotes } = new NoteService()
+    console.log(formData)
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const allData = await createNotes(formData, accessToken)
+      console.log(allData.data)
+      return allData.data
+    } catch (error) {
+      console.error("Erro ao criar nota!", error)
+      throw error;
+    }
   }
   return (
     <Box sx={{
@@ -300,10 +321,13 @@ export const CadastroNotas = ({ onClose }) => {
           onChange={handleChangeFile}
         />
         <Autocomplete
-          value={formData.tag}
+          value={valueTag}
           options={tag}
           getOptionLabel={(option) => option.name || ''}
-          onChange={(event, newValue) => handleAutocompleteChange("tag", newValue)}
+          onChange={(event, newValue) => {
+            handleAutocompleteChange("tag", newValue.id)
+            setValueTag(newValue)
+          }}
           noOptionsText={<RenderNoOptions onClick={handleOpenModalTag} title="Cadastrar Tag" />}
           renderInput={(params) => (
             <TextField
@@ -321,10 +345,13 @@ export const CadastroNotas = ({ onClose }) => {
         />
 
         <Autocomplete
-          value={formData.presenter}
+          value={valuePresenter}
           options={presenter}
           getOptionLabel={(option) => option.name || ''}
-          onChange={(event, newValue) => handleAutocompleteChange("presenter", newValue)}
+          onChange={(event, newValue) => {
+            setFormData({ ...formData, presenter: newValue.cpfcnpj })
+            setValuePresenter(newValue)
+          }}
           noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title="Cadastrar Apresentante" />}
           renderInput={(params) => (
             <TextField
@@ -345,7 +372,7 @@ export const CadastroNotas = ({ onClose }) => {
           // value={formData.service_type}
           options={notesType}
           getOptionLabel={(option) => option.name || ''}
-          onChange={(e,newValue) => setValueNotesType(newValue)}
+          onChange={(e, newValue) => setValueNotesType(newValue)}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -364,7 +391,10 @@ export const CadastroNotas = ({ onClose }) => {
         {valueNotesType && (
           <Autocomplete
             value={option}
-            onChange={(event, newValue) => setOption(newValue)}
+            onChange={(event, newValue) => {
+              setOption(newValue)
+              setFormData((prev) => ({...prev, service_type: newValue.id}))
+            }}
             options={typesGroup.filter(item => item.id === valueNotesType.id)} // Assegurar que as opções sejam baseadas na seleção de valueNotesType
             getOptionLabel={(opcao) => opcao.name || ''} // Como opcao é uma string, apenas a retornamos
             fullWidth
@@ -406,12 +436,12 @@ export const CadastroNotas = ({ onClose }) => {
             <Autocomplete
               value={valueOutorgante[outorgante[index]]}
               options={outorganteArray}
-              getOptionLabel={(option) => option.label || ''}
+              getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               noOptionsText={<RenderNoOptions title={'Cadastrar Outorgante'} onClick={handleOpenNotesCustomers} />}
               onChange={(e, value) => {
                 const updatedValues = [...valueOutorgante];
-                updatedValues[index] = value ? value.label : ''; // Ensure value is a valid object
+                updatedValues[index] = value ? value.cpfcnpj  : ''; // Ensure value is a valid object
                 setValueOutorgante(updatedValues);
               }}
               renderInput={(params) => (
@@ -423,8 +453,8 @@ export const CadastroNotas = ({ onClose }) => {
                 />
               )}
               renderOption={(props, option) => (
-                <li {...props} key={option.id}>
-                  {option.label}
+                <li {...props} key={option.cpfcnpj}>
+                  {option.name}
                 </li>
               )}
             />
@@ -468,11 +498,11 @@ export const CadastroNotas = ({ onClose }) => {
             <Autocomplete
               value={valueOutorgado[outorgado[index]]}
               options={outorgadoArray}
-              getOptionLabel={(option) => option.label || ''}
+              getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(e, value) => {
                 const updatedValues = [...valueOutorgante];
-                updatedValues[index] = value ? value.label : ''; // Ensure value is a valid object
+                updatedValues[index] = value ? value.cpfcnpj  : ''; // Ensure value is a valid object
                 setValueOutorgado(updatedValues);
               }}
               noOptionsText={<RenderNoOptions title={'Cadastrar Outorgado'} onClick={handleOpenNotesCustomers} />}
@@ -485,8 +515,8 @@ export const CadastroNotas = ({ onClose }) => {
                 />
               )}
               renderOption={(props, option) => (
-                <li {...props} key={option.id}>
-                  {option.label}
+                <li {...props} key={option.cpfcnpj}>
+                  {option.name}
                 </li>
               )}
             />
@@ -525,17 +555,19 @@ export const CadastroNotas = ({ onClose }) => {
           </Box>
         ))}
         <TextField
-
+          value={formData.box}
+          onChange={handleChangeFile}
+          name="box"
           label="Caixa"
           color="success"
           type="number"
         />
-        <TextField type="file" ref={file} onChange={handleSelectedFile} color="success" />
+        <TextField type="file" onChange={handleSelectedFile} color="success" />
         <Stack sx={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
           <ButtonScanner>
             Scannear Arquivo
           </ButtonScanner>
-          <ButtonCadastrar onClick={handleRegister}>
+          <ButtonCadastrar onClick={handleCreateNotes}>
             Cadastrar
           </ButtonCadastrar>
 
@@ -545,7 +577,7 @@ export const CadastroNotas = ({ onClose }) => {
       <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} />
       <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} />
       <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} />
-      <CadastroNotesCurtomers open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
+      <CadastroNotesCurtomers getData={getCustumers} open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
     </Box >
   );
 };

@@ -4,12 +4,15 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
 import { CadastroNotas } from "@/Components/Modals/ModalCadastroNotas";
 import { DocList } from "@/Components/List/DocList";
 import { ButtonLixeira } from "@/Components/ButtonLixeira";
 import CustomContainer from "@/Components/CustomContainer";
+import NoteService from "@/services/notes.service";
+import { TableList } from "./components/TableList";
+import MenuOptionsFile from "@/Components/MenuPopUp";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -22,28 +25,40 @@ const BoxMain = styled('section')({
 
 const PageNotas = () => {
     const theme = useTheme()
-    
+
     const [opt, setOpt] = useState(['Nome', 'CPF', 'Ordem', 'Livro', 'Livro Folha'])
     const [optService, setOptService] = useState(['Escrituras', 'Procuração', 'Substabelecimento', 'Divórcio',
         'Ata Notarial', 'Inventário'
     ])
-    const [data, setData] = useState([
-        {
-            NomeFile: 'Arquivo 1',
-            nameUser: 'Kauan',
-            link: '/teste.pdf'
-        },
-
-    ])
+    const [data, setData] = useState([])
     const [open, setOpen] = useState(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const openMenu = Boolean(anchorEl);
     const handleOpen = () => setOpen(!open)
     const handleClose = () => setOpen(!open)
 
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setNotesChange({...notesChange, [name]: value})
+    const handleClickMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+    };
+    const getData = async () => {
+        const { getAllNotes } = new NoteService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const dataNote = await getAllNotes(accessToken)
+            console.log(dataNote.data)
+            setData(Object.values(dataNote.data))
+        } catch (error) {
+            console.error("Erro ao listar notas", error)
+            throw error;
+        }
     }
+
+    useEffect(() => {
+        getData()
+    }, [])
 
     return (
         <Box sx={{
@@ -141,17 +156,20 @@ const PageNotas = () => {
                                     <ButtonOpenModals onClick={handleOpen} />
                                     <ButtonLixeira href={"/notas/lixeira_notas"} />
                                 </Box>
+
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} >
-                        <DocList data={data} />
+                        <TableList data={data} handleClick={handleClickMenu} setPresenter={(e) => console.log(e)} />
                     </Grid>
                 </Grid>
             </CustomContainer>
             <Drawer anchor="left" open={open} onClose={handleClose}>
                 <CadastroNotas onClose={handleClose} />
             </Drawer>
+            <MenuOptionsFile open={openMenu} handleClose={handleCloseMenu} anchorEl={anchorEl} 
+            handleDelete={() => console.log('oi')} handleOpenModalPDF={() => console.log('oi')} type={888} />
         </Box>
     );
 }
