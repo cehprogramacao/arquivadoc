@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, ListItemIcon, Typography, List, ListItem, useTheme, useMediaQuery } from '@mui/material';
+import { Box, ListItemIcon, Typography, List, ListItem, useTheme, useMediaQuery, useRadioGroup } from '@mui/material';
 import PendingActionsSharpIcon from '@mui/icons-material/PendingActionsSharp';
 import QueryBuilderSharpIcon from '@mui/icons-material/QueryBuilderSharp';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -14,31 +14,67 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { SET_LOGOUT, SET_QUEUESIZE } from '@/store/actions';
+import { useAuth } from '@/context';
+import User from '@/services/user.service';
 
 export const Sidebar = () => {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const router = useRouter()
     const dispatch = useDispatch()
+    const { permissions, updatePermissions} = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
+    const isAdmin = sessionStorage.getItem("isAdmin")
     const handleLogout = () => {
         sessionStorage.removeItem("accessToken")
         sessionStorage.removeItem("refreshToken")
         sessionStorage.removeItem("isAdmin")
-        dispatch({type: SET_LOGOUT})
+        dispatch({ type: SET_LOGOUT })
         router.push("/login")
     };
     const handleClose = () => {
         setAnchorEl(null);
     }
+    const getDataUserByAdmin = async (userId) => {
+        try {
+            const accessToken = sessionStorage.getItem("accessToken");
+            const { getUserById } = new User();
+            const { data } = await getUserById(userId, accessToken);
+            await updatePermissions(data.permissions);
+        } catch (error) {
+            console.error("Erro ao buscar dados do usuário!", error);
+            throw error;
+        }
+    };
 
     useEffect(() => {
-        dispatch({type: SET_QUEUESIZE})
+        const getDataUser = async () => {
+            try {
+                const accessToken = sessionStorage.getItem("accessToken");
+                const { getUser } = new User();
+                const { data } = await getUser(accessToken);
+                await getDataUserByAdmin(data.id);
+            } catch (error) {
+                console.error("Erro ao buscar dados do usuário!", error);
+                throw error;
+            }
+        };
+
+        getDataUser();
+    }, [updatePermissions]);
+
+
+    useEffect(() => {
+        dispatch({ type: SET_QUEUESIZE })
+        console.log(permissions)
     }, [])
+
+
+    
     return (
 
         <Box sx={{
@@ -92,7 +128,7 @@ export const Sidebar = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                     }} >
-                        <Link href={"/home"}>
+                        <Link href={"/"}>
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -113,7 +149,9 @@ export const Sidebar = () => {
                                 Recentes
                             </button>
                         </Link>
-                        <Link href={"/notas"}>
+                        <Link href={"/notas"} style={{
+                            display: permissions[6]?.view === 1 ? "flex" : "none"
+                        }} >
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -134,7 +172,9 @@ export const Sidebar = () => {
                             </button>
                         </Link>
 
-                        <Link href={"/rgi"}>
+                        <Link href={"/rgi"} style={{
+                            display: permissions[1]?.view === 1 ? "flex" : "none"
+                        }} >
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -155,7 +195,9 @@ export const Sidebar = () => {
                                 RGI
                             </button>
                         </Link>
-                        <Link href={"/protestos"}>
+                        <Link href={"/protestos"} style={{
+                            display: permissions[0]?.view === 1 ? "flex" : "none"
+                        }} >
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -176,7 +218,9 @@ export const Sidebar = () => {
                                 Protestos
                             </button>
                         </Link>
-                        <Link href={"/oficio"}>
+                        <Link href={"/oficio"} style={{
+                            display: permissions[4]?.view === 1 ? "flex" : "none"
+                        }}>
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -197,7 +241,9 @@ export const Sidebar = () => {
                                 Ofícios
                             </button>
                         </Link>
-                        <Link href="/rtd">
+                        <Link href="/rtd" style={{
+                            display: permissions[2]?.view === 1 ? "flex" : "none"
+                        }}>
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -218,7 +264,9 @@ export const Sidebar = () => {
                                 RTD
                             </button>
                         </Link>
-                        <Link href={"/rpj"}>
+                        <Link href={"/rpj"} style={{
+                            display: permissions[3]?.view === 1 ? "flex" : "none"
+                        }}>
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -239,7 +287,9 @@ export const Sidebar = () => {
                                 RPJ
                             </button>
                         </Link>
-                        <Link href={"/cartoes"}>
+                        <Link href={"/cartoes"} style={{
+                            display: permissions[5]?.view === 1 ? "flex" : "none"
+                        }}>
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -260,7 +310,9 @@ export const Sidebar = () => {
                                 Cartões de Autógrafo
                             </button>
                         </Link>
-                        <Link href={"/termos"}>
+                        <Link href={"/termos"} style={{
+                            display: permissions[5]?.view === 1 ? "flex" : "none"
+                        }}>
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -281,7 +333,9 @@ export const Sidebar = () => {
                                 Termos
                             </button>
                         </Link>
-                        <Link href={"/solicitantes"} >
+                        <Link href={"/solicitantes"} style={{
+                            display:permissions[6]?.view === 1 ? "flex" : "none"
+                        }} >
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -302,7 +356,9 @@ export const Sidebar = () => {
                                 Solicitantes
                             </button>
                         </Link>
-                        <Link href={"/pessoas"}>
+                        <Link href={"/pessoas"} style={{
+                            display: isAdmin === "1" ? "flex" : "none"
+                        }} >
                             <button style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -331,13 +387,11 @@ export const Sidebar = () => {
             <List sx={{
                 width: 'auto',
                 display: 'flex',
-                alignItems: 'center',
                 padding: '17px 21px',
                 backgroundColor: '#237117',
                 flexDirection: 'column',
                 gap: '0px',
-                height: 'auto',
-                placeContent: 'center'
+                height: '100%',
             }}>
                 <ListItem>
                     <ListItemIcon sx={{

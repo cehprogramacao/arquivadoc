@@ -16,6 +16,9 @@ import MenuOptionsFile from "@/Components/MenuPopUp";
 import ModalList from "./components/ModalPDF";
 import Loading from "@/Components/loading";
 import SnackBar from "@/Components/SnackBar";
+import User from "@/services/user.service";
+import PrivateRoute from "@/utils/LayoutPerm";
+import { AuthProvider } from "@/context";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -39,6 +42,7 @@ const PageNotas = () => {
     const [optService, setOptService] = useState(['Escrituras', 'Procuração', 'Substabelecimento', 'Divórcio',
         'Ata Notarial', 'Inventário'
     ])
+
     const [data, setData] = useState([])
     const [open, setOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
@@ -74,9 +78,7 @@ const PageNotas = () => {
         }
     }
 
-    useEffect(() => {
-        getData()
-    }, [])
+
 
     const handleOpenModalPDF = async () => {
         const { getNoteByNumber } = new NoteService()
@@ -113,124 +115,132 @@ const PageNotas = () => {
     }
 
 
+
+    useEffect(() => {
+        getData()
+
+    }, [])
+
     return (
-        <>
-            {loading ? <Loading />
-                :
-                <Box sx={{
-                    width: '100%',
-                    display: "flex",
-                    flexDirection: 'column',
-                    placeItems: 'center',
-                    py: 12,
-                    px: 3
-                }}>
-                    <CustomContainer >
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} >
-                                <Box sx={{
-                                    width: "100%",
-                                    display: 'flex',
-                                    justifyContent: "center"
-                                }}>
-                                    <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                                        Notas
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} >
-                                <Grid container spacing={5}>
-                                    <Grid item xs={12} lg={4} md={4} sm={4}>
-                                        <TextField
-                                            fullWidth
-                                            label="Buscar"
-                                            color="success" />
-                                    </Grid>
-                                    <Grid item xs={12} lg={3} md={4} sm={4}>
-                                        <Autocomplete
-                                            disablePortal
-                                            id="combo-box-demo"
-                                            options={opt}
-                                            fullWidth
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    color="success"
-                                                    InputProps={{
-                                                        ...params.InputProps,
-                                                        classes: {
-                                                            root: 'no-options-input',
-                                                        },
-                                                    }}
-                                                    {...params}
-                                                    label="Buscar Por"
+        <AuthProvider >
+            <PrivateRoute requiredPermissions={['Notas']} >
+                {loading ? <Loading />
+                    :
+                    <Box sx={{
+                        width: '100%',
+                        display: "flex",
+                        flexDirection: 'column',
+                        placeItems: 'center',
+                        py: 12,
+                        px: 3
+                    }}>
+                        <CustomContainer >
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} >
+                                    <Box sx={{
+                                        width: "100%",
+                                        display: 'flex',
+                                        justifyContent: "center"
+                                    }}>
+                                        <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
+                                            Notas
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} >
+                                    <Grid container spacing={5}>
+                                        <Grid item xs={12} lg={4} md={4} sm={4}>
+                                            <TextField
+                                                fullWidth
+                                                label="Buscar"
+                                                color="success" />
+                                        </Grid>
+                                        <Grid item xs={12} lg={3} md={4} sm={4}>
+                                            <Autocomplete
+                                                disablePortal
+                                                id="combo-box-demo"
+                                                options={opt}
+                                                fullWidth
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        color="success"
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            classes: {
+                                                                root: 'no-options-input',
+                                                            },
+                                                        }}
+                                                        {...params}
+                                                        label="Buscar Por"
 
-                                                    sx={{
-                                                        color: "#237117",
-                                                        '& input': {
-                                                            color: 'success.main',
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={3} md={4} sm={4}>
-                                        <Autocomplete
-                                            disablePortal
-                                            id="combo-box-demo"
-                                            options={optService}
-                                            fullWidth
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    color="success"
-                                                    InputProps={{
-                                                        ...params.InputProps,
-                                                        classes: {
-                                                            root: 'no-options-input',
-                                                        },
-                                                    }}
-                                                    {...params}
-                                                    label="Buscar Tipo de Serviço"
+                                                        sx={{
+                                                            color: "#237117",
+                                                            '& input': {
+                                                                color: 'success.main',
+                                                            },
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} lg={3} md={4} sm={4}>
+                                            <Autocomplete
+                                                disablePortal
+                                                id="combo-box-demo"
+                                                options={optService}
+                                                fullWidth
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        color="success"
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            classes: {
+                                                                root: 'no-options-input',
+                                                            },
+                                                        }}
+                                                        {...params}
+                                                        label="Buscar Tipo de Serviço"
 
-                                                    sx={{
-                                                        color: "#237117",
-                                                        '& input': {
-                                                            color: 'success.main',
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={2} md={12} sm={12} >
-                                        <Box sx={{
-                                            width: "100%",
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            gap: 4
-                                        }}>
-                                            <ButtonOpenModals onClick={handleOpen} />
-                                            <ButtonLixeira href={"/notas/lixeira_notas"} />
-                                        </Box>
+                                                        sx={{
+                                                            color: "#237117",
+                                                            '& input': {
+                                                                color: 'success.main',
+                                                            },
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} lg={2} md={12} sm={12} >
+                                            <Box sx={{
+                                                width: "100%",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                gap: 4
+                                            }}>
+                                                <ButtonOpenModals onClick={handleOpen} />
+                                                <ButtonLixeira href={"/notas/lixeira_notas"} />
+                                            </Box>
 
+                                        </Grid>
                                     </Grid>
                                 </Grid>
+                                <Grid item xs={12} >
+                                    <TableList data={data} handleClick={handleClickMenu} setNumber={(e) => setNumber(e)} />
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} >
-                                <TableList data={data} handleClick={handleClickMenu} setNumber={(e) => setNumber(e)} />
-                            </Grid>
-                        </Grid>
-                    </CustomContainer>
-                    <Drawer anchor="left" open={open} onClose={handleClose}>
-                        <CadastroNotas onClose={handleClose} getData={getData} dataSnack={(e) => setAlert({ ...e })} />
-                    </Drawer>
-                    <MenuOptionsFile open={openMenu} handleClose={handleCloseMenu} anchorEl={anchorEl}
-                        handleDelete={handleDeleteByNumber} handleOpenModalPDF={handleOpenModalPDF} type={number} />
-                    <ModalList data={dataFileModal} number={number} onClose={handleCloseModalPDF} open={openPDF} />
-                    <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
-                </Box>
-            }
-        </>
+                        </CustomContainer>
+                        <Drawer anchor="left" open={open} onClose={handleClose}>
+                            <CadastroNotas onClose={handleClose} getData={getData} dataSnack={(e) => setAlert({ ...e })} />
+                        </Drawer>
+                        <MenuOptionsFile open={openMenu} handleClose={handleCloseMenu} anchorEl={anchorEl}
+                            handleDelete={handleDeleteByNumber} handleOpenModalPDF={handleOpenModalPDF} type={number} />
+                        <ModalList data={dataFileModal} number={number} onClose={handleCloseModalPDF} open={openPDF} />
+                        <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
+                    </Box>
+                }
+            </PrivateRoute>
+        </AuthProvider>
     );
 }
 

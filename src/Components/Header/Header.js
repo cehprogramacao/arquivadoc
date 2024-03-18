@@ -4,6 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
 import { Sidebar } from '../SideBar/Sidebar';
 import Image from 'next/image';
+import { AuthProvider } from '@/context';
 
 const Header = () => {
     const theme = useTheme()
@@ -14,7 +15,7 @@ const Header = () => {
     };
 
     return (
-        <>
+        <AuthProvider>
             <AppBar position="fixed" sx={{ backgroundColor: theme.palette.background.header, height: '90px' }}>
                 <Toolbar sx={{ width: "100%" }}>
                     <IconButton
@@ -39,7 +40,7 @@ const Header = () => {
             <Drawer anchor="left" open={openSideBar} onClose={handleToggleButton}>
                 <Sidebar />
             </Drawer>
-        </>
+        </AuthProvider>
     );
 };
 

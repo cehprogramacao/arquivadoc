@@ -25,7 +25,7 @@ export const TableList = ({ data, handleClick, setNumber }) => {
                         item
                         key={index}
                         xs={6}
-                        sm={3}
+                        sm={6}
                         md={3}
                         lg={3}
 
