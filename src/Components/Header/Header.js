@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { AppBar, Toolbar, IconButton, Drawer, Box } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Drawer, Box, useTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
 import { Sidebar } from '../SideBar/Sidebar';
 import Image from 'next/image';
 
 const Header = () => {
+    const theme = useTheme()
     const [openSideBar, setOpenSideBar] = useState(false);
 
     const handleToggleButton = () => {
@@ -14,7 +15,7 @@ const Header = () => {
 
     return (
         <>
-            <AppBar position="fixed" sx={{ backgroundColor: '#247117', height: '90px' }}>
+            <AppBar position="fixed" sx={{ backgroundColor: theme.palette.background.header, height: '90px' }}>
                 <Toolbar sx={{ width: "100%" }}>
                     <IconButton
                         edge="start"

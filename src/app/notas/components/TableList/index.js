@@ -6,17 +6,16 @@ import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 
-export const TableList = ({ data, handleClick, setPresenter }) => {
+export const TableList = ({ data, handleClick, setNumber }) => {
     return (
         <>
             <Grid
                 container
-                spacing={2}
+                spacing={5}
                 sx={{
                     width: "100%",
                     flexGrow: 1,
                     height: '450px',
-                    margin: '0 auto',
                     position: 'relative',
                     overflowY: 'auto',
                 }}
@@ -25,30 +24,28 @@ export const TableList = ({ data, handleClick, setPresenter }) => {
                     <Grid
                         item
                         key={index}
-                        xs={12}
-                        columns={4}
-                        sm={6}
+                        xs={6}
+                        sm={3}
                         md={3}
                         lg={3}
-                        sx={{
-                            display: 'flex',
-                            padding: '0px',
-                            justifyContent: 'center',
-                            px: 2
-                        }}
+
                     >
-                        <List sx={{ width: '100%'}}>
-                            <ListItem sx={{ cursor: 'pointer' }}>
+                        <List sx={{ width: '100%' }} >
+                            <ListItem sx={{ cursor: 'pointer' }} onClick={(e) => {
+                                setNumber(item.order_num)
+                                handleClick(e)
+                            }}>
                                 <ListItemAvatar>
                                     <Image width={50} height={50} src="/image/pdf-icon.svg" alt="" />
                                 </ListItemAvatar>
                                 <ListItemText
-                                
+
 
                                     primaryTypographyProps={{
                                         color: 'black',
                                         fontWeight: 'bold',
                                     }}
+
                                     primary={item.presenterDocument}
                                     secondary={`por ${item.presenterName}`}
                                 />

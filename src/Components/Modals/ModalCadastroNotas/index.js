@@ -19,6 +19,7 @@ import CadastroNotesType from "@/Components/ModalsRegistration/ModalNotesTypes";
 import CadastroNotesCurtomers from "@/Components/ModalsRegistration/ModalNotesCustomers";
 import NoteService from "@/services/notes.service";
 import Customer from "@/services/customer.service";
+import { ModalNotesGroup } from "@/Components/ModalsRegistration/ModalNotesGroup";
 
 
 
@@ -66,32 +67,10 @@ const ButtonCadastrar = styled("button")({
   }
 });
 
-const BoxInputs = styled(Box)({
-  display: "flex",
-  flexDirection: "column",
-  width: "100%",
-  gap: '30px',
-  height: "100vh",
-  overflowY: "auto",
-  padding: "5px 8px",
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-export const CadastroNotas = ({ onClose }) => {
+export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   const [outorgantes, setOutorgantes] = useState([""]);
   const [outorgados, setOutorgados] = useState([""]);
-  const [valuePresenter,setValuePresenter] = useState("")
+  const [valuePresenter, setValuePresenter] = useState("")
   const [valueTag, setValueTag] = useState("")
   const [valueOutorgante, setValueOutorgante] = useState(Array(outorgantes.length).fill(''));
   const [valueOutorgado, setValueOutorgado] = useState(Array(outorgados.length).fill(''));
@@ -257,6 +236,13 @@ export const CadastroNotas = ({ onClose }) => {
   const [openModalPresenter, setOpenModalPresenter] = useState(false)
   const [openModalNotesType, setOpenModalNotesType] = useState(false)
   const [openModalNotesCustomers, setOpenModalNotesCustomers] = useState(false)
+  const [openModalGroup, setOpenModalGroup] = useState(false)
+  const handleOpenGroup = () => {
+    setOpenModalGroup(!openModalGroup)
+  }
+  const handleCloseGroup = () => {
+    setOpenModalGroup(!openModalGroup)
+  }
   const handleOpenModalTag = () => {
     setOpenModalTag(!openModalTag)
   }
@@ -289,21 +275,37 @@ export const CadastroNotas = ({ onClose }) => {
       const accessToken = sessionStorage.getItem("accessToken")
       const allData = await createNotes(formData, accessToken)
       console.log(allData.data)
+      dataSnack({
+        open: true,
+        text: allData.data.message,
+        severity: "success",
+        type: "file"
+      })
       return allData.data
     } catch (error) {
+      dataSnack({
+        open: true,
+        text: error.msg,
+        severity: "error",
+        type: "file"
+      })
       console.error("Erro ao criar nota!", error)
       throw error;
+    }
+    finally {
+      getData()
+      onClose()
     }
   }
   return (
     <Box sx={{
       width: { lg: 420, md: 390, sm: 350, xs: 320 },
       height: "100vh",
-      padding: "8px 10px",
       display: "flex",
       flexDirection: "column",
       gap: "30px",
       overflow: "hidden",
+      px: 1
     }} >
       <BoxSearchTitle>
         <Typography sx={{ fontSize: "clamp(1.3rem, 1rem, 1.7rem)" }}>
@@ -313,7 +315,16 @@ export const CadastroNotas = ({ onClose }) => {
           <CloseIcon sx={{ fill: '#000000bc', width: '30px ', height: '30px' }} />
         </ButtonClose>
       </BoxSearchTitle>
-      <BoxInputs ref={boxInputsRef}>
+      <Box sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        gap: '30px',
+        height: "100vh",
+        overflowY: "auto",
+        py: 2,
+        px: 1,
+      }} ref={boxInputsRef}>
         <TextField
           color="success" label="Ordem"
           name="order_num"
@@ -373,6 +384,7 @@ export const CadastroNotas = ({ onClose }) => {
           options={notesType}
           getOptionLabel={(option) => option.name || ''}
           onChange={(e, newValue) => setValueNotesType(newValue)}
+          noOptionsText={<RenderNoOptions onClick={handleOpenGroup} title={"Cadastrar Grupo"} />}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -393,7 +405,7 @@ export const CadastroNotas = ({ onClose }) => {
             value={option}
             onChange={(event, newValue) => {
               setOption(newValue)
-              setFormData((prev) => ({...prev, service_type: newValue.id}))
+              setFormData((prev) => ({ ...prev, service_type: newValue.id }))
             }}
             options={typesGroup.filter(item => item.id === valueNotesType.id)} // Assegurar que as opções sejam baseadas na seleção de valueNotesType
             getOptionLabel={(opcao) => opcao.name || ''} // Como opcao é uma string, apenas a retornamos
@@ -441,7 +453,7 @@ export const CadastroNotas = ({ onClose }) => {
               noOptionsText={<RenderNoOptions title={'Cadastrar Outorgante'} onClick={handleOpenNotesCustomers} />}
               onChange={(e, value) => {
                 const updatedValues = [...valueOutorgante];
-                updatedValues[index] = value ? value.cpfcnpj  : ''; // Ensure value is a valid object
+                updatedValues[index] = value ? value.cpfcnpj : ''; // Ensure value is a valid object
                 setValueOutorgante(updatedValues);
               }}
               renderInput={(params) => (
@@ -502,7 +514,7 @@ export const CadastroNotas = ({ onClose }) => {
               isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(e, value) => {
                 const updatedValues = [...valueOutorgante];
-                updatedValues[index] = value ? value.cpfcnpj  : ''; // Ensure value is a valid object
+                updatedValues[index] = value ? value.cpfcnpj : ''; // Ensure value is a valid object
                 setValueOutorgado(updatedValues);
               }}
               noOptionsText={<RenderNoOptions title={'Cadastrar Outorgado'} onClick={handleOpenNotesCustomers} />}
@@ -573,11 +585,12 @@ export const CadastroNotas = ({ onClose }) => {
 
         </Stack>
 
-      </BoxInputs>
+      </Box>
       <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} />
       <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} />
-      <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} />
+      <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} getData={getTypeAndGroup} />
       <CadastroNotesCurtomers getData={getCustumers} open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
+      <ModalNotesGroup getData={getTypeAndGroup} onClose={handleCloseGroup} open={openModalGroup} />
     </Box >
   );
 };

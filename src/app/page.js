@@ -4,21 +4,14 @@ import {
   Autocomplete,
   Box,
   Button,
-  FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
   TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Search } from "@/Components/Search/Search";
 import { DocList } from "@/Components/List/DocList";
 import { Buttons } from "@/Components/Button/Button";
-import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
 import ModalList from "@/Components/Modals/ModalList";
 import { useRouter } from "next/navigation";
 import { isLoggedIn } from "@/utils/auth";
@@ -27,8 +20,6 @@ import CustomContainer from "@/Components/CustomContainer";
 const Home = () => {
   const theme = useTheme();
   const router = useRouter()
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const isSmallScreenWrap = useMediaQuery(theme.breakpoints.down("lg"));
 
   const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false);
   const [list, setList] = useState([]);
@@ -57,10 +48,7 @@ const Home = () => {
 
   useEffect(() => {
     if (!isLoggedIn()) {
-      router.push("login")
-    }
-    else {
-      fetchData();
+      router.push("/login")
     }
   }, []);
 

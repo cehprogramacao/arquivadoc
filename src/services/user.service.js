@@ -8,6 +8,13 @@ class User {
             }
         })
     }
+    getUser(accessToken) {
+        return customAxios.get("/user", {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
+    }
     addUserByAdmin(data, accssToken) {
         return customAxios.post("/user", data, {
             headers: {
