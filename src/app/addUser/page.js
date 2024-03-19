@@ -13,7 +13,7 @@ import {
     TableRow,
     Paper,
     Checkbox,
-    FormControl, 
+    FormControl,
     OutlinedInput,
 } from '@mui/material';
 import { styled, width } from '@mui/system';
@@ -125,7 +125,8 @@ const AddUser = () => {
 
     return (
         <>
-            {!loading ?
+            {loading ? <Loading />
+                :
                 <CustomContainer >
                     <StyledFormContainer>
                         <Box sx={{
@@ -250,7 +251,7 @@ const AddUser = () => {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {['Protesto', 'RGI', 'RTD', 'RPJ','Ofício','Cadastros','Notas'].map((permission, permIndex) => (
+                                                {['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofício', 'Cadastros', 'Notas'].map((permission, permIndex) => (
                                                     <TableRow key={permission}>
                                                         <TableCell sx={{ fontSize: "1.2rem" }} align="center">{permission}</TableCell>
                                                         {userData.permissions[permIndex].map((value, checkboxIndex) => (
@@ -298,8 +299,6 @@ const AddUser = () => {
                         </StyledContentContainer>
                     </StyledFormContainer>
                 </CustomContainer>
-                :
-                <Loading />
             }
         </>
     );
