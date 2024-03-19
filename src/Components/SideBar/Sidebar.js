@@ -39,33 +39,33 @@ export const Sidebar = () => {
     const handleClose = () => {
         setAnchorEl(null);
     }
-    const getDataUserByAdmin = async (userId) => {
-        try {
-            const accessToken = sessionStorage.getItem("accessToken");
-            const { getUserById } = new User();
-            const { data } = await getUserById(userId, accessToken);
-            await updatePermissions(data.permissions);
-        } catch (error) {
-            console.error("Erro ao buscar dados do usuário!", error);
-            throw error;
-        }
-    };
+    // const getDataUserByAdmin = async (userId) => {
+    //     try {
+    //         const accessToken = sessionStorage.getItem("accessToken");
+    //         const { getUserById } = new User();
+    //         const { data } = await getUserById(userId, accessToken);
+    //         await updatePermissions(data.permissions);
+    //     } catch (error) {
+    //         console.error("Erro ao buscar dados do usuário!", error);
+    //         throw error;
+    //     }
+    // };
 
-    useEffect(() => {
-        const getDataUser = async () => {
-            try {
-                const accessToken = sessionStorage.getItem("accessToken");
-                const { getUser } = new User();
-                const { data } = await getUser(accessToken);
-                await getDataUserByAdmin(data.id);
-            } catch (error) {
-                console.error("Erro ao buscar dados do usuário!", error);
-                throw error;
-            }
-        };
+    // useEffect(() => {
+    //     const getDataUser = async () => {
+    //         try {
+    //             const accessToken = sessionStorage.getItem("accessToken");
+    //             const { getUser } = new User();
+    //             const { data } = await getUser(accessToken);
+    //             await getDataUserByAdmin(data.id);
+    //         } catch (error) {
+    //             console.error("Erro ao buscar dados do usuário!", error);
+    //             throw error;
+    //         }
+    //     };
 
-        getDataUser();
-    }, [updatePermissions]);
+    //     getDataUser();
+    // }, [updatePermissions]);
 
 
     useEffect(() => {
@@ -80,7 +80,7 @@ export const Sidebar = () => {
         <Box sx={{
             overflowY: 'auto',
             flex: 1,
-
+            bgcolor: theme.palette.background.header,
             '::-webkit-scrollbar': {
                 width: '15px',
 
@@ -96,7 +96,6 @@ export const Sidebar = () => {
             <List sx={{
                 width: '100%',
                 display: 'flex',
-                height: 'auto',
                 alignItems: 'start',
                 borderBottom: '1px solid #FFFFFF',
                 backgroundColor: '#237117',
@@ -385,13 +384,11 @@ export const Sidebar = () => {
             </List>
 
             <List sx={{
-                width: 'auto',
                 display: 'flex',
                 padding: '17px 21px',
                 backgroundColor: '#237117',
                 flexDirection: 'column',
                 gap: '0px',
-                height: '100%',
             }}>
                 <ListItem>
                     <ListItemIcon sx={{
@@ -426,7 +423,6 @@ export const Sidebar = () => {
 
                 </ListItem>
                 <Typography component={'span'} sx={{
-                    width: 'auto',
                     fontSize: '.7rem',
                     color: '#fff',
                     letterSpacing: '.8px'

@@ -8,50 +8,37 @@ const PrivateRoute = ({ children, requiredPermissions }) => {
     const [loading, setLoading] = useState(true);
     const { permissions, updatePermissions } = useAuth();
 
-    const getDataUserByAdmin = async (userId) => {
-        try {
-            const accessToken = sessionStorage.getItem("accessToken");
-            const { getUserById } = new User();
-            const { data } = await getUserById(userId, accessToken);
-            await updatePermissions(Object.values(data.permissions) || []);
-        } catch (error) {
-            console.error("Erro ao buscar dados do usuário!", error);
-            throw error;
-        }
-    };
-
-    useEffect(() => {
-        const getDataUser = async () => {
-            try {
-                const accessToken = sessionStorage.getItem("accessToken");
-                const { getUser } = new User();
-                const { data } = await getUser(accessToken);
-                await getDataUserByAdmin(data.id);
-            } catch (error) {
-                console.error("Erro ao buscar dados do usuário!", error);
-                throw error;
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        getDataUser();
-    }, [updatePermissions]);
-
     const hasRequiredPermissions = () => {
-        return requiredPermissions.every(permission =>
-            permissions.some(p => p.public_name === permission && p.view === 1)
-        );
+        return requiredPermissions.every(permission => {
+            switch (permission) {
+                case 'Protesto':
+                    return permissions.some(p => p[0].public_name === permission && p.view === 1);
+                case 'RGI':
+                    return permissions.some(p => p[1]?.public_name === permission && p.view === 1);
+                case 'RTD':
+                    return permissions.some(p => p[2]?.public_name === permission && p.view === 1);
+                case 'RPJ':
+                    return permissions.some(p => p[3]?.public_name === permission && p.view === 1);
+                case 'Ofícios':
+                    return permissions.some(p => p[4]?.public_name === permission && p.view === 1);
+                case 'Cadastros':
+                    return permissions.some(p => p[5]?.public_name === permission && p.view === 1);
+                case 'Notas':
+                    return permissions.some(p => p[6]?.public_name === permission && p.view === 1);
+                default:
+                    return false;
+            }
+        });
     };
 
     useEffect(() => {
-        if (loading) return; // Aguarda o carregamento dos dados do usuário
+        if (loading) return;
         if (permissions.length === 0 || !hasRequiredPermissions()) {
             router.push('/');
         }
     }, [loading, permissions, requiredPermissions, router]);
 
-    return loading ? null : children;
+    return children;
 };
 
 export default PrivateRoute;
