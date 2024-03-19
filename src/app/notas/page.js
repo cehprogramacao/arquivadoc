@@ -32,6 +32,7 @@ const BoxMain = styled('section')({
 const PageNotas = () => {
     const theme = useTheme()
     const [loading, setLoading] = useState(false)
+    const { permissions, updatePermissions } = useAuth();
     const [alert, setAlert] = useState({
         open: false,
         text: "",
@@ -218,7 +219,7 @@ const PageNotas = () => {
                                                 justifyContent: "center",
                                                 gap: 4
                                             }}>
-                                                <ButtonOpenModals onClick={handleOpen} />
+                                                {permissions[6]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
                                                 <ButtonLixeira href={"/notas/lixeira_notas"} />
                                             </Box>
 
@@ -233,8 +234,15 @@ const PageNotas = () => {
                         <Drawer anchor="left" open={open} onClose={handleClose}>
                             <CadastroNotas onClose={handleClose} getData={getData} dataSnack={(e) => setAlert({ ...e })} />
                         </Drawer>
-                        <MenuOptionsFile open={openMenu} handleClose={handleCloseMenu} anchorEl={anchorEl}
-                            handleDelete={handleDeleteByNumber} handleOpenModalPDF={handleOpenModalPDF} type={number} />
+                        <MenuOptionsFile open={openMenu}
+                            handleClose={handleCloseMenu}
+                            anchorEl={anchorEl}
+                            handleDelete={handleDeleteByNumber}
+                            handleOpenModalPDF={handleOpenModalPDF}
+                            type={number}
+                            deletePerm={permissions[6]?.delete_permission}
+                            editPerm={permissions[6]?.edit}
+                        />
                         <ModalList data={dataFileModal} number={number} onClose={handleCloseModalPDF} open={openPDF} />
                         <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
                     </Box>

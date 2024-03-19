@@ -57,9 +57,9 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenModalPDF, type, handleDelete }) => {
+const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenModalPDF, type, handleDelete, deletePerm, editPerm }) => {
   const path = usePathname().split("/")[1]
-  
+  console.log(deletePerm, editPerm, '9999kauan')
 
   return (
     <>
@@ -73,30 +73,35 @@ const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenModalPDF, type
           open={open}
           onClose={handleClose}
         >
-          <Link href={`/${path}/${[type]}`} as={`/${path}/${type}`}>
-            <MenuItem sx={{color: "#FFD500"}} onClick={handleClose} disableRipple >
-              <EditIcon sx={{ fill: '#FFD500' }} />
-              Editar
-            </MenuItem>
-          </Link>
-          <MenuItem sx={{color: "#0088F0"}} onClick={() => {
+          {editPerm === 1 &&
+            <Link href={`/${path}/${[type]}`} as={`/${path}/${type}`}>
+              <MenuItem sx={{ color: "#FFD500" }} onClick={handleClose} disableRipple >
+                <EditIcon sx={{ fill: '#FFD500' }} />
+                Editar
+              </MenuItem>
+            </Link>
+          }
+
+          <MenuItem sx={{ color: "#0088F0" }} onClick={() => {
             handleClose()
             handleOpenModalPDF()
           }} disableRipple>
             <FileOpen sx={{ fill: '#0088F0' }} />
             Abrir Arquivo
           </MenuItem>
-          <Divider sx={{ my:0 }} />
-          <MenuItem sx={{color: '#dc3545'}} onClick={() => {
-            handleClose()
-            handleDelete()
-          }} disableRipple>
-            <Delete sx={{ fill: '#dc3545' }} />
-            Deletar
-          </MenuItem>
+          {/* <Divider sx={{ my: 0 }} /> */}
+          {deletePerm === 1 &&
+            <MenuItem sx={{ color: '#dc3545' }} onClick={() => {
+              handleClose()
+              handleDelete()
+            }} disableRipple>
+              <Delete sx={{ fill: '#dc3545' }} />
+              Deletar
+            </MenuItem>
+          }
         </StyledMenu>
       </Box>
-      
+
     </>
   );
 }

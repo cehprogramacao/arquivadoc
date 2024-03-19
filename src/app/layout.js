@@ -10,6 +10,7 @@ import { store } from '@/store';
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '@/theme/theme';
 import withAuth from '@/utils/withAuth';
+import { AuthProvider } from '@/context';
 
 const inter = Poppins({ subsets: ['latin'], weight: '500' });
 
@@ -28,8 +29,10 @@ const RootLayout = ({ children }) => {
         <AppRouterCacheProvider >
           <ThemeProvider theme={theme}>
             <Provider store={store}>
-              {pathname !== "/login" && <Header />}
-              {children}
+              <AuthProvider >
+                {pathname !== "/login" && <Header />}
+                {children}
+              </AuthProvider>
             </Provider>
           </ThemeProvider>
         </AppRouterCacheProvider>
