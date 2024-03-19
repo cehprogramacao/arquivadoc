@@ -13,21 +13,25 @@ import {
     TableRow,
     Paper,
     Checkbox,
-    FormControl, 
+    FormControl,
     OutlinedInput,
 } from '@mui/material';
 import { styled, width } from '@mui/system';
+import CustomContainer from '@/Components/CustomContainer';
+import withIsAdmin from '@/utils/isAdmin';
+import User from '@/services/user.service';
+import Loading from '@/Components/loading';
+import ReactInputMask from 'react-input-mask';
 
 const StyledFormContainer = styled(Box)({
-    width: '100%',
+    width: '70%',
     maxWidth: '700px',
-    height: '100vh',
     margin: 'auto',
-    padding: '80px 30px',
+    padding: '130px 0',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: '0px',
+    gap: '0px'
 });
 
 const StyledContentContainer = styled(Box)({
@@ -39,10 +43,10 @@ const StyledContentContainer = styled(Box)({
 });
 
 const StyledButtonContainer = styled(Box)({
-    // marginTop: '10px',
+    marginTop: '20px',
     display: 'flex',
     justifyContent: 'space-between',
-    width: '300px',
+    width: "100%",
 });
 const numberMaskEstruct = '(99) 99999-9999'
 const AddUser = () => {
@@ -74,20 +78,15 @@ const AddUser = () => {
             [name]: value,
         });
     };
-
-
     const handleInputChange = (e) => {
         e.target.value?.replace(/\D/g, '').length < 11
             ? setNumberMask(numberMask)
             : setNumberMask(numberMask);
         setUserData({ ...userData, phone: e.target.value });
     };
-
     const handleInputBlur = () => {
         userData.phone?.replace(/\D/g, '').length === 11 && setNumberMask(numberMask);
     };
-
-
     const handleNext = () => {
         if (section === 'Dados' && (!userData.name.trim() || !userData.email.trim() || !userData.phone.trim() || !userData.password.trim())) {
             return;
@@ -125,153 +124,171 @@ const AddUser = () => {
     };
 
     return (
-        <StyledFormContainer>
-            <Box sx={{
-                width: '100%',
-                margin: '0 auto',
-                height: 'auto',
-                padding: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                placeContent: 'center',
-                placeItems: 'center',
-                border: '1px solid #237117',
-                borderRadius: '8px',
-                gap: '30px',
-                flexWrap:'wrap'
-            }}>
-                <Typography variant="h5" sx={{
-                    display: 'flex',
-                    background: section === 'Dados' ? '#237117' : 'transparent',
-                    border: '1px solid #237117',
-                    padding: '5px 40px',
-                    color: section === 'Dados' ? '#fff' : '#237117',
-                    borderRadius: '8px'
-                }}>
-                    Dados
-                    {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
-                </Typography>
-                <Typography variant="h5" sx={{
-                    display: 'flex',
-                    border: '1px solid #237117',
-                    padding: '5px 26px',
-                    color: '#237171',
-                    borderRadius: '8px',
-                    background: section === 'Permissoes' ? '#237117' : 'transparent',
-                    color: section === 'Permissoes' ? '#fff' : '#237117',
-                }}>
-                    {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
-                    Permissões
-                </Typography>
-            </Box>
-            <StyledContentContainer>
-                {section === 'Dados' && (
-                    <Box component="form">
-                        <TextField
-                            label="Username"
-                            name="username"
-                            variant="outlined"
-                            value={userData.username}
-                            onChange={handleChange}
-                            fullWidth
-                            sx={{ mb: 5 }}
-                            required
-                        />
-                        <TextField
-                            label="Email"
-                            name="email"
-                            variant="outlined"
-                            type="email"
-                            value={userData.email}
-                            onChange={handleChange}
-                            fullWidth
-                            sx={{ mb: 5 }}
-                            required
-                        />
-                        <TextField
-                            label="Phone"
-                            name="phone"
-                            variant="outlined"
-                            value={userData.phone}
-                            onChange={handleChange}
-                            fullWidth
-                            sx={{ mb: 5 }}
-                            required
-                        />
-                        <TextField
-                            label="Password"
-                            name="password"
-                            variant="outlined"
-                            type="password"
-                            value={userData.password}
-                            onChange={handleChange}
-                            fullWidth
-                            sx={{ mb: 5 }}
-                            required
-                        />
-                    </Box>
-                )}
-                {section === 'Permissoes' && (
-                    <Box
-                        component="form"
-
-                        sx={{
+        <>
+            {loading ? <Loading />
+                :
+                <CustomContainer >
+                    <StyledFormContainer>
+                        <Box sx={{
                             width: '100%',
-                            '& .MuiFormControlLabel-root': { m: .8, },
-                        }}
-                    >
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead sx={{ background: '#237117' }}>
-                                    <TableRow>
-                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Permissão</TableCell>
-                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Visualizar</TableCell>
-                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Adicionar</TableCell>
-                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Editar</TableCell>
-                                        <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Deletar</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {['Notas', 'RGI', 'RTD', 'RPJ', 'Protestos', 'Oficios', 'Cadastro Geral'].map((permission) => (
-                                        <TableRow key={permission}>
-                                            <TableCell sx={{ fontSize: "1.2rem" }} align="center">{permission}</TableCell>
-                                            <TableCell align="center">
-                                                <Checkbox color='success' />
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Checkbox color='success' />
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Checkbox color='success' />
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Checkbox color='success' />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                            margin: '0 auto',
+                            height: 'auto',
+                            padding: '20px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            placeContent: 'center',
+                            placeItems: 'center',
+                            border: '1px solid #237117',
+                            borderRadius: '8px',
+                            gap: '30px',
+                            flexWrap: 'wrap'
+                        }}>
+                            <Typography variant="h5" sx={{
+                                display: 'flex',
+                                background: section === 'Dados' ? '#237117' : 'transparent',
+                                border: '1px solid #237117',
+                                padding: '5px 40px',
+                                color: section === 'Dados' ? '#fff' : '#237117',
+                                borderRadius: '8px'
+                            }}>
+                                Dados
+                                {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
+                            </Typography>
+                            <Typography variant="h5" sx={{
+                                display: 'flex',
+                                border: '1px solid #237117',
+                                padding: '5px 26px',
+                                color: '#237171',
+                                borderRadius: '8px',
+                                background: section === 'Permissoes' ? '#237117' : 'transparent',
+                                color: section === 'Permissoes' ? '#fff' : '#237117',
+                            }}>
+                                {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
+                                Permissões
+                            </Typography>
+                        </Box>
+                        <StyledContentContainer>
+                            {section === 'Dados' && (
+                                <Box component="form" sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: 5,
+                                    width: "100%"
+                                }}>
+                                    <TextField
+                                        label="Name"
+                                        name="name"
+                                        variant="outlined"
+                                        color="success"
+                                        value={userData.username}
+                                        onChange={handleChange}
+                                        fullWidth
+                                    />
+                                    <TextField
+                                        label="Email"
+                                        name="email"
+                                        variant="outlined"
+                                        type="email"
+                                        color="success"
+                                        value={userData.email}
+                                        onChange={handleChange}
+                                        fullWidth
+                                    />
+                                    <FormControl fullWidth error={Boolean(errors['phone'])}>
+                                        <ReactInputMask
+                                            mask={numberMask}
+                                            value={userData.phone}
+                                            onChange={handleInputChange}
+                                            onBlur={handleInputBlur}
+                                            name="phone"
+                                        >
+                                            {(inputProps) => (
+                                                <OutlinedInput
+                                                    {...inputProps}
+                                                    id={'id-documento'}
+                                                    color="success"
+                                                    placeholder={'Número de Telefone'}
+                                                    sx={{
+                                                        borderRadius: '12.5px',
+                                                        '& .MuiOutlinedInput-notchedOutline': {
+                                                            borderRadius: '4px',
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        </ReactInputMask>
+                                    </FormControl>
+                                    <TextField
+                                        label="Password"
+                                        name="password"
+                                        variant="outlined"
+                                        type="password"
+                                        color="success"
+                                        value={userData.password}
+                                        onChange={handleChange}
+                                        fullWidth
+                                    />
+                                </Box>
+                            )}
+                            {section === 'Permissoes' && (
+                                <Box
+                                    component="form"
 
-                    </Box>
-                )}
-                <StyledButtonContainer>
-                    <Button onClick={handleBack} variant="contained" disabled={section === 'Dados'} sx={{
-                        background: "#237117",
-                        color: '#fff',
-                        ":hover": {
-                            background: "#237117",
+                                    sx={{
+                                        width: '100%',
+                                        '& .MuiFormControlLabel-root': { m: .8, },
+                                    }}
+                                >
+                                    <TableContainer component={Paper}>
+                                        <Table>
+                                            <TableHead sx={{ background: '#237117' }}>
+                                                <TableRow>
+                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Permissão</TableCell>
+                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Visualizar</TableCell>
+                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Adicionar</TableCell>
+                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Editar</TableCell>
+                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Deletar</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofício', 'Cadastros', 'Notas'].map((permission, permIndex) => (
+                                                    <TableRow key={permission}>
+                                                        <TableCell sx={{ fontSize: "1.2rem" }} align="center">{permission}</TableCell>
+                                                        {userData.permissions[permIndex].map((value, checkboxIndex) => (
+                                                            <TableCell key={checkboxIndex} align="center">
+                                                                <Checkbox
+                                                                    color='success'
+                                                                    checked={value === 1}
+                                                                    onChange={() => handleCheckedPermission(permIndex, checkboxIndex)}
+                                                                />
+                                                            </TableCell>
+                                                        ))}
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
 
-                            color: "#fff"
-                        }
-                    }}>
-                        Voltar
-                    </Button>
-                    <Button onClick={handleNext} variant="contained" color="primary" sx={{
-                        background: "#237117",
-                        border: '1px solid #237117',
-                        ":hover": {
-                            background: "transparent",
+                                        </Table>
+                                    </TableContainer>
+
+                                </Box>
+                            )}
+                            <StyledButtonContainer>
+                                <Button onClick={handleBack} variant="contained" disabled={section === 'Dados'} sx={{
+                                    background: "#237117",
+                                    color: '#fff',
+                                    ":hover": {
+                                        background: "#237117",
+
+                                        color: "#fff"
+                                    }
+                                }}>
+                                    Voltar
+                                </Button>
+                                <Button onClick={section === "Dados" || section === "Próximo" ? handleNext : handleSend} variant="contained" color="primary" sx={{
+                                    background: "#237117",
+                                    border: '1px solid #237117',
+                                    ":hover": {
+                                        background: "transparent",
 
                                         color: "#237117"
                                     }
@@ -282,8 +299,6 @@ const AddUser = () => {
                         </StyledContentContainer>
                     </StyledFormContainer>
                 </CustomContainer>
-                :
-                <Loading />
             }
         </>
     );
