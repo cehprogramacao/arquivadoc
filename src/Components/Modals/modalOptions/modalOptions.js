@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,53 +13,50 @@ import GroupIcon from '@mui/icons-material/Group';
 import HistoryIcon from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
 import Link from 'next/link';
+import User from '@/services/user.service';
 
 
-export const ModalOptions = ({ open, onClose, anchorEl }) => {
+export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
+  const [user, setUser] = useState([])
+  const [isAdmin, setIsAdmin] = useState(false);
+
+
+
+  const getUser = async () => {
+    const { getUser } = new User()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const { data } = await getUser(accessToken)
+      console.log(data)
+      setUser(data)
+    } catch (error) {
+      console.error("Erro ao buscar usuário!", error)
+      throw error;
+    }
+  }
+
+  useEffect(() => {
+    getUser()
+    const admin = sessionStorage.getItem("isAdmin");
+    if (admin === "1") {
+      setIsAdmin(true);
+    }
+  }, []);
+
 
   return (
-    <React.Fragment>
+    <>
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
         open={open}
         onClose={onClose}
         onClick={onClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            marginBottom: 2,
-            ml: 8,
-            position: 'fixed',
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-              background: ""
-            },
-            '&:before': {
-              content: '""',
-              display: 'block',
-              position: 'fixed',
-              top: 178,
-              right: 0,
-              left: -5,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
-            },
-          },
-        }}
         transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
         anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
       >
         <Typography sx={{ padding: '4px', mb: '5px', textAlign: "center" }}>
-          Bem-vindo, kauan
+          {user.name && `Bem vindo, ${user.name}`}
         </Typography>
 
         <Divider />
@@ -70,29 +67,34 @@ export const ModalOptions = ({ open, onClose, anchorEl }) => {
             </ListItemIcon> Editar Perfil
           </MenuItem>
         </Link>
-        <Link href={"/logs"}>
-          <MenuItem >
-            <ListItemIcon>
-              <HistoryIcon fontSize="small" />
-            </ListItemIcon>
-            Logs
-          </MenuItem>
-        </Link>
-        <Link href={"/usuarios"}>
-          <MenuItem>
-            <ListItemIcon>
-              <GroupIcon fontSize="small" />
-            </ListItemIcon>
-            Usuários
-          </MenuItem>
-        </Link>
-        <MenuItem onClick={onClose}>
+        {isAdmin &&
+          <Link href={"/logs"}>
+            <MenuItem >
+              <ListItemIcon>
+                <HistoryIcon fontSize="small" />
+              </ListItemIcon>
+              Logs
+            </MenuItem>
+          </Link>
+        }
+        {isAdmin &&
+          <Link href={"/usuarios"}>
+            <MenuItem>
+              <ListItemIcon>
+                <GroupIcon fontSize="small" />
+              </ListItemIcon>
+              Usuários
+            </MenuItem>
+          </Link>
+        }
+
+        <MenuItem onClick={logout} >
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Sair
         </MenuItem>
       </Menu>
-    </React.Fragment>
+    </>
   );
 }

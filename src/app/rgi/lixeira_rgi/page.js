@@ -1,22 +1,15 @@
 "use client"
-import { Autocomplete, Box, Button, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
-import { useState } from "react"
+import { Autocomplete, Box, Button, TextField, Typography, useMediaQuery, useTheme, Grid } from "@mui/material"
+import { useEffect, useState } from "react"
 import { LixeiraTable } from "./tableLixeira"
+import CustomContainer from "@/Components/CustomContainer"
+import RGI from "@/services/rgi.service"
+import Loading from "@/Components/loading"
 
 
 
 
-const LixeiraRGI = ({ data }) => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const docs = [
-        {
-            name: 'Ronaldo',
-            text: 'Procuração'
-        },
-
-
-    ]
+const LixeiraRGI = () => {
     const top100Films = [
         {
             label: 'Prenotação'
@@ -31,40 +24,31 @@ const LixeiraRGI = ({ data }) => {
             label: 'Apresentante(documento)'
         }
     ];
-    
-    
-    const [rows, setRows] = useState([
-        { 
-          id: 1, 
-          prenotacao: '000001',
-          caixa: 1,
-          apresentante: '14276348000110',
-          servico: 'Serviço 1',
-          matricula: '14276348000110',
-          arquivo: 'https://drive.google.com/file/d/1Uw9X7wXwXigimanH2d-G5rY4Uo-OOX3L/view?pli=1'
-        },
-        { 
-          id: 2, 
-          prenotacao: '000002',
-          caixa: 2,
-          apresentante: '14276348000110',
-          servico: 'Serviço 2',
-          matricula: '14276348000110',
-          arquivo: 'https://drive.google.com/file/d/1xV4ubFGKXhluQtVUZEUROEK4_KxxF5OV/view'
-        },
-        { 
-          id: 3, 
-          prenotacao: '000003',
-          caixa: 3,
-          apresentante: '14276348000110',
-          servico: 'Serviço 3',
-          matricula: '14276348000110',
-          arquivo: 'https://drive.google.com/file/d/1Uw9X7wXwXigimanH2d-G5rY4Uo-OOX3L/view'
-        },
-        // Adicione mais objetos conforme necessário
-      ]);
-      
-      
+    const [loading, setLoading] = useState(false)
+
+
+    const [rows, setRows] = useState([]);
+
+    const getData = async () => {
+        const { getTrash } = new RGI()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getTrash(accessToken)
+            console.log(data)
+            setRows(Object.values(data))
+            return data
+        } catch (error) {
+            console.error("Error ao pegar arquivos!", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+    useEffect(() => {
+        getData()
+    }, [])
 
     const handleExcluir = (id) => {
         const updatedRows = rows.filter((row) => row.id !== id);
@@ -72,74 +56,86 @@ const LixeiraRGI = ({ data }) => {
     };
     const [select, setSelect] = useState(null);
     const [valueInput, setValueInput] = useState('')
-    const handleBuscar = () => {
 
-    };
 
     return (
-        <Box sx={{
-            width: '100%',
-            height: '100vh',
-            marginTop: 11,
-            position: 'relative',
-            padding: '30px 0',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            placeItems: 'center'
-        }}>
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
-                Lixeira
-            </Typography>
-            <div style={{
-                maxWidth: '1200px',
-                height: 'auto',
-                padding: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '30px',
-                flexWrap: 'wrap',
-                placeContent: 'center',
-                flexDirection: isSmallScreen ? 'column' : 'row'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
-                <TextField
-                        label="Buscar"
-                        sx={{ width: isSmallScreen ? '100%' : 450, '& input': { color: 'success.main' } }}
-                        color="success"
-                    />
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={top100Films}
-                            sx={{ width: isSmallScreen ? '100%' : 450}}
-                            renderInput={(params) => (
-                                <TextField
-                                    color="success"
-                                    {...params}
-                                    label="Buscar Por"
-                                    sx={{
-                                        color: "#237117",
-                                        '& input': {
-                                            color: 'success.main',
-                                        },
-                                    }}
-                                />
-                            )}
-                        />
-                </div>
-                <Button variant="contained" onClick={handleBuscar} sx={{
-                    background: '#247117',
-                    padding: '14px 10px',
-                    ":hover": {
-                        background: '#247117'
-                    }
+        <>
+            {loading ? <Loading />
+                :
+                <Box sx={{
+                    width: '100%',
+                    height: '100vh',
+                    py: 14,
+                    px: 4
                 }}>
-                    BUSCAR
-                </Button>
-            </div>
-            <LixeiraTable data={rows} onClick={handleExcluir}/>
-        </Box>
+                    <CustomContainer >
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Box sx={{
+                                    width: "100%",
+                                    justifyContent: "center",
+                                    display: "flex"
+                                }}>
+                                    <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
+                                        Lixeira
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} >
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} lg={5} md={5} sm={6}>
+                                        <TextField
+                                            fullWidth
+                                            label="Buscar"
+                                            sx={{ '& input': { color: 'success.main' } }}
+                                            color="success"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={5} md={5} sm={6}>
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={top100Films}
+                                            fullWidth
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    color="success"
+                                                    {...params}
+                                                    label="Buscar Por"
+                                                    sx={{
+                                                        color: "#237117",
+                                                        '& input': {
+                                                            color: 'success.main',
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={2} md={12} sm={12}>
+                                        <Box sx={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: "center" }}>
+                                            <Button variant="contained" sx={{
+                                                background: '#247117',
+                                                padding: '14px 10px',
+                                                ":hover": {
+                                                    background: '#247117'
+                                                }
+                                            }}>
+                                                BUSCAR
+                                            </Button>
+
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12} >
+                                <LixeiraTable data={rows} onClick={handleExcluir} />
+                            </Grid>
+                        </Grid>
+                    </CustomContainer>
+                </Box>
+            }
+        </>
     )
 }
 

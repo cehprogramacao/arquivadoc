@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Autocomplete, Box, Button, Stack, TextField, Typography, useMediaQuery, useTheme, IconButton } from "@mui/material"
 
 
 export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
@@ -31,7 +31,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                 }}>
                     Cadastro - Cartões de Autógrafo
                 </Typography>
-                <button style={{
+                <IconButton style={{
                     boxSizing: 'content-box',
                     width: '1em',
                     height: '1em',
@@ -47,7 +47,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                     },
                 }} onClick={onClose} >
 
-                </button>
+                </IconButton>
             </Box>
             <Box sx={{
                 display: 'flex',

@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -7,16 +6,36 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
+import Calling from '@/services/calling.service';
 
-const CadastroModalCallingTypes = ({ onClose, open }) => {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+const CadastroModalCallingTypes = ({ onClose, open,getTypes }) => {
+
+
+
+  const [data, setData] = useState({
+    name: ""
+  })
+
+  const handleCreateTypeCalling = async () => {
+    const { createCallingType } = new Calling()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const response = await createCallingType(data, accessToken)
+      getTypes()
+      console.log(response.data)
+      return response.data
+    } catch (error) {
+      console.error('Erro ao adicionar tipo!', error)
+      throw error;
+    }
+  }
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box
         sx={{
           position: 'absolute',
-          width: isSmallScreen ? '100%' : "440px",
+          width: { lg: 440, md: 440, sm: 400, xs: 350 },
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
@@ -64,17 +83,17 @@ const CadastroModalCallingTypes = ({ onClose, open }) => {
             mb: 7
           }}
           label="Nome"
+          value={data.name}
+          onChange={(e) => setData({ ...data, name: e.target.value })}
           color="success"
         />
 
         <Button
           sx={{
             display: 'flex',
-            width: 'max-content',
             background: '#237117',
             color: '#fff',
             border: '1px solid #237117',
-            textTransform: 'capitalize',
             fontSize: '.9rem',
             alignSelf: "center",
             borderRadius: '5px',
@@ -83,7 +102,10 @@ const CadastroModalCallingTypes = ({ onClose, open }) => {
               color: '#237117',
             },
           }}
-          onClick={onClose}
+          onClick={() => {
+            onClose()
+            handleCreateTypeCalling()
+          }}
         >
           Realizar Cadastro
         </Button>

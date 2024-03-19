@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { useMediaQuery, useTheme, Box, TextField, Typography, Button, Autocomplete, Modal, styled } from "@mui/material";
+import { useMediaQuery, useTheme, Box, TextField, Typography, Button, Autocomplete, Modal, styled, IconButton, Grid, FormControl, OutlinedInput } from "@mui/material";
+import Customer from "@/services/customer.service";
+import { CloseOutlined } from "@mui/icons-material";
+import ReactInputMask from "react-input-mask";
 
 const ButtonClose = styled('button')({
     boxSizing: 'content-box',
@@ -34,26 +37,55 @@ const ButtonCadastrar = styled('button')({
         color: '#237117',
     }
 })
-const CadastroNotesCurtomers = ({ open, onClose }) => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const [valueNotesType, setValueNotesType] = useState('')
-    const notesType = ['Outorgante', 'Outorgado']
-    const BoxMain = styled('main')({
-        width: isSmallScreen ? '100%' : "440px",
-        height: 'auto',
-        padding: '20px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        placeItems: 'center',
-        gap: '20px',
-        backgroundColor: '#fff',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        borderRadius: '10px'
-    })
+const cpfMask = '999.999.999-99';
+const cnpjMask = '99.999.999/9999-99';
+const CadastroNotesCurtomers = ({ open, onClose, getData }) => {
+    const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false)
+    const [data, setData] = useState({
+        cpfcnpj: "",
+        name: ""
+    });
+
+    const handleInputChange = (e) => {
+        const onlyDigits = e.target.value?.replace(/\D/g, '');
+        console.log(onlyDigits);
+        onlyDigits.length < 11
+            ? setCpfCnpjMask(cpfMask)
+            : setCpfCnpjMask(cnpjMask);
+        setData({ ...data, cpfcnpj: onlyDigits });
+    };
+
+    const handleInputBlur = () => {
+        if (data.cpfcnpj?.replace(/\D/g, '').length === 11) {
+            setCpfCnpjMask(cpfMask);
+        }
+    };
+
+    const handleCreateCustomers = async () => {
+        const { createCustomer } = new Customer()
+        console.log(data)
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken");
+            if (!accessToken) {
+                console.error("Access token is missing.");
+                throw new Error("Access token is missing.");
+            }
+            const response = await createCustomer(data, accessToken);
+            console.log(response)
+            return response;
+        } catch (error) {
+            console.error("Error creating customer:", error.message);
+            throw error;
+        }
+        finally {
+            onClose()
+            getData()
+        }
+    };
+
 
     return (
         <Modal
@@ -63,60 +95,96 @@ const CadastroNotesCurtomers = ({ open, onClose }) => {
             aria-describedby="cadastro-partes-modal-description"
 
         >
-            <BoxMain >
-                <ButtonClose style={{
-
-                }} onClick={onClose} >
-                </ButtonClose>
-                <Typography sx={{
-                    fontSize: 'clamp(2rem, 1rem, 1.7rem)',
-                }} color={"black"}>
-                    Cadastro
-                </Typography>
-                <TextField sx={{
-                    '& input': { color: 'success.main' }
-                }}
-                    fullWidth
-                    label="CPF"
-                    required
-                    color='success'
-                />
-                <TextField sx={{
-                    '& input': { color: 'success.main' }
-                }}
-                    fullWidth
-                    label="Ordem"
-                    required
-                    type="number"
-                    color='success'
-                />
-                <Autocomplete
-                    value={valueNotesType}
-                    options={notesType}
-                    fullWidth
-                    getOptionLabel={(option) => option || ''}
-                    onChange={(event, newValue) => {
-                        setValueNotesType(newValue);
-                    }}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label="Tipo"
-                            required
-                            color="success"
+            <Box sx={{
+                width: { lg: 440, md: 440, sm: 380, xs: 300 },
+                height: 'auto',
+                padding: '20px 20px',
+                display: 'flex',
+                flexDirection: 'column',
+                placeItems: 'center',
+                gap: '20px',
+                backgroundColor: '#fff',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                borderRadius: '10px'
+            }} >
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <Box sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "space-between"
+                        }}>
+                            <Typography sx={{
+                                fontSize: 'clamp(2rem, 1rem, 1.7rem)',
+                            }} color={"black"}>
+                                Cadastro
+                            </Typography>
+                            <IconButton aria-label="" onClick={onClose}>
+                                <CloseOutlined />
+                            </IconButton>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <TextField sx={{
+                            '& input': { color: 'success.main' }
+                        }}
+                            fullWidth
+                            label="Name"
+                            name="name"
+                            value={data.name}
+                            onChange={(e) => setData({...data, name: e.target.value})}
+                            color='success'
                         />
-                    )}
-                    renderOption={(props, option, { index }) => (
-                        <li {...props} key={index}>
-                            {option}
-                        </li>
-                    )}
-                />
+                    </Grid>
+                    <Grid item xs={12} >
+                        <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
+                            <ReactInputMask
+                                mask={cpfCnpjMask}
+                                value={data.cpfcnpj}
+                                onChange={handleInputChange}
+                                onBlur={handleInputBlur}
+                                name="cpfcnpj"
+                            >
+                                {(inputProps) => (
+                                    <OutlinedInput
+                                        {...inputProps}
+                                        id={'id-documento'}
+                                        label={'CPF/CNPJ'}
+                                        color="success"
+                                        sx={{
+                                            borderRadius: '12.5px',
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderRadius: '4px',
+                                            },
+                                        }}
+                                    />
+                                )}
+                            </ReactInputMask>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <Box sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}>
+                            <Button variant="contained" color="success" onClick={handleCreateCustomers}>
+                                Realizar Cadastro
+                            </Button>
+                        </Box>
+                    </Grid>
+                </Grid>
 
-                <ButtonCadastrar>
-                    Realizar Cadastro
-                </ButtonCadastrar>
-            </BoxMain>
+
+
+
+
+
+
+            </Box>
         </Modal>
     );
 }

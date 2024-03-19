@@ -1,69 +1,67 @@
-import { useMediaQuery, useTheme, Box, TextField, Typography, Button, Autocomplete } from "@mui/material";
+import NoteService from "@/services/notes.service";
+import { CloseOutlined } from "@mui/icons-material";
+import { useMediaQuery, useTheme, Box, TextField, Typography, Button, Autocomplete, IconButton } from "@mui/material";
+import { useState } from "react";
 
 
 
-export const CadastroSolicitantes = ({ onClose }) => {
+export const CadastroSolicitantes = ({ onClose, getTag }) => {
+    const [data, setData] = useState({
+        name: ""
+    })
 
-    const opt = [
-        {
-            label: 'Física'
-        },
-        {
-            label: 'Jurídica'
+    const handleCreateNotesTag = async () => {
+        const { createNoteTag } = new NoteService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const tag = await createNoteTag(data, accessToken)
+            getTag()
+            onClose()
+            return tag.data
+        } catch (error) {
+            console.error("Erro ao criar tag!", error)
+            throw error;
         }
-    ]
-
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    }
     return (
         <Box sx={{
-            width: isSmallScreen ? '400px' : "440px",
+            width: { lg: 440, md: 440, sm: 400, xs: 340 },
             height: '100vh',
             padding: '20px 20px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '30px'
+            gap: '30px',
+            alignItems: "flex-start"
         }}>
             <Box sx={{
-                maxWidth: '100%',
+                width: '100%',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
             }}>
                 <Typography sx={{
-                    fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
+                    fontSize: { lg: "1.3rem", md: "1.2rem", sm: "1.1rem", xl: "1rem" },
                 }}>
                     Cadastro - Solicitantes
                 </Typography>
-                <button style={{
-                    boxSizing: 'content-box',
-                    width: '1em',
-                    height: '1em',
-                    padding: '0.25em 0.25em',
-                    color: '#000',
-                    border: 0,
-                    background: 'transparent url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23000\'%3e%3cpath d=\'M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z\'/%3e%3c/svg%3e")',
-                    borderRadius: '0.375rem',
-                    opacity: '.5',
-                    cursor: 'pointer',
-                    '&:hover': {
-                        opacity: '1',
-                    },
-                }} onClick={onClose} >
-
-                </button>
+                <IconButton onClick={onClose}>
+                    <CloseOutlined />
+                </IconButton>
             </Box>
 
-            <TextField sx={{
+            <TextField 
+            value={data.name}
+            onChange={(e) => setData({name: e.target.value})}
+            sx={{
 
                 '& input': { color: 'success.main' }
             }}
+                fullWidth
                 label="Nome"
                 color='success'
             />
             <Button sx={{
                 display: 'flex',
-                width: 'max-content',
                 background: "#237117",
                 color: '#fff',
                 border: '1px solid #237117',
@@ -75,7 +73,7 @@ export const CadastroSolicitantes = ({ onClose }) => {
                     color: '#237117',
 
                 }
-            }}>
+            }} onClick={handleCreateNotesTag}>
                 Realizar Cadastro
             </Button>
         </Box >

@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fontsource/poppins": "^5.0.8",
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.14.11",
     "@mui/material": "^5.14.18",
+    "@mui/material-nextjs": "^5.15.11",
     "@mui/styled-engine-sc": "^6.0.0-alpha.6",
     "@mui/system": "^5.14.18",
     "@mui/x-date-pickers": "^6.18.2",
@@ -24,12 +26,17 @@
     "@react-pdf/renderer": "^3.1.14",
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
+    "dotenv": "^16.3.1",
+    "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "next": "^14.0.1",
     "pdfjs-dist": "^3.4.120",
     "raw-loader": "^4.0.2",
     "react": "latest",
     "react-dom": "latest",
+    "react-input-mask": "^2.0.4",
+    "react-redux": "^9.1.0",
+    "redux": "^5.0.1",
     "styled-components": "^6.1.1"
   }
 }

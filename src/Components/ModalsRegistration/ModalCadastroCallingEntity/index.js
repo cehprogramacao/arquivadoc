@@ -1,6 +1,4 @@
-
-
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -8,16 +6,34 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
+import Calling from '@/services/calling.service';
 
-const ModalCadastroCallingEntity = ({ onClose, open }) => {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+const ModalCadastroCallingEntity = ({ onClose, open, getEntity }) => {
+
+  const [data, setData] = useState({
+    name:""
+  })
+
+  const handleCreateTypeEntity = async () => {
+    const { createCallingEntity } = new Calling()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const response = await createCallingEntity(data, accessToken)
+      getEntity()
+      console.log(response.data)
+      return response.data
+    } catch (error) {
+      console.error('Erro ao adicionar endidade!', error)
+      throw error;
+    }
+  }
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box
         sx={{
           position: 'absolute',
-          width: isSmallScreen ? '100%' : "440px",
+          width: {lg: 440, md: 440, sm: 400, xs: 350},
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
@@ -64,6 +80,8 @@ const ModalCadastroCallingEntity = ({ onClose, open }) => {
             '& input': { color: 'success.main' },
             mb: 7
           }}
+          value={data.name}
+          onChange={(e) => setData({...data, name: e.target.value})}
           label="Nome"
           color="success"
         />
@@ -75,7 +93,6 @@ const ModalCadastroCallingEntity = ({ onClose, open }) => {
             background: '#237117',
             color: '#fff',
             border: '1px solid #237117',
-            textTransform: 'capitalize',
             fontSize: '.9rem',
             alignSelf: "center",
             borderRadius: '5px',
@@ -84,7 +101,10 @@ const ModalCadastroCallingEntity = ({ onClose, open }) => {
               color: '#237117',
             },
           }}
-          onClick={onClose}
+          onClick={() => {
+            onClose()
+            handleCreateTypeEntity()
+          }}
         >
           Realizar Cadastro
         </Button>

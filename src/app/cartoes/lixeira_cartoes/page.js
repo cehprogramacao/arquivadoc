@@ -1,24 +1,21 @@
 "use client"
-import Header from "@/Components/Header/Header"
-
-import { Autocomplete, Box, Button, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Autocomplete, Box, Button, Grid, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
 import { useState } from "react"
-
-import { LixeiraTable } from "./tableLixeira"
 import { DocList } from "@/Components/List/DocList"
 import ModalList from "@/Components/Modals/ModalList"
+import CustomContainer from "@/Components/CustomContainer"
 
 
 
 const LixeiraCartoes = ({ data }) => {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    
+
     const docs = [
         {
             NameFile: 'Procuração',
             nomeUser: 'Kauan',
-            link:'/teste.pdf'
+            link: '/teste.pdf'
         },
 
 
@@ -31,7 +28,7 @@ const LixeiraCartoes = ({ data }) => {
             label: 'Caixa'
         },
     ];
-    
+
 
 
 
@@ -40,77 +37,90 @@ const LixeiraCartoes = ({ data }) => {
         <Box sx={{
             width: '100%',
             height: '100vh',
-            marginTop: 11,
-            position: 'relative',
-            padding: '30px 0',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            placeItems: 'center'
+            py: 13,
+            px: 5
         }}>
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
-                Lixeira
-            </Typography>
-            <div style={{
-                maxWidth: '1200px',
-                height: 'auto',
-                padding: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '30px',
-                flexWrap: 'wrap',
-                placeContent: "center",
-                flexDirection: isSmallScreen ? 'column' : 'row'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
-                    <TextField label="Buscar"
-                        sx={{
-                            width: isSmallScreen ? '100%' : 400,
-                            '& input': {
-                                color: 'success.main',
-                            },
-                        }} color="success" />
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={top100Films}
-                        sx={{ width: isSmallScreen ? '100%' : 400 }}
-                        autoHighlight
-                        getOptionLabel={(option) => option.label}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                color="success"
-                                label="Buscar Por"
-                                onChange={(e) => {
-                                    const selected = top100Films.find(
-                                        (item) => item.label === e.target.value
-                                    );
-                                    setSelect(selected)
-                                }}
-                                sx={{
-                                    color: "#237117",
-                                    "& input": {
-                                        color: "success.main",
-                                    },
-                                }}
-                            />
-                        )}
-                    />
-                </div>
-                <Button variant="contained" onClick={handleBuscar} sx={{
-                    background: '#247117',
-                    width: 'max-content',
-                    padding: '14px 28px',
-                    ":hover": {
-                        background: '#247117'
-                    }
-                }}>
-                    BUSCAR
-                </Button>
-            </div>
-            <DocList data={docs[0]} />
-            <ModalList data={docs[0]} link={docs[0].link} />
+            <CustomContainer >
+                <Grid container spacing={2} >
+                    <Grid item xs={12} >
+                        <Box sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}
+                        >
+                            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
+                                Lixeira
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <Grid container spacing={3}>
+                            <Grid item lg={5} md={6} sm={6} xs={12} >
+                                <TextField label="Buscar"
+                                    fullWidth
+                                    sx={{
+                                        '& input': {
+                                            color: 'success.main',
+                                        },
+                                    }} color="success" />
+                            </Grid>
+                            <Grid item lg={5} md={6} sm={6} xs={12} >
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    options={top100Films}
+                                    fullWidth
+                                    autoHighlight
+                                    getOptionLabel={(option) => option.label}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            color="success"
+                                            label="Buscar Por"
+                                            onChange={(e) => {
+                                                const selected = top100Films.find(
+                                                    (item) => item.label === e.target.value
+                                                );
+                                                setSelect(selected)
+                                            }}
+                                            sx={{
+                                                color: "#237117",
+                                                "& input": {
+                                                    color: "success.main",
+                                                },
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid item lg={2} md={12} sm={12} xs={12} >
+                                <Box sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }} >
+                                    <Button variant="contained" sx={{
+                                        background: '#247117',
+                                        width: 'max-content',
+                                        padding: '14px 28px',
+                                        ":hover": {
+                                            background: '#247117'
+                                        }
+                                    }}>
+                                        BUSCAR
+                                    </Button>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <DocList data={docs} />
+                    </Grid>
+                </Grid>
+            </CustomContainer>
+
+            <ModalList data={docs} link={docs[0].link} />
         </Box>
     )
 }

@@ -1,22 +1,24 @@
 "use client"
-import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import { Autocomplete, Box, Button, Drawer,TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
-import { useState } from "react"
+import { Autocomplete, Box, Button, Drawer, TextField, Typography, useTheme, useMediaQuery, Grid } from "@mui/material"
+import { useEffect, useState } from "react"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import { Buttons } from "@/Components/Button/Button"
 import { UserTable } from "./tablePessoas/table"
 import { CadastroPessoas } from "@/Components/Modals/ModalCadastroPessoas"
+import CustomContainer from "@/Components/CustomContainer"
+import Customer from "@/services/customer.service"
+import Loading from "@/Components/loading"
 
 
 
-const PagePessoas = ({ data }) => {
+const PagePessoas = () => {
     const theme = useTheme();
     const [open, setOpen] = useState(false)
-
+    const [rows, setRows] = useState([])
+    const [loading, setLoading] = useState(false)
     const handleOpenModal = () => setOpen(true)
     const handleCloseModal = () => setOpen(false)
 
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const top100Films = [
         {
             label: 'CPF/CNPJ'
@@ -26,99 +28,137 @@ const PagePessoas = ({ data }) => {
         },
     ];
 
+    const getData = async () => {
+        try {
+            setLoading(true)
+            const customer = new Customer()
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await customer.customers(accessToken)
+            setRows(data)
+            console.log(data)
+            return data
+        } catch (error) {
+            console.error('Error listing customers', error.message)
+            throw error
+        }
+        finally {
+            setLoading(false)
+        }
+    }
 
-    const [rows, setRows] = useState([
-        { id: 1, documento: '45357', tipo: 'Física', nome: 'Diego'},
-        { id: 2, documento: '87564', tipo: 'Juídica', nome: 'Construtora'},
-    ]);
+    useEffect(() => {
+        getData()
+    }, [])
 
-    const handleExcluir = (id) => {
-        const updatedRows = rows.filter((row) => row.id !== id);
-        setRows(updatedRows);
+
+    const handleDeleteCustomer = async (cpfcnpj) => {
+        const customer = new Customer()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await customer.deleteCustomer(cpfcnpj, accessToken)
+            console.log(data)
+            return data
+        } catch (error) {
+            console.error("error when deleting client", error)
+            throw error
+        }
+        finally {
+            setLoading(false)
+        }
     };
-    const [select, setSelect] = useState(null);
-    const [valueInput, setValueInput] = useState('')
-    const handleBuscar = () => {
 
-    };
 
     return (
-        <Box sx={{
-            width: '100%',
-            height: '100vh',
-            marginTop: 11,
-            position: 'relative',
-            padding: '30px 0',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            alignItems: 'center'
-        }}>
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
-                Pessoas
-            </Typography>
-            <div style={{
-                width: 'auto',
-                height: 'auto',
-                padding: '8px',
-                gap: '30px',
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                placeContent: 'space-evenly',
-                flexDirection: isSmallScreen ? 'column' : 'row'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30, flexWrap: 'wrap', placeContent: 'center' }}>
-                    <TextField label="Buscar"
-                        sx={{
-                            width: isSmallScreen ? '100%' : 400,
-                            '& input': {
-                                color: 'success.main',
-                            },
-                        }} color="success" />
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={top100Films}
-                        sx={{ width: isSmallScreen ? '100%' : 400 }}
-                        autoHighlight
-                        getOptionLabel={(option) => option.label}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                color="success"
-                                label="Buscar Por"
-                                onChange={(e) => {
-                                    const selected = top100Films.find(
-                                        (item) => item.label === e.target.value
-                                    );
-                                    setSelect(selected)
-                                }}
-                                sx={{
-                                    color: "#237117",
-                                    "& input": {
-                                        color: "success.main",
-                                    },
-                                }}
-                            />
-                        )}
-                    />
-                </div>
+        <>
+            {loading ?
+                <Loading />
+                :
                 <Box sx={{
-                    display: 'flex',
-                    width: 'auto',
-                    gap: isSmallScreen ? '20px' : '50px'
+                    width: '100%',
+                    height: '100vh',
+                    px: 3,
+                    py: 13
                 }}>
-                    <Buttons color={'green'} title={'Buscar'} />
-                    <ButtonOpenModals onClick={handleOpenModal}  />
-                </Box>
-            </div>
-            <UserTable data={rows} onClick={handleExcluir} />
+                    <CustomContainer >
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} >
+                                <Box sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}>
+                                    <Typography fontSize={30} fontWeight={'bold'} color={"black"}>
+                                        Pessoas
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} >
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} md={6} sm={6} lg={5}>
+                                        <TextField label="Buscar"
+                                            fullWidth
+                                            sx={{
+                                                '& input': {
+                                                    color: 'success.main',
+                                                },
+                                            }} color="success" />
+                                    </Grid>
+                                    <Grid item xs={12} md={6} sm={6} lg={5}>
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={top100Films}
+                                            fullWidth
+                                            autoHighlight
+                                            getOptionLabel={(option) => option.label}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    color="success"
+                                                    label="Buscar Por"
+                                                    onChange={(e) => {
+                                                        const selected = top100Films.find(
+                                                            (item) => item.label === e.target.value
+                                                        );
+                                                        setSelect(selected)
+                                                    }}
+                                                    sx={{
+                                                        color: "#237117",
+                                                        "& input": {
+                                                            color: "success.main",
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} md={12} sm={12} lg={2}>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            width: '100%',
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 3
+                                        }}>
+                                            <Buttons color={'green'} title={'Buscar'} />
+                                            <ButtonOpenModals onClick={handleOpenModal} />
+                                        </Box>
+                                    </Grid>
 
-            <Drawer anchor="left" open={open} onClose={handleCloseModal}>
-                <CadastroPessoas onClose={handleCloseModal} />
-            </Drawer>
-        </Box>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12} >
+                                <UserTable data={rows} onClick={handleDeleteCustomer} />
+                            </Grid>
+                        </Grid>
+                    </CustomContainer>
+                    <Drawer anchor="left" open={open} onClose={handleCloseModal}>
+                        <CadastroPessoas onClose={handleCloseModal} />
+                    </Drawer>
+                </Box>
+            }
+        </>
     )
 }
 
