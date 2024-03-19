@@ -55,7 +55,7 @@ export const LixeiraTable = ({ data, onClick }) => {
             <StyledTableCell align='center'>Entidade</StyledTableCell>
             <StyledTableCell align='center'>Tipo</StyledTableCell>
             <StyledTableCell align='center'>Data</StyledTableCell>
-            <StyledTableCell align='center'>Arquivo</StyledTableCell>
+            {/* <StyledTableCell align='center'>Arquivo</StyledTableCell> */}
             <StyledTableCell align='right'>Excluir</StyledTableCell>
             <StyledTableCell align='right'>Restaurar</StyledTableCell>
           </TableRow>
@@ -63,12 +63,12 @@ export const LixeiraTable = ({ data, onClick }) => {
         <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
           {data.map((row, index) => (
             <StyledTableRow key={index}>
-              <StyledTableCell align='left'>{row.numero}</StyledTableCell>
-              <StyledTableCell align='center'>{row.caixa}</StyledTableCell>
-              <StyledTableCell align='center' >{row.entidade}</StyledTableCell>
-              <StyledTableCell align='center'>{row.tipo}</StyledTableCell>
-              <StyledTableCell align='center'>{row.data}</StyledTableCell>
-              <StyledTableCell align='center'>
+              <StyledTableCell align='left'>{row.number}</StyledTableCell>
+              <StyledTableCell align='center'>{row.box}</StyledTableCell>
+              <StyledTableCell align='center' >{row.entityName}</StyledTableCell>
+              <StyledTableCell align='center'>{row.typeName}</StyledTableCell>
+              <StyledTableCell align='center'>{row.date}</StyledTableCell>
+              {/* <StyledTableCell align='center'>
                 <Button sx={{
                   fontSize: '12px',
                   textTransform: 'none',
@@ -82,10 +82,10 @@ export const LixeiraTable = ({ data, onClick }) => {
                     background: 'transparent',
                     color: '#237117'
                   }
-                }} onClick={() => handleOpen(row.arquivo)}>
+                }} >
                   Ver Arquivo
                 </Button>
-              </StyledTableCell>
+              </StyledTableCell> */}
               <StyledTableCell align='right'>
                 <Button sx={{
                   fontSize: '15px',
@@ -99,7 +99,7 @@ export const LixeiraTable = ({ data, onClick }) => {
                     background: '#ea1010',
                     color: '#fff'
                   }
-                }} onClick={() => onClick(row.id)}>
+                }} >
                   Excluir
                 </Button>
               </StyledTableCell>

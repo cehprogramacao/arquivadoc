@@ -1,5 +1,5 @@
 "use client"
-import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme, Grid } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { DocList } from '@/Components/List/DocList';
@@ -9,6 +9,8 @@ import { CadastroProtesto } from '@/Components/Modals/ModalCadastroProtesto';
 import { useState } from 'react';
 import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
 import ModalList from '@/Components/Modals/ModalList';
+import CustomContainer from '@/Components/CustomContainer';
+import { width } from '@mui/system';
 
 const top100Films = [
     { label: 'Nome' },
@@ -56,71 +58,81 @@ const PageProtesto = () => {
             sx={{
                 width: '100%',
                 height: '100vh',
-                marginTop: 11,
-                position: 'relative',
-                padding: '30px 0',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '10px',
+                py: 15,
+                px: 3
             }}
         >
-            <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                Protestos
-            </Typography>
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: isSmallScreen ? 'column' : 'row',
-                    alignItems: isSmallScreen ? 'center' : 'flex-start',
-                    gap: '30px',
-                    margin: '0 auto',
-                    flexWrap: isSmallScreen ? 'nowrap' : 'wrap',
-                    placeContent: 'center',
-                    marginTop: 4
-                }}
-            >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center" }}>
-                    <TextField
-                        label="Buscar"
-                        sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }}
-                        color="success"
-                    />
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={top100Films}
-                        sx={{ width: isSmallScreen ? '100%' : 400 }}
-                        renderInput={(params) => (
-                            <TextField
-                                color="success"
-                                {...params}
-                                label="Buscar Por"
-                                sx={{
-                                    color: "#237117",
-                                    '& input': {
-                                        color: 'success.main',
-                                    },
-                                }}
-                            />
-                        )}
-                    />
-                </Box>
-                <Buttons color={'green'} title={'Buscar'} />
-                <Box sx={{display: 'flex', width: 'auto', gap: '30px'}}>
-                    <ButtonOpenModals onClick={handleOpenModalCadastro} />
-                    <ButtonLixeira href={"/protestos/lixeira_protesto"} />
-                </Box>
-            </Box>
+            <CustomContainer>
+                <Grid container spacing={0}>
+                    <Grid item xs={12}>
+                        <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
+                                Protestos
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} lg={5} md={6} sm={6}>
+                                <TextField
+                                    label="Buscar"
+                                    fullWidth
+                                    sx={{ '& input': { color: 'success.main' } }}
+                                    color="success"
+                                />
+                            </Grid>
+                            <Grid item xs={12} lg={4} md={6} sm={6}>
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    options={top100Films}
+                                    fullWidth
+                                    renderInput={(params) => (
+                                        <TextField
+                                            color="success"
+                                            {...params}
+                                            label="Buscar Por"
+                                            sx={{
+                                                color: "#237117",
+                                                '& input': {
+                                                    color: 'success.main',
+                                                },
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid item xs={12} lg={3} md={12} sm={12}>
+                                <Box sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    gap: 2,
+                                    justifyContent: "center"
+                                }}>
+                                    <Buttons color={'green'} title={'Buscar'} />
 
-            <DocList data={docs} sx={{ marginTop: isSmallScreen ? 2 : 0 }} onClick={handleOpenModalFile} />
+                                    <ButtonOpenModals onClick={handleOpenModalCadastro} />
+                                    <ButtonLixeira href={"/protestos/lixeira_protesto"} />
+                                </Box>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <DocList data={docs} onClick={handleOpenModalFile} />
+                    </Grid>
+                </Grid>
+
+
+
+
+            </CustomContainer>
             <Drawer anchor='left' open={openModalCadastro} onClose={handleCloseModalCadastro} >
                 <CadastroProtesto onClickPartes={handleOpenModalPartes} onClose={handleCloseModalCadastro} />
             </Drawer>
             <Drawer anchor='right' onClose={handleCloseModalPartes} open={openModalPartes}>
                 <CadastroPartes onClose={handleCloseModalPartes} />
             </Drawer>
-                <ModalList open={openModalListFile} onClose={handleCloseModalFile} data={docs} />
+            <ModalList open={openModalListFile} onClose={handleCloseModalFile} data={docs} />
         </Box>
     );
 };

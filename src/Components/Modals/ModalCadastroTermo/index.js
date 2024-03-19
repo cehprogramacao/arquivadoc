@@ -1,19 +1,75 @@
-import { useMediaQuery, useTheme, TextField, Button, Typography } from "@mui/material";
+import { useMediaQuery, useTheme, TextField, Button, Typography, IconButton, FormControl, OutlinedInput } from "@mui/material";
 import { Box } from "@mui/system";
 import FilledInput from '@mui/material/FilledInput';
+import { useState } from "react";
+import ReactInputMask from "react-input-mask";
+import Customer from "@/services/customer.service";
 
-
+const cpfMask = '999.999.999-99';
+const cnpjMask = '99.999.999/9999-99';
 export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
+  const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
+  const [errors, setErrors] = useState({});
+  const [data, setData] = useState({
+    customer_cpfcnpj: "",
+    box: "",
+    file_url: ""
+  })
+  const handleInputChange = (e) => {
+    e.target.value?.replace(/\D/g, '').length < 11
+      ? setCpfCnpjMask(cpfMask)
+      : setCpfCnpjMask(cnpjMask);
+    setData({ ...data, customer_cpfcnpj: e.target.value });
+  };
 
+  const handleInputBlur = () => {
+    data.customer_cpfcnpj?.replace(/\D/g, '').length === 11 && setCpfCnpjMask(cpfMask);
+  };
   const theme = useTheme();
+
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
 
+  const handleChangeData = (e) => {
+    const { name, value } = e.target
+    setData({ ...data, [name]: value })
+  }
+  const handleChangeFile = (e) => {
+    const files = e.target.files[0]
+    if (files) {
+      const fileReader = new FileReader()
+      fileReader.onloadend = () => {
+        let resultURL = fileReader.result.split(",")[1]
+        setData((prev) => ({ ...prev, file_url: resultURL }))
+      }
+      fileReader.readAsDataURL(files)
+      console.log(fileReader, 999)
+    }
+  }
+  const handleCreateTerm = async () => {
+    const { createTermLGDP } = new Customer();
+    try {
+      onClose()
+      const accessToken = sessionStorage.getItem("accessToken");
+      if (!accessToken) {
+        console.error("Access token is missing.");
+        throw new Error("Access token is missing.");
+      }
+      const response = await createTermLGDP(data, accessToken);
+      console.log(response.data)
+      return response.data;
+    } catch (error) {
+      console.error("Error creating customer:", error);
+      throw error;
+    }
+    
+  }
   return (
     <Box sx={{
-      width: isSmallScreen ? '300px' : "389px",
+      width: { lg: 350, md: 350, sm: 350, xs: 250 },
       height: '100vh',
-      padding: '8px 10px',
+      py: 2,
+      px: 1,
       display: 'flex',
       flexDirection: 'column',
       gap: '30px'
@@ -29,11 +85,8 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         }}>
           Cadastro - Termos
         </Typography>
-        <button style={{
+        <IconButton sx={{
           boxSizing: 'content-box',
-          width: '1em',
-          height: '1em',
-          padding: '0.25em 0.25em',
           color: '#000',
           border: 0,
           background: 'transparent url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23000\'%3e%3cpath d=\'M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z\'/%3e%3c/svg%3e")',
@@ -45,36 +98,57 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
           },
         }} onClick={onClose} >
 
-        </button>
+        </IconButton>
       </Box>
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
         width: 'auto',
         gap: isSmallScreen ? '20px' : '26px',
-        padding:'5px 0'
+        padding: '5px 0'
       }}>
-        
-        <TextField sx={{
-          width: isSmallScreen ? '100%' : '370px',
-          '& input': { color: 'success.main' },
 
-
-        }}
-          label="CPF"
-          color='success'
-        />
-        <TextField sx={{
-          width: isSmallScreen ? '100%' : '370px',
-          '& input': { color: 'success.main' }
-        }}
+        <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
+          <ReactInputMask
+            mask={cpfCnpjMask}
+            value={data.cpfcnpj}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            name="customer_cpfcnpj"
+          >
+            {(inputProps) => (
+              <OutlinedInput
+                {...inputProps}
+                id={'id-documento'}
+                color="success"
+                placeholder={'CPF/CNPJ'}
+                sx={{
+                  borderRadius: '12.5px',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderRadius: '4px',
+                  },
+                }}
+              />
+            )}
+          </ReactInputMask>
+        </FormControl>
+        <TextField
+          fullWidth
+          value={data.box}
+          onChange={handleChangeData}
+          name="box"
+          sx={{
+            '& input': { color: 'success.main' }
+          }}
           label="N° da Caixa"
           color='success'
         />
-        
+
         <TextField
+          fullWidth
+          onChange={handleChangeFile}
           sx={{
-            width: isSmallScreen ? '100%' : '370px',
+
             border: 'none',
             '::placeholder': {
               color: 'success.main',
@@ -145,7 +219,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
             color: '#237117',
 
           }
-        }}>
+        }} onClick={handleCreateTerm}>
           Realizar Cadastro
         </Button>
 

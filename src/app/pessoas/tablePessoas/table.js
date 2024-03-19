@@ -30,7 +30,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
   },
@@ -38,12 +37,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export const UserTable = ({ data, onClick }) => {
 
-
+  const dataArray = Array.isArray(data) ? data : Object.values(data)
+  console.log(dataArray)
 
 
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: '1080px', margin: '0 auto', marginTop: '30px' }}>
+    <TableContainer component={Paper} sx={{ width: "100%", margin: '0 auto', marginTop: '30px' }}>
       <Table sx={{ maxWidth: '100%' }} >
         <TableHead>
           <TableRow>
@@ -55,11 +55,11 @@ export const UserTable = ({ data, onClick }) => {
           </TableRow>
         </TableHead>
         <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
-          {data.map((row, index) => (
+          {dataArray.length > 0 && dataArray.map((row, index) => (
             <StyledTableRow key={index}>
-              <StyledTableCell align='left'>{row.documento}</StyledTableCell>
-              <StyledTableCell align='center' >{row.tipo}</StyledTableCell>
-              <StyledTableCell align='center' sx={{ textTransform: 'uppercase' }}>{row.nome}</StyledTableCell>
+              <StyledTableCell align='left'>{row.cpfcnpj}</StyledTableCell>
+              <StyledTableCell align='center' >{row.type}</StyledTableCell>
+              <StyledTableCell align='center' sx={{ textTransform: 'uppercase' }}>{row.name}</StyledTableCell>
               <StyledTableCell align='center'>
                 <Button sx={{
                   fontSize: '15px',
@@ -73,12 +73,12 @@ export const UserTable = ({ data, onClick }) => {
                     background: '#EA1010',
                     color: '#fff'
                   }
-                }} onClick={() => onClick(row.id)}>
+                }} onClick={() => onClick(row.cpfcnpj)}>
                   Excluir
                 </Button>
               </StyledTableCell>
               <StyledTableCell align='center'>
-                <Link href={'/editarPessoas'}>
+                <Link href={`/pessoas/[cpfcnpj]`} as={`/pessoas/${row.cpfcnpj}`}>
                   <Button sx={{
                     fontSize: '15px',
                     textTransform: 'none',

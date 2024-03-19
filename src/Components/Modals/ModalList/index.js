@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Modal, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Grid, Modal, Typography, useMediaQuery, useTheme } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import PrintIcon from '@mui/icons-material/Print';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -7,33 +7,63 @@ import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+import RGI from '@/services/rgi.service';
+import CustomContainer from '@/Components/CustomContainer';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-const ModalList = ({ open, onClose, data, link }) => {
-
-
+const ModalList = ({ open, data, onClose, prenotation }) => {
+    const path = usePathname().split("/")[1]
+    // console.log(data, '696969696996969696')
     const theme = useTheme()
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'))
+    const createBlobUrl = (base64Data) => {
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        return URL.createObjectURL(blob);
+    };
     const handlePrintFile = () => {
-        const base64Data = link;
+        const base64Data = data.file;
         const byteCharacters = atob(base64Data);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'application/pdf' });
-        
+
         // Criar uma URL do Blob e abrir em uma nova janela
         const blobUrl = URL.createObjectURL(blob);
         window.open(blobUrl, '_blank');
     }
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
+    // console.log(data, 'ModalListaaaaaaaaaaaaaaaaaaaaaaa')
+    // console.log(data.file, 'Index e Filllllllllllllllllllllllle')
 
-
+    const handleDeleteByPrenotation = async () => {
+        const { deleteByPrenotation } = new RGI()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteByPrenotation(prenotation, accessToken)
+            console.log(response.data)
+            window.location.reload()
+            return response.data
+        } catch (error) {
+            console.error("Error ao deletar arquivo rgi!", error)
+            throw error;
+        }
+    }
 
     return (
-        <Box>
+        <>
 
 
             <Modal
@@ -55,7 +85,59 @@ const ModalList = ({ open, onClose, data, link }) => {
                     p: 4,
                     borderRadius: "20px"
                 }}>
-                    <Box sx={{
+                    <Grid container alignItems={"flex-start"} justifyContent={"space-between"}>
+                        <Grid item xs={12} lg={8} md={8} sm={12}>
+                            <Box sx={{
+                                width: "100%",
+                                py: 2,
+                                px: 2,
+                                height: { lg: 500, md: 500, sm: 400, xs: 350 }
+                            }}>
+                                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                                    <Viewer fileUrl={`data:application/pdf;base64,${data.file}`} plugins={[defaultLayoutPluginInstance]} />
+                                    {/* <Viewer fileUrl={createBlobUrl(data[index]?.file)} plugins={[defaultLayoutPluginInstance]} /> */}
+                                    {/* <Viewer fileUrl={data[0]?.file} plugins={[defaultLayoutPluginInstance]} /> */}
+                                </Worker>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} lg={4} md={4} sm={12}>
+                            <Box sx={{
+                                width: "100%",
+                                display: 'flex',
+                                gap: '25px',
+                                alignItems: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" },
+                                flexDirection: { lg: "column", md: "column", sm: "row", xs: "row" },
+                                py: 2,
+                                justifyContent: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" }
+                            }}>
+                                {/* Add your buttons here */}
+                                <Link href={`/${path}/[prenotation]`} as={`/${path}/${prenotation}`}>
+                                </Link>
+                                <Button variant="outlined" color='inherit' sx={{
+                                    color: '#FFD500',
+                                    ":hover": {
+                                        color: '#FFD500'
+                                    }
+                                }}>
+                                    <EditIcon />
+                                </Button>
+                                <Button variant="outlined" color='inherit' sx={{
+                                    color: "#0dcaf0",
+                                    ":hover": {
+                                        color: "#0DCAF0"
+                                    }
+                                }} onClick={() => handlePrintFile()} >
+                                    <PrintIcon />
+                                </Button>
+                                <Button variant="outlined" color='error' onClick={handleDeleteByPrenotation}>
+                                    <DeleteIcon sx={{
+                                        fill: '#dc3545'
+                                    }} />
+                                </Button>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    {/* <Box sx={{
                         width: "100%",
                         display: "flex",
                         flexDirection: "row",
@@ -64,50 +146,13 @@ const ModalList = ({ open, onClose, data, link }) => {
                         flexWrap: "wrap",
                         placeContent: "center"
                     }}>
-                        <Box sx={{
-                            width: isSmallScreen ? '100%' : '700px',
-                            height: isSmallScreen ? '300px' : "520px",
-                            padding: '20px'
-                        }}>
-                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                <Viewer fileUrl={`data:application/pdf;base64,${link}`} plugins={[defaultLayoutPluginInstance]} />
 
-                            </Worker>
-                        </Box>
 
-                        <Box sx={{
-                            display: 'flex',
-                            gap: '25px',
-                            alignItems: 'start',
-                            flexDirection: isSmallScreen ? 'row' : "column"
-                        }}>
-                            {/* Add your buttons here */}
-                            <Button variant="outlined" color='inherit' sx={{
-                                color: '#FFD500',
-                                ":hover": {
-                                    color: '#FFD500'
-                                }
-                            }}>
-                                <EditIcon />
-                            </Button>
-                            <Button variant="outlined" color='inherit' sx={{
-                                color: "#0dcaf0",
-                                ":hover": {
-                                    color: "#0DCAF0"
-                                }
-                            }} onClick={handlePrintFile} >
-                                <PrintIcon />
-                            </Button>
-                            <Button variant="outlined" color='error' >
-                                <DeleteIcon sx={{
-                                    fill: '#dc3545'
-                                }} />
-                            </Button>
-                        </Box>
-                    </Box>
+                        
+                    </Box> */}
                 </Box>
             </Modal>
-        </Box>
+        </>
     );
 }
 

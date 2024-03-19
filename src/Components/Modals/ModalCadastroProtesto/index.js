@@ -2,7 +2,7 @@
 
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
 import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
-import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
+import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete,IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
 
@@ -69,7 +69,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         }}>
           Cadastro - Protestos
         </Typography>
-        <button style={{
+        <IconButton style={{
           boxSizing: 'content-box',
           width: '1em',
           height: '1em',
@@ -85,7 +85,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           },
         }} onClick={onClose} >
 
-        </button>
+        </IconButton>
       </Box>
       <Box sx={{
         display: 'flex',

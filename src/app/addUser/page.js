@@ -13,24 +13,15 @@ import {
     TableRow,
     Paper,
     Checkbox,
-    FormControlLabel,
+    FormControl, 
+    OutlinedInput,
 } from '@mui/material';
 import { styled, width } from '@mui/system';
-
-
-const fontBodyParams = {
-    fontSize: {lg:'.9rem', md: '1rem',sm: '.96rem', xs: '.55rem'},
-    lineHeight: {lg:'1rem', md: '.9rem',sm: '.89rem', xs: '.833rem'},
-}
-const fontParams = {
-    fontSize: {lg:'1.5rem', md: '1.5rem',sm: '1.3rem', xs: '1rem'},
-    lineHeight: {lg:'1.2rem', md: '1rem',sm: '.89rem', xs: '.833rem'},
-}
 
 const StyledFormContainer = styled(Box)({
     width: '100%',
     maxWidth: '700px',
-    height: 'auto',
+    height: '100vh',
     margin: 'auto',
     padding: '80px 30px',
     display: 'flex',
@@ -51,54 +42,81 @@ const StyledButtonContainer = styled(Box)({
     // marginTop: '10px',
     display: 'flex',
     justifyContent: 'space-between',
-    width: '100%',
-    flexWrap: 'wrap',
-    gap: '8px',
-    alignItems:'center',
-    placeItems:"center"
+    width: '300px',
 });
-
+const numberMaskEstruct = '(99) 99999-9999'
 const AddUser = () => {
+    const [numberMask, setNumberMask] = useState(numberMaskEstruct)
+    const [errors, setErrors] = useState({});
     const [userData, setUserData] = useState({
-        username: '',
+        name: '',
         email: '',
         phone: '',
         password: '',
+        permissions: Array(7).fill().map(() => Array(4).fill(0)),
     });
+    const [loading, setLoading] = useState(false)
+    const handleCheckedPermission = (permIndex, checkboxIndex) => {
+        const newPermissions = userData.permissions.map((perm, index) =>
+            index === permIndex ? perm.map((value, cIndex) =>
+                cIndex === checkboxIndex ? value === 0 ? 1 : 0 : value
+            ) : perm
+        );
 
-    const [permissions, setPermissions] = useState({
-        view: false,
-        edit: false,
-        add: false,
-        delete: false,
-    });
+        setUserData({ ...userData, permissions: newPermissions });
+    }
     const [section, setSection] = useState('Dados');
 
     const handleChange = (e) => {
+        const { name, value } = e.target
         setUserData({
             ...userData,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
     };
 
-    const handleCheckboxChange = (permission) => {
-        setPermissions({
-            ...permissions,
-            [permission]: !permissions[permission],
-        });
+
+    const handleInputChange = (e) => {
+        e.target.value?.replace(/\D/g, '').length < 11
+            ? setNumberMask(numberMask)
+            : setNumberMask(numberMask);
+        setUserData({ ...userData, phone: e.target.value });
     };
+
+    const handleInputBlur = () => {
+        userData.phone?.replace(/\D/g, '').length === 11 && setNumberMask(numberMask);
+    };
+
 
     const handleNext = () => {
-        if (section === 'Dados' && (!userData.username.trim() || !userData.email.trim() || !userData.phone.trim() || !userData.password.trim())) {
-            // Adicione aqui a lógica para exibir uma mensagem de erro se necessário
+        if (section === 'Dados' && (!userData.name.trim() || !userData.email.trim() || !userData.phone.trim() || !userData.password.trim())) {
             return;
         }
         setSection('Permissoes');
     };
+    const handleSend = async () => {
+        console.log(userData)
+        const user = new User()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await user.addUserByAdmin(userData, accessToken)
+            console.log(data)
+            return data
+        } catch (error) {
+            console.log('Erro ao adicionar usuário!', error)
+            throw error
+        }
+        finally {
+            setLoading(false)
+            window.location.reload()
+        }
+
+    }
 
     const handleBack = () => {
         setUserData({
-            username: '',
+            name: '',
             email: '',
             phone: '',
             password: '',
@@ -119,31 +137,28 @@ const AddUser = () => {
                 placeItems: 'center',
                 border: '1px solid #237117',
                 borderRadius: '8px',
-                gap: {lg:'30px', md:'25px', sm:'20px', xs: '10px'},
-                flexWrap:'wrap',
-                marginTop:'40px'
+                gap: '30px',
+                flexWrap:'wrap'
             }}>
-                <Typography sx={{
+                <Typography variant="h5" sx={{
                     display: 'flex',
                     background: section === 'Dados' ? '#237117' : 'transparent',
                     border: '1px solid #237117',
-                    padding: '10px 40px',
+                    padding: '5px 40px',
                     color: section === 'Dados' ? '#fff' : '#237117',
-                    borderRadius: '8px',
-                    ...fontParams
+                    borderRadius: '8px'
                 }}>
                     Dados
                     {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
                 </Typography>
-                <Typography sx={{
+                <Typography variant="h5" sx={{
                     display: 'flex',
                     border: '1px solid #237117',
-                    padding: '10px 26px',
+                    padding: '5px 26px',
                     color: '#237171',
                     borderRadius: '8px',
                     background: section === 'Permissoes' ? '#237117' : 'transparent',
                     color: section === 'Permissoes' ? '#fff' : '#237117',
-                    ...fontParams
                 }}>
                     {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
                     Permissões
@@ -205,9 +220,9 @@ const AddUser = () => {
                             '& .MuiFormControlLabel-root': { m: .8, },
                         }}
                     >
-                        <TableContainer component={Paper} >
+                        <TableContainer component={Paper}>
                             <Table>
-                                <TableHead sx={{ background: '#237117',  }}>
+                                <TableHead sx={{ background: '#237117' }}>
                                     <TableRow>
                                         <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Permissão</TableCell>
                                         <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Visualizar</TableCell>
@@ -244,7 +259,6 @@ const AddUser = () => {
                     <Button onClick={handleBack} variant="contained" disabled={section === 'Dados'} sx={{
                         background: "#237117",
                         color: '#fff',
-                        ...fontBodyParams,
                         ":hover": {
                             background: "#237117",
 
@@ -256,19 +270,23 @@ const AddUser = () => {
                     <Button onClick={handleNext} variant="contained" color="primary" sx={{
                         background: "#237117",
                         border: '1px solid #237117',
-                        ...fontBodyParams,
                         ":hover": {
                             background: "transparent",
 
-                            color: "#237117"
-                        }
-                    }}>
-                        {section === 'Dados' ? 'Próximo' : 'Enviar'}
-                    </Button>
-                </StyledButtonContainer>
-            </StyledContentContainer>
-        </StyledFormContainer>
+                                        color: "#237117"
+                                    }
+                                }}>
+                                    {section === 'Dados' ? 'Próximo' : 'Enviar'}
+                                </Button>
+                            </StyledButtonContainer>
+                        </StyledContentContainer>
+                    </StyledFormContainer>
+                </CustomContainer>
+                :
+                <Loading />
+            }
+        </>
     );
 };
 
-export default AddUser;
+export default withIsAdmin(AddUser);

@@ -44,7 +44,7 @@ export const LogsTable = ({ data }) => {
 
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: '1200px', margin: '0 auto', marginTop: '30px' }}>
+    <TableContainer component={Paper} sx={{ maxWidth: '100%', height: 400 }}>
       {isSmallScreen ?
         <Table sx={{ maxWidth: '100%' }} >
           <TableBody >
@@ -66,26 +66,24 @@ export const LogsTable = ({ data }) => {
           </TableBody>
         </Table> 
         : 
-        <Table sx={{ maxWidth: '100%' }} >
+        <Table sx={{ maxWidth: '100%', height: '400px' }} >
           <TableHead>
             <TableRow>
               <StyledTableCell>ID</StyledTableCell>
               <StyledTableCell align='center'>USUÁRIO</StyledTableCell>
-              <StyledTableCell align='center'>CATEGORIA</StyledTableCell>
-              <StyledTableCell align='center'>REGISTRO</StyledTableCell>
+              <StyledTableCell align='center'>GRUPO</StyledTableCell>
               <StyledTableCell align='center'>AÇÃO</StyledTableCell>
               <StyledTableCell align='center'>DATA / HORA</StyledTableCell>
             </TableRow>
           </TableHead>
-          <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
+          <TableBody sx={{ height: '400px', overflowY: 'auto', }}>
             {data.map((row, index) => (
               <StyledTableRow key={index}>
-                <StyledTableCell align='left'>{row.id}</StyledTableCell>
-                <StyledTableCell align='center'>{row.usuario}</StyledTableCell>
-                <StyledTableCell align='center' >{row.categoria}</StyledTableCell>
-                <StyledTableCell align='center'>{row.registro}</StyledTableCell>
-                <StyledTableCell align='center'>{row.acao}</StyledTableCell>
-                <StyledTableCell align='center'>{row.dataEhora}</StyledTableCell>
+                <StyledTableCell align='left'>{row.register_id}</StyledTableCell>
+                <StyledTableCell align='center'>{row.user_name}</StyledTableCell>
+                <StyledTableCell align='center' >{row.service_group}</StyledTableCell>
+                <StyledTableCell align='center'>{row.action}</StyledTableCell>
+                <StyledTableCell align='center'>{row.created_at}</StyledTableCell>
 
               </StyledTableRow>
             ))}

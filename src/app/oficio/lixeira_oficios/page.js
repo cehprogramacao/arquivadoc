@@ -1,133 +1,142 @@
 "use client"
 import Header from "@/Components/Header/Header"
 
-import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery } from "@mui/material"
-import { useState } from "react"
+import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery, Grid } from "@mui/material"
+import { useEffect, useState } from "react"
 import { LixeiraTable } from "./tableLixeira"
+import CustomContainer from "@/Components/CustomContainer"
+import Calling from "@/services/calling.service"
+import Loading from "@/Components/loading"
+import SnackBar from "@/Components/SnackBar"
 
 
 
-const LixeiraOficio = ({ data }) => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const docs = [
-        {
-            name: 'Ronaldo',
-            text: 'Procuração'
-        },
+const LixeiraOficio = () => {
+    const [data, setData] = useState([])
+    const [alert, setAlert] = useState({
+        open: false,
+        text: "",
+        type: "",
+        severity: ""
+    })
+    const [loading, setLoading] = useState(false)
+    const getAllCallingsInTrash = async () => {
+        const { getAllCallingsInTrash } = new Calling()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const allData = await getAllCallingsInTrash(accessToken)
+            console.log(allData.data)
+            setAlert({ open: true, text: `Arquivos na lixeira: ${Object.values(allData.data).length}`, type: "file", severity: "success" })
+            setData(Object.values(allData.data))
+            return allData.data
+        } catch (error) {
+            setAlert({ open: true, text: error.msg, type: "file", severity: "error" })
+            console.error("Error ao pegar arquivos da lixeira!", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
 
-
-    ]
-    const top100Films = [
-        {
-            label: 'Número'
-        },
-        {
-            label: 'Caixa'
-        },
-    ];
-    
-    const [rows, setRows] = useState([
-        { 
-          id: 1, 
-          numero: '000001',
-          caixa: '14276348000110',
-          entidade: 'Entidade',
-          tipo: 'Tipo 1',
-          data: new Date().toLocaleDateString(),          
-          arquivo: 'https://link-arquivo-1.com'
-        },
-        
-      ]);
-      
-      
-      
-
-    const handleExcluir = (id) => {
-        const updatedRows = rows.filter((row) => row.id !== id);
-        setRows(updatedRows);
-    };
-    const [select, setSelect] = useState(null);
-    const [valueInput, setValueInput] = useState('')
-    const handleBuscar = () => {
-
-    };
+    useEffect(() => {
+        getAllCallingsInTrash()
+    }, [])
 
     return (
-        <Box sx={{
-            width: '100%',
-            height: '100vh',
-            marginTop: 11,
-            position: 'relative',
-            padding: '30px 0',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            placeItems: 'center'
-        }}>
-            <Header />
-            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
-                Lixeira
-            </Typography>
-            <div style={{
-                maxWidth: '1200px',
-                height: 'auto',
-                padding: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '30px',
-                flexWrap: 'wrap',
-                flexDirection: isSmallScreen ? 'column' : 'row',
-                placeContent: 'center'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30, placeContent: 'center', flexWrap: 'wrap' }}>
-                    <TextField label="Buscar"
-                        sx={{
-                            width: isSmallScreen ? '100%' : 400,
-                            '& input': {
-                                color: 'success.main',
-                            },
-                        }} color="success" />
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={top100Films}
-                        sx={{ width: isSmallScreen ? '100%' : 400 }}
-                        autoHighlight
-                        getOptionLabel={(option) => option.label}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                color="success"
-                                label="Buscar Por"
-                                onChange={(e) => {
-                                    const selected = top100Films.find(
-                                        (item) => item.label === e.target.value
-                                    );
-                                    setSelect(selected)
-                                }}
-                                sx={{
-                                    color: "#237117",
-                                    "& input": {
-                                        color: "success.main",
-                                    },
-                                }}
-                            />
-                        )}
-                    />
-                </div>
-                <Button variant="contained" onClick={handleBuscar} sx={{
-                    background: '#247117',
-                    padding: '14px 10px',
-                    ":hover": {
-                        background: '#247117'
-                    }
+        <>
+            {loading ?
+                <Loading />
+                :
+                <Box sx={{
+                    width: '100%',
+                    height: '100vh',
+                    py: 12,
+                    px: 2
                 }}>
-                    BUSCAR
-                </Button>
-            </div>
-            <LixeiraTable data={rows} onClick={handleExcluir}/>
-        </Box>
+                    <CustomContainer >
+                        <Grid container >
+                            <Grid item xs={12} >
+                                <Box sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}>
+                                    <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
+                                        Lixeira
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            {/* <Grid item xs={12} >
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} lg={5} md={5} sm={6} >
+                                <TextField
+                                    fullWidth
+                                    label="Buscar"
+                                    sx={{
+                                        '& input': {
+                                            color: 'success.main',
+                                        },
+                                    }} color="success" />
+                            </Grid>
+                            <Grid item xs={12} lg={5} md={5} sm={6} >
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    fullWidth
+                                    options={top100Films}
+                                    autoHighlight
+                                    getOptionLabel={(option) => option.label}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            color="success"
+                                            label="Buscar Por"
+                                            onChange={(e) => {
+                                                const selected = top100Films.find(
+                                                    (item) => item.label === e.target.value
+                                                );
+                                                setSelect(selected)
+                                            }}
+                                            sx={{
+                                                color: "#237117",
+                                                "& input": {
+                                                    color: "success.main",
+                                                },
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid item xs={12} lg={2} md={2} sm={12} >
+                                <Box sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "flex-end"
+                                }}>
+                                    <Button variant="contained" onClick={handleBuscar} sx={{
+                                        background: '#247117',
+                                        padding: '14px 10px',
+                                        ":hover": {
+                                            background: '#247117'
+                                        }
+                                    }}>
+                                        BUSCAR
+                                    </Button>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                    </Grid> */}
+                            <Grid item xs={12} >
+                                <LixeiraTable data={data} />
+                            </Grid>
+                        </Grid>
+                    </CustomContainer>
+                </Box>
+            }
+            <SnackBar data={alert} handleClose={() => setAlert({...alert, open: false})}/>
+        </>
     )
 }
 
