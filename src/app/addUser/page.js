@@ -78,20 +78,15 @@ const AddUser = () => {
             [name]: value,
         });
     };
-
-
     const handleInputChange = (e) => {
         e.target.value?.replace(/\D/g, '').length < 11
             ? setNumberMask(numberMask)
             : setNumberMask(numberMask);
         setUserData({ ...userData, phone: e.target.value });
     };
-
     const handleInputBlur = () => {
         userData.phone?.replace(/\D/g, '').length === 11 && setNumberMask(numberMask);
     };
-
-
     const handleNext = () => {
         if (section === 'Dados' && (!userData.name.trim() || !userData.email.trim() || !userData.phone.trim() || !userData.password.trim())) {
             return;
