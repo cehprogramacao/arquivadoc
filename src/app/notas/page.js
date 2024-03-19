@@ -18,7 +18,7 @@ import Loading from "@/Components/loading";
 import SnackBar from "@/Components/SnackBar";
 import User from "@/services/user.service";
 import PrivateRoute from "@/utils/LayoutPerm";
-import { AuthProvider } from "@/context";
+import { AuthProvider, useAuth } from "@/context";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -32,7 +32,7 @@ const BoxMain = styled('section')({
 const PageNotas = () => {
     const theme = useTheme()
     const [loading, setLoading] = useState(false)
-    const { permissions, updatePermissions } = useAuth();
+    const { permissions, updatePermissions } = useAuth()
     const [alert, setAlert] = useState({
         open: false,
         text: "",
