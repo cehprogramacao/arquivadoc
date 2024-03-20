@@ -356,7 +356,7 @@ export const Sidebar = () => {
                             </button>
                         </Link>
                         <Link href={"/pessoas"} style={{
-                            display: isAdmin === "1" ? "flex" : "none"
+                            display: isAdmin === "1" || permissions[5]?.view === 1 ? "flex" : "none"
                         }} >
                             <button style={{
                                 display: 'flex',

@@ -18,6 +18,8 @@ import MenuOptionsFile from '@/Components/MenuPopUp';
 import ModalCalling from './components/modalCalling';
 import { NumbersRounded } from '@mui/icons-material';
 import SnackBar from '@/Components/SnackBar';
+import { AuthProvider } from '@/context';
+import PrivateRoute from '@/utils/LayoutPerm';
 
 const top100Films = [
     { label: 'Número' },
@@ -195,7 +197,8 @@ const PageOficio = () => {
     }
 
     return (
-        <>
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['Ofícios']}>
             {loading
                 ?
                 <Loading />
@@ -284,7 +287,8 @@ const PageOficio = () => {
             <MenuOptionsFile open={openMenu} anchorEl={anchorEl} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={number} handleDelete={handleDeleteByNumber} />
             <ModalCalling open={openPDF} data={dataFile} number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />
             <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
-        </>
+            </PrivateRoute>
+        </AuthProvider>
     );
 };
 

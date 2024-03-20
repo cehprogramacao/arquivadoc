@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
             }
         };
         getDataUser();
-    }, []);
+    }, []); 
     const updatePermissions = async (newPermissions) => {
         setPermissions(Object.values(newPermissions));
     };

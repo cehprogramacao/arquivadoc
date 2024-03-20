@@ -243,7 +243,14 @@ const PageNotas = () => {
                             deletePerm={permissions[6]?.delete_permission}
                             editPerm={permissions[6]?.edit}
                         />
-                        <ModalList data={dataFileModal} number={number} onClose={handleCloseModalPDF} open={openPDF} />
+                        <ModalList
+                            data={dataFileModal}
+                            number={number}
+                            onClose={handleCloseModalPDF}
+                            open={openPDF}
+                            deletePerm={permissions[6]?.delete_permission}
+                            editPerm={permissions[6]?.edit}
+                        />
                         <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
                     </Box>
                 }

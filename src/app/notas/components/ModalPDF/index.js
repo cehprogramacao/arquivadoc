@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import NoteService from '@/services/notes.service';
 
-const ModalList = ({ open, data, onClose, number }) => {
+const ModalList = ({ open, data, onClose, number, deletePerm, editPerm }) => {
     const path = usePathname().split("/")[1]
     // console.log(data, '696969696996969696')
     const theme = useTheme()
@@ -112,16 +112,19 @@ const ModalList = ({ open, data, onClose, number }) => {
                                 justifyContent: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" }
                             }}>
                                 {/* Add your buttons here */}
-                                <Link href={`/${path}/[number]`} as={`/${path}/${number}`}>
-                                </Link>
-                                <Button variant="outlined" color='inherit' sx={{
-                                    color: '#FFD500',
-                                    ":hover": {
-                                        color: '#FFD500'
-                                    }
-                                }}>
-                                    <EditIcon />
-                                </Button>
+                                {editPerm === 1 && (
+                                    <Link href={`/${path}/[number]`} as={`/${path}/${number}`}>
+                                        <Button variant="outlined" color='inherit' sx={{
+                                            color: '#FFD500',
+                                            ":hover": {
+                                                color: '#FFD500'
+                                            }
+                                        }}>
+                                            <EditIcon />
+                                        </Button>
+                                    </Link>
+                                )}
+
                                 <Button variant="outlined" color='inherit' sx={{
                                     color: "#0dcaf0",
                                     ":hover": {
@@ -130,11 +133,13 @@ const ModalList = ({ open, data, onClose, number }) => {
                                 }} onClick={() => handlePrintFile()} >
                                     <PrintIcon />
                                 </Button>
-                                <Button variant="outlined" color='error' onClick={handleDeleteByNumber}>
-                                    <DeleteIcon sx={{
-                                        fill: '#dc3545'
-                                    }} />
-                                </Button>
+                                {deletePerm === 1 && (
+                                    <Button variant="outlined" color='error' onClick={handleDeleteByNumber}>
+                                        <DeleteIcon sx={{
+                                            fill: '#dc3545'
+                                        }} />
+                                    </Button>
+                                )}
                             </Box>
                         </Grid>
                     </Grid>

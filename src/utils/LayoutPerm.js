@@ -12,19 +12,19 @@ const PrivateRoute = ({ children, requiredPermissions }) => {
         return requiredPermissions.every(permission => {
             switch (permission) {
                 case 'Protesto':
-                    return permissions.some(p => p[0].public_name === permission && p.view === 1);
+                    return permissions.some(p => p?.public_name === permission && p.view === 1);
                 case 'RGI':
-                    return permissions.some(p => p[1]?.public_name === permission && p.view === 1);
+                    return permissions.some(p => p?.public_name === permission && p.view === 1);
                 case 'RTD':
-                    return permissions.some(p => p[2]?.public_name === permission && p.view === 1);
+                    return permissions.some(p => p?.public_name === permission && p.view === 1);
                 case 'RPJ':
-                    return permissions.some(p => p[3]?.public_name === permission && p.view === 1);
+                    return permissions.some(p => p?.public_name === permission && p.view === 1);
                 case 'Ofícios':
-                    return permissions.some(p => p[4]?.public_name === permission && p.view === 1);
+                    return permissions.some(p => p?.public_name === permission && p.view === 1);
                 case 'Cadastros':
-                    return permissions.some(p => p[5]?.public_name === permission && p.view === 1);
+                    return permissions.some(p => p?.public_name === permission && p.view === 1);
                 case 'Notas':
-                    return permissions.some(p => p[6]?.public_name === permission && p.view === 1);
+                    return permissions.some(p => p?.public_name === permission && p.view === 1);
                 default:
                     return false;
             }

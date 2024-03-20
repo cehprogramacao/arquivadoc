@@ -83,6 +83,7 @@ const withAuth = (WrappedComponent) => {
       if (isAccessTokenExpired || isRefreshTokenExpired) {
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('isAdmin')
         router.push('/login');
       }
     }, [router]);

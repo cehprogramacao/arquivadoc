@@ -47,7 +47,6 @@ export const CadastroPessoas = ({ onClose }) => {
         console.log(data)
         try {
             setLoading(true)
-            onClose()
             const accessToken = sessionStorage.getItem("accessToken");
             if (!accessToken) {
                 console.error("Access token is missing.");
