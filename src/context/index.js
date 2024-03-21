@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
         getDataUser();
     }, []); 
     const updatePermissions = async (newPermissions) => {
-        setPermissions(Object.values(newPermissions));
+        setPermissions(newPermissions);
     };
     return (
         <AuthContext.Provider value={{ permissions, updatePermissions }}>

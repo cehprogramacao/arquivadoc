@@ -1,44 +1,44 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import User from '@/services/user.service';
-import { AuthProvider, useAuth } from '@/context';
+import { useAuth } from '@/context';
 
 const PrivateRoute = ({ children, requiredPermissions }) => {
     const router = useRouter();
-    const [loading, setLoading] = useState(true);
     const { permissions, updatePermissions } = useAuth();
-
-    const hasRequiredPermissions = () => {
-        return requiredPermissions.every(permission => {
-            switch (permission) {
-                case 'Protesto':
-                    return permissions.some(p => p?.public_name === permission && p.view === 1);
-                case 'RGI':
-                    return permissions.some(p => p?.public_name === permission && p.view === 1);
-                case 'RTD':
-                    return permissions.some(p => p?.public_name === permission && p.view === 1);
-                case 'RPJ':
-                    return permissions.some(p => p?.public_name === permission && p.view === 1);
-                case 'Ofícios':
-                    return permissions.some(p => p?.public_name === permission && p.view === 1);
-                case 'Cadastros':
-                    return permissions.some(p => p?.public_name === permission && p.view === 1);
-                case 'Notas':
-                    return permissions.some(p => p?.public_name === permission && p.view === 1);
-                default:
-                    return false;
-            }
-        });
-    };
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (loading) return;
-        if (permissions.length === 0 || !hasRequiredPermissions()) {
-            router.push('/');
+        const fetchData = async () => {
+            try {
+                const accessToken = sessionStorage.getItem("accessToken");
+                const { getUser } = new User();
+                const { data } = await getUser(accessToken);
+                await updatePermissions(data.permissions);
+                setLoading(false);
+            } catch (error) {
+                console.error("Erro ao buscar dados do usuário!", error);
+                throw error;
+            }
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if (!loading) {
+            const hasRequiredPermissions = () => {
+                return requiredPermissions.every(permission => {
+                    return permissions.some(p => p?.public_name === permission && p.view === 1);
+                });
+            };
+
+            if (!hasRequiredPermissions()) {
+                router.push('/');
+            }
         }
     }, [loading, permissions, requiredPermissions, router]);
 
-    return children;
+    return <>{children}</>;
 };
 
 export default PrivateRoute;
