@@ -6,7 +6,7 @@ import Customer from "@/services/customer.service";
 
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
-export const CadastroPartes = ({ open, onClose }) => {
+export const CadastroPartes = ({ open, onClose, getData }) => {
   const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false)
@@ -40,7 +40,6 @@ export const CadastroPartes = ({ open, onClose }) => {
     console.log(data)
     try {
       setLoading(true)
-      onClose()
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
         console.error("Access token is missing.");
@@ -56,6 +55,8 @@ export const CadastroPartes = ({ open, onClose }) => {
     }
     finally {
       setLoading(false)
+      onClose()
+      getData()
     }
   };
 

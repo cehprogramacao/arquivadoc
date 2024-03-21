@@ -21,7 +21,7 @@ class RGI {
         return customAxios.get("/trash/rgi", {
             headers: {
                 Authorization: `Bearer ${accessToken}`
-            }
+            }   
         });
     }
 

@@ -7,12 +7,16 @@ import PersonIcon from '@mui/icons-material/Person';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import KeyIcon from '@mui/icons-material/Key'
+
 
 const SnackBar = ({ data, handleClose, }) => {
   const getIcon = () => {
     switch (data.type) {
       case 'user':
         return <PersonIcon />;
+      case 'key':
+        return <KeyIcon />;
       case 'file':
         return <InsertDriveFileIcon />;
       case 'error':

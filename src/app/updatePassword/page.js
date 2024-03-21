@@ -1,10 +1,46 @@
 "use client"
+import SnackBar from '@/Components/SnackBar';
+import Loading from '@/Components/loading';
+import User from '@/services/user.service';
 import { Box, Button, TextField, Typography, useTheme, useMediaQuery } from '@mui/material'
+import { useState } from 'react';
 
-const PageEditarPerfil = () => {
+const ChangePassoword = () => {
     const theme = useTheme();
+    const [password, setPassword] = useState({
+        password: ""
+    })
+    const [loading, setLoading] = useState(false)
+    const [alert, setAlert] = useState({
+        open: false,
+        text: "",
+        severity: "",
+        type: ""
+    })
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    return (
+
+    const handleChangePassword = async () => {
+        const { changeUserPassword } = new User()
+        try {
+            setLoading(true)
+            if(!password) {
+                throw new Error('Campo vazio')
+            }
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await changeUserPassword(password, accessToken)
+            setAlert({open: true, type: "key", severity: "success", text: data.message})
+        } catch (error) {
+            console.error("Erro ao alterar senha!", error)
+            setAlert({open: true, type: "key", severity: "error", text: error.message})
+            throw error;
+        }
+        finally {
+            setLoading(false)
+            setPassword({password: ""})
+        }
+    }
+
+    return !loading ? (
         <Box sx={{
             width: '100%',
             display: 'flex',
@@ -18,7 +54,7 @@ const PageEditarPerfil = () => {
                 fontSize: "clamp(36px, 5vw, 48px)",
                 textAlign: 'center'
             }} fontWeight='bold' marginTop={isSmallScreen ? 15 : 14} color={"black"}>
-                Mudar senha
+                Mudar Senha
             </Typography>
             <Box sx={{
                 display: 'flex',
@@ -35,37 +71,14 @@ const PageEditarPerfil = () => {
                     <TextField sx={{
                         width: isSmallScreen ? '100%' : '400px',
                         '& input': { color: 'success.main' },
-
-
                     }}
-                        label="Nome"
-                        placeholder='Digite seu nome'
-                        color='success'
-                    />
-                    <TextField sx={{
-                        width: isSmallScreen ? '100%' : '400px',
-                        '& input': { color: 'success.main' }
-                    }}
-                        label="Email"
-                        placeholder='exemple@gmail.com'
-                        color='success'
-                    />
-                    <TextField sx={{
-                        width: isSmallScreen ? '100%' : '400px',
-                        '& input': { color: 'success.main' }
-                    }}
+                    value={password.password}
+                    onChange={(e) => setPassword((prev) => ({...prev, password: e.target.value}))}
                         label="Senha"
-                        placeholder='Senha: '
+                        placeholder='Digite sua senha'
                         color='success'
                     />
-                    <TextField sx={{
-                        width: isSmallScreen ? '100%' : '400px',
-                        '& input': { color: 'success.main' }
-                    }}
-                        label="Repita a senha"
-                        placeholder='Repita a senha: '
-                        color='success'
-                    />
+                    
 
                 </Box>
                 <Button sx={{
@@ -81,11 +94,14 @@ const PageEditarPerfil = () => {
                         color: '#237117',
                         
                     }
-                }}>
+                }} onClick={handleChangePassword}>
                     Atualizar
                 </Button>
             </Box>
+            <SnackBar data={alert} handleClose={(prev) => setAlert({...prev, open: false})} />
         </Box>
     )
+    : 
+    <Loading />
 }
-export default PageEditarPerfil
+export default ChangePassoword

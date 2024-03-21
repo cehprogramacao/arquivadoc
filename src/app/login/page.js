@@ -9,10 +9,12 @@ import { useRouter } from "next/navigation";
 import { SET_LOGIN_DATA } from "@/store/actions";
 import Snackbar from "@/Components/SnackBar";
 import SnackBar from "@/Components/SnackBar";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 const { Box } = require("@mui/system");
 
 const LoginPage = () => {
   const router = useRouter()
+  const [viewPassword, setViewPassword] = useState(false)
   const dispatch = useDispatch()
   const [dataUser, setDataUser] = useState({
     email: "",
@@ -31,6 +33,9 @@ const LoginPage = () => {
     setDataUser({ ...dataUser, [name]: value })
   }
 
+  const handleChangeViewPassword = () => {
+    setViewPassword(!viewPassword)
+  }
 
   const handleSubmit = async (event) => {
     try {
@@ -129,7 +134,7 @@ const LoginPage = () => {
             sx={{ width: "100%", background: "#FFFFFF", borderRadius: "8px" }}
             color="success"
             InputProps={{
-              startAdornment: (
+              endAdornment: (
                 <PersonIcon sx={{ mr: 1, mb: 0.5, fill: "#237117" }} />
               ),
             }}
@@ -142,9 +147,9 @@ const LoginPage = () => {
             id="outlined-start-adornment"
             sx={{ width: "100%", background: "#FFFFFF", borderRadius: "8px" }}
             color="success"
-            type="password"
+            type={viewPassword ? "text" : "password"}
             InputProps={{
-              startAdornment: <KeyIcon sx={{ mr: 1, fill: "#237117" }} />,
+              endAdornment: viewPassword ? <Visibility onClick={handleChangeViewPassword} sx={{ mr: 1, fill: "#237117", cursor: "pointer" }} /> : <VisibilityOff onClick={handleChangeViewPassword} sx={{ mr: 1, fill: "#237117", cursor: "pointer"}} />,
             }}
             onChange={handleOnChange}
           />

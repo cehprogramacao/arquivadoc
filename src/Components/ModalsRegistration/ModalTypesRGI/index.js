@@ -34,7 +34,7 @@ const ButtonCadastrar = styled(Button)({
     }
 })
 
-const CadastroRGITypes = ({ open, onClose }) => {
+const CadastroRGITypes = ({ open, onClose, getData }) => {
     const [data, setData] = useState({
         group: "",
         name: ""
@@ -48,6 +48,7 @@ const CadastroRGITypes = ({ open, onClose }) => {
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await createType(data, accessToken)
             console.log(response.data)
+            getData()
             return response.data
         } catch (error) {
             console.log("Erro ao adicionar type de rgi!", error)

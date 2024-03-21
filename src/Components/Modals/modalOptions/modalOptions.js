@@ -14,6 +14,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
 import Link from 'next/link';
 import User from '@/services/user.service';
+import KeyIcon from '@mui/icons-material/Key';
 
 
 export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
@@ -60,11 +61,18 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
         </Typography>
 
         <Divider />
-        <Link href={"/mudarSenha"}>
+        <Link href={"/update"}>
           <MenuItem>
             <ListItemIcon>
               <EditIcon fontSize="small" />
             </ListItemIcon> Editar Perfil
+          </MenuItem>
+        </Link>
+        <Link href={"/updatePassword"}>
+          <MenuItem>
+            <ListItemIcon>
+              <KeyIcon fontSize="small" />
+            </ListItemIcon> Mudar Senha
           </MenuItem>
         </Link>
         {isAdmin &&

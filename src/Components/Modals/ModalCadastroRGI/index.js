@@ -2,9 +2,11 @@ import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
 import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
 import CadastroRGITypes from "@/Components/ModalsRegistration/ModalTypesRGI";
 import Loading from "@/Components/loading";
+import { useAuth } from "@/context";
 import Customer from "@/services/customer.service";
 import RGI from "@/services/rgi.service";
-import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton } from "@mui/material";
+import { CloseOutlined } from "@mui/icons-material";
+import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton, Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 
@@ -20,6 +22,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
     const [types, setTypes] = useState([]);
     const [userPresenter, setUserPresenter] = useState(null)
     const [presenter, setPresenter] = useState([]);
+    const { permissions } = useAuth()
     const [data, setData] = useState({
         prenotation: 0,
         presenter: userPresenter,
@@ -140,7 +143,30 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
         getTypesRGI()
     }, []);
 
+    const deteleTypeById = async (typeId) => {
+        const { deleteType } = new RGI()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await deleteType(typeId, accessToken)
+            getTypesRGI()
+        } catch (error) {
+            console.error('Erro ao deletar tipo de rgi!', error)
+            throw error;
+        }
 
+    }
+
+    const detelePresenterById = async (typeId) => {
+        const { deleteCustomer } = new Customer()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await deleteCustomer(typeId, accessToken)
+        } catch (error) {
+            console.error('Erro ao deletar tipo de rgi!', error)
+            throw error;
+        }
+
+    }
 
     return (
         <>
@@ -227,16 +253,39 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                                 />
                             )}
                             renderOption={(props, option) => (
-                                <li {...props} key={option.cpfcnpj}>
-                                    {option.name}
-                                </li>
+                                <Box
+                                    {...props}
+                                    key={option.cpfcnpj}
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center"
+                                    }}
+                                >
+                                    <Grid container alignItems={"center"} >
+                                        <Grid item xs={11} lg={11} md={11} sm={11}>
+                                            <Typography >
+                                                {option.name}
+                                            </Typography>
+                                        </Grid>
+                                        {permissions[5]?.delete_permission === 1 && (
+                                            <Grid item xs={1} lg={1} md={1} sm={1}>
+                                                <Box sx={{
+                                                    width: "100%",
+                                                    display: 'flex',
+                                                    justifyContent: "flex-end"
+                                                }}>
+                                                    <IconButton onClick={() => detelePresenterById(option.cpfcnpj)}>
+                                                        <CloseOutlined sx={{ width: 20, height: 20 }} />
+                                                    </IconButton>
+                                                </Box>
+                                            </Grid>
+                                        )}
+                                    </Grid>
+
+                                </Box>
                             )}
                         />
-
-
-
-
-
 
                         <Autocomplete
                             value={grupo}
@@ -254,14 +303,47 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                                 fullWidth
                                 value={data.service_type}
                                 onChange={(event, newValue) => setData({ ...data, service_type: newValue })}
-                                options={tiposFiltrados.map(tipo => tipo.id)}
+                                options={tiposFiltrados.filter(tipo => tipo.id)}
                                 getOptionLabel={(id) => {
-                                    const tipoSelecionado = tiposFiltrados.find(t => t.id === id);
+                                    const tipoSelecionado = tiposFiltrados.find(t => t.name === id.name);
                                     return tipoSelecionado ? tipoSelecionado.name : '';
                                 }}
                                 noOptionsText={<RenderNoOptions onClick={handleOpenModalRGITypes} title={'Cadastrar Tipo'} />}
                                 renderInput={(params) => (
                                     <TextField {...params} label={`Selecione a opção de ${grupo}`} color="success" variant="outlined" />
+                                )}
+                                renderOption={(props, option) => (
+                                    <Box
+                                        {...props}
+                                        key={option.id}
+                                        sx={{
+                                            width: "100%",
+                                            display: "flex",
+                                            alignItems: "center"
+                                        }}
+                                    >
+                                        <Grid container alignItems={"center"} justifyContent="space-between" >
+                                            <Grid item xs={10} lg={10} md={10} sm={10}>
+                                                <Typography >
+                                                    {option.name}
+                                                </Typography>
+                                            </Grid>
+                                            {permissions[1]?.delete_permission === 1 && (
+                                                <Grid item xs={2} lg={2} md={2} sm={2}>
+                                                    <Box sx={{
+                                                        width: "100%",
+                                                        display: 'flex',
+                                                        justifyContent: "flex-end"
+                                                    }}>
+                                                        <IconButton onClick={() => deteleTypeById(option.id)}>
+                                                            <CloseOutlined sx={{ width: 20, height: 20 }} />
+                                                        </IconButton>
+                                                    </Box>
+                                                </Grid>
+                                            )}
+                                        </Grid>
+
+                                    </Box>
                                 )}
                             />
                         )}
@@ -320,8 +402,8 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                         </Button>
 
                     </Box>
-                    <CadastroRGITypes open={openModalRGITypes} onClose={handleCloseModalRGITypes} />
-                    <CadastroPartes open={openModalPresenter} onClose={handleCloseModalPresenter} />
+                    <CadastroRGITypes getData={getTypesRGI} open={openModalRGITypes} onClose={handleCloseModalRGITypes} />
+                    <CadastroPartes getData={getCustomersPresenter} open={openModalPresenter} onClose={handleCloseModalPresenter} />
                 </Box >
             }
         </>
