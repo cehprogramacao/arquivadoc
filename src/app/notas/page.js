@@ -1,5 +1,5 @@
 "use client"
-import { Autocomplete, Box, Button, Drawer, Stack, TextField, Typography, styled, useMediaQuery, useTheme, Grid } from "@mui/material";
+import { Autocomplete, Box, Button, Stack, TextField, Drawer, Typography, styled, useMediaQuery, useTheme, Grid } from "@mui/material";
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -19,6 +19,7 @@ import SnackBar from "@/Components/SnackBar";
 import User from "@/services/user.service";
 import PrivateRoute from "@/utils/LayoutPerm";
 import { AuthProvider, useAuth } from "@/context";
+import { Buttons } from "@/Components/Button/Button";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -39,12 +40,13 @@ const PageNotas = () => {
         severity: "",
         type: ""
     })
-    const [opt, setOpt] = useState(['Nome', 'CPF', 'Ordem', 'Livro', 'Livro Folha'])
-    const [optService, setOptService] = useState(['Escrituras', 'Procuração', 'Substabelecimento', 'Divórcio',
-        'Ata Notarial', 'Inventário'
-    ])
 
     const [data, setData] = useState([])
+    const [selectOption, setSelectOption] = useState({
+        option: null,
+        value: ""
+    })
+    const [opt, setOpt] = useState(['Número', 'Apresentante'])
     const [open, setOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
     const [openPDF, setOpenPDF] = useState(false)
@@ -78,9 +80,6 @@ const PageNotas = () => {
             setLoading(false)
         }
     }
-
-
-
     const handleOpenModalPDF = async () => {
         const { getNoteByNumber } = new NoteService()
         try {
@@ -115,8 +114,68 @@ const PageNotas = () => {
         }
     }
 
+    const handleSearchByPresenter = async (value, accessToken) => {
+        console.log('Filtrando por Apresentante com valor:', value);
+        const { getNoteByPresenter } = new NoteService();
+        let newData = [];
+        try {
+            setLoading(true);
+            const response = await getNoteByPresenter(value, accessToken);
+            console.log('Resposta do Apresentante:', response.data);
+            // newData.push(response.data)
+            setData(Object.values(response.data))
+            return response.data
+        } catch (error) {
+            console.error("Erro ao filtrar por Apresentante", error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+    const handleSearchByNumber = async (value, accessToken) => {
+        console.log('Filtrando por Prenotação com valor:', value);
+        const { getNoteByNumber } = new NoteService();
+        let newData = []
+        try {
+            setLoading(true);
+            const response = await getNoteByNumber(value, accessToken);
+            console.log('Resposta da Number:', response.data);
+            newData.push(response.data)
+            setData(newData)
+            return response
+        } catch (error) {
+            console.error("Erro ao filtrar por número", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const handleSearchByPresenterOrNumber = async () => {
+        console.log('Iniciando filtragem com valor:', selectOption);
 
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log('AccessToken:', accessToken);
 
+        if (selectOption.option && selectOption.value) {
+            console.log('Opção selecionada:', selectOption.option);
+
+            try {
+                if (selectOption.option === "Número") {
+                    await handleSearchByNumber(selectOption.value, accessToken);
+                } else if (selectOption.option === "Apresentante") {
+                    await handleSearchByPresenter(selectOption.value, accessToken);
+                }
+
+            } catch (error) {
+                console.error("Erro ao filtrar", error);
+            }
+        } else {
+            console.error("Opção ou valor não definidos.");
+        }
+    }
+
+    const handleUpdateNote = async () => {
+        console.log(data)
+    }
     useEffect(() => {
         getData()
 
@@ -150,17 +209,26 @@ const PageNotas = () => {
                                 </Grid>
                                 <Grid item xs={12} >
                                     <Grid container spacing={5}>
-                                        <Grid item xs={12} lg={4} md={4} sm={4}>
+                                        <Grid item xs={12} lg={4} md={4} sm={6}>
                                             <TextField
                                                 fullWidth
+                                                value={selectOption.value}
+                                                isOptionEqualToValue={(option, value) => option.label === value.label}
+                                                onChange={(e) => setSelectOption((prev) => ({ ...prev, value: e.target.value }))}
                                                 label="Buscar"
                                                 color="success" />
                                         </Grid>
-                                        <Grid item xs={12} lg={3} md={4} sm={4}>
+                                        <Grid item xs={12} lg={5} md={5} sm={6}>
                                             <Autocomplete
                                                 disablePortal
                                                 id="combo-box-demo"
                                                 options={opt}
+                                                getOptionLabel={(option) => option}
+                                                value={selectOption.option}
+                                                isOptionEqualToValue={(option, value) => option === value}
+                                                onChange={(e, value) => {
+                                                    setSelectOption((prev) => ({ ...prev, option: value }))
+                                                }}
                                                 fullWidth
                                                 renderInput={(params) => (
                                                     <TextField
@@ -184,45 +252,23 @@ const PageNotas = () => {
                                                 )}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} lg={3} md={4} sm={4}>
-                                            <Autocomplete
-                                                disablePortal
-                                                id="combo-box-demo"
-                                                options={optService}
-                                                fullWidth
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        color="success"
-                                                        InputProps={{
-                                                            ...params.InputProps,
-                                                            classes: {
-                                                                root: 'no-options-input',
-                                                            },
-                                                        }}
-                                                        {...params}
-                                                        label="Buscar Tipo de Serviço"
-
-                                                        sx={{
-                                                            color: "#237117",
-                                                            '& input': {
-                                                                color: 'success.main',
-                                                            },
-                                                        }}
-                                                    />
-                                                )}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} lg={2} md={12} sm={12} >
+                                        <Grid item xs={12} lg={3} md={3} sm={12} >
                                             <Box sx={{
                                                 width: "100%",
                                                 display: "flex",
                                                 justifyContent: "center",
                                                 gap: 4
                                             }}>
+                                                <Buttons title={"Buscar"} color={"green"} onClick={handleSearchByPresenterOrNumber} />
                                                 {permissions[6]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
                                                 <ButtonLixeira href={"/notas/lixeira_notas"} />
                                             </Box>
 
+                                        </Grid>
+                                        <Grid item xs={12} >
+                                            <Button variant="contained" color="success">
+                                                Atualizar
+                                            </Button>
                                         </Grid>
                                     </Grid>
                                 </Grid>

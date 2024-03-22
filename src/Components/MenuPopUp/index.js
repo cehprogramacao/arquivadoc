@@ -59,7 +59,7 @@ const StyledMenu = styled((props) => (
 
 const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenModalPDF, type, handleDelete, deletePerm, editPerm }) => {
   const path = usePathname().split("/")[1]
-  console.log(deletePerm, editPerm, '9999kauan')
+  // console.log(deletePerm, editPerm, '9999kauan')
 
   return (
     <>

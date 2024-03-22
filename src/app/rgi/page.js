@@ -77,25 +77,7 @@ const PageRGI = () => {
     const handleCloseModalPartes = () => setOpenModalPartes(false)
 
     // Função para tratar o filtro de Prenotação
-    const handlePrenotationFilter = async (value, accessToken) => {
-        console.log('Filtrando por Prenotação com valor:', value);
-        const { getByPrenotation } = new RGI();
-        let newData = [];
-        try {
-            setLoading(true);
-            const response = await getByPrenotation(value, accessToken);
-            console.log('Resposta da Prenotação:', response.data);
-            setOpenFilterModalPDF(!openFilterModalPDF)
-            console.log(data, 9090)
-            newData.push(response.data)
-            setData(newData)
-            return response
-        } catch (error) {
-            console.error("Erro ao filtrar por Prenotação", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    
     const [alert, setAlert] = useState({
         open: false,
         text: '',
@@ -108,6 +90,23 @@ const PageRGI = () => {
     console.log(data, 9090)
 
     // Função para tratar o filtro de Apresentante
+    
+    const handleDeleteByPrenotation = async () => {
+        const { deleteByPrenotation } = new RGI()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteByPrenotation(prenotation, accessToken)
+            console.log(response.data)
+            return response.data
+        } catch (error) {
+            console.error("Error ao deletar arquivo rgi!", error)
+            throw error;
+        }
+        finally {
+            getDataRGI()
+        }
+    }
+
     const handlePresenterFilter = async (value, accessToken) => {
         console.log('Filtrando por Apresentante com valor:', value);
         const { getByPresenter } = new RGI();
@@ -127,19 +126,25 @@ const PageRGI = () => {
             setLoading(false);
         }
     };
-    const handleDeleteByPrenotation = async () => {
-        const { deleteByPrenotation } = new RGI()
+    const handlePrenotationFilter = async (value, accessToken) => {
+        console.log('Filtrando por Prenotação com valor:', value);
+        const { getByPrenotation } = new RGI();
+        let newData = [];
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteByPrenotation(prenotation, accessToken)
-            console.log(response.data)
-            window.location.reload()
-            return response.data
+            setLoading(true);
+            const response = await getByPrenotation(value, accessToken);
+            console.log('Resposta da Prenotação:', response.data);
+            setOpenFilterModalPDF(!openFilterModalPDF)
+            console.log(data, 9090)
+            newData.push(response.data)
+            setData(newData)
+            return response
         } catch (error) {
-            console.error("Error ao deletar arquivo rgi!", error)
-            throw error;
+            console.error("Erro ao filtrar por Prenotação", error);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
     const handleFilter = async () => {
         console.log('Iniciando filtragem com valor:', value);
 
