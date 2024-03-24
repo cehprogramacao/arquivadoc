@@ -2,8 +2,10 @@
 import CustomContainer from "@/Components/CustomContainer"
 import Loading from "@/Components/loading"
 import SnackBar from "@/Components/SnackBar"
+import { AuthProvider } from "@/context"
 import Customer from "@/services/customer.service"
 import NoteService from "@/services/notes.service"
+import PrivateRoute from "@/utils/LayoutPerm"
 import { Autocomplete, Box, Grid, TextField, Button } from "@mui/material"
 import { Container } from "@mui/system"
 import { useEffect, useState } from "react"
@@ -19,14 +21,14 @@ const NoteUpdate = ({ params }) => {
         type: ""
     })
     const [data, setData] = useState({
-        tag: null,
-        presenter: null,
-        service_type: null,
+        tag: 0,
+        presenter: 0,
+        service_type: 0,
         book: 0,
         initial_sheet: 0,
         final_sheet: 0,
         box: 0,
-        file_url: ''
+        file_url: "",
     });
 
     const handleChangeFile = async (event) => {
@@ -101,7 +103,7 @@ const NoteUpdate = ({ params }) => {
         const { updateNoteByNumber } = new NoteService()
         console.log(data)
         try {
-            setLoading()
+            setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await updateNoteByNumber(params.number, data, accessToken)
             setAlert({ open: true, severity: "success", type: "file", text: response.data.message })
@@ -112,6 +114,7 @@ const NoteUpdate = ({ params }) => {
         }
         finally {
             setLoading(false)
+            getDataNoteByNumber()
         }
     }
     const handleChangeInputValues = (event) => {
@@ -137,6 +140,7 @@ const NoteUpdate = ({ params }) => {
         }
         finally {
             setLoading(false)
+
         }
     }
 
@@ -146,160 +150,167 @@ const NoteUpdate = ({ params }) => {
 
     return loading ? <Loading /> :
         (
-            <Box sx={{
-                width: "100%",
-                height: "100vh",
-                py: 14,
-                px: 2,
-            }}>
-                <CustomContainer >
-                    <Container maxWidth="sm" >
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6} md={6} lg={6} >
-                                <Autocomplete
-                                    value={optionTag}
-                                    options={tag}
-                                    getOptionLabel={(option) => option.name || ''}
-                                    onChange={(e, value) => {
-                                        setData((prev) => ({ ...prev, tag: value.name }))
-                                        setOptionTag(value)
-                                    }}
-                                    isOptionEqualToValue={(option, label) => option.name === label.name}
-                                    renderInput={(params) => (
+            <AuthProvider>
+                <PrivateRoute requiredPermissions={['Notas']}>
+                    <Box sx={{
+                        width: "100%",
+                        height: "100vh",
+                        py: 14,
+                        px: 2,
+                    }}>
+                        <CustomContainer >
+                            <Container maxWidth="sm" >
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={6} md={6} lg={6} >
+                                        <Autocomplete
+                                            value={optionTag}
+                                            options={tag}
+                                            getOptionLabel={(option) => option.name || ''}
+                                            onChange={(e, value) => {
+                                                setData((prev) => ({ ...prev, tag: value.id }))
+                                                setOptionTag(value)
+                                            }}
+                                            isOptionEqualToValue={(option, label) => option.name === label.name}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label="Tag"
+                                                    name="tag"
+                                                    color="success"
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} lg={6} >
+                                        <Autocomplete
+                                            value={optionPresenter}
+                                            options={presenter}
+                                            getOptionLabel={(option) => option.name || ''}
+                                            onChange={(e, value) => {
+                                                setData((prev) => ({ ...prev, presenter: value.cpfcnpj }))
+                                                setOptionPresenter(value)
+                                            }}
+                                            isOptionEqualToValue={(option, label) => option.name === label.name}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label="Apresentante"
+                                                    name="apresentante"
+                                                    color="success"
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} lg={6} >
+                                        <Autocomplete
+                                            // value={data.service_type}
+                                            options={notesType}
+                                            isOptionEqualToValue={(option, label) => option.name === label.name}
+                                            getOptionLabel={(option) => option.name || ''}
+                                            onChange={(e, newValue) => setValueNotesType(newValue)}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label="Tipo"
+                                                    name="service_type"
+                                                    color="success"
+                                                />
+                                            )}
+                                            renderOption={(props, option) => (
+                                                <li {...props} key={option.id}>
+                                                    {option.name}
+                                                </li>
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} lg={6} >
+                                        <Autocomplete
+                                            value={option}
+                                            onChange={(event, newValue) => {
+                                                setOption(newValue)
+                                                setData((prev) => ({ ...prev, service_type: newValue.id }))
+                                            }}
+                                            isOptionEqualToValue={(option, label) => option.name === label.name}
+                                            options={typesGroup.filter(item => item.id === valueNotesType?.id)}
+                                            getOptionLabel={(opcao) => opcao.name || ''}
+                                            fullWidth
+                                            renderInput={(params) => (
+                                                <TextField {...params} label={`Selecione o tipo de ${valueNotesType?.id ? valueNotesType?.name : ""}`} color="success" variant="outlined" />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} lg={6}>
                                         <TextField
-                                            {...params}
-                                            label="Tag"
-                                            name="tag"
+                                            value={data.book}
+                                            name="book"
+                                            onChange={handleChangeInputValues}
+                                            fullWidth
+                                            type="number"
+                                            label="Livro"
                                             color="success"
                                         />
-                                    )}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6} >
-                                <Autocomplete
-                                    value={optionPresenter}
-                                    options={presenter}
-                                    getOptionLabel={(option) => option.name || ''}
-                                    onChange={(e, value) => {
-                                        setData((prev) => ({ ...prev, presenter: value.cpfcnpj }))
-                                        setOptionPresenter(value)
-                                    }}
-                                    isOptionEqualToValue={(option, label) => option.name === label.name}
-                                    renderInput={(params) => (
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} lg={6}>
                                         <TextField
-                                            {...params}
-                                            label="Apresentante"
-                                            name="apresentante"
+                                            fullWidth
+                                            value={data.initial_sheet}
+                                            label="Folha Inicial"
+                                            type="number"
+                                            name="initial_sheet"
+                                            onChange={handleChangeInputValues}
                                             color="success"
                                         />
-                                    )}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6} >
-                                <Autocomplete
-                                    // value={data.service_type}
-                                    options={notesType}
-                                    isOptionEqualToValue={(option, label) => option.name === label.name}
-                                    getOptionLabel={(option) => option.name || ''}
-                                    onChange={(e, newValue) => setValueNotesType(newValue)}
-                                    renderInput={(params) => (
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} lg={6}>
                                         <TextField
-                                            {...params}
-                                            label="Tipo"
-                                            name="service_type"
+                                            fullWidth
+                                            value={data.final_sheet}
+                                            label="Folha Final"
+                                            name="final_sheet"
+                                            type="number"
+                                            onChange={handleChangeInputValues}
                                             color="success"
                                         />
-                                    )}
-                                    renderOption={(props, option) => (
-                                        <li {...props} key={option.id}>
-                                            {option.name}
-                                        </li>
-                                    )}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6} >
-                                <Autocomplete
-                                    value={option}
-                                    onChange={(event, newValue) => {
-                                        setOption(newValue)
-                                        setData((prev) => ({ ...prev, service_type: newValue.id }))
-                                    }}
-                                    isOptionEqualToValue={(option, label) => option.name === label.name}
-                                    options={typesGroup.filter(item => item.id === valueNotesType?.id)}
-                                    getOptionLabel={(opcao) => opcao.name || ''}
-                                    fullWidth
-                                    renderInput={(params) => (
-                                        <TextField {...params} label={`Selecione o tipo de ${valueNotesType?.id ? valueNotesType?.name : ""}`} color="success" variant="outlined" />
-                                    )}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6}>
-                                <TextField
-                                    value={data.book}
-                                    name="book"
-                                    onChange={handleChangeInputValues}
-                                    fullWidth
-                                    type="number"
-                                    label="Livro"
-                                    color="success"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6}>
-                                <TextField
-                                    fullWidth
-                                    value={data.initial_sheet}
-                                    label="Folha Inicial"
-                                    type="number"
-                                    name="initial_sheet"
-                                    onChange={handleChangeInputValues}
-                                    color="success"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6}>
-                                <TextField
-                                    fullWidth
-                                    value={data.final_sheet}
-                                    label="Folha Final"
-                                    name="final_sheet"
-                                    type="number"
-                                    onChange={handleChangeInputValues}
-                                    color="success"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6}>
-                                <TextField
-                                    fullWidth
-                                    value={data.box}
-                                    label="Caixa"
-                                    name="box"
-                                    onChange={handleChangeInputValues}
-                                    color="success"
-                                />
-                            </Grid>
-                            <Grid item xs={12} >
-                                <TextField
-                                    type="file"
-                                    fullWidth
-                                    color="success"
-                                    onChange={handleChangeFile}
-                                />
-                            </Grid>
-                            <Grid item xs={12} >
-                                <Box sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}>
-                                    <Button variant="contained" color="success" onClick={handleUpdadeNote}>
-                                        Atualizar
-                                    </Button>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Container>
-                </CustomContainer>
-                <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
-            </Box>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} lg={6}>
+                                        <TextField
+                                            fullWidth
+                                            value={data.box}
+                                            label="Caixa"
+                                            name="box"
+                                            onChange={handleChangeInputValues}
+                                            color="success"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} >
+                                        <TextField
+                                            type="file"
+                                            fullWidth
+                                            color="success"
+                                            onChange={handleChangeFile}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} >
+                                        <Box sx={{
+                                            width: "100%",
+                                            display: "flex",
+                                            justifyContent: "space-between"
+                                        }}>
+                                            <Button variant="contained" color="success" LinkComponent="a" href="/notas">
+                                                Voltar
+                                            </Button>
+                                            <Button variant="contained" color="success" onClick={handleUpdadeNote}>
+                                                Atualizar
+                                            </Button>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Container>
+                        </CustomContainer>
+                        <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
+                    </Box>
+                </PrivateRoute>
+            </AuthProvider>
         )
 }
 

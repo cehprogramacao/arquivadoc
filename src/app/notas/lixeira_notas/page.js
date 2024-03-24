@@ -7,6 +7,7 @@ import '@fontsource/roboto/700.css';
 import { useState } from "react";
 import { DocList } from "@/Components/List/DocList";
 import { Buttons } from "@/Components/Button/Button";
+import withAuth from "@/utils/withAuth";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -124,4 +125,4 @@ const LixeiraNotas = () => {
     );
 }
 
-export default LixeiraNotas;
+export default withAuth(LixeiraNotas);

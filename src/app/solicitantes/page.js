@@ -10,6 +10,7 @@ import CustomContainer from "@/Components/CustomContainer"
 import SnackBar from "@/Components/SnackBar"
 import Loading from "@/Components/loading"
 import NoteService from "@/services/notes.service"
+import withAuth from "@/utils/withAuth"
 
 
 
@@ -35,11 +36,11 @@ const PageSolicitantes = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const allData = await getAllNoteTags(accessToken)
-            setAlert({open: true, severity: "success", text: `Solicitantes: ${Object.values(allData.data).length}`})
+            setAlert({ open: true, severity: "success", text: `Solicitantes: ${Object.values(allData.data).length}` })
             setData(Object.values(allData.data))
             return allData.data
         } catch (error) {
-            setAlert({open: true, severity: "error", text: error.msg})
+            setAlert({ open: true, severity: "error", text: error.msg })
             console.error("error when searching all notes tags", error)
             throw error;
         }
@@ -51,6 +52,24 @@ const PageSolicitantes = () => {
     useEffect(() => {
         getAllNoteTags()
     }, [])
+
+    const handleDeleteTagById = async (tagId) => {
+        const { deleteNoteTag } = new NoteService()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem('accessToken')
+            const { data } = await deleteNoteTag(tagId, accessToken)
+            setAlert({ open: true, severity: "success", text: data.message })
+        } catch (error) {
+            setAlert({ open: true, severity: "error", text: error.msg })
+            console.error('Erro ao deletar solicitante', error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+            getAllNoteTags()
+        }
+    }
 
 
     return (
@@ -128,7 +147,7 @@ const PageSolicitantes = () => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} >
-                                <UserTable data={data} />
+                                <UserTable data={data} onClick={(tagId) => handleDeleteTagById(tagId)} />
                             </Grid>
                         </Grid>
                     </CustomContainer>
@@ -143,4 +162,4 @@ const PageSolicitantes = () => {
     )
 }
 
-export default PageSolicitantes
+export default withAuth(PageSolicitantes)

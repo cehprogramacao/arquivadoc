@@ -5,6 +5,9 @@ import { LixeiraTable } from "./tableLixeira"
 import CustomContainer from "@/Components/CustomContainer"
 import RGI from "@/services/rgi.service"
 import Loading from "@/Components/loading"
+import withAuth from "@/utils/withAuth"
+import { AuthProvider } from "@/context"
+import PrivateRoute from "@/utils/LayoutPerm"
 
 
 
@@ -59,84 +62,86 @@ const LixeiraRGI = () => {
 
 
     return (
-        <>
-            {loading ? <Loading />
-                :
-                <Box sx={{
-                    width: '100%',
-                    height: '100vh',
-                    py: 14,
-                    px: 4
-                }}>
-                    <CustomContainer >
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Box sx={{
-                                    width: "100%",
-                                    justifyContent: "center",
-                                    display: "flex"
-                                }}>
-                                    <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
-                                        Lixeira
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} >
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} lg={5} md={5} sm={6}>
-                                        <TextField
-                                            fullWidth
-                                            label="Buscar"
-                                            sx={{ '& input': { color: 'success.main' } }}
-                                            color="success"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={5} md={5} sm={6}>
-                                        <Autocomplete
-                                            disablePortal
-                                            id="combo-box-demo"
-                                            options={top100Films}
-                                            fullWidth
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    color="success"
-                                                    {...params}
-                                                    label="Buscar Por"
-                                                    sx={{
-                                                        color: "#237117",
-                                                        '& input': {
-                                                            color: 'success.main',
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={2} md={12} sm={12}>
-                                        <Box sx={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: "center" }}>
-                                            <Button variant="contained" sx={{
-                                                background: '#247117',
-                                                padding: '14px 10px',
-                                                ":hover": {
-                                                    background: '#247117'
-                                                }
-                                            }}>
-                                                BUSCAR
-                                            </Button>
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['RGI']}>
+                {loading ? <Loading />
+                    :
+                    <Box sx={{
+                        width: '100%',
+                        height: '100vh',
+                        py: 14,
+                        px: 4
+                    }}>
+                        <CustomContainer >
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <Box sx={{
+                                        width: "100%",
+                                        justifyContent: "center",
+                                        display: "flex"
+                                    }}>
+                                        <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
+                                            Lixeira
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} >
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12} lg={5} md={5} sm={6}>
+                                            <TextField
+                                                fullWidth
+                                                label="Buscar"
+                                                sx={{ '& input': { color: 'success.main' } }}
+                                                color="success"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} lg={5} md={5} sm={6}>
+                                            <Autocomplete
+                                                disablePortal
+                                                id="combo-box-demo"
+                                                options={top100Films}
+                                                fullWidth
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        color="success"
+                                                        {...params}
+                                                        label="Buscar Por"
+                                                        sx={{
+                                                            color: "#237117",
+                                                            '& input': {
+                                                                color: 'success.main',
+                                                            },
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} lg={2} md={12} sm={12}>
+                                            <Box sx={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: "center" }}>
+                                                <Button variant="contained" sx={{
+                                                    background: '#247117',
+                                                    padding: '14px 10px',
+                                                    ":hover": {
+                                                        background: '#247117'
+                                                    }
+                                                }}>
+                                                    BUSCAR
+                                                </Button>
 
-                                        </Box>
+                                            </Box>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
+                                <Grid item xs={12} >
+                                    <LixeiraTable data={rows} onClick={handleExcluir} />
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} >
-                                <LixeiraTable data={rows} onClick={handleExcluir} />
-                            </Grid>
-                        </Grid>
-                    </CustomContainer>
-                </Box>
-            }
-        </>
+                        </CustomContainer>
+                    </Box>
+                }
+            </PrivateRoute>
+        </AuthProvider>
     )
 }
 
-export default LixeiraRGI
+export default withAuth(LixeiraRGI)

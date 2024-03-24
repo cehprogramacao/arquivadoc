@@ -239,7 +239,7 @@ export const CadastroOficio = ({ onClose, getData }) => {
                   alignItems: "center"
                 }}
               >
-                <Grid container alignItems={"center"} justifyContent="space-between" px={1}>
+                <Grid container alignItems={"center"} justifyContent="space-between" >
                   <Grid item xs={10} lg={10} md={10} sm={10}>
                     <Typography >
                       {option.name}
@@ -252,7 +252,7 @@ export const CadastroOficio = ({ onClose, getData }) => {
                       justifyContent: "flex-end"
                     }}>
                       <IconButton onClick={() => handleDeleteEntityById(option.id)}>
-                        <CloseOutlined />
+                        <CloseOutlined sx={{ width: 20, height: 20 }} />
                       </IconButton>
                     </Box>
                   </Grid>
@@ -296,7 +296,7 @@ export const CadastroOficio = ({ onClose, getData }) => {
                   alignItems: "center"
                 }}
               >
-                <Grid container alignItems={"center"} justifyContent="space-between" px={1}>
+                <Grid container alignItems={"center"} justifyContent="space-between" >
                   <Grid item xs={10} lg={10} md={10} sm={10}>
                     <Typography >
                       {option.name}
@@ -309,7 +309,7 @@ export const CadastroOficio = ({ onClose, getData }) => {
                       justifyContent: "flex-end"
                     }}>
                       <IconButton onClick={() => handleDeleteByTypeId(option.id)}>
-                        <CloseOutlined />
+                        <CloseOutlined sx={{ width: 20, height: 20 }} />
                       </IconButton>
                     </Box>
                   </Grid>

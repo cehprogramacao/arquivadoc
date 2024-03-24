@@ -20,6 +20,7 @@ import SnackBar from '@/Components/SnackBar';
 import MenuOptionsFile from '@/Components/MenuPopUp';
 import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
+import withAuth from '@/utils/withAuth';
 
 const optionsFilter = [
     { label: 'Prenotação' },
@@ -314,4 +315,4 @@ const PageRGI = () => {
     );
 };
 
-export default PageRGI;
+export default withAuth(PageRGI);

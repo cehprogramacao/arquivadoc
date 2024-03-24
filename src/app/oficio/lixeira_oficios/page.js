@@ -8,6 +8,9 @@ import CustomContainer from "@/Components/CustomContainer"
 import Calling from "@/services/calling.service"
 import Loading from "@/Components/loading"
 import SnackBar from "@/Components/SnackBar"
+import withAuth from "@/utils/withAuth"
+import { AuthProvider } from "@/context"
+import PrivateRoute from "@/utils/LayoutPerm"
 
 
 
@@ -45,30 +48,31 @@ const LixeiraOficio = () => {
     }, [])
 
     return (
-        <>
-            {loading ?
-                <Loading />
-                :
-                <Box sx={{
-                    width: '100%',
-                    height: '100vh',
-                    py: 12,
-                    px: 2
-                }}>
-                    <CustomContainer >
-                        <Grid container >
-                            <Grid item xs={12} >
-                                <Box sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}>
-                                    <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
-                                        Lixeira
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            {/* <Grid item xs={12} >
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['Ofícios']}>
+                {loading ?
+                    <Loading />
+                    :
+                    <Box sx={{
+                        width: '100%',
+                        height: '100vh',
+                        py: 12,
+                        px: 2
+                    }}>
+                        <CustomContainer >
+                            <Grid container >
+                                <Grid item xs={12} >
+                                    <Box sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center"
+                                    }}>
+                                        <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
+                                            Lixeira
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                {/* <Grid item xs={12} >
                         <Grid container spacing={2}>
                             <Grid item xs={12} lg={5} md={5} sm={6} >
                                 <TextField
@@ -128,16 +132,17 @@ const LixeiraOficio = () => {
                             </Grid>
                         </Grid>
                     </Grid> */}
-                            <Grid item xs={12} >
-                                <LixeiraTable data={data} />
+                                <Grid item xs={12} >
+                                    <LixeiraTable data={data} />
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </CustomContainer>
-                </Box>
-            }
-            <SnackBar data={alert} handleClose={() => setAlert({...alert, open: false})}/>
-        </>
+                        </CustomContainer>
+                    </Box>
+                }
+                <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
+            </PrivateRoute>
+        </AuthProvider>
     )
 }
 
-export default LixeiraOficio
+export default withAuth(LixeiraOficio)

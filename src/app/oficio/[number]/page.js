@@ -4,6 +4,7 @@ import SnackBar from "@/Components/SnackBar"
 import Loading from "@/Components/loading"
 import Calling from "@/services/calling.service"
 import RGI from "@/services/rgi.service"
+import withAuth from "@/utils/withAuth"
 import { Grid, Box, TextField, Container, Button, Autocomplete } from "@mui/material"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -205,4 +206,4 @@ const EditCallingByNumber = ({ params }) => {
     )
 }
 
-export default EditCallingByNumber
+export default withAuth(EditCallingByNumber)

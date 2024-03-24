@@ -20,6 +20,7 @@ import User from "@/services/user.service";
 import PrivateRoute from "@/utils/LayoutPerm";
 import { AuthProvider, useAuth } from "@/context";
 import { Buttons } from "@/Components/Button/Button";
+import withAuth from "@/utils/withAuth";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -69,7 +70,6 @@ const PageNotas = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const dataNote = await getAllNotes(accessToken)
             setAlert({ open: true, text: `Total de arquivos: ${Object.values(dataNote.data).length}`, type: "file", severity: "success" })
-            console.log(dataNote.data)
             setData(Object.values(dataNote.data))
         } catch (error) {
             setAlert({ open: true, text: error.message, type: "file", severity: "error" })
@@ -173,9 +173,7 @@ const PageNotas = () => {
         }
     }
 
-    const handleUpdateNote = async () => {
-        console.log(data)
-    }
+    
     useEffect(() => {
         getData()
 
@@ -213,7 +211,7 @@ const PageNotas = () => {
                                             <TextField
                                                 fullWidth
                                                 value={selectOption.value}
-                                                isOptionEqualToValue={(option, value) => option.label === value.label}
+                                                // isOptionEqualToValue={(option, value) => option.label === value.label}
                                                 onChange={(e) => setSelectOption((prev) => ({ ...prev, value: e.target.value }))}
                                                 label="Buscar"
                                                 color="success" />
@@ -301,4 +299,4 @@ const PageNotas = () => {
     );
 }
 
-export default PageNotas;
+export default withAuth(PageNotas);

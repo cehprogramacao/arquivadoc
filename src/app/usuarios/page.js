@@ -11,6 +11,8 @@ import User from "@/services/user.service"
 import TableComponente, { UserTable } from "./tableUser"
 import Loading from "@/Components/loading"
 import SnackBar from "@/Components/SnackBar"
+import { AuthProvider } from "@/context"
+import withAuth from "@/utils/withAuth"
 
 
 const PageUsuarios = () => {
@@ -175,7 +177,7 @@ const PageUsuarios = () => {
     }
 
     return (
-        <>
+        <AuthProvider>
             {!loading ?
                 <Box sx={{
                     width: '100%',
@@ -269,8 +271,8 @@ const PageUsuarios = () => {
                 <Loading />
             }
             <SnackBar data={alert} handleClose={handleClose} />
-        </>
+        </AuthProvider>
     )
 }
 
-export default withIsAdmin(PageUsuarios)
+export default withAuth(withIsAdmin(PageUsuarios))

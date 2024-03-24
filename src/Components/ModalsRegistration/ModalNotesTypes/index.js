@@ -22,7 +22,6 @@ const CadastroNotesType = ({ open, onClose, getData }) => {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getAllNoteGroups(accessToken)
             
-            console.log(data, '77777777 makk')
             setDataOptions(Object.values(data))
         } catch (error) {
             console.log('Erro ao buscar grupos de notas!', error)

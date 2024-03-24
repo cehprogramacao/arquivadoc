@@ -2,6 +2,7 @@
 import SnackBar from '@/Components/SnackBar'
 import Loading from '@/Components/loading'
 import User from '@/services/user.service'
+import withAuth from '@/utils/withAuth'
 import { Box, Button, TextField, Typography, useTheme, useMediaQuery, FormControl, OutlinedInput } from '@mui/material'
 import { useEffect, useState } from 'react'
 import ReactInputMask from 'react-input-mask'
@@ -158,4 +159,4 @@ const UpdateProfile = () => {
     : 
     <Loading />
 }
-export default UpdateProfile
+export default withAuth(UpdateProfile)

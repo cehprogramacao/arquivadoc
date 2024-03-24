@@ -11,6 +11,9 @@ import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPar
 import ModalList from '@/Components/Modals/ModalList';
 import CustomContainer from '@/Components/CustomContainer';
 import { width } from '@mui/system';
+import withAuth from '@/utils/withAuth';
+import { AuthProvider } from '@/context';
+import PrivateRoute from '@/utils/LayoutPerm';
 
 const top100Films = [
     { label: 'Nome' },
@@ -54,87 +57,91 @@ const PageProtesto = () => {
 
 
     return (
-        <Box
-            sx={{
-                width: '100%',
-                height: '100vh',
-                py: 15,
-                px: 3
-            }}
-        >
-            <CustomContainer>
-                <Grid container spacing={0}>
-                    <Grid item xs={12}>
-                        <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                                Protestos
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} >
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} lg={5} md={6} sm={6}>
-                                <TextField
-                                    label="Buscar"
-                                    fullWidth
-                                    sx={{ '& input': { color: 'success.main' } }}
-                                    color="success"
-                                />
-                            </Grid>
-                            <Grid item xs={12} lg={4} md={6} sm={6}>
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={top100Films}
-                                    fullWidth
-                                    renderInput={(params) => (
-                                        <TextField
-                                            color="success"
-                                            {...params}
-                                            label="Buscar Por"
-                                            sx={{
-                                                color: "#237117",
-                                                '& input': {
-                                                    color: 'success.main',
-                                                },
-                                            }}
-                                        />
-                                    )}
-                                />
-                            </Grid>
-                            <Grid item xs={12} lg={3} md={12} sm={12}>
-                                <Box sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    gap: 2,
-                                    justifyContent: "center"
-                                }}>
-                                    <Buttons color={'green'} title={'Buscar'} />
-
-                                    <ButtonOpenModals onClick={handleOpenModalCadastro} />
-                                    <ButtonLixeira href={"/protestos/lixeira_protesto"} />
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['Protesto']}>
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '100vh',
+                        py: 15,
+                        px: 3
+                    }}
+                >
+                    <CustomContainer>
+                        <Grid container spacing={0}>
+                            <Grid item xs={12}>
+                                <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                    <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
+                                        Protestos
+                                    </Typography>
                                 </Box>
                             </Grid>
+                            <Grid item xs={12} >
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} lg={5} md={6} sm={6}>
+                                        <TextField
+                                            label="Buscar"
+                                            fullWidth
+                                            sx={{ '& input': { color: 'success.main' } }}
+                                            color="success"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={4} md={6} sm={6}>
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={top100Films}
+                                            fullWidth
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    color="success"
+                                                    {...params}
+                                                    label="Buscar Por"
+                                                    sx={{
+                                                        color: "#237117",
+                                                        '& input': {
+                                                            color: 'success.main',
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={3} md={12} sm={12}>
+                                        <Box sx={{
+                                            width: "100%",
+                                            display: "flex",
+                                            gap: 2,
+                                            justifyContent: "center"
+                                        }}>
+                                            <Buttons color={'green'} title={'Buscar'} />
+
+                                            <ButtonOpenModals onClick={handleOpenModalCadastro} />
+                                            <ButtonLixeira href={"/protestos/lixeira_protesto"} />
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12} >
+                                <DocList data={docs} onClick={handleOpenModalFile} />
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid item xs={12} >
-                        <DocList data={docs} onClick={handleOpenModalFile} />
-                    </Grid>
-                </Grid>
 
 
 
 
-            </CustomContainer>
-            <Drawer anchor='left' open={openModalCadastro} onClose={handleCloseModalCadastro} >
-                <CadastroProtesto onClickPartes={handleOpenModalPartes} onClose={handleCloseModalCadastro} />
-            </Drawer>
-            <Drawer anchor='right' onClose={handleCloseModalPartes} open={openModalPartes}>
-                <CadastroPartes onClose={handleCloseModalPartes} />
-            </Drawer>
-            <ModalList open={openModalListFile} onClose={handleCloseModalFile} data={docs} />
-        </Box>
+                    </CustomContainer>
+                    <Drawer anchor='left' open={openModalCadastro} onClose={handleCloseModalCadastro} >
+                        <CadastroProtesto onClickPartes={handleOpenModalPartes} onClose={handleCloseModalCadastro} />
+                    </Drawer>
+                    <Drawer anchor='right' onClose={handleCloseModalPartes} open={openModalPartes}>
+                        <CadastroPartes onClose={handleCloseModalPartes} />
+                    </Drawer>
+                    <ModalList open={openModalListFile} onClose={handleCloseModalFile} data={docs} />
+                </Box>
+            </PrivateRoute>
+        </AuthProvider>
     );
 };
 
-export default PageProtesto;
+export default withAuth(PageProtesto);

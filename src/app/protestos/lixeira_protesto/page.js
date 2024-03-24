@@ -3,6 +3,9 @@ import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQue
 import { useState } from "react"
 import { LixeiraTable } from "./tableLixeira"
 import CustomContainer from "@/Components/CustomContainer"
+import withAuth from "@/utils/withAuth"
+import { AuthProvider } from "@/context"
+import PrivateRoute from "@/utils/LayoutPerm"
 
 
 
@@ -153,90 +156,94 @@ const LixeiraProtestos = ({ data }) => {
     };
 
     return (
-        <Box sx={{
-            width: '100%',
-            height: '100vh',
-            py: 15,
-            px: 3
-        }}>
-            <CustomContainer>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} >
-                        <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }} >
-                            <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
-                                Lixeira
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} >
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} lg={5} md={5} sm={6} >
-                                <TextField label="Buscar"
-                                    fullWidth
-                                    sx={{
-                                        '& input': {
-                                            color: 'success.main',
-                                        },
-                                    }} color="success" />
-                            </Grid>
-                            <Grid item xs={12} lg={5} md={5} sm={6} >
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={top100Films}
-                                    fullWidth
-                                    autoHighlight
-                                    getOptionLabel={(option) => option.label}
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            color="success"
-                                            label="Buscar Por"
-                                            onChange={(e) => {
-                                                const selected = top100Films.find(
-                                                    (item) => item.label === e.target.value
-                                                );
-                                                setSelect(selected)
-                                            }}
-                                            sx={{
-                                                color: "#237117",
-                                                "& input": {
-                                                    color: "success.main",
-                                                },
-                                            }}
-                                        />
-                                    )}
-                                />
-                            </Grid>
-                            <Grid item xs={12} lg={2} md={2} sm={12}>
-                                <Box sx={{
-                                    display: "flex",
-                                    width: "100%",
-                                    alignItems: "center",
-                                    justifyContent: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" }
-                                }}>
-                                    <Button variant="contained" onClick={handleBuscar} sx={{
-                                        background: '#247117',
-                                        px: 5,
-                                        py: "15px",
-                                        ":hover": {
-                                            background: '#247117'
-                                        }
-                                    }}>
-                                        BUSCAR
-                                    </Button>
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['Protesto']} >
+                <Box sx={{
+                    width: '100%',
+                    height: '100vh',
+                    py: 15,
+                    px: 3
+                }}>
+                    <CustomContainer>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} >
+                                <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }} >
+                                    <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
+                                        Lixeira
+                                    </Typography>
                                 </Box>
                             </Grid>
+                            <Grid item xs={12} >
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} lg={5} md={5} sm={6} >
+                                        <TextField label="Buscar"
+                                            fullWidth
+                                            sx={{
+                                                '& input': {
+                                                    color: 'success.main',
+                                                },
+                                            }} color="success" />
+                                    </Grid>
+                                    <Grid item xs={12} lg={5} md={5} sm={6} >
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={top100Films}
+                                            fullWidth
+                                            autoHighlight
+                                            getOptionLabel={(option) => option.label}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    color="success"
+                                                    label="Buscar Por"
+                                                    onChange={(e) => {
+                                                        const selected = top100Films.find(
+                                                            (item) => item.label === e.target.value
+                                                        );
+                                                        setSelect(selected)
+                                                    }}
+                                                    sx={{
+                                                        color: "#237117",
+                                                        "& input": {
+                                                            color: "success.main",
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={2} md={2} sm={12}>
+                                        <Box sx={{
+                                            display: "flex",
+                                            width: "100%",
+                                            alignItems: "center",
+                                            justifyContent: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" }
+                                        }}>
+                                            <Button variant="contained" onClick={handleBuscar} sx={{
+                                                background: '#247117',
+                                                px: 5,
+                                                py: "15px",
+                                                ":hover": {
+                                                    background: '#247117'
+                                                }
+                                            }}>
+                                                BUSCAR
+                                            </Button>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <LixeiraTable data={rows} onClick={handleExcluir} />
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <LixeiraTable data={rows} onClick={handleExcluir} />
-                    </Grid>
-                </Grid>
 
-            </CustomContainer>
-        </Box>
+                    </CustomContainer>
+                </Box>
+            </PrivateRoute>
+        </AuthProvider>
     )
 }
 
-export default LixeiraProtestos
+export default withAuth(LixeiraProtestos)

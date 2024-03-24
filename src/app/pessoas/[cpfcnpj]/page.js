@@ -2,6 +2,7 @@
 import CustomContainer from '@/Components/CustomContainer';
 import Loading from '@/Components/loading';
 import Customer from '@/services/customer.service';
+import withAuth from '@/utils/withAuth';
 import { Box, TextField, Typography, Button, Autocomplete, FormControl, FormLabel, FormHelperText, OutlinedInput, Grid } from "@mui/material";
 import { useRouter } from 'next/navigation';
 import { useState } from "react";
@@ -185,4 +186,4 @@ const PageEditarPessoas = ({ params }) => {
         </>
     )
 }
-export default PageEditarPessoas
+export default withAuth(PageEditarPessoas)

@@ -2,6 +2,7 @@
 import CustomContainer from "@/Components/CustomContainer"
 import Loading from "@/Components/loading"
 import RGI from "@/services/rgi.service"
+import withAuth from "@/utils/withAuth"
 import { Grid, Box, TextField, Container, Button, Autocomplete } from "@mui/material"
 import { useEffect, useState } from "react"
 
@@ -250,4 +251,4 @@ const Prenotation = ({ params }) => {
     )
 }
 
-export default Prenotation
+export default withAuth(Prenotation)

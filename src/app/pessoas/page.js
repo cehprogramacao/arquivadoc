@@ -8,6 +8,7 @@ import { CadastroPessoas } from "@/Components/Modals/ModalCadastroPessoas"
 import CustomContainer from "@/Components/CustomContainer"
 import Customer from "@/services/customer.service"
 import Loading from "@/Components/loading"
+import withAuth from "@/utils/withAuth"
 
 
 
@@ -162,4 +163,4 @@ const PagePessoas = () => {
     )
 }
 
-export default PagePessoas
+export default withAuth(PagePessoas)

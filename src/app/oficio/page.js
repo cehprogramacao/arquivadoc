@@ -18,8 +18,9 @@ import MenuOptionsFile from '@/Components/MenuPopUp';
 import ModalCalling from './components/modalCalling';
 import { NumbersRounded } from '@mui/icons-material';
 import SnackBar from '@/Components/SnackBar';
-import { AuthProvider } from '@/context';
+import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
+import withAuth from '@/utils/withAuth';
 
 const top100Films = [
     { label: 'Número' },
@@ -31,6 +32,7 @@ const top100Films = [
 const PageOficio = () => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const { permissions } = useAuth()
     const [loading, setLoading] = useState(false)
     const [callingData, setCallingData] = useState([])
     const [number, setNumber] = useState("")
@@ -199,97 +201,98 @@ const PageOficio = () => {
     return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Ofícios']}>
-            {loading
-                ?
-                <Loading />
-                :
-                <Box
-                    sx={{
-                        width: '100%',
-                        height: '100vh',
-                        py: 13,
-                        px: 2
-                    }}
-                >
+                {loading
+                    ?
+                    <Loading />
+                    :
+                    <Box
+                        sx={{
+                            width: '100%',
+                            height: '100vh',
+                            py: 13,
+                            px: 2
+                        }}
+                    >
 
-                    <CustomContainer>
-                        <Grid container spacing={0}>
-                            <Grid item xs={12} >
-                                <Box sx={{
-                                    display: 'flex',
-                                    width: "100%",
-                                    justifyContent: "center"
-                                }} >
-                                    <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                                        Ofício
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} >
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} lg={5} md={5} sm={6}>
-                                        <TextField
-                                            fullWidth
-                                            label="Buscar"
-                                            type={selectOption.option?.label === "Número" ? "number" : "text"}
-                                            value={selectOption.value}
-                                            onChange={(e) => setSelectOption({ ...selectOption, value: e.target.value })}
-                                            sx={{ '& input': { color: 'success.main' } }}
-                                            color="success"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={4} md={4} sm={6}>
-                                        <Autocomplete
-                                            disablePortal
-                                            id="combo-box-demo"
-                                            options={top100Films}
-                                            getOptionLabel={(option) => option.label}
-                                            fullWidth
-                                            value={selectOption.option}
-                                            onChange={(e, value) => setSelectOption({ ...selectOption, option: value })}
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    color="success"
-                                                    {...params}
-                                                    label="Buscar Por"
-                                                    sx={{
-                                                        color: "#237117",
-                                                        '& input': {
-                                                            color: 'success.main',
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={3} md={3} sm={12}>
-                                        <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", gap: 2 }}>
-                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFilterByNumberOrEntity} />
-                                            <ButtonOpenModals onClick={handleOpen} />
-                                            <ButtonLixeira href={"/oficio/lixeira_oficios"} />
-                                        </Box>
+                        <CustomContainer>
+                            <Grid container spacing={0}>
+                                <Grid item xs={12} >
+                                    <Box sx={{
+                                        display: 'flex',
+                                        width: "100%",
+                                        justifyContent: "center"
+                                    }} >
+                                        <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
+                                            Ofício
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} >
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12} lg={5} md={5} sm={6}>
+                                            <TextField
+                                                fullWidth
+                                                label="Buscar"
+                                                type={selectOption.option?.label === "Número" ? "number" : "text"}
+                                                value={selectOption.value}
+                                                onChange={(e) => setSelectOption({ ...selectOption, value: e.target.value })}
+                                                sx={{ '& input': { color: 'success.main' } }}
+                                                color="success"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} lg={4} md={4} sm={6}>
+                                            <Autocomplete
+                                                disablePortal
+                                                id="combo-box-demo"
+                                                options={top100Films}
+                                                getOptionLabel={(option) => option.label}
+                                                fullWidth
+                                                value={selectOption.option}
+                                                onChange={(e, value) => setSelectOption({ ...selectOption, option: value })}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        color="success"
+                                                        {...params}
+                                                        label="Buscar Por"
+                                                        sx={{
+                                                            color: "#237117",
+                                                            '& input': {
+                                                                color: 'success.main',
+                                                            },
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} lg={3} md={3} sm={12}>
+                                            <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", gap: 2 }}>
+                                                <Buttons color={'green'} title={'Buscar'} onClick={handleFilterByNumberOrEntity} />
+                                                {permissions[4]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
+                                                <ButtonLixeira href={"/oficio/lixeira_oficios"} />
+                                            </Box>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
+                                <Grid item xs={12} >
+                                    <DocCalling data={callingData} setNumber={(number) => setNumber(number)} handleClick={handleClickMenu} />
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} >
-                                <DocCalling data={callingData} setNumber={(number) => setNumber(number)} handleClick={handleClickMenu} />
-                            </Grid>
-                        </Grid>
-                    </CustomContainer>
-                </Box>
-            }
-            <Drawer anchor='left' open={open} onClose={handleClose}>
-                <CadastroOficio getData={getCallingData} onClose={handleClose} onClickPartes={handleOpenPartes} />
-            </Drawer>
-            <Drawer anchor='right' open={openPartes} onClose={handleClosePartes}>
-                <CadastroPartes onClose={handleClosePartes} />
-            </Drawer>
-            <MenuOptionsFile open={openMenu} anchorEl={anchorEl} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={number} handleDelete={handleDeleteByNumber} />
-            <ModalCalling open={openPDF} data={dataFile} number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />
-            <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
+                        </CustomContainer>
+                    </Box>
+                }
+                <Drawer anchor='left' open={open} onClose={handleClose}>
+                    <CadastroOficio getData={getCallingData} onClose={handleClose} onClickPartes={handleOpenPartes} />
+                </Drawer>
+                <Drawer anchor='right' open={openPartes} onClose={handleClosePartes}>
+                    <CadastroPartes onClose={handleClosePartes} />
+                </Drawer>
+                <MenuOptionsFile deletePerm={permissions[4]?.delete_permission} editPerm={permissions[4]?.edit}
+                    open={openMenu} anchorEl={anchorEl} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={number} handleDelete={handleDeleteByNumber} />
+                <ModalCalling open={openPDF} data={dataFile} number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />
+                <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
             </PrivateRoute>
         </AuthProvider>
     );
 };
 
-export default PageOficio;
+export default withAuth(PageOficio);

@@ -6,6 +6,7 @@ import CustomContainer from "@/Components/CustomContainer";
 import withIsAdmin from "@/utils/isAdmin";
 import All from "@/services/all.service";
 import Loading from "@/Components/loading";
+import withAuth from "@/utils/withAuth";
 
 
 const PageLogs = () => {
@@ -73,4 +74,4 @@ const PageLogs = () => {
         </>
     )
 }
-export default withIsAdmin(PageLogs)
+export default withAuth(withIsAdmin(PageLogs))

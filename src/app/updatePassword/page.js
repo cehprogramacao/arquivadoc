@@ -2,6 +2,7 @@
 import SnackBar from '@/Components/SnackBar';
 import Loading from '@/Components/loading';
 import User from '@/services/user.service';
+import withAuth from '@/utils/withAuth';
 import { Box, Button, TextField, Typography, useTheme, useMediaQuery } from '@mui/material'
 import { useState } from 'react';
 
@@ -104,4 +105,4 @@ const ChangePassoword = () => {
     : 
     <Loading />
 }
-export default ChangePassoword
+export default withAuth(ChangePassoword)

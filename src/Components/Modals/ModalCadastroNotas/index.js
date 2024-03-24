@@ -8,7 +8,8 @@ import {
   Box,
   Stack,
   styled,
-  IconButton
+  IconButton,
+  Grid
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
@@ -20,6 +21,8 @@ import CadastroNotesCurtomers from "@/Components/ModalsRegistration/ModalNotesCu
 import NoteService from "@/services/notes.service";
 import Customer from "@/services/customer.service";
 import { ModalNotesGroup } from "@/Components/ModalsRegistration/ModalNotesGroup";
+import { CloseOutlined } from "@mui/icons-material";
+import { useAuth } from "@/context";
 
 
 
@@ -70,15 +73,16 @@ const ButtonCadastrar = styled("button")({
 export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   const [outorgantes, setOutorgantes] = useState([""]);
   const [outorgados, setOutorgados] = useState([""]);
-  const [valuePresenter, setValuePresenter] = useState("")
-  const [valueTag, setValueTag] = useState("")
+  const { permissions } = useAuth()
+  const [valuePresenter, setValuePresenter] = useState(null)
+  const [valueTag, setValueTag] = useState(null)
   const [valueOutorgante, setValueOutorgante] = useState(Array(outorgantes.length).fill(''));
   const [valueOutorgado, setValueOutorgado] = useState(Array(outorgados.length).fill(''));
   const [formData, setFormData] = useState({
     order_num: 0,
-    tag: 0,
-    presenter: '',
-    service_type: 0,
+    tag: null,
+    presenter: null,
+    service_type: null,
     book: 0,
     initial_sheet: 0,
     final_sheet: 0,
@@ -116,7 +120,6 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       const allData = await customers(accessToken)
       setOutorganteArray(Object.values(allData.data))
       setOutorgadoArray(Object.values(allData.data))
-      console.log(allData.data)
       return allData.data
     } catch (error) {
       console.error("Erro ao listar cliente!", error)
@@ -182,7 +185,6 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       const accessToken = sessionStorage.getItem("accessToken")
       const allTags = await getAllNoteTags(accessToken)
       setTag(Object.values(allTags.data))
-      console.log(allTags.data, '99999999999')
       return allTags.data
     } catch (error) {
       console.error("Error list of tags", error)
@@ -197,7 +199,6 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       const allPresenter = await customer.customers(accessToken);
       const newData = Object.values(allPresenter.data);
       setPresenter(newData);
-      console.log(allPresenter.data);
       return allPresenter.data;
     } catch (error) {
       console.error("Error when listing presenters", error);
@@ -217,7 +218,6 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       const types = await getAllNoteTypes(accessToken);
       setNotesType(Object.values(groups.data))
       setTypesGroup(Object.values(types.data))
-      console.log(groups.data, types.data, '88888')
       return groups.data && types.data
     } catch (error) {
       console.error(error);
@@ -297,6 +297,64 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       onClose()
     }
   }
+
+
+  const handleDeleteTagById = async (tagId) => {
+    const { deleteNoteTag } = new NoteService()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const { data } = await deleteNoteTag(tagId, accessToken)
+    } catch (error) {
+      console.error("Erro ao deletar tag", error)
+      throw error;
+    }
+    finally {
+      getAllNotesTag()
+    }
+  }
+
+  const handleDeletePresenterById = async (presenterId) => {
+    const { deleteCustomer } = new Customer()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const { data } = await deleteCustomer(presenterId, accessToken)
+    } catch (error) {
+      console.error("Erro ao deletar apresentante", error)
+      throw error;
+    }
+    finally {
+      getCustomersPresenter()
+    }
+  }
+
+  const handleDeleteGroupNoteById = async (groupId) => {
+    const { deleteNoteGroup } = new NoteService()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const { data } = await deleteNoteGroup(groupId, accessToken)
+    } catch (error) {
+      console.error("Erro ao deletar grupo de notas!", error)
+      throw error;
+    }
+    finally {
+      getTypeAndGroup()
+    }
+  }
+  const handleDeleteTypeNoteById = async (typeId) => {
+    const { deleteNoteType } = new NoteService()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const { data } = await deleteNoteType(typeId, accessToken)
+    } catch (error) {
+      console.error("Erro ao deletar tipo de notas!", error)
+      throw error;
+    }
+    finally {
+      getTypeAndGroup()
+    }
+  }
+
+
   return (
     <Box sx={{
       width: { lg: 420, md: 390, sm: 350, xs: 320 },
@@ -334,6 +392,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         <Autocomplete
           value={valueTag}
           options={tag}
+          isOptionEqualToValue={(option, label) => option.name === label.name}
           getOptionLabel={(option) => option.name || ''}
           onChange={(event, newValue) => {
             handleAutocompleteChange("tag", newValue.id)
@@ -349,18 +408,47 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
             />
           )}
           renderOption={(props, option) => (
-            <li {...props} key={option.id}>
-              {option.name}
-            </li>
+            <Box
+              {...props}
+              key={option.id}
+              sx={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center"
+              }}
+            >
+              <Grid container alignItems={"center"} justifyContent="space-between" >
+                <Grid item xs={10} lg={10} md={10} sm={10}>
+                  <Typography >
+                    {option.name}
+                  </Typography>
+                </Grid>
+                {permissions[6]?.delete_permission === 1 && (
+                  <Grid item xs={2} lg={2} md={2} sm={2}>
+                    <Box sx={{
+                      width: "100%",
+                      display: 'flex',
+                      justifyContent: "flex-end"
+                    }}>
+                      <IconButton onClick={() => handleDeleteTagById(option.id)}>
+                        <CloseOutlined sx={{ width: 20, height: 20 }} />
+                      </IconButton>
+                    </Box>
+                  </Grid>
+                )}
+              </Grid>
+
+            </Box>
           )}
         />
 
         <Autocomplete
           value={valuePresenter}
           options={presenter}
+          isOptionEqualToValue={(option, label) => option.name === label.name}
           getOptionLabel={(option) => option.name || ''}
           onChange={(event, newValue) => {
-            setFormData({ ...formData, presenter: newValue.cpfcnpj })
+            setFormData({ ...formData, presenter: newValue.cpfcnpj || null })
             setValuePresenter(newValue)
           }}
           noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title="Cadastrar Apresentante" />}
@@ -373,15 +461,44 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
             />
           )}
           renderOption={(props, option) => (
-            <li {...props} key={option.id}>
-              {option.name}
-            </li>
+            <Box
+              {...props}
+              key={option.cpfcnpj}
+              sx={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center"
+              }}
+            >
+              <Grid container alignItems={"center"} justifyContent="space-between" >
+                <Grid item xs={10} lg={10} md={10} sm={10}>
+                  <Typography >
+                    {option.name}
+                  </Typography>
+                </Grid>
+                {permissions[5]?.delete_permission === 1 && (
+                  <Grid item xs={2} lg={2} md={2} sm={2}>
+                    <Box sx={{
+                      width: "100%",
+                      display: 'flex',
+                      justifyContent: "flex-end"
+                    }}>
+                      <IconButton onClick={() => handleDeletePresenterById(option.cpfcnpj)}>
+                        <CloseOutlined sx={{ width: 20, height: 20 }} />
+                      </IconButton>
+                    </Box>
+                  </Grid>
+                )}
+              </Grid>
+
+            </Box>
           )}
         />
 
         <Autocomplete
           // value={formData.service_type}
           options={notesType}
+          isOptionEqualToValue={(option, label) => option.name === label.name}
           getOptionLabel={(option) => option.name || ''}
           onChange={(e, newValue) => setValueNotesType(newValue)}
           noOptionsText={<RenderNoOptions onClick={handleOpenGroup} title={"Cadastrar Grupo"} />}
@@ -394,9 +511,37 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
             />
           )}
           renderOption={(props, option) => (
-            <li {...props} key={option.id}>
-              {option.name}
-            </li>
+            <Box
+              {...props}
+              key={option.id}
+              sx={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center"
+              }}
+            >
+              <Grid container alignItems={"center"} justifyContent="space-between" >
+                <Grid item xs={10} lg={10} md={10} sm={10}>
+                  <Typography >
+                    {option.name}
+                  </Typography>
+                </Grid>
+                {permissions[6]?.delete_permission === 1 && (
+                  <Grid item xs={2} lg={2} md={2} sm={2}>
+                    <Box sx={{
+                      width: "100%",
+                      display: 'flex',
+                      justifyContent: "flex-end"
+                    }}>
+                      <IconButton onClick={() => handleDeleteGroupNoteById(option.id)}>
+                        <CloseOutlined sx={{ width: 20, height: 20 }} />
+                      </IconButton>
+                    </Box>
+                  </Grid>
+                )}
+              </Grid>
+
+            </Box>
           )}
         />
 
@@ -407,6 +552,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
               setOption(newValue)
               setFormData((prev) => ({ ...prev, service_type: newValue.id }))
             }}
+            isOptionEqualToValue={(option, label) => option.name === label.name}
             options={typesGroup.filter(item => item.id === valueNotesType.id)} // Assegurar que as opções sejam baseadas na seleção de valueNotesType
             getOptionLabel={(opcao) => opcao.name || ''} // Como opcao é uma string, apenas a retornamos
             fullWidth
@@ -415,6 +561,39 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
             />}
             renderInput={(params) => (
               <TextField {...params} label={`Selecione o tipo de ${valueNotesType.name}`} color="success" variant="outlined" />
+            )}
+            renderOption={(props, option) => (
+              <Box
+                {...props}
+                key={option.id}
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center"
+                }}
+              >
+                <Grid container alignItems={"center"} justifyContent="space-between" >
+                  <Grid item xs={10} lg={10} md={10} sm={10}>
+                    <Typography >
+                      {option.name}
+                    </Typography>
+                  </Grid>
+                  {permissions[6]?.delete_permission === 1 && (
+                    <Grid item xs={2} lg={2} md={2} sm={2}>
+                      <Box sx={{
+                        width: "100%",
+                        display: 'flex',
+                        justifyContent: "flex-end"
+                      }}>
+                        <IconButton onClick={() => handleDeleteTypeNoteById(option.id)}>
+                          <CloseOutlined sx={{ width: 20, height: 20 }} />
+                        </IconButton>
+                      </Box>
+                    </Grid>
+                  )}
+                </Grid>
+  
+              </Box>
             )}
           />
         )}
@@ -586,9 +765,10 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         </Stack>
 
       </Box>
-      <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} />
+      <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} getData={getAllNotesTag} />
       <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} />
-      <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} getData={getTypeAndGroup} />
+      <CadastroNotesTxype open={openModalNotesType} onClose={handleCloseNotesType} getData={getTypeAndGroup} />
+      
       <CadastroNotesCurtomers getData={getCustumers} open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
       <ModalNotesGroup getData={getTypeAndGroup} onClose={handleCloseGroup} open={openModalGroup} />
     </Box >
