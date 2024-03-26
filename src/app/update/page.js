@@ -21,14 +21,14 @@ const UpdateProfile = () => {
         type: ""
 
     })
-    const [userData,setUserData] = useState({
+    const [userData, setUserData] = useState({
         name: "",
         phone: ""
     })
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    
+
     const handleInputChange = (e) => {
         e.target.value?.replace(/\D/g, '').length < 11
             ? setNumberMask(numberMask)
@@ -43,11 +43,11 @@ const UpdateProfile = () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getUser(accessToken)
-            setUserData({name: data.name, phone: data.phone})
+            setUserData({ name: data.name, phone: data.phone })
             console.log(data)
         } catch (error) {
             console.error("Erro ao buscar usuários!", error)
-            throw error;            
+            throw error;
         }
     }
     const handleUpdateUser = async () => {
@@ -55,11 +55,11 @@ const UpdateProfile = () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await updateUser(userData, accessToken)
-            setAlert({open: true, severity: "success", type: "user", text: data.message})
+            setAlert({ open: true, severity: "success", type: "user", text: data.message })
             setLoading(true)
         } catch (error) {
             console.log("Erro ao editar usuários!", error)
-            setAlert({open: true, severity: "error", type: 'user', text: error.message})
+            setAlert({ open: true, severity: "error", type: 'user', text: error.message })
             throw error;
         }
         finally {
@@ -70,7 +70,7 @@ const UpdateProfile = () => {
     useEffect(() => {
         getUser()
     }, [])
-    
+
     return !loading ? (
         <Box sx={{
             width: '100%',
@@ -100,11 +100,11 @@ const UpdateProfile = () => {
 
                 }}>
                     <TextField sx={{
-                        width: isSmallScreen ? '100%' : '400px',
                         '& input': { color: 'success.main' },
                     }}
+                        fullWidth
                         value={userData.name}
-                        onChange={(e) => setUserData((prev) => ({...prev, name: e.target.value}))}
+                        onChange={(e) => setUserData((prev) => ({ ...prev, name: e.target.value }))}
                         label="Nome"
                         placeholder='Digite seu nome'
                         color='success'
@@ -112,6 +112,7 @@ const UpdateProfile = () => {
 
                     <FormControl fullWidth error={Boolean(errors['phone'])}>
                         <ReactInputMask
+
                             mask={numberMask}
                             value={userData.phone}
                             onChange={handleInputChange}
@@ -120,6 +121,7 @@ const UpdateProfile = () => {
                         >
                             {(inputProps) => (
                                 <OutlinedInput
+                                    fullWidth
                                     {...inputProps}
                                     id={'id-documento'}
                                     color="success"
@@ -153,10 +155,10 @@ const UpdateProfile = () => {
                     Atualizar
                 </Button>
             </Box>
-            <SnackBar data={alert} handleClose={() => setAlert((prev) => ({...prev, open: false}))} />
+            <SnackBar data={alert} handleClose={() => setAlert((prev) => ({ ...prev, open: false }))} />
         </Box>
     )
-    : 
-    <Loading />
+        :
+        <Loading />
 }
 export default withAuth(UpdateProfile)

@@ -1,7 +1,7 @@
 "use client"
 import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery, Grid } from "@mui/material"
 import { useEffect, useState } from "react"
-import { LixeiraTable } from "./tableLixeira"
+import { DocList, LixeiraTable } from "./tableLixeira"
 import CustomContainer from "@/Components/CustomContainer"
 import withAuth from "@/utils/withAuth"
 import { AuthProvider } from "@/context"
@@ -9,19 +9,25 @@ import PrivateRoute from "@/utils/LayoutPerm"
 import Loading from "@/Components/loading"
 import ProtestService from "@/services/protest.service"
 import SnackBar from "@/Components/SnackBar"
+import { useDispatch } from "react-redux"
+import { showAlert } from "@/store/actions"
+import MenuOptionsFile from "@/Components/ModalOptionsTrash"
 
 
 
 const LixeiraProtestos = () => {
     const [data, setData] = useState([])
+    const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
-    const [alert, setAlert] = useState({
-        open: true,
-        severity: "",
-        type: "",
-        text: ""
-    })
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
 
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
 
     const getFetchingFilesFromTrash = async () => {
         const { getProtestFromTrash } = new ProtestService()
@@ -29,20 +35,11 @@ const LixeiraProtestos = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getProtestFromTrash(accessToken)
-            setAlert({
-                open: true,
-                severity: "success",
-                type: "file",
-                text: `Total de arquivos na lixera: ${Object.values(data).length}`
-            })
+
+            dispatch(showAlert(`Total de arquivos na lixera: ${Object.values(data).length}`, "success", "file"))
             setData(Object.values(data))
         } catch (error) {
-            setAlert({
-                open: true,
-                severity: "error",
-                type: "file",
-                text: error.msg
-            })
+            dispatch(showAlert(error.message, "error", "file"))
             console.error("Erro ao buscar arquivos da lixeira!", error)
             throw error;
         }
@@ -137,13 +134,14 @@ const LixeiraProtestos = () => {
                                 </Grid>
                             </Grid> */}
                             <Grid item xs={12}>
-                                <LixeiraTable data={data} />
+                                <DocList data={data} handleClick={handleClick} />
                             </Grid>
                         </Grid>
 
                     </CustomContainer>
                 </Box>
-                <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
+                <SnackBar />
+                <MenuOptionsFile anchorEl={anchorEl} open={open} handleClose={handleClose} />
             </PrivateRoute>
         </AuthProvider>
     )

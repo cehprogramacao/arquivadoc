@@ -23,6 +23,7 @@ import Customer from "@/services/customer.service";
 import { ModalNotesGroup } from "@/Components/ModalsRegistration/ModalNotesGroup";
 import { CloseOutlined } from "@mui/icons-material";
 import { useAuth } from "@/context";
+import { showAlert } from "@/store/actions";
 
 
 
@@ -71,6 +72,7 @@ const ButtonCadastrar = styled("button")({
 });
 
 export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
+  const dispatch = useDispatch()
   const [outorgantes, setOutorgantes] = useState([""]);
   const [outorgados, setOutorgados] = useState([""]);
   const { permissions } = useAuth()
@@ -275,20 +277,10 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       const accessToken = sessionStorage.getItem("accessToken")
       const allData = await createNotes(formData, accessToken)
       console.log(allData.data)
-      dataSnack({
-        open: true,
-        text: allData.data.message,
-        severity: "success",
-        type: "file"
-      })
+      dispatch(showAlert(allData.data.message, "success", "file"))
       return allData.data
     } catch (error) {
-      dataSnack({
-        open: true,
-        text: error.msg,
-        severity: "error",
-        type: "file"
-      })
+      dispatch(showAlert(error.msg, "error", "file"))
       console.error("Erro ao criar nota!", error)
       throw error;
     }

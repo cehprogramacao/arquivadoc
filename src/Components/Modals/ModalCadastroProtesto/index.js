@@ -2,13 +2,16 @@ import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
 import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
 import Customer from "@/services/customer.service";
 import ProtestService from "@/services/protest.service";
+import { showAlert } from "@/store/actions";
 import { CloseOutlined } from "@mui/icons-material";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { v4 as randomUUID } from "uuid";
 
 export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
+  const dispatch = useDispatch()
   const [data, setData] = useState({
     notation: 0,
     box: 0,
@@ -66,7 +69,9 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
       const accessToken = sessionStorage.getItem("accessToken")
       const response = await createProtest(data, accessToken)
       console.log(response.data)
+      dispatch(showAlert(response.data.message, "success", "file"))
     } catch (error) {
+      dispatch(showAlert(error.msg, "error", "file"))
       console.error("Erro ao criar protesto!", error)
       throw new Error("Erro ao criar protesto!")
     }

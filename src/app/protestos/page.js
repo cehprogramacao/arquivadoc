@@ -19,12 +19,15 @@ import ProtestService from '@/services/protest.service';
 import Loading from '@/Components/loading';
 import { ModalOptions } from '@/Components/Modals/modalOptions/modalOptions';
 import MenuOptionsFile from '@/Components/MenuPopUp';
+import { useDispatch } from 'react-redux';
+import { showAlert } from '@/store/actions';
 
 const options = [
     { label: 'Apontamento' },
     { label: 'Apresentante' }
 ]
 const PageProtesto = () => {
+    const dispatch = useDispatch()
     const [data, setData] = useState([])
     const { permissions } = useAuth()
     const [dataFile, setDataFile] = useState([])
@@ -32,12 +35,6 @@ const PageProtesto = () => {
     const [option, setOption] = useState({
         option: "",
         value: ""
-    })
-    const [alert, setAlert] = useState({
-        open: true,
-        severity: "",
-        text: "",
-        type: ""
     })
     const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
@@ -89,15 +86,11 @@ const PageProtesto = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getAllProtests(accessToken)
 
-            setAlert({
-                open: true,
-                severity: "success",
-                text: `Total de arquivos: ${Object.values(data).length}`,
-                type: 'file'
-            })
+            dispatch(showAlert(`Total de arquivos: ${Object.values(data).length}`,"success", "file"))
             console.log(data)
             setData(Object.values(data))
         } catch (error) {
+            dispatch(showAlert(error.msg,"error", "file"))
             console.error("Erro ao listar todos os arquivos!", error)
             throw error;
         }
@@ -112,8 +105,10 @@ const PageProtesto = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await deleteProtestByNotation(notation, accessToken)
             console.log(response.data)
+            dispatch(showAlert(response.data.message, 'success', 'file'))
             return response.data
         } catch (error) {
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Error ao deletar arquivo rgi!", error)
             throw error;
         }
@@ -277,7 +272,7 @@ const PageProtesto = () => {
                         deletePerm={permissions[0]?.delete_permission} editPerm={permissions[0]?.edit}
                     />
                 </Box>
-                <SnackBar data={alert} handleClose={() => setAlert((prev) => ({ ...prev, open: false }))} />
+                <SnackBar />
                 <MenuOptionsFile
                     handleDelete={handleDeleteByNotation}
                     handleOpenModalPDF={handleOpenModalFile}

@@ -24,20 +24,20 @@ const ChangePassoword = () => {
         const { changeUserPassword } = new User()
         try {
             setLoading(true)
-            if(!password) {
+            if (!password) {
                 throw new Error('Campo vazio')
             }
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await changeUserPassword(password, accessToken)
-            setAlert({open: true, type: "key", severity: "success", text: data.message})
+            setAlert({ open: true, type: "key", severity: "success", text: data.message })
         } catch (error) {
             console.error("Erro ao alterar senha!", error)
-            setAlert({open: true, type: "key", severity: "error", text: error.message})
+            setAlert({ open: true, type: "key", severity: "error", text: error.message })
             throw error;
         }
         finally {
             setLoading(false)
-            setPassword({password: ""})
+            setPassword({ password: "" })
         }
     }
 
@@ -63,25 +63,18 @@ const ChangePassoword = () => {
                 width: 'auto',
                 gap: '20px'
             }}>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '20px',
-                    
-                }}>
-                    <TextField sx={{
-                        width: isSmallScreen ? '100%' : '400px',
+                <TextField
+                    fullWidth
+                    sx={{
                         '& input': { color: 'success.main' },
                     }}
                     value={password.password}
-                    onChange={(e) => setPassword((prev) => ({...prev, password: e.target.value}))}
-                        label="Senha"
-                        placeholder='Digite sua senha'
-                        color='success'
-                    />
-                    
+                    onChange={(e) => setPassword((prev) => ({ ...prev, password: e.target.value }))}
+                    label="Senha"
+                    placeholder='Digite sua senha'
+                    color='success'
+                />
 
-                </Box>
                 <Button sx={{
                     display: 'flex',
                     alignSelf: "center",
@@ -93,16 +86,16 @@ const ChangePassoword = () => {
                     ":hover": {
                         background: 'transparent',
                         color: '#237117',
-                        
+
                     }
                 }} onClick={handleChangePassword}>
                     Atualizar
                 </Button>
             </Box>
-            <SnackBar data={alert} handleClose={(prev) => setAlert({...prev, open: false})} />
+            <SnackBar data={alert} handleClose={(prev) => setAlert({ ...prev, open: false })} />
         </Box>
     )
-    : 
-    <Loading />
+        :
+        <Loading />
 }
 export default withAuth(ChangePassoword)

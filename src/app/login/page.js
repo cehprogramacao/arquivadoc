@@ -6,7 +6,7 @@ import { useState } from "react";
 import { login } from "@/services/auth.service";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import { SET_LOGIN_DATA } from "@/store/actions";
+import { SET_LOGIN_DATA, showAlert } from "@/store/actions";
 import Snackbar from "@/Components/SnackBar";
 import SnackBar from "@/Components/SnackBar";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -21,12 +21,7 @@ const LoginPage = () => {
     password: ""
   })
 
-  const [alert, setAlert] = useState({
-    open: false,
-    text: '',
-    type: '',
-    severity: ''
-  });
+  
   
   const handleOnChange = (event) => {
     const { name, value } = event.target
@@ -43,14 +38,12 @@ const LoginPage = () => {
       const { accessToken, refreshToken } = data;
       sessionStorage.setItem('accessToken', accessToken);
       sessionStorage.setItem('refreshToken', refreshToken);
-      dispatch({ type: SET_LOGIN_DATA});
-      setAlert({ text: data.message, type: "success",severity: "success", open: true });
+      dispatch(showAlert(data.message, "success", "file"))
       if (data.auth) {
         router.push('/'); 
       }
     } catch (err) {
-      const errorMessage = err.message || "An unexpected error occurred";
-      setAlert({ text: errorMessage, type: 'error', open: true, severity:"error" });
+      dispatch(showAlert(err.message, "error", "file"))
     }
 
   };
