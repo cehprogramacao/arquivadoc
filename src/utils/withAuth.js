@@ -86,7 +86,7 @@ const withAuth = (WrappedComponent) => {
         sessionStorage.removeItem('isAdmin')
         router.push('/login');
       }
-    }, [router]);
+    }, []);
 
     return <WrappedComponent {...props} />;
   };

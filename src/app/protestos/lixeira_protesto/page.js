@@ -1,161 +1,63 @@
 "use client"
 import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery, Grid } from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LixeiraTable } from "./tableLixeira"
 import CustomContainer from "@/Components/CustomContainer"
 import withAuth from "@/utils/withAuth"
 import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
+import Loading from "@/Components/loading"
+import ProtestService from "@/services/protest.service"
+import SnackBar from "@/Components/SnackBar"
 
 
 
-const LixeiraProtestos = ({ data }) => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const docs = [
-        {
-            name: 'Ronaldo',
-            text: 'Procuração'
-        },
+const LixeiraProtestos = () => {
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [alert, setAlert] = useState({
+        open: true,
+        severity: "",
+        type: "",
+        text: ""
+    })
 
 
-    ]
-    const top100Films = [
-        {
-            label: 'Número'
-        },
-        {
-            label: 'Caixa'
-        },
-    ];
+    const getFetchingFilesFromTrash = async () => {
+        const { getProtestFromTrash } = new ProtestService()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getProtestFromTrash(accessToken)
+            setAlert({
+                open: true,
+                severity: "success",
+                type: "file",
+                text: `Total de arquivos na lixera: ${Object.values(data).length}`
+            })
+            setData(Object.values(data))
+        } catch (error) {
+            setAlert({
+                open: true,
+                severity: "error",
+                type: "file",
+                text: error.msg
+            })
+            console.error("Erro ao buscar arquivos da lixeira!", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
 
-    const [rows, setRows] = useState([
-        {
-            id: 1,
-            numero: '000001',
-            caixa: '14276348000110',
-            status: 'Ativo',
-            tipo: 'Tipo 1',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 1',
-            devedor: 'Devedor 1',
-            arquivo: 'https://link-arquivo-1.com'
-        },
-        {
-            id: 2,
-            numero: '000002',
-            caixa: '14276348000110',
-            status: 'Inativo',
-            tipo: 'Tipo 2',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 2',
-            devedor: 'Devedor 2',
-            arquivo: 'https://link-arquivo-2.com'
-        },
-        {
-            id: 3,
-            numero: '000003',
-            caixa: '14276348000110',
-            status: 'Ativo',
-            tipo: 'Tipo 3',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 3',
-            devedor: 'Devedor 3',
-            arquivo: 'https://link-arquivo-3.com'
-        },
-        {
-            id: 4,
-            numero: '000004',
-            caixa: '14276348000110',
-            status: 'Inativo',
-            tipo: 'Tipo 4',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 4',
-            devedor: 'Devedor 4',
-            arquivo: 'https://link-arquivo-4.com'
-        },
-        {
-            id: 5,
-            numero: '000005',
-            caixa: '14276348000110',
-            status: 'Ativo',
-            tipo: 'Tipo 5',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 5',
-            devedor: 'Devedor 5',
-            arquivo: 'https://link-arquivo-5.com'
-        },
-        {
-            id: 6,
-            numero: '000006',
-            caixa: '14276348000110',
-            status: 'Inativo',
-            tipo: 'Tipo 6',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 6',
-            devedor: 'Devedor 6',
-            arquivo: 'https://link-arquivo-6.com'
-        },
-        {
-            id: 7,
-            numero: '000007',
-            caixa: '14276348000110',
-            status: 'Ativo',
-            tipo: 'Tipo 7',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 7',
-            devedor: 'Devedor 7',
-            arquivo: 'https://link-arquivo-7.com'
-        },
-        {
-            id: 8,
-            numero: '000008',
-            caixa: '14276348000110',
-            status: 'Inativo',
-            tipo: 'Tipo 8',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 8',
-            devedor: 'Devedor 8',
-            arquivo: 'https://link-arquivo-8.com'
-        },
-        {
-            id: 9,
-            numero: '000009',
-            caixa: '14276348000110',
-            status: 'Ativo',
-            tipo: 'Tipo 9',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 9',
-            devedor: 'Devedor 9',
-            arquivo: 'https://link-arquivo-9.com'
-        },
-        {
-            id: 10,
-            numero: '000010',
-            caixa: '14276348000110',
-            status: 'Inativo',
-            tipo: 'Tipo 10',
-            apresentante: '14276348000110',
-            sacado: 'Sacado 10',
-            devedor: 'Devedor 10',
-            arquivo: 'https://link-arquivo-10.com'
-        },
-    ]);
+    useEffect(() => {
+        getFetchingFilesFromTrash()
+    }, [])
 
 
 
-
-    const handleExcluir = (id) => {
-        const updatedRows = rows.filter((row) => row.id !== id);
-        setRows(updatedRows);
-    };
-    const [select, setSelect] = useState(null);
-    const [valueInput, setValueInput] = useState('')
-    const handleBuscar = () => {
-
-    };
-
-    return (
+    return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Protesto']} >
                 <Box sx={{
@@ -173,7 +75,7 @@ const LixeiraProtestos = ({ data }) => {
                                     </Typography>
                                 </Box>
                             </Grid>
-                            <Grid item xs={12} >
+                            {/* <Grid item xs={12} >
                                 <Grid container spacing={3}>
                                     <Grid item xs={12} lg={5} md={5} sm={6} >
                                         <TextField label="Buscar"
@@ -233,14 +135,15 @@ const LixeiraProtestos = ({ data }) => {
                                         </Box>
                                     </Grid>
                                 </Grid>
-                            </Grid>
+                            </Grid> */}
                             <Grid item xs={12}>
-                                <LixeiraTable data={rows} onClick={handleExcluir} />
+                                <LixeiraTable data={data} />
                             </Grid>
                         </Grid>
 
                     </CustomContainer>
                 </Box>
+                <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
             </PrivateRoute>
         </AuthProvider>
     )

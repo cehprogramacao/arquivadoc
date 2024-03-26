@@ -9,29 +9,11 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import RGI from '@/services/rgi.service';
 import CustomContainer from '@/Components/CustomContainer';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import ProtestService from '@/services/protest.service';
+import Customer from '@/services/customer.service';
 
-const ModalList = ({ open, data, onClose, notation, deletePerm, editPerm, handleDeleteByNotation }) => {
-    const path = usePathname().split("/")[1]
-    // console.log(data, '696969696996969696')
-    const theme = useTheme()
-    const createBlobUrl = (base64Data) => {
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-        return URL.createObjectURL(blob);
-    };
+const ModalListCards = ({ open, data, onClose, cpfcnpj }) => {
     const handlePrintFile = () => {
-        const base64Data = data.file;
+        const base64Data = data.file_url;
         const byteCharacters = atob(base64Data);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
@@ -46,10 +28,22 @@ const ModalList = ({ open, data, onClose, notation, deletePerm, editPerm, handle
     }
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
-    // console.log(data, 'ModalListaaaaaaaaaaaaaaaaaaaaaaa')
-    // console.log(data.file, 'Index e Filllllllllllllllllllllllle')
 
-    
+
+    const handleDeleteByPrenotation = async () => {
+        const { deleteTermLGDP } = new Customer()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteTermLGDP(cpfcnpj, accessToken)
+
+            console.log(response.data)
+            window.location.reload()
+            return response.data
+        } catch (error) {
+            console.error("Error ao deletar arquivo rgi!", error)
+            throw error;
+        }
+    }
 
     return (
         <>
@@ -83,7 +77,7 @@ const ModalList = ({ open, data, onClose, notation, deletePerm, editPerm, handle
                                 height: { lg: 500, md: 500, sm: 400, xs: 350 }
                             }}>
                                 <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                    <Viewer fileUrl={`data:application/pdf;base64,${data.file}`} plugins={[defaultLayoutPluginInstance]} />
+                                    <Viewer fileUrl={`data:application/pdf;base64,${data.doc_file}`} plugins={[defaultLayoutPluginInstance]} />
                                     {/* <Viewer fileUrl={createBlobUrl(data[index]?.file)} plugins={[defaultLayoutPluginInstance]} /> */}
                                     {/* <Viewer fileUrl={data[0]?.file} plugins={[defaultLayoutPluginInstance]} /> */}
                                 </Worker>
@@ -100,34 +94,27 @@ const ModalList = ({ open, data, onClose, notation, deletePerm, editPerm, handle
                                 justifyContent: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" }
                             }}>
                                 {/* Add your buttons here */}
-                                {editPerm === 1 && (
-                                    <Link href={`/${path}/[notation]`} as={`/${path}/${notation}`}>
-                                        <Button variant="outlined" color='inherit' sx={{
-                                            color: '#FFD500',
-                                            ":hover": {
-                                                color: '#FFD500'
-                                            }
-                                        }}>
-                                            <EditIcon />
-                                        </Button>
-                                    </Link>
-                                )}
-
+                                <Button variant="outlined" color='inherit' sx={{
+                                    color: '#FFD500',
+                                    ":hover": {
+                                        color: '#FFD500'
+                                    }
+                                }}>
+                                    <EditIcon />
+                                </Button>
                                 <Button variant="outlined" color='inherit' sx={{
                                     color: "#0dcaf0",
                                     ":hover": {
                                         color: "#0DCAF0"
                                     }
-                                }} onClick={() => handlePrintFile()} >
+                                }} onClick={handlePrintFile} >
                                     <PrintIcon />
                                 </Button>
-                                {deletePerm === 1 && (
-                                    <Button variant="outlined" color='error' onClick={handleDeleteByNotation}>
-                                        <DeleteIcon sx={{
-                                            fill: '#dc3545'
-                                        }} />
-                                    </Button>
-                                )}
+                                <Button variant="outlined" color='error' onClick={handleDeleteByPrenotation}>
+                                    <DeleteIcon sx={{
+                                        fill: '#dc3545'
+                                    }} />
+                                </Button>
                             </Box>
                         </Grid>
                     </Grid>
@@ -150,4 +137,4 @@ const ModalList = ({ open, data, onClose, notation, deletePerm, editPerm, handle
     );
 }
 
-export default ModalList;
+export default ModalListCards;

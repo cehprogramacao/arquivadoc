@@ -16,7 +16,6 @@ const inter = Poppins({ subsets: ['latin'], weight: '500' });
 
 const RootLayout = ({ children }) => {
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <html lang="pt-br">
       <head>

@@ -30,6 +30,7 @@ const SnackBar = ({ data, handleClose, }) => {
   return (
     <Snackbar open={data.open} autoHideDuration={6000} onClose={handleClose} >
       <Alert
+        variant='filled'
         onClose={handleClose}
         severity={data.severity === "success" ? "success" : "error"}
         icon={getIcon()}

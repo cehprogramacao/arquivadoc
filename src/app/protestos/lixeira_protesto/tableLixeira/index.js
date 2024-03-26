@@ -10,6 +10,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import ProtestService from '@/services/protest.service';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -23,7 +24,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
   },
-  padding: '10px 22px' 
+  padding: '10px 22px'
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -37,15 +38,36 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export const LixeiraTable = ({ data, onClick }) => {
- 
-    const handleOpen = (link) => {
-        window.open(link)
+
+  const handlePrintFile = (file) => {
+    const base64Data = file;
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
-  
-  
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+    const blobUrl = URL.createObjectURL(blob);
+    window.open(blobUrl, '_blank');
+  }
+  const handleOpenFile = async (notation) => {
+    const { getProtestByNotation } = new ProtestService()
+    try {
+      const accessToken = sessionStorage.getItem("accessToken")
+      const { data } = await getProtestByNotation(notation, accessToken)
+      handlePrintFile(data.file)
+    } catch (error) {
+      console.error("Erro ao buscar arquivo", error)
+      throw error;
+    }
+  }
+
+
 
   return (
-    <TableContainer component={Paper} sx={{ width: "100%"}}>
+    <TableContainer component={Paper} sx={{ width: "100%" }}>
       <Table sx={{ maxWidth: '100%' }} >
         <TableHead>
           <TableRow>
@@ -56,19 +78,19 @@ export const LixeiraTable = ({ data, onClick }) => {
             <StyledTableCell align='center'>Sacado</StyledTableCell>
             <StyledTableCell align='center'>Devedor</StyledTableCell>
             <StyledTableCell align='center'>Arquivo</StyledTableCell>
-            <StyledTableCell align='right'>Excluir</StyledTableCell>
+            {/* <StyledTableCell align='right'>Excluir</StyledTableCell> */}
             <StyledTableCell align='right'>Restaurar</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
           {data.map((row, index) => (
             <StyledTableRow key={index}>
-              <StyledTableCell align='left'>{row.numero}</StyledTableCell>
-              <StyledTableCell align='center'>{row.caixa}</StyledTableCell>
-              <StyledTableCell align='center' >{row.status}</StyledTableCell>
-              <StyledTableCell align='center'>({`${row.apresentante}`})</StyledTableCell>
-              <StyledTableCell align='center'>{row.sacado}</StyledTableCell>
-              <StyledTableCell align='center'>{row.devedor}</StyledTableCell>
+              <StyledTableCell align='left'>{row.notation}</StyledTableCell>
+              <StyledTableCell align='center'>{row.box}</StyledTableCell>
+              <StyledTableCell align='center' >{row.situation}</StyledTableCell>
+              <StyledTableCell align='center'>({`${row.presenterDocument}`})</StyledTableCell>
+              <StyledTableCell align='center'>{row.draweeName}</StyledTableCell>
+              <StyledTableCell align='center'>{row.debtorName}</StyledTableCell>
               <StyledTableCell align='center'>
                 <Button sx={{
                   fontSize: '12px',
@@ -76,18 +98,18 @@ export const LixeiraTable = ({ data, onClick }) => {
                   left: 1,
                   color: 'black',
                   background: '#237117',
-                  padding:'10px 9px ',
+                  padding: '10px 9px ',
                   border: '1px solid #237117',
                   color: '#fff',
                   ":hover": {
                     background: 'transparent',
                     color: '#237117'
                   }
-                }} onClick={() => handleOpen(row.arquivo)}>
+                }} onClick={() => handleOpenFile(row.notation)}>
                   Ver Arquivo
                 </Button>
               </StyledTableCell>
-              <StyledTableCell align='right'>
+              {/* <StyledTableCell align='right'>
                 <Button sx={{
                   fontSize: '15px',
                   textTransform: 'none',
@@ -103,7 +125,7 @@ export const LixeiraTable = ({ data, onClick }) => {
                 }} onClick={() => onClick(row.id)}>
                   Excluir
                 </Button>
-              </StyledTableCell>
+              </StyledTableCell> */}
               <StyledTableCell align='right'>
                 <Button sx={{
                   fontSize: '15px',

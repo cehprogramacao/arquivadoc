@@ -2,40 +2,57 @@
 import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme, Grid } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
-import { DocList } from '@/Components/List/DocList';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import Autocomplete from '@mui/material/Autocomplete';
 import { CadastroProtesto } from '@/Components/Modals/ModalCadastroProtesto';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
 import ModalList from '@/Components/Modals/ModalList';
 import CustomContainer from '@/Components/CustomContainer';
 import { width } from '@mui/system';
 import withAuth from '@/utils/withAuth';
-import { AuthProvider } from '@/context';
+import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
+import { DocList } from './components/TableProtest';
+import SnackBar from '@/Components/SnackBar';
+import ProtestService from '@/services/protest.service';
+import Loading from '@/Components/loading';
+import { ModalOptions } from '@/Components/Modals/modalOptions/modalOptions';
+import MenuOptionsFile from '@/Components/MenuPopUp';
 
-const top100Films = [
-    { label: 'Nome' },
-    { label: 'CPF' },
-    { label: 'Caixa' },
-];
-
-const docs = [
-    {
-        name: 'Ronaldo',
-        text: 'Procuração',
-        link: "/teste.pdf"
-    },
+const options = [
+    { label: 'Apontamento' },
+    { label: 'Apresentante' }
 ]
-
 const PageProtesto = () => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
+    const [data, setData] = useState([])
+    const { permissions } = useAuth()
+    const [dataFile, setDataFile] = useState([])
+    const [notation, setNotation] = useState("")
+    const [option, setOption] = useState({
+        option: "",
+        value: ""
+    })
+    const [alert, setAlert] = useState({
+        open: true,
+        severity: "",
+        text: "",
+        type: ""
+    })
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+    const handleOpenPopUp = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+    const handleClosePopUp = () => {
+        setAnchorEl(null)
+    }
+    const [loading, setLoading] = useState()
     const [openModalCadastro, setOpenModalCadastro] = useState(false)
     const [openModalPartes, setOpenModalPartes] = useState(false)
     const [openModalListFile, setOpenModalListFile] = useState(false)
+
+
     const handleOpenModalPartes = () => {
         setOpenModalPartes(true)
     }
@@ -48,15 +65,124 @@ const PageProtesto = () => {
     const handleCloseModalCadastro = () => {
         setOpenModalCadastro(false)
     }
-    const handleOpenModalFile = () => {
-        setOpenModalListFile(true)
+    const handleOpenModalFile = async () => {
+        const { getProtestByNotation } = new ProtestService()
+        try {
+            setOpenModalListFile(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getProtestByNotation(notation, accessToken)
+            console.log(data)
+            setDataFile(data)
+        } catch (error) {
+            console.error("Erro ao buscar arquivo", error)
+            throw error;
+        }
     }
     const handleCloseModalFile = () => {
         setOpenModalListFile(false)
     }
 
+    const getAllFilesProtest = async () => {
+        const { getAllProtests } = new ProtestService()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getAllProtests(accessToken)
 
-    return (
+            setAlert({
+                open: true,
+                severity: "success",
+                text: `Total de arquivos: ${Object.values(data).length}`,
+                type: 'file'
+            })
+            console.log(data)
+            setData(Object.values(data))
+        } catch (error) {
+            console.error("Erro ao listar todos os arquivos!", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    const handleDeleteByNotation = async () => {
+        const { deleteProtestByNotation } = new ProtestService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteProtestByNotation(notation, accessToken)
+            console.log(response.data)
+            return response.data
+        } catch (error) {
+            console.error("Error ao deletar arquivo rgi!", error)
+            throw error;
+        }
+        finally {
+            getAllFilesProtest()
+        }
+    }
+
+    const getProtestByNotation = async (value, accessToken) => {
+        const { getProtestByNotation } = new ProtestService()
+        let newData = []
+        try {
+            setLoading(true)
+            const { data } = await getProtestByNotation(value, accessToken)
+            console.log(data)
+            newData.push(data)
+            setData(newData)
+        } catch (error) {
+            console.error("Erro ao buscar arquivo", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+    const getProtestByPresenter = async (value, accessToken) => {
+        const { getProtestByPresenter } = new ProtestService()
+        let newData = []
+        try {
+            setLoading(true)
+            const { data } = await getProtestByPresenter(value, accessToken)
+            console.log(data)
+
+            setData(Object.values(data))
+        } catch (error) {
+            console.error("Erro ao buscar arquivo", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    const handleSearchProtest = async () => {
+        const accessToken = sessionStorage.getItem("accessToken")
+        if (option.value && option.value) {
+            try {
+                if (option.option === 'Apontamento') {
+                    await getProtestByNotation(option.value, accessToken)
+                }
+                else if (option.option === 'Apresentante') {
+                    await getProtestByPresenter(option.value, accessToken)
+                }
+
+            } catch (error) {
+                console.error("Erro ao buscar arquivo!", error)
+                throw new Error("Erro ao buscar arquivo!")
+            }
+        }
+        else {
+            console.error("Campos vazios!")
+            throw new Error('Campos Vazios!')
+        }
+    }
+    useEffect(() => {
+        getAllFilesProtest()
+    }, [])
+
+    return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Protesto']}>
                 <Box
@@ -81,7 +207,9 @@ const PageProtesto = () => {
                                     <Grid item xs={12} lg={5} md={6} sm={6}>
                                         <TextField
                                             label="Buscar"
+                                            value={option.value}
                                             fullWidth
+                                            onChange={(e) => setOption({ ...option, value: e.target.value })}
                                             sx={{ '& input': { color: 'success.main' } }}
                                             color="success"
                                         />
@@ -90,7 +218,9 @@ const PageProtesto = () => {
                                         <Autocomplete
                                             disablePortal
                                             id="combo-box-demo"
-                                            options={top100Films}
+                                            options={options}
+                                            getOptionLabel={(option) => option.label}
+                                            onChange={(e, value) => setOption({ ...option, option: value.label })}
                                             fullWidth
                                             renderInput={(params) => (
                                                 <TextField
@@ -114,16 +244,17 @@ const PageProtesto = () => {
                                             gap: 2,
                                             justifyContent: "center"
                                         }}>
-                                            <Buttons color={'green'} title={'Buscar'} />
-
-                                            <ButtonOpenModals onClick={handleOpenModalCadastro} />
+                                            <Buttons color={'green'} title={'Buscar'} onClick={handleSearchProtest} />
+                                            {permissions[0]?.create_permission === 1 && (
+                                                <ButtonOpenModals onClick={handleOpenModalCadastro} />
+                                            )}
                                             <ButtonLixeira href={"/protestos/lixeira_protesto"} />
                                         </Box>
                                     </Grid>
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} >
-                                <DocList data={docs} onClick={handleOpenModalFile} />
+                                <DocList data={data} handleClick={handleOpenPopUp} setNotation={(e) => setNotation(e)} />
                             </Grid>
                         </Grid>
 
@@ -137,8 +268,25 @@ const PageProtesto = () => {
                     <Drawer anchor='right' onClose={handleCloseModalPartes} open={openModalPartes}>
                         <CadastroPartes onClose={handleCloseModalPartes} />
                     </Drawer>
-                    <ModalList open={openModalListFile} onClose={handleCloseModalFile} data={docs} />
+                    <ModalList
+                        open={openModalListFile}
+                        onClose={handleCloseModalFile}
+                        data={dataFile}
+                        handleDeleteByNotation={handleDeleteByNotation}
+                        notation={notation}
+                        deletePerm={permissions[0]?.delete_permission} editPerm={permissions[0]?.edit}
+                    />
                 </Box>
+                <SnackBar data={alert} handleClose={() => setAlert((prev) => ({ ...prev, open: false }))} />
+                <MenuOptionsFile
+                    handleDelete={handleDeleteByNotation}
+                    handleOpenModalPDF={handleOpenModalFile}
+                    anchorEl={anchorEl}
+                    handleClose={handleClosePopUp}
+                    type={notation}
+                    deletePerm={permissions[0]?.delete_permission}
+                    editPerm={permissions[0]?.edit}
+                    open={open} />
             </PrivateRoute>
         </AuthProvider>
     );

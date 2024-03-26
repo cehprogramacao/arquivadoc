@@ -155,19 +155,8 @@ export const CadastroOficio = ({ onClose, getData }) => {
           }}>
             Cadastro - Oficio
           </Typography>
-          <IconButton style={{
-            boxSizing: 'content-box',
-            color: '#000',
-            border: 0,
-            background: 'transparent url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23000\'%3e%3cpath d=\'M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z\'/%3e%3c/svg%3e")',
-            borderRadius: '0.375rem',
-            opacity: '.5',
-            cursor: 'pointer',
-            '&:hover': {
-              opacity: '1',
-            },
-          }} onClick={onClose} >
-
+          <IconButton onClick={onClose} >
+          <CloseOutlined />
           </IconButton>
         </Box>
         <Box sx={{
@@ -330,39 +319,6 @@ export const CadastroOficio = ({ onClose, getData }) => {
           />
           <TextField
             fullWidth
-            sx={{
-
-              border: 'none',
-              '::placeholder': {
-                color: 'success.main',
-              },
-              '& .MuiInputBase-input': {
-                display: 'block',
-                width: '100%',
-                padding: '0.9rem 0.75rem',
-                fontSize: '1rem',
-                fontWeight: 400,
-                lineHeight: 1.5,
-                backgroundColor: '#fff',
-                backgroundClip: 'padding-box',
-                border: '1px solid #ced4da',
-                WebkitAppearance: 'none',
-                MozAppearance: 'none',
-                appearance: 'none',
-                borderRadius: '0.375rem',
-                transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
-              },
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  border: 'none',
-                },
-              },
-              '& .MuiInput-underline': {
-                '&:before, &:after': {
-                  borderBottom: 'none',
-                },
-              },
-            }}
             type="file"
             color='success'
             onChange={handleFileChange}
