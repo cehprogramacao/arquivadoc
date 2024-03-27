@@ -24,6 +24,7 @@ import { ModalNotesGroup } from "@/Components/ModalsRegistration/ModalNotesGroup
 import { CloseOutlined } from "@mui/icons-material";
 import { useAuth } from "@/context";
 import { showAlert } from "@/store/actions";
+import { useDispatch } from "react-redux";
 
 
 
@@ -759,7 +760,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       </Box>
       <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} getData={getAllNotesTag} />
       <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} />
-      <CadastroNotesTxype open={openModalNotesType} onClose={handleCloseNotesType} getData={getTypeAndGroup} />
+      <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} getData={getTypeAndGroup} />
       
       <CadastroNotesCurtomers getData={getCustumers} open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
       <ModalNotesGroup getData={getTypeAndGroup} onClose={handleCloseGroup} open={openModalGroup} />

@@ -1,70 +1,90 @@
 "use client"
-import { Autocomplete, Box, Button, Drawer, Grid, Stack, TextField, Typography, styled, useMediaQuery, useTheme } from "@mui/material";
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-import { useState } from "react";
-import { DocList } from "@/Components/List/DocList";
-import { Buttons } from "@/Components/Button/Button";
-import withAuth from "@/utils/withAuth";
-import CustomContainer from "@/Components/CustomContainer";
-
-const BoxMain = styled('section')({
-    maxWidth: '1300px',
-    width: '85%',
-    display: 'flex',
-    flexDirection: "column",
-    padding: '5px 10px'
-});
+import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery, Grid } from "@mui/material"
+import { useEffect, useState } from "react"
+import CustomContainer from "@/Components/CustomContainer"
+import withAuth from "@/utils/withAuth"
+import { AuthProvider } from "@/context"
+import PrivateRoute from "@/utils/LayoutPerm"
+import Loading from "@/Components/loading"
+import ProtestService from "@/services/protest.service"
+import SnackBar from "@/Components/SnackBar"
+import { useDispatch } from "react-redux"
+import { showAlert } from "@/store/actions"
+import MenuOptionsFile from "@/Components/ModalOptionsTrash"
+import NoteService from "@/services/notes.service"
+import { DocList } from "./TableTrash"
 
 
-const LixeiraNotas = () => {
+
+const LixeiraProtestos = () => {
+    const [data, setData] = useState([])
+    const dispatch = useDispatch()
+    const [loading, setLoading] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
+
+    const getFetchingFilesFromTrash = async () => {
+        const { getNotesInTrash } = new NoteService()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getNotesInTrash(accessToken)
+            dispatch(showAlert(`Total de arquivos na lixera: ${Object.values(data).length}`, "success", "file"))
+            setData(Object.values(data))
+        } catch (error) {
+            dispatch(showAlert(error.message, "error", "file"))
+            console.error("Erro ao buscar arquivos da lixeira!", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        getFetchingFilesFromTrash()
+    }, [])
 
 
-    const BoxSearch = styled('div')({
-        maxWidth: '100%',
-        width: '100%',
-        padding: '0px',
-        display: "flex",
-        gap: "30px",
-        alignItems: 'center',
-        flexWrap: isSmallScreen ? 'wrap' : 'nowrap',
-        flexDirection: isSmallScreen ? 'column' : 'row'
-    });
 
-    return (
-        <Box sx={{
-            width: '100%',
-            height: "100vh",
-            display: "flex",
-            flexDirection: 'column',
-            placeItems: 'center',
-            gap: '10px'
-        }}>
-            <CustomContainer>
-                <Grid container>
-                    <Grid item xs={12} >
-                        <Box sx={{
-                            width: "100%",
-                            height: "100vh",
-                            display: "flex",
-                            justifyContent: "center"
-                        }}>
-                            <Typography fontSize={40} marginTop={13} fontWeight={'bold'} color={"black"}>
-                                Lixeira Notas
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} >
-                        <DocList data={data} />
-                    </Grid>
-                </Grid>
-            </CustomContainer>
+    return loading ? <Loading /> : (
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['Notas']} >
+                <Box sx={{
+                    width: '100%',
+                    height: '100vh',
+                    py: 15,
+                    px: 3
+                }}>
+                    <CustomContainer>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} >
+                                <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }} >
+                                    <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
+                                        Lixeira
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                        
+                            <Grid item xs={12}>
+                                <DocList data={data} handleClick={handleClick} />
+                            </Grid>
+                        </Grid>
 
-
-        </Box>
-    );
+                    </CustomContainer>
+                </Box>
+                <SnackBar />
+                <MenuOptionsFile anchorEl={anchorEl} open={open} handleClose={handleClose} />
+            </PrivateRoute>
+        </AuthProvider>
+    )
 }
 
-export default withAuth(LixeiraNotas);
+export default withAuth(LixeiraProtestos)

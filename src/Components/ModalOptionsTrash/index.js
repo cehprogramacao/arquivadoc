@@ -71,12 +71,12 @@ const MenuOptionsFile = ({ open, anchorEl, handleClose }) => {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem sx={{ color: "#0088F0" }} disableRipple>
+          <MenuItem sx={{ color: "#0088F0" }} >
             <FileOpen sx={{ fill: '#0088F0' }} />
             Abrir Arquivo
           </MenuItem>
           {/* <Divider sx={{ my: 0 }} /> */}
-            <MenuItem sx={{ color: '#0dcaf0' }} isableRipple>
+            <MenuItem sx={{ color: '#0dcaf0' }} >
               <RestoreFromTrash sx={{ fill: '#0dcaf0' }} />
               Restaurar
             </MenuItem>

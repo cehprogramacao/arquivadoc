@@ -39,6 +39,7 @@ const LoginPage = () => {
       sessionStorage.setItem('accessToken', accessToken);
       sessionStorage.setItem('refreshToken', refreshToken);
       dispatch(showAlert(data.message, "success", "file"))
+      dispatch({type: SET_LOGIN_DATA})
       if (data.auth) {
         router.push('/'); 
       }
