@@ -201,8 +201,7 @@ const PageTermos = () => {
                                                 options={top100Films}
                                                 fullWidth
                                                 autoHighlight
-                                                value={dataOptions.option}
-                                                getOptionLabel={(option) => option.label || ""}
+                                           getOptionLabel={(option) => option.label || ""}
                                                 onChange={(e, newValue) => setDataOptions({ ...dataOptions, option: newValue })}
                                                 isOptionEqualToValue={(option, value) => option.label === value.label}
                                                 renderInput={(params) => (

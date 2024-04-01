@@ -242,7 +242,7 @@ const PageProtesto = () => {
                                             {permissions[0]?.create_permission === 1 && (
                                                 <ButtonOpenModals onClick={handleOpenModalCadastro} />
                                             )}
-                                            <ButtonLixeira href={"/protestos/lixeira_protesto"} />
+                                            <ButtonLixeira href={"/protest/lixeira_protesto"} />
                                         </Box>
                                     </Grid>
                                 </Grid>
@@ -251,10 +251,6 @@ const PageProtesto = () => {
                                 <DocList data={data} handleClick={handleOpenPopUp} setNotation={(e) => setNotation(e)} />
                             </Grid>
                         </Grid>
-
-
-
-
                     </CustomContainer>
                     <Drawer anchor='left' open={openModalCadastro} onClose={handleCloseModalCadastro} >
                         <CadastroProtesto onClickPartes={handleOpenModalPartes} onClose={handleCloseModalCadastro} />

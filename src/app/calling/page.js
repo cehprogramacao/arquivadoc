@@ -268,7 +268,7 @@ const PageOficio = () => {
                                             <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", gap: 2 }}>
                                                 <Buttons color={'green'} title={'Buscar'} onClick={handleFilterByNumberOrEntity} />
                                                 {permissions[4]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                                <ButtonLixeira href={"/oficio/lixeira_oficios"} />
+                                                <ButtonLixeira href={"/calling/lixeira_oficios"} />
                                             </Box>
                                         </Grid>
                                     </Grid>

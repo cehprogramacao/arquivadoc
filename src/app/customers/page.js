@@ -9,23 +9,26 @@ import CustomContainer from "@/Components/CustomContainer"
 import Customer from "@/services/customer.service"
 import Loading from "@/Components/loading"
 import withAuth from "@/utils/withAuth"
+import { useDispatch } from "react-redux"
+import { showAlert } from "@/store/actions"
 
 
 
 const PagePessoas = () => {
+    const dispatch = useDispatch()
     const theme = useTheme();
     const [open, setOpen] = useState(false)
     const [rows, setRows] = useState([])
     const [loading, setLoading] = useState(false)
     const handleOpenModal = () => setOpen(true)
     const handleCloseModal = () => setOpen(false)
-
+    const [options,setOptions] = useState({
+        option: "",
+        value: ""
+    })
     const top100Films = [
         {
             label: 'CPF/CNPJ'
-        },
-        {
-            label: 'Nome'
         },
     ];
 
@@ -36,7 +39,6 @@ const PagePessoas = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await customer.customers(accessToken)
             setRows(data)
-            console.log(data)
             return data
         } catch (error) {
             console.error('Error listing customers', error.message)
@@ -58,7 +60,6 @@ const PagePessoas = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await customer.deleteCustomer(cpfcnpj, accessToken)
-            console.log(data)
             return data
         } catch (error) {
             console.error("error when deleting client", error)
@@ -68,6 +69,30 @@ const PagePessoas = () => {
             setLoading(false)
         }
     };
+
+    const handleFindCustomerByCpfCnpj = async () => {
+        console.log(options)
+        if(options.option && options.value) {
+            const { getCustomerByCPFCNPJ } = new Customer()
+            let newData = []
+            try {
+                const accessToken = sessionStorage.getItem("accessToken")
+                const { data } = await getCustomerByCPFCNPJ(options.value, accessToken)
+                console.log(data)
+                newData.push(data)
+                setRows(newData)
+                dispatch(showAlert("Usuário listado!", "success"))
+            } catch (error) {
+                console.error("Erro ao buscar usuário!", error)
+                dispatch(showAlert(error.message, "error"))
+                throw error;
+            }
+        }
+        else {
+            console.error("Campos vazios!")
+            dispatch(showAlert("Campos vazios!", "error"))
+        }
+    }
 
 
     return (
@@ -99,6 +124,8 @@ const PagePessoas = () => {
                                     <Grid item xs={12} md={6} sm={6} lg={5}>
                                         <TextField label="Buscar"
                                             fullWidth
+                                            value={options.value}
+                                            onChange={(e) => setOptions(state => ({...state, value: e.target.value}))}
                                             sx={{
                                                 '& input': {
                                                     color: 'success.main',
@@ -111,19 +138,17 @@ const PagePessoas = () => {
                                             id="combo-box-demo"
                                             options={top100Films}
                                             fullWidth
+                                            isOptionEqualToValue={(option, label) => option.label === label.label}
                                             autoHighlight
+                                            onChange={(e,value) => {
+                                                setOptions(state => ({...state, option: value.label}))
+                                            }}
                                             getOptionLabel={(option) => option.label}
                                             renderInput={(params) => (
                                                 <TextField
                                                     {...params}
                                                     color="success"
                                                     label="Buscar Por"
-                                                    onChange={(e) => {
-                                                        const selected = top100Films.find(
-                                                            (item) => item.label === e.target.value
-                                                        );
-                                                        setSelect(selected)
-                                                    }}
                                                     sx={{
                                                         color: "#237117",
                                                         "& input": {
@@ -142,7 +167,7 @@ const PagePessoas = () => {
                                             alignItems: "center",
                                             gap: 3
                                         }}>
-                                            <Buttons color={'green'} title={'Buscar'} />
+                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFindCustomerByCpfCnpj} />
                                             <ButtonOpenModals onClick={handleOpenModal} />
                                         </Box>
                                     </Grid>

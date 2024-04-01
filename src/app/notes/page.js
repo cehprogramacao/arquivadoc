@@ -259,7 +259,7 @@ const PageNotas = () => {
                                             }}>
                                                 <Buttons title={"Buscar"} color={"green"} onClick={handleSearchByPresenterOrNumber} />
                                                 {permissions[6]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                                <ButtonLixeira href={"/notas/lixeira_notas"} />
+                                                <ButtonLixeira href={"/notes/lixeira_notas"} />
                                             </Box>
 
                                         </Grid>

@@ -6,7 +6,9 @@ import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 
-export const DocList = ({ data, handleClick, setNotation }) => {
+export const DocList = ({ data, handleClick, setPresenter }) => {
+
+
     return (
         <>
             <Grid
@@ -35,21 +37,22 @@ export const DocList = ({ data, handleClick, setNotation }) => {
                             justifyContent: 'center',
                         }}
                     >
-                        <List sx={{ width: '100%'}}>
+                        <List sx={{ width: '100%' }}>
                             <ListItem sx={{ cursor: 'pointer' }}>
                                 <ListItemAvatar>
                                     <Image width={50} height={50} src="/image/pdf-icon.svg" alt="" />
                                 </ListItemAvatar>
                                 <ListItemText
-                                onClick={(event) => {
-                                    handleClick(event)
-                                    setNotation(item.notation)
-                                }}
+                                    onClick={(event) => {
+                                        handleClick(event)
+                                        console.log(item)
+                                        setPresenter(item.cpfcnpj)
+                                    }}
                                     primaryTypographyProps={{
                                         color: 'black',
                                         fontWeight: 'bold',
                                     }}
-                                    primary={item.notation}
+                                    primary={item.presenterDocument}
                                     secondary={`por ${item.presenterName}`}
                                 />
                             </ListItem>

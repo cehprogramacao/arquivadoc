@@ -21,7 +21,7 @@ const LixeiraProtestos = () => {
     const [loading, setLoading] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
-
+    const [notation, setNotation] = useState("")
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
     }
@@ -36,10 +36,8 @@ const LixeiraProtestos = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getProtestFromTrash(accessToken)
 
-            dispatch(showAlert(`Total de arquivos na lixera: ${Object.values(data).length}`, "success", "file"))
             setData(Object.values(data))
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "file"))
             console.error("Erro ao buscar arquivos da lixeira!", error)
             throw error;
         }
@@ -47,7 +45,33 @@ const LixeiraProtestos = () => {
             setLoading(false)
         }
     }
+    const handleViewFileTrash = async () => {
+        const { getProtestByNotation } = new ProtestService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getProtestByNotation(notation, accessToken)
+            handlePrintFile(data.file)
 
+        } catch (error) {
+            console.error("Erro ao buscar arquivo", error)
+            throw error;
+        }
+    }
+
+    const handlePrintFile = (file) => {
+        const base64Data = file;
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        // Criar uma URL do Blob e abrir em uma nova janela
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+    }
     useEffect(() => {
         getFetchingFilesFromTrash()
     }, [])
@@ -134,14 +158,14 @@ const LixeiraProtestos = () => {
                                 </Grid>
                             </Grid> */}
                             <Grid item xs={12}>
-                                <DocList data={data} handleClick={handleClick} />
+                                <DocList data={data} handleClick={handleClick} setNotation={(e) => setNotation(e)} />
                             </Grid>
                         </Grid>
 
                     </CustomContainer>
                 </Box>
                 <SnackBar />
-                <MenuOptionsFile anchorEl={anchorEl} open={open} handleClose={handleClose} />
+                <MenuOptionsFile handleOpenFile={handleViewFileTrash} anchorEl={anchorEl} open={open} handleClose={handleClose} />
             </PrivateRoute>
         </AuthProvider>
     )

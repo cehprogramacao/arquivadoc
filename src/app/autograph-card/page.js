@@ -209,7 +209,7 @@ const PageAutographCards = () => {
                                         <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", gap: '30px' }}>
                                             <Buttons color={'green'} title={'Buscar'} onClick={handleFilterAutographCard} />
                                             {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                            <ButtonLixeira href={"/cartoes/lixeira_cartoes"} />
+                                            <ButtonLixeira href={"/autograph-card/lixeira_cartoes"} />
                                         </Box>
                                     </Grid>
                                 </Grid>

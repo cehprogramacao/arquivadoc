@@ -1,41 +1,20 @@
 "use client"
 import { Autocomplete, Box, Button, Grid, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
 import { useState } from "react"
-import { DocList } from "@/Components/List/DocList"
 import ModalList from "@/Components/Modals/ModalList"
 import CustomContainer from "@/Components/CustomContainer"
 import withAuth from "@/utils/withAuth"
 import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
+import { DocList } from "./TableTrash"
+import MenuOptionsFile from "@/Components/ModalOptionsTrash"
 
 
 
-const LixeiraCartoes = ({ data }) => {
-    const theme = useTheme()
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+const LixeiraCartoes = () => {
+    const [data, setData] = useState([]) 
 
-    const docs = [
-        {
-            NameFile: 'Procuração',
-            nomeUser: 'Kauan',
-            link: '/teste.pdf'
-        },
-
-
-    ]
-    const top100Films = [
-        {
-            label: 'Número'
-        },
-        {
-            label: 'Caixa'
-        },
-    ];
-
-
-
-
-
+    
     return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={'Cadastros'}>
@@ -59,7 +38,7 @@ const LixeiraCartoes = ({ data }) => {
                                     </Typography>
                                 </Box>
                             </Grid>
-                            <Grid item xs={12} >
+                            {/* <Grid item xs={12} >
                                 <Grid container spacing={3}>
                                     <Grid item lg={5} md={6} sm={6} xs={12} >
                                         <TextField label="Buscar"
@@ -118,15 +97,15 @@ const LixeiraCartoes = ({ data }) => {
                                         </Box>
                                     </Grid>
                                 </Grid>
-                            </Grid>
+                            </Grid> */}
                             <Grid item xs={12} >
-                                <DocList data={docs} />
+                                <DocList data={data} />
                             </Grid>
                         </Grid>
                     </CustomContainer>
 
-                    <ModalList data={docs} link={docs[0].link} />
                 </Box>
+                <MenuOptionsFile  />
             </PrivateRoute>
         </AuthProvider>
     )

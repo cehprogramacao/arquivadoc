@@ -10,8 +10,10 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import RGI from '@/services/rgi.service';
 import CustomContainer from '@/Components/CustomContainer';
 import Customer from '@/services/customer.service';
+import Link from 'next/link';
 
 const ModalListCards = ({ open, data, onClose, cpfcnpj }) => {
+    const path = usePathname().split("/")[1]
     const handlePrintFile = () => {
         const base64Data = data.file_url;
         const byteCharacters = atob(base64Data);
@@ -94,14 +96,16 @@ const ModalListCards = ({ open, data, onClose, cpfcnpj }) => {
                                 justifyContent: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" }
                             }}>
                                 {/* Add your buttons here */}
-                                <Button variant="outlined" color='inherit' sx={{
-                                    color: '#FFD500',
-                                    ":hover": {
-                                        color: '#FFD500'
-                                    }
-                                }}>
-                                    <EditIcon />
-                                </Button>
+                                <Link href={`/${path}/[cpfcnpj]`} as={`/${path}/${cpfcnpj}`}>
+                                    <Button variant="outlined" color='inherit' sx={{
+                                        color: '#FFD500',
+                                        ":hover": {
+                                            color: '#FFD500'
+                                        }
+                                    }}>
+                                        <EditIcon />
+                                    </Button>
+                                </Link>
                                 <Button variant="outlined" color='inherit' sx={{
                                     color: "#0dcaf0",
                                     ":hover": {

@@ -38,7 +38,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export const UserTable = ({ data, onClick }) => {
 
   const dataArray = Array.isArray(data) ? data : Object.values(data)
-  console.log(dataArray)
 
 
 
@@ -78,7 +77,7 @@ export const UserTable = ({ data, onClick }) => {
                 </Button>
               </StyledTableCell>
               <StyledTableCell align='center'>
-                <Link href={`/pessoas/[cpfcnpj]`} as={`/pessoas/${row.cpfcnpj}`}>
+                <Link href={`/customers/[cpfcnpj]`} as={`/customers/${row.cpfcnpj}`}>
                   <Button sx={{
                     fontSize: '15px',
                     textTransform: 'none',

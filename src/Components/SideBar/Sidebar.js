@@ -148,7 +148,7 @@ export const Sidebar = () => {
                                 Recentes
                             </button>
                         </Link>
-                        <Link href={"/notas"} style={{
+                        <Link href={"/notes"} style={{
                             display: permissions[6]?.view === 1 ? "flex" : "none"
                         }} >
                             <button style={{
@@ -194,7 +194,7 @@ export const Sidebar = () => {
                                 RGI
                             </button>
                         </Link>
-                        <Link href={"/protestos"} style={{
+                        <Link href={"/protest"} style={{
                             display: permissions[0]?.view === 1 ? "flex" : "none"
                         }} >
                             <button style={{
@@ -217,7 +217,7 @@ export const Sidebar = () => {
                                 Protestos
                             </button>
                         </Link>
-                        <Link href={"/oficio"} style={{
+                        <Link href={"/calling"} style={{
                             display: permissions[4]?.view === 1 ? "flex" : "none"
                         }}>
                             <button style={{
@@ -286,7 +286,7 @@ export const Sidebar = () => {
                                 RPJ
                             </button>
                         </Link>
-                        <Link href={"/cartoes"} style={{
+                        <Link href={"/autograph-card"} style={{
                             display: permissions[5]?.view === 1 ? "flex" : "none"
                         }}>
                             <button style={{
@@ -355,7 +355,7 @@ export const Sidebar = () => {
                                 Solicitantes
                             </button>
                         </Link>
-                        <Link href={"/pessoas"} style={{
+                        <Link href={"/customers"} style={{
                             display: isAdmin === "1" || permissions[5]?.view === 1 ? "flex" : "none"
                         }} >
                             <button style={{
