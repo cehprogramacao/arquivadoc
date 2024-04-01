@@ -1,67 +1,130 @@
-
-
-
-import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
-import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
-import ModalTypesRTD from "@/Components/ModalsRegistration/ModalCadastroTypesRTD";
-import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete } from "@mui/material";
+import React, { useEffect, useState } from 'react'
+import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton, Grid } from "@mui/material";
 import { Box } from "@mui/system";
-import { useState } from "react";
+import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
+import ModalTypesRTD from '@/Components/ModalsRegistration/ModalCadastroTypesRPJ';
+import RenderNoOptions from '@/Components/ButtonOpenModalCadastro';
+import { CloseOutlined } from '@mui/icons-material';
+import Customer from '@/services/customer.service';
+import { useDispatch } from 'react-redux'
+import { showAlert } from '@/store/actions';
+import { useAuth } from '@/context';
+import RTDService from '@/services/rtd.service';
 
+export const CadastroModalRTD = ({ onClose, getData }) => {
+    const dispatch = useDispatch()
+    const [data, setData] = useState({
+        notation: 0,
+        register: 0,
+        presenter: null,
+        service_type: null,
+        book: 0,
+        initial_sheet: 0,
+        final_sheet: 0,
+        box: 0,
+        file_url: ""
+    })
+    const [presenter, setPresenter] = useState([])
+    const { permissions } = useAuth()
 
-export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
-    const [value, setValue] = useState('')
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-
-    const optipos = [
-        {
-            label: 'Protestado'
-        },
-        {
-            label: 'Cancelamento'
-        },
-        {
-            label: 'Em andamento  '
-        },
-    ]
-
-    const opt = [
-        {
-            label: 'Por falta ou recusa de aceite'
-        },
-        {
-            label: 'Por falta ou recusa de pagamento'
-        },
-        {
-            label: 'Por falta de devolução'
-        },
-        {
-            label: 'Por simples indicação do portador'
-        },
-    ]
-
-    const optapresentante = [
-        {
-            numero: '3333', label: 'Guaiuba Construtora'
-        }
-    ]
-
-    const [openModalPresenter, setOpenModalPresenter] = useState('')
-    const handleOpenModalPresenter = () => setOpenModalPresenter(!openModalPresenter)
-    const handleCloseModalPresenter = () => setOpenModalPresenter(!openModalPresenter)
+    const [optionPresenter, setOptionPresenter] = useState(null)
+    const [optionType, setOptionType] = useState(null)
+    const [types, setTypes] = useState([])
     const [openModalCadastroTypes, setOpenModalCadastroTypes] = useState(false)
     const handleOpenModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
     const handleCloseModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
 
+    const fetchData = async () => {
+        const { getAllRTDTypes } = new RTDService()
+        const { customers } = new Customer()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const responseCustomers = await customers(accessToken)
+            const responseTypes = await getAllRTDTypes(accessToken)
+            setPresenter(Object.values(responseCustomers.data))
+            setTypes(Object.values(responseTypes.data))
+
+        } catch (error) {
+            console.error('Erro ao buscar dados!', error)
+            throw error
+        }
+    }
+
+    const handleChangeFileUrl = (event) => {
+        const files = event.target.files[0]
+        if (files) {
+            const fileReader = new FileReader()
+            fileReader.onloadend = () => {
+                const fileResult = fileReader.result.split(",")[1]
+                setData(state => ({ ...state, file_url: fileResult }))
+            }
+            fileReader.readAsDataURL(files)
+        }
+    }
+
+    const handleChangeValuesField = (event) => {
+        const { name, value } = event.target
+        setData(state => ({ ...state, [name]: value }))
+    }
+
+    const handleCreateFileRtd = async () => {
+        const { createRTD } = new RTDService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await createRTD(accessToken, data)
+            dispatch(showAlert(response.data.message, "success", "file"))
+        } catch (error) {
+            console.error("Erro ao arquivar arquivo de rpj", error)
+            dispatch(showAlert(error.message, "error", "file"))
+            throw error
+        }
+        finally {
+            getData()
+            onClose()
+        }
+    }
+    const deletePresenterById = async (typeId) => {
+        const { deleteCustomer } = new Customer()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await deleteCustomer(typeId, accessToken)
+            console.log(data)
+        } catch (error) {
+            console.error('Erro ao deletar tipo de rgi!', error)
+            throw error;
+        }
+
+    }
+
+    const handleDeleteTypeRpjById = async (typeId) => {
+        const { deleteRTDTypeById } = new RTDService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await deleteRTDTypeById(accessToken, typeId)
+        } catch (error) {
+            console.error("Erro ao deletar tipo de rpj!", error)
+            throw error;
+        }
+        finally {
+            fetchData()
+        }
+    }
+
+    const [openModalCadastroPartes, setOpenModalCadastroPartes] = useState(false)
+    const handleOpenModalPartes = () => setOpenModalCadastroPartes(true)
+    const handleCloseModalPartes = () => setOpenModalCadastroPartes(false)
+    useEffect(() => {
+        fetchData()
+    }, [])
+
     return (
         <Box sx={{
-            width: isSmallScreen ? '320px' : "409px",
+            width: { md: 400, xs: "100%" },
             height: '100vh',
-            padding: '8px 10px',
             display: 'flex',
             flexDirection: 'column',
             gap: '30px',
+            px: 1,
             overflow: 'hidden'
         }}>
             <Box sx={{
@@ -75,119 +138,161 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
                 }}>
                     Cadastro - RTD
                 </Typography>
-                <button style={{
-                    boxSizing: 'content-box',
-                    width: '1em',
-                    height: '1em',
-                    padding: '0.25em 0.25em',
-                    color: '#000',
-                    border: 0,
-                    background: 'transparent url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23000\'%3e%3cpath d=\'M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z\'/%3e%3c/svg%3e")',
-                    borderRadius: '0.375rem',
-                    opacity: '.5',
-                    cursor: 'pointer',
-                    '&:hover': {
-                        opacity: '1',
-                    },
-                }} onClick={onClose} >
-
-                </button>
+                <IconButton onClick={onClose}>
+                    <CloseOutlined />
+                </IconButton>
             </Box>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 width: '100%',
-                gap: isSmallScreen ? '20px' : '30px',
+                gap: '30px',
                 height: "100vh",
                 overflowY: 'auto',
-                padding: '5px 0'
-
+                py: 1,
             }}>
+
                 <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
                     '& input': { color: 'success.main' }
                 }}
-                    label="Prenotação"
+                    fullWidth
+                    label="Notação"
                     type="text"
                     color='success'
+                    name='notation'
+                    value={data.notation}
+                    onChange={handleChangeValuesField}
                 />
-                <Autocomplete
-
-                    disablePortal
-                    id="combo-box-demo"
-                    options={optapresentante}
-                    autoHighlight
-                    getOptionLabel={(option) => option.numero}
-                    noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title={'Cadastrar Apresentante'} />}
-                    renderOption={(props, option) => (
-                        <Box component="li" sx={{
-                            width: '100%',
-                            display: 'flex', flexDirection: 'column', gap: '6px'
-                        }} {...props}>
-                            <Typography sx={{ fontSize: "12px", display: 'flex', alignSelf: 'start' }}>
-                                {option.numero}
-                            </Typography>
-                            <Typography sx={{
-                                fontSize: "11px", display: 'flex', alignSelf: 'start',
-                                textTransform: 'uppercase'
-                            }}>
-                                {option.label}
-                            </Typography>
-                        </Box>
-                    )}
-                    sx={{ width: isSmallScreen ? '100%' : 360 }}
-                    renderInput={(params) => <TextField color="success" {...params}
-
-
-                        inputProps={{
-                            ...params.inputProps,
-                            autoComplete: 'new-password',
-                        }}
-                        label="Apresentante"
-                        sx={{
-                            color: "#237117", '& input': {
-                                color: 'success.main',
-                            },
-                        }} />}
-                />
-
                 <TextField sx={{
-                    width: isSmallScreen ? '100%' : '360px',
-                    '& input': { color: 'success.main' }
+                    '& input': { color: 'success.main' },
                 }}
+                    fullWidth
                     label="Registro"
                     type="text"
+                    name='register'
+                    value={data.register}
+                    onChange={handleChangeValuesField}
                     color='success'
                 />
                 <Autocomplete
                     disablePortal
                     id="combo-box-demo"
-                    options={['Nada ainda']}
-                    noOptionsText={<RenderNoOptions onClick={handleOpenModalTypes} title={"Cadastrar Tipo"} />}
-
-                    sx={{ width: isSmallScreen ? "100%" : 360 }}
+                    options={presenter}
+                    noOptionsText={<RenderNoOptions onClick={handleOpenModalPartes} title={'Cadastrar Apresentante'} />}
+                    autoHighlight
+                    value={optionPresenter}
+                    isOptionEqualToValue={(option, label) => option.name === label.name}
+                    getOptionLabel={(option) => option.name}
+                    onChange={(event, value) => {
+                        setOptionPresenter(value);
+                        setData((state) => ({ ...state, presenter: value ? value.cpfcnpj : optionPresenter }));
+                    }}
+                    fullWidth
                     renderInput={(params) => (
                         <TextField
-                            color="success"
-                            InputProps={{
-                                ...params.InputProps,
-                                classes: {
-                                    root: 'no-options-input',
-                                },
-                            }}
                             {...params}
-                            value={value}
-                            label="Tipo de serviço"
-                            sx={{
-                                color: "#237117",
-                                "& input": {
-                                    color: "success.main",
-                                },
-                            }}
+                            label="Apresentante"
+                            color="success"
+                            name="presenter"
                         />
                     )}
+                    renderOption={(props, option) => (
+                        <Box
+                            {...props}
+                            key={option.cpfcnpj}
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                alignItems: "center"
+                            }}
+                        >
+                            <Grid container alignItems={"center"} justifyContent="space-between" >
+                                <Grid item xs={10} lg={10} md={10} sm={10}>
+                                    <Typography >
+                                        {option.name}
+                                    </Typography>
+                                    <Typography sx={{
+                                        fontSize: "11px", display: 'flex', alignSelf: 'start',
+                                        textTransform: 'uppercase'
+                                    }}>
+                                        {option.cpfcnpj}
+                                    </Typography>
+                                </Grid>
+                                {permissions[5]?.delete_permission === 1 && (
+                                    <Grid item xs={2} lg={2} md={2} sm={2}>
+                                        <Box sx={{
+                                            width: "100%",
+                                            display: 'flex',
+                                            justifyContent: "flex-end"
+                                        }}>
+                                            <IconButton onClick={() => deletePresenterById(option.cpfcnpj)}>
+                                                <CloseOutlined sx={{ width: 20, height: 20 }} />
+                                            </IconButton>
+                                        </Box>
+                                    </Grid>
+                                )}
+                            </Grid>
+
+                        </Box>
+                    )}
+
                 />
 
+                <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={types}
+                    noOptionsText={<RenderNoOptions onClick={handleOpenModalTypes} title={'Cadastrar Tipo'} />}
+                    fullWidth
+                    value={optionType}
+                    getOptionLabel={(option) => option.name}
+                    isOptionEqualToValue={(option, label) => option.name === label.name}
+                    onChange={(event, value) => {
+                        setOptionType(value);
+                        setData((state) => ({ ...state, service_type: value ? value.id : optionType }));
+                    }}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Tipo"
+                            name="service_type"
+                            color="success"
+                        />
+                    )}
+                    renderOption={(props, option) => (
+                        <Box
+                            {...props}
+                            key={option.id}
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                alignItems: "center"
+                            }}
+                        >
+                            <Grid container alignItems={"center"} justifyContent="space-between" >
+                                <Grid item xs={10} lg={10} md={10} sm={10}>
+                                    <Typography >
+                                        {option.name}
+                                    </Typography>
+                                </Grid>
+                                {permissions[3]?.delete_permission === 1 && (
+                                    <Grid item xs={2} lg={2} md={2} sm={2}>
+                                        <Box sx={{
+                                            width: "100%",
+                                            display: 'flex',
+                                            justifyContent: "flex-end"
+                                        }}>
+                                            <IconButton onClick={() => handleDeleteTypeRpjById(option.id)}>
+                                                <CloseOutlined sx={{ width: 20, height: 20 }} />
+                                            </IconButton>
+                                        </Box>
+                                    </Grid>
+                                )}
+                            </Grid>
+
+                        </Box>
+                    )}
+                />
                 <TextField sx={{
                     '& input': { color: 'success.main' }
                 }}
@@ -195,30 +300,48 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
                     label="Livro"
                     type="number"
                     color='success'
+                    onChange={handleChangeValuesField}
+                    name='book'
+                    value={data.book}
+                />
+
+                <TextField sx={{
+                    '& input': { color: 'success.main' }
+                }}
+                    fullWidth
+                    type="number"
+                    label="Folha inicial"
+                    color='success'
+                    onChange={handleChangeValuesField}
+                    value={data.initial_sheet}
+                    name='initial_sheet'
                 />
                 <TextField sx={{
                     '& input': { color: 'success.main' }
                 }}
                     fullWidth
-                    label="Folhas inicial"
+                    type="number"
+                    label="Folha final"
                     color='success'
+                    value={data.final_sheet}
+                    name='final_sheet'
+                    onChange={handleChangeValuesField}
                 />
                 <TextField sx={{
                     '& input': { color: 'success.main' }
                 }}
-                    fullWidth
-                    label="Folhas final"
-                    color='success'
-                />
-                <TextField sx={{
-                    '& input': { color: 'success.main' }
-                }}
+                    onChange={handleChangeValuesField}
+                    value={data.box}
                     fullWidth
                     label="Número da caixa"
                     type="number"
                     color='success'
+                    name='box'
                 />
                 <TextField
+                    sx={{
+                    }}
+                    onChange={handleChangeFileUrl}
                     fullWidth
                     type="file"
                     color='success'
@@ -259,13 +382,13 @@ export const CadastroModalRTD = ({ onClose, onClickPartes }) => {
                         color: '#237117',
 
                     }
-                }}>
+                }} onClick={handleCreateFileRtd}>
                     Realizar Cadastro
                 </Button>
 
             </Box>
-            <CadastroPartes open={openModalPresenter} onClose={handleCloseModalPresenter} />
             <ModalTypesRTD open={openModalCadastroTypes} onClose={handleCloseModalTypes} />
+            <CadastroPartes open={openModalCadastroPartes} onClose={handleCloseModalPartes} getData={fetchData} />
         </Box >
     );
 };

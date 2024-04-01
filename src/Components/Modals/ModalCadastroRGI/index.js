@@ -156,7 +156,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
 
     }
 
-    const detelePresenterById = async (typeId) => {
+    const deletePresenterById = async (typeId) => {
         const { deleteCustomer } = new Customer()
         try {
             const accessToken = sessionStorage.getItem("accessToken")
@@ -275,7 +275,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                                                     display: 'flex',
                                                     justifyContent: "flex-end"
                                                 }}>
-                                                    <IconButton onClick={() => detelePresenterById(option.cpfcnpj)}>
+                                                    <IconButton onClick={() => deletePresenterById(option.cpfcnpj)}>
                                                         <CloseOutlined sx={{ width: 20, height: 20 }} />
                                                     </IconButton>
                                                 </Box>

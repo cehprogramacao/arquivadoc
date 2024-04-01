@@ -21,8 +21,8 @@ const LoginPage = () => {
     password: ""
   })
 
-  
-  
+
+
   const handleOnChange = (event) => {
     const { name, value } = event.target
     setDataUser({ ...dataUser, [name]: value })
@@ -39,9 +39,9 @@ const LoginPage = () => {
       sessionStorage.setItem('accessToken', accessToken);
       sessionStorage.setItem('refreshToken', refreshToken);
       dispatch(showAlert(data.message, "success", "file"))
-      dispatch({type: SET_LOGIN_DATA})
+      dispatch({ type: SET_LOGIN_DATA })
       if (data.auth) {
-        router.push('/'); 
+        router.push('/');
       }
     } catch (err) {
       dispatch(showAlert(err.message, "error", "file"))
@@ -51,7 +51,7 @@ const LoginPage = () => {
 
 
   const handleClose = () => {
-    setAlert({...alert, open: false})
+    setAlert({ ...alert, open: false })
   }
 
 
@@ -143,7 +143,7 @@ const LoginPage = () => {
             color="success"
             type={viewPassword ? "text" : "password"}
             InputProps={{
-              endAdornment: viewPassword ? <Visibility onClick={handleChangeViewPassword} sx={{ mr: 1, fill: "#237117", cursor: "pointer" }} /> : <VisibilityOff onClick={handleChangeViewPassword} sx={{ mr: 1, fill: "#237117", cursor: "pointer"}} />,
+              endAdornment: viewPassword ? <Visibility onClick={handleChangeViewPassword} sx={{ mr: 1, fill: "#237117", cursor: "pointer" }} /> : <VisibilityOff onClick={handleChangeViewPassword} sx={{ mr: 1, fill: "#237117", cursor: "pointer" }} />,
             }}
             onChange={handleOnChange}
           />
@@ -167,7 +167,7 @@ const LoginPage = () => {
           Entrar
         </Button>
       </Box>
-      <SnackBar data={alert} handleClose={handleClose} />
+      <SnackBar />
     </Box>
   );
 };

@@ -1,3 +1,4 @@
+"use client"
 import User from "@/services/user.service";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -6,7 +7,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [permissions, setPermissions] = useState([]);
 
-    
+
 
     useEffect(() => {
         const getDataUser = async () => {
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
             }
         };
         getDataUser();
-    }, []); 
+    }, []);
     const updatePermissions = async (newPermissions) => {
         setPermissions(newPermissions);
     };

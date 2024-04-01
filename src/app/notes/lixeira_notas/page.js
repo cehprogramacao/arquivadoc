@@ -18,6 +18,7 @@ import { DocList } from "./TableTrash"
 
 const LixeiraProtestos = () => {
     const [data, setData] = useState([])
+    const [number, setNumber] = useState("")
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
@@ -52,6 +53,34 @@ const LixeiraProtestos = () => {
         getFetchingFilesFromTrash()
     }, [])
 
+    const handleOpenFilePDF = async () => {
+        const { getNoteByNumber } = new NoteService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getNoteByNumber(number, accessToken)
+            console.log(data.file, 'noteeeeeeeeeee 88')
+            handlePrintFile(data.file)
+        } catch (error) {
+            console.error("Error ao lista dados por número", error)
+            throw error;
+        }
+    }
+
+    const handlePrintFile = (file) => {
+        const base64Data = file;
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        // Criar uma URL do Blob e abrir em uma nova janela
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+    }
+
 
 
     return loading ? <Loading /> : (
@@ -72,16 +101,16 @@ const LixeiraProtestos = () => {
                                     </Typography>
                                 </Box>
                             </Grid>
-                        
+
                             <Grid item xs={12}>
-                                <DocList data={data} handleClick={handleClick} />
+                                <DocList data={data} handleClick={handleClick} setNumber={(e) => setNumber(e)} />
                             </Grid>
                         </Grid>
 
                     </CustomContainer>
                 </Box>
                 <SnackBar />
-                <MenuOptionsFile anchorEl={anchorEl} open={open} handleClose={handleClose} />
+                <MenuOptionsFile anchorEl={anchorEl} open={open} handleClose={handleClose} handleOpenFile={handleOpenFilePDF} />
             </PrivateRoute>
         </AuthProvider>
     )

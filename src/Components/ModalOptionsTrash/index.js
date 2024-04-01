@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import ModalList from '../Modals/ModalList';
 import RGI from '@/services/rgi.service';
+import NoteService from '@/services/notes.service';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -57,8 +58,9 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-const MenuOptionsFile = ({ open, anchorEl, handleClose }) => {
+const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenFile }) => {
 
+  
   return (
     <>
       <Box>
@@ -71,15 +73,15 @@ const MenuOptionsFile = ({ open, anchorEl, handleClose }) => {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem sx={{ color: "#0088F0" }} >
+          <MenuItem sx={{ color: "#0088F0" }} onClick={handleOpenFile}>
             <FileOpen sx={{ fill: '#0088F0' }} />
             Abrir Arquivo
           </MenuItem>
           {/* <Divider sx={{ my: 0 }} /> */}
-            <MenuItem sx={{ color: '#0dcaf0' }} >
-              <RestoreFromTrash sx={{ fill: '#0dcaf0' }} />
-              Restaurar
-            </MenuItem>
+          <MenuItem sx={{ color: '#0dcaf0' }} >
+            <RestoreFromTrash sx={{ fill: '#0dcaf0' }} />
+            Restaurar
+          </MenuItem>
         </StyledMenu>
       </Box>
 

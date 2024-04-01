@@ -7,7 +7,6 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { CadastroProtesto } from '@/Components/Modals/ModalCadastroProtesto';
 import { useEffect, useState } from 'react';
 import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
-import ModalList from '@/Components/Modals/ModalList';
 import CustomContainer from '@/Components/CustomContainer';
 import { width } from '@mui/system';
 import withAuth from '@/utils/withAuth';
@@ -17,10 +16,10 @@ import { DocList } from './components/TableProtest';
 import SnackBar from '@/Components/SnackBar';
 import ProtestService from '@/services/protest.service';
 import Loading from '@/Components/loading';
-import { ModalOptions } from '@/Components/Modals/modalOptions/modalOptions';
 import MenuOptionsFile from '@/Components/MenuPopUp';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '@/store/actions';
+import ModalList from './components/ModalPDF';
 
 const options = [
     { label: 'Apontamento' },
@@ -269,6 +268,7 @@ const PageProtesto = () => {
                         data={dataFile}
                         handleDeleteByNotation={handleDeleteByNotation}
                         notation={notation}
+
                         deletePerm={permissions[0]?.delete_permission} editPerm={permissions[0]?.edit}
                     />
                 </Box>

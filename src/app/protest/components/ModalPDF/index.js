@@ -11,8 +11,9 @@ import RGI from '@/services/rgi.service';
 import CustomContainer from '@/Components/CustomContainer';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import ProtestService from '@/services/protest.service';
 
-const ModalList = ({ open, data, onClose, prenotation, deletePerm, editPerm }) => {
+const ModalList = ({ open, data, onClose, notation, deletePerm, editPerm, handleDeleteByNotation }) => {
     const path = usePathname().split("/")[1]
     // console.log(data, '696969696996969696')
     const theme = useTheme()
@@ -48,19 +49,7 @@ const ModalList = ({ open, data, onClose, prenotation, deletePerm, editPerm }) =
     // console.log(data, 'ModalListaaaaaaaaaaaaaaaaaaaaaaa')
     // console.log(data.file, 'Index e Filllllllllllllllllllllllle')
 
-    const handleDeleteByPrenotation = async () => {
-        const { deleteByPrenotation } = new RGI()
-        try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteByPrenotation(prenotation, accessToken)
-            console.log(response.data)
-            window.location.reload()
-            return response.data
-        } catch (error) {
-            console.error("Error ao deletar arquivo rgi!", error)
-            throw error;
-        }
-    }
+    
 
     return (
         <>
@@ -112,7 +101,7 @@ const ModalList = ({ open, data, onClose, prenotation, deletePerm, editPerm }) =
                             }}>
                                 {/* Add your buttons here */}
                                 {editPerm === 1 && (
-                                    <Link href={`/${path}/[prenotation]`} as={`/${path}/${prenotation}`}>
+                                    <Link href={`/${path}/[notation]`} as={`/${path}/${notation}`}>
                                         <Button variant="outlined" color='inherit' sx={{
                                             color: '#FFD500',
                                             ":hover": {
@@ -133,7 +122,7 @@ const ModalList = ({ open, data, onClose, prenotation, deletePerm, editPerm }) =
                                     <PrintIcon />
                                 </Button>
                                 {deletePerm === 1 && (
-                                    <Button variant="outlined" color='error' onClick={handleDeleteByPrenotation}>
+                                    <Button variant="outlined" color='error' onClick={handleDeleteByNotation}>
                                         <DeleteIcon sx={{
                                             fill: '#dc3545'
                                         }} />

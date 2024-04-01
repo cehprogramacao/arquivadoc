@@ -173,7 +173,7 @@ const PageNotas = () => {
         }
     }
 
-    
+
     useEffect(() => {
         getData()
 
@@ -207,7 +207,7 @@ const PageNotas = () => {
                                 </Grid>
                                 <Grid item xs={12} >
                                     <Grid container spacing={5}>
-                                        <Grid item xs={12} lg={4} md={4} sm={6}>
+                                        <Grid item xs={12} lg={4} md={6} sm={6}>
                                             <TextField
                                                 fullWidth
                                                 value={selectOption.value}
@@ -216,7 +216,7 @@ const PageNotas = () => {
                                                 label="Buscar"
                                                 color="success" />
                                         </Grid>
-                                        <Grid item xs={12} lg={5} md={5} sm={6}>
+                                        <Grid item xs={12} lg={5} md={6} sm={6}>
                                             <Autocomplete
                                                 disablePortal
                                                 id="combo-box-demo"
@@ -250,7 +250,7 @@ const PageNotas = () => {
                                                 )}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} lg={3} md={3} sm={12} >
+                                        <Grid item xs={12} lg={3} md={12} sm={12} >
                                             <Box sx={{
                                                 width: "100%",
                                                 display: "flex",
@@ -263,7 +263,7 @@ const PageNotas = () => {
                                             </Box>
 
                                         </Grid>
-                                        
+
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={12} >
@@ -291,7 +291,7 @@ const PageNotas = () => {
                             deletePerm={permissions[6]?.delete_permission}
                             editPerm={permissions[6]?.edit}
                         />
-                        <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
+                        <SnackBar  />
                     </Box>
                 }
             </PrivateRoute>

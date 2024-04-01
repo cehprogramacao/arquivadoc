@@ -19,6 +19,7 @@ import { DocList } from './components/TableCards';
 import ReactInputMask from "react-input-mask"
 import Loading from '@/Components/loading';
 
+
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
 const PageAutographCards = () => {
@@ -44,8 +45,8 @@ const PageAutographCards = () => {
     const [openPDF, setOpenPDF] = useState(false)
     const [dataFile, setDataFile] = useState([])
 
-    
-    
+
+
     const handleOpenModalPDF = async () => {
         const { getAutographCard } = new Customer()
         try {
@@ -76,12 +77,12 @@ const PageAutographCards = () => {
         }
     }
     const handleFilterAutographCard = async () => {
-        console.log(dataOptions, '2929292929')
         const { getAutographCard } = new Customer()
         let newData = []
         try {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
+
             const response = await getAutographCard(dataOptions.cpfcnpj, accessToken)
             console.log(response.data)
             newData.push(response.data)
@@ -125,7 +126,8 @@ const PageAutographCards = () => {
         e.target.value?.replace(/\D/g, '').length < 11
             ? setCpfCnpjMask(cpfMask)
             : setCpfCnpjMask(cnpjMask);
-        setDataOptions({ ...dataOptions, cpfcnpj: e.target.value });
+        setDataOptions({ ...dataOptions, cpfcnpj: e.target.value.replace(/[^\d]/g, '') });
+
     };
 
     const handleInputBlur = () => {
@@ -220,9 +222,7 @@ const PageAutographCards = () => {
                     <Drawer anchor='left' open={open} onClose={handleClose}>
                         <CadastrarCartoesModal onClose={handleClose} onClickPartes={handleOpenPartes} />
                     </Drawer>
-                    <Drawer anchor='right' open={openPartes} onClose={handleClosePartes}>
-                        <CadastroPartes onClose={handleClosePartes} />
-                    </Drawer>
+                    <CadastroPartes onClose={handleClosePartes} />
 
                 </Box>
                 <MenuOptionsFile

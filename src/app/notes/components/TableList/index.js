@@ -11,7 +11,7 @@ export const TableList = ({ data, handleClick, setNumber }) => {
         <>
             <Grid
                 container
-                spacing={5}
+                spacing={0}
                 sx={{
                     width: "100%",
                     flexGrow: 1,

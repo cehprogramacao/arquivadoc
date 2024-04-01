@@ -1,3 +1,4 @@
+"use client"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
@@ -14,7 +15,7 @@ const withIsAdmin = (ComponentAdmin) => {
                 console.log("Não é um administrador!")
                 return;
             }
-        }, [router])
+        }, [])
         return <ComponentAdmin {...props} />
     }
     return wrapper
