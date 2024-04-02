@@ -14,13 +14,14 @@ import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPar
 import CadastroRGITypes from '@/Components/ModalsRegistration/ModalTypesRGI';
 import CustomContainer from '@/Components/CustomContainer';
 import RGI from '@/services/rgi.service';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Loading from '@/Components/loading';
 import SnackBar from '@/Components/SnackBar';
 import MenuOptionsFile from '@/Components/MenuPopUp';
 import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
 import withAuth from '@/utils/withAuth';
+import { showAlert } from '@/store/actions';
 
 const optionsFilter = [
     { label: 'Prenotação' },
@@ -28,8 +29,7 @@ const optionsFilter = [
 ];
 
 const PageRGI = () => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const dispatch = useDispatch()
     const payload = useSelector(state => state.login)
     const [value, setValue] = useState({
         option: "",
@@ -77,18 +77,7 @@ const PageRGI = () => {
     const handleOpenModalPartes = () => setOpenModalPartes(true)
     const handleCloseModalPartes = () => setOpenModalPartes(false)
 
-    // Função para tratar o filtro de Prenotação
-    
-    const [alert, setAlert] = useState({
-        open: false,
-        text: '',
-        type: '',
-        severity: ''
-    });
-    const handleCloseSnackBar = () => {
-        setAlert({ ...alert, open: false })
-    }
-    console.log(data, 9090)
+
 
     // Função para tratar o filtro de Apresentante
     
@@ -97,10 +86,11 @@ const PageRGI = () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await deleteByPrenotation(prenotation, accessToken)
-            console.log(response.data)
+            dispatch(showAlert(response.data.message, "success", "file"))
             return response.data
         } catch (error) {
             console.error("Error ao deletar arquivo rgi!", error)
+            dispatch(showAlert(error.msg, "error", "file"))
             throw error;
         }
         finally {
@@ -177,9 +167,10 @@ const PageRGI = () => {
             const response = await getData(accessToken)
             console.log(response.data, 'Kauannnnnnnnnnnnnnnn')
             setData(Object.values(response.data))
-            setAlert({ ...alert, open: true, text: `Total de arquivos:${Object.values(response.data).length}`, type: "file", severity: "success" })
+            dispatch(showAlert(`Total de arquivos:${Object.values(response.data).length}`, "success", "file"))
             return response.data
         } catch (error) {
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("error listing all rgi files", error)
             throw error;
         }
@@ -192,14 +183,11 @@ const PageRGI = () => {
 
     useEffect(() => {
         getDataRGI()
-        console.log(payload, '2002010kkkakakkakakakak')
-
     }, [])
-    return (
+    return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['RGI']}>
-                {loading ? <Loading />
-                    :
+                
                     <Box
                         sx={{
                             width: '100%',
@@ -236,7 +224,6 @@ const PageRGI = () => {
                                         <Grid item xs={12} lg={4} md={6} sm={6}>
                                             <Autocomplete
                                                 disablePortal
-                                                value={value.option}
                                                 getOptionLabel={(option) => option.label || ""}
                                                 onChange={(e, newValue) => setValue({ ...value, option: newValue })}
                                                 isOptionEqualToValue={(option, value) => option.label === value.label}
@@ -289,8 +276,7 @@ const PageRGI = () => {
                             <CadastroPartes onClose={handleCloseModalPartes} />
                         </Drawer>
                     </Box>
-                }
-                <SnackBar data={alert} handleClose={handleCloseSnackBar} />
+                <SnackBar />
                 <MenuOptionsFile
                     anchorEl={anchorEl}
                     data={data}

@@ -198,13 +198,10 @@ const PageOficio = () => {
         }
     }
 
-    return (
+    return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Ofícios']}>
-                {loading
-                    ?
-                    <Loading />
-                    :
+                
                     <Box
                         sx={{
                             width: '100%',
@@ -279,7 +276,6 @@ const PageOficio = () => {
                             </Grid>
                         </CustomContainer>
                     </Box>
-                }
                 <Drawer anchor='left' open={open} onClose={handleClose}>
                     <CadastroOficio getData={getCallingData} onClose={handleClose} onClickPartes={handleOpenPartes} />
                 </Drawer>

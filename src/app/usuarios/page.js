@@ -13,9 +13,12 @@ import Loading from "@/Components/loading"
 import SnackBar from "@/Components/SnackBar"
 import { AuthProvider } from "@/context"
 import withAuth from "@/utils/withAuth"
+import { useDispatch } from "react-redux"
+import { showAlert } from "@/store/actions"
 
 
 const PageUsuarios = () => {
+    const dispatch = useDispatch()
     const [dataRows, setDataRows] = useState([])
     const [filter, setFilter] = useState({
         userId: "",
@@ -50,22 +53,16 @@ const PageUsuarios = () => {
         },
     ];
 
-    const [alert, setAlert] = useState({
-        open: false,
-        type: "",
-        text: "",
-        severity: ""
-    })
     const handleDeleteByID = async (userId) => {
         const { deleteUser } = new User()
         try {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await deleteUser(userId, accessToken)
-            setAlert({ open: true, type: "user", text: response.data.message, severity: "success" })
+            dispatch(showAlert(response.data.message, "success", "user"))
             return response.data
         } catch (error) {
-            setAlert({ open: true, type: "user", text: error.message, severity: "error" })
+            dispatch(showAlert(error.msg, "error", "user"))
             console.error("Erro ao excluir usuário!", error)
             throw error;
         }
@@ -73,10 +70,7 @@ const PageUsuarios = () => {
             setLoading(false)
         }
     }
-
-    const handleClose = () => {
-        setAlert({ ...alert, open: false })
-    }
+    
 
     const handleSetAdmin = async (userId) => {
         const { setAdmin } = new User()
@@ -84,12 +78,12 @@ const PageUsuarios = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await setAdmin(userId, accessToken)
-            setAlert({ open: true, text: response.data.message, severity: "success", type: "user" })
+            dispatch(showAlert(response.data.message, "success", "user"))
             console.log(response.data, '77777')
             getUsers()
             return response.data
         } catch (error) {
-            setAlert({ open: true, text: error.message, severity: "error", type: "user" })
+            dispatch(showAlert(error.msg, "error", "user"))
             console.error("Erro ao tornar admin", error)
             throw error;
         }
@@ -104,12 +98,12 @@ const PageUsuarios = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await unsetAdmin(userId, accessToken)
-            setAlert({ open: true, text: response.data.message, severity: "success", type: "user" })
+            dispatch(showAlert(response.data.message, "success", "user"))
             console.log(response.data, '77777')
             getUsers()
             return response.data
         } catch (error) {
-            setAlert({ open: true, text: error.message, severity: "error", type: "user" })
+            dispatch(showAlert(error.msg, "error", "user"))
             console.error("Erro ao tornar usuário", error)
             throw error;
         }
@@ -124,12 +118,11 @@ const PageUsuarios = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await enableUser(userId, accessToken)
-            setAlert({ open: true, text: response.data.message, severity: "success", type: "user" })
-            console.log(response.data, '77777')
+            dispatch(showAlert(response.data.message, "success", "user"))
             getUsers()
             return response.data
         } catch (error) {
-            setAlert({ open: true, text: error.message, severity: "error", type: "user" })
+            dispatch(showAlert(error.msg, "error", "user"))
             console.error("Erro ao habilitar usuário", error)
             throw error;
         }
@@ -143,12 +136,12 @@ const PageUsuarios = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await disableUser(userId, accessToken)
-            setAlert({ open: true, text: response.data.message, severity: "success", type: "user" })
+            dispatch(showAlert(response.data.message, "success", "user"))
             console.log(response.data, '77777')
             getUsers()
             return response.data
         } catch (error) {
-            setAlert({ open: true, text: error.message, severity: "error", type: "user" })
+            dispatch(showAlert(error.msg, "error", "user"))
             console.error("Erro ao desabilitar usuário", error)
             throw error;
         }
@@ -162,12 +155,12 @@ const PageUsuarios = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getUserById(filter.userId, accessToken)
-            setAlert({ open: true, severity: "success", type: "user", text: `Usuário ${data.user[0].email}` })
+            dispatch(showAlert(response.data.message, "success", "user"))
             console.log(data.user[0].email)
             setDataRows(data.user)
             return data
         } catch (error) {
-            setAlert({ open: true, severity: "error", type: "user", text: error.message })
+            dispatch(showAlert(error.msg, "error", "user"))
             console.error("Erro ao filter usuário!", error)
             throw error;
         }
@@ -176,101 +169,97 @@ const PageUsuarios = () => {
         }
     }
 
-    return (
+    return loading ? <Loading /> : (
         <AuthProvider>
-            {!loading ?
-                <Box sx={{
-                    width: '100%',
-                    height: '100vh',
-                    display: 'flex',
-                    py: 12,
-                    px: 3
-                }}>
-                    <CustomContainer>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} >
-                                <Box sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }}>
-                                    <Typography fontSize={30} fontWeight={'bold'} color={"black"}>
-                                        Usuários
-                                    </Typography>
+            <Box sx={{
+                width: '100%',
+                height: '100vh',
+                display: 'flex',
+                py: 12,
+                px: 3
+            }}>
+                <CustomContainer>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} >
+                            <Box sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}>
+                                <Typography fontSize={30} fontWeight={'bold'} color={"black"}>
+                                    Usuários
+                                </Typography>
 
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} >
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} lg={5} md={5} sm={6}>
-                                        <TextField label="Buscar"
-                                            fullWidth
-                                            value={filter.userId}
-                                            onChange={(e) => setFilter({ ...filter, userId: e.target.value })}
-                                            sx={{
-                                                '& input': {
-                                                    color: 'success.main',
-                                                },
-                                            }} color="success" />
-                                    </Grid>
-                                    <Grid item xs={12} lg={5} md={5} sm={6}>
-                                        <Autocomplete
-                                            disablePortal
-                                            id="combo-box-demo"
-                                            options={top100Films}
-                                            fullWidth
-                                            // value={filter.option}
-                                            autoHighlight
-                                            getOptionLabel={(option) => option.label}
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    color="success"
-                                                    label="Buscar Por"
-                                                    onChange={(e, newValue) => setFilter({ ...filter, option: newValue.label })}
-                                                    sx={{
-                                                        color: "#237117",
-                                                        "& input": {
-                                                            color: "success.main",
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={2} md={2} sm={12} >
-                                        <Box sx={{
-                                            display: 'flex',
-                                            width: '100%',
-                                            gap: "10px",
-                                            justifyContent: "center"
-                                        }}>
-                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFilterById} />
-                                            <Link href={"/addUser"}>
-                                                <ButtonOpenModals />
-                                            </Link>
-                                        </Box>
-                                    </Grid>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} >
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} lg={5} md={5} sm={6}>
+                                    <TextField label="Buscar"
+                                        fullWidth
+                                        value={filter.userId}
+                                        onChange={(e) => setFilter({ ...filter, userId: e.target.value })}
+                                        sx={{
+                                            '& input': {
+                                                color: 'success.main',
+                                            },
+                                        }} color="success" />
+                                </Grid>
+                                <Grid item xs={12} lg={5} md={5} sm={6}>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={top100Films}
+                                        fullWidth
+                                        // value={filter.option}
+                                        autoHighlight
+                                        getOptionLabel={(option) => option.label}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                color="success"
+                                                label="Buscar Por"
+                                                onChange={(e, newValue) => setFilter({ ...filter, option: newValue.label })}
+                                                sx={{
+                                                    color: "#237117",
+                                                    "& input": {
+                                                        color: "success.main",
+                                                    },
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} lg={2} md={2} sm={12} >
+                                    <Box sx={{
+                                        display: 'flex',
+                                        width: '100%',
+                                        gap: "10px",
+                                        justifyContent: "center"
+                                    }}>
+                                        <Buttons color={'green'} title={'Buscar'} onClick={handleFilterById} />
+                                        <Link href={"/addUser"}>
+                                            <ButtonOpenModals />
+                                        </Link>
+                                    </Box>
                                 </Grid>
                             </Grid>
-                            <Grid item xs={12} >
-                                <TableComponente
-                                    data={dataRows}
-                                    handleDeleteByID={handleDeleteByID}
-                                    handleSetAdmin={handleSetAdmin}
-                                    handleUnsetAdmin={handleUnsetAdmin}
-                                    handleEnable={handleEnable}
-                                    handleDisabled={handleDisabled}
-                                />
-                            </Grid>
                         </Grid>
-                    </CustomContainer>
-                </Box>
-                :
-                <Loading />
-            }
-            <SnackBar data={alert} handleClose={handleClose} />
+                        <Grid item xs={12} >
+                            <TableComponente
+                                data={dataRows}
+                                handleDeleteByID={handleDeleteByID}
+                                handleSetAdmin={handleSetAdmin}
+                                handleUnsetAdmin={handleUnsetAdmin}
+                                handleEnable={handleEnable}
+                                handleDisabled={handleDisabled}
+                            />
+                        </Grid>
+                    </Grid>
+                </CustomContainer>
+            </Box>
+            <SnackBar />
         </AuthProvider>
     )
 }

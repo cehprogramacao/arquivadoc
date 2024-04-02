@@ -11,6 +11,9 @@ import Loading from "@/Components/loading"
 import withAuth from "@/utils/withAuth"
 import { useDispatch } from "react-redux"
 import { showAlert } from "@/store/actions"
+import { AuthProvider } from "@/context"
+import PrivateRoute from "@/utils/LayoutPerm"
+import SnackBar from "@/Components/SnackBar"
 
 
 
@@ -60,9 +63,11 @@ const PagePessoas = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await customer.deleteCustomer(cpfcnpj, accessToken)
+            dispatch(showAlert(response.data.message, "success", "user"))
             return data
         } catch (error) {
             console.error("error when deleting client", error)
+            dispatch(showAlert(error.msg, "error", "user"))
             throw error
         }
         finally {
@@ -84,7 +89,7 @@ const PagePessoas = () => {
                 dispatch(showAlert("Usuário listado!", "success"))
             } catch (error) {
                 console.error("Erro ao buscar usuário!", error)
-                dispatch(showAlert(error.message, "error"))
+                dispatch(showAlert(error.msg, "error"))
                 throw error;
             }
         }
@@ -95,12 +100,10 @@ const PagePessoas = () => {
     }
 
 
-    return (
-        <>
-            {loading ?
-                <Loading />
-                :
-                <Box sx={{
+    return loading ? <Loading /> : (
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['Cadastros']}>
+            <Box sx={{
                     width: '100%',
                     height: '100vh',
                     px: 3,
@@ -182,9 +185,10 @@ const PagePessoas = () => {
                     <Drawer anchor="left" open={open} onClose={handleCloseModal}>
                         <CadastroPessoas onClose={handleCloseModal} />
                     </Drawer>
+                    <SnackBar />
                 </Box>
-            }
-        </>
+            </PrivateRoute>
+        </AuthProvider>
     )
 }
 

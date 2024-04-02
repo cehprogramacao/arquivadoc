@@ -8,14 +8,33 @@ import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
 import { DocList } from "./TableTrash"
 import MenuOptionsFile from "@/Components/ModalOptionsTrash"
+import Loading from "@/Components/loading"
 
 
 
 const LixeiraCartoes = () => {
     const [data, setData] = useState([]) 
-
+    const [presenter, setPresenter] = useState("")
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+    const [loading, setLoading] = useState(false)
     
-    return (
+    const handleOpenMenuTrash = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+    const handleCloseMenuTrash = () => {
+        setAnchorEl(null)
+    }
+
+    const getAllFilesTrash = async () => {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
+    return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={'Cadastros'}>
                 <Box sx={{
@@ -99,13 +118,14 @@ const LixeiraCartoes = () => {
                                 </Grid>
                             </Grid> */}
                             <Grid item xs={12} >
-                                <DocList data={data} />
+                                <DocList data={data} handleClick={handleOpenMenuTrash} 
+                                setPresenter={(e) => setPresenter(e)} />
                             </Grid>
                         </Grid>
                     </CustomContainer>
 
                 </Box>
-                <MenuOptionsFile  />
+                <MenuOptionsFile open={open} anchorEl={anchorEl} handleClose={handleCloseMenuTrash}  />
             </PrivateRoute>
         </AuthProvider>
     )

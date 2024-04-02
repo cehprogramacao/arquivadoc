@@ -1,37 +1,30 @@
 "use client"
 import { Autocomplete, Box, Button, TextField, Typography, useMediaQuery, useTheme, Grid } from "@mui/material"
 import { useEffect, useState } from "react"
-import { LixeiraTable } from "./tableLixeira"
+import { DocList, LixeiraTable } from "./tableLixeira"
 import CustomContainer from "@/Components/CustomContainer"
 import RGI from "@/services/rgi.service"
 import Loading from "@/Components/loading"
 import withAuth from "@/utils/withAuth"
 import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
+import MenuOptionsFile from "@/Components/ModalOptionsTrash"
 
 
 
 
 const LixeiraRGI = () => {
-    const top100Films = [
-        {
-            label: 'Prenotação'
-        },
-        {
-            label: 'Matrícula '
-        },
-        {
-            label: 'Caixa'
-        },
-        {
-            label: 'Apresentante(documento)'
-        }
-    ];
     const [loading, setLoading] = useState(false)
-
-
     const [rows, setRows] = useState([]);
-
+    const [prenotation, setPrenotation] = useState("")
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+    const handleOpenMenuTrash = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+    const handleCloseMenuTrash = () => {
+        setAnchorEl(null)
+    }
     const getData = async () => {
         const { getTrash } = new RGI()
         try {
@@ -49,43 +42,64 @@ const LixeiraRGI = () => {
             setLoading(false)
         }
     }
+
+    const handleViewFileTrash = async () => {
+        const { getByPrenotation } = new RGI()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await getByPrenotation(prenotation, accessToken)
+            handlePrintFile(data.file)
+        } catch (error) {
+            console.error("Erro ao buscar arquivo", error)
+            throw error;
+        }
+    }
+
+    const handlePrintFile = (file) => {
+        const base64Data = file;
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        // Criar uma URL do Blob e abrir em uma nova janela
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+    }
+
     useEffect(() => {
         getData()
     }, [])
 
-    const handleExcluir = (id) => {
-        const updatedRows = rows.filter((row) => row.id !== id);
-        setRows(updatedRows);
-    };
-    const [select, setSelect] = useState(null);
-    const [valueInput, setValueInput] = useState('')
 
 
-    return (
+    return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['RGI']}>
-                {loading ? <Loading />
-                    :
-                    <Box sx={{
-                        width: '100%',
-                        height: '100vh',
-                        py: 14,
-                        px: 4
-                    }}>
-                        <CustomContainer >
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <Box sx={{
-                                        width: "100%",
-                                        justifyContent: "center",
-                                        display: "flex"
-                                    }}>
-                                        <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
-                                            Lixeira
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} >
+
+                <Box sx={{
+                    width: '100%',
+                    height: '100vh',
+                    py: 14,
+                    px: 4
+                }}>
+                    <CustomContainer >
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Box sx={{
+                                    width: "100%",
+                                    justifyContent: "center",
+                                    display: "flex"
+                                }}>
+                                    <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"} >
+                                        Lixeira
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            {/* <Grid item xs={12} >
                                     <Grid container spacing={2}>
                                         <Grid item xs={12} lg={5} md={5} sm={6}>
                                             <TextField
@@ -131,14 +145,14 @@ const LixeiraRGI = () => {
                                             </Box>
                                         </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid item xs={12} >
-                                    <LixeiraTable data={rows} onClick={handleExcluir} />
-                                </Grid>
+                                </Grid> */}
+                            <Grid item xs={12} >
+                                <DocList setPrenotation={(e) => setPrenotation(e)} data={rows} handleClick={handleOpenMenuTrash} />
                             </Grid>
-                        </CustomContainer>
-                    </Box>
-                }
+                        </Grid>
+                    </CustomContainer>
+                </Box>
+                <MenuOptionsFile handleOpenFile={handleViewFileTrash} anchorEl={anchorEl} handleClose={handleCloseMenuTrash} open={open} />
             </PrivateRoute>
         </AuthProvider>
     )
