@@ -28,7 +28,7 @@ const StyledFormContainer = styled(Box)({
     width: '70%',
     maxWidth: '700px',
     margin: 'auto',
-    padding: '130px 0',
+    padding: '100px 0',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -124,10 +124,13 @@ const AddUser = () => {
         setSection('Dados');
     };
 
-    return (
-        <>
-            {loading ? <Loading />
-                :
+    return loading ? <Loading /> : (
+        <Box sx={{
+            width: "100%",
+            height: "100vh",
+            px: 2
+        }}>
+            
                 <CustomContainer >
                     <StyledFormContainer>
                         <Box sx={{
@@ -300,8 +303,7 @@ const AddUser = () => {
                         </StyledContentContainer>
                     </StyledFormContainer>
                 </CustomContainer>
-            }
-        </>
+        </Box>
     );
 };
 

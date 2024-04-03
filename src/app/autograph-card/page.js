@@ -18,6 +18,8 @@ import SnackBar from '@/Components/SnackBar';
 import { DocList } from './components/TableCards';
 import ReactInputMask from "react-input-mask"
 import Loading from '@/Components/loading';
+import { useDispatch } from 'react-redux';
+import { showAlert } from '@/store/actions';
 
 
 const cpfMask = '999.999.999-99';
@@ -25,18 +27,13 @@ const cnpjMask = '99.999.999/9999-99';
 const PageAutographCards = () => {
     const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
     const [errors, setErrors] = useState({});
+    const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState([])
     const { permissions } = useAuth()
     const [dataOptions, setDataOptions] = useState({
         cpfcnpj: null,
         option: null
-    })
-    const [alert, setAlert] = useState({
-        open: false,
-        severity: "",
-        text: "",
-        icon: ""
     })
     const [cpfcnpj, setCpfcnpj] = useState("")
     const [anchorEl, setAnchorEl] = useState(null);
@@ -68,10 +65,10 @@ const PageAutographCards = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await deleteAutographCard(cpfcnpj, accessToken)
             console.log(response.data)
-            setAlert({ open: true, icon: "file", text: response.data.message, severity: "success" })
+            dispatch(showAlert(response.data.message, "success", "file"))
             return response.data
         } catch (error) {
-            setAlert({ open: true, icon: "file", text: error.message, severity: "error" })
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Error ao deletar termo !", error)
             throw error;
         }
@@ -230,7 +227,7 @@ const PageAutographCards = () => {
                     deletePerm={permissions[5]?.delete_permission}
                     anchorEl={anchorEl} data={data} open={openMenu} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={cpfcnpj} handleDelete={handleDeleteByCPFCNPJ} />
                 <ModalListCards data={dataFile} onClose={handleCloseModalPDF} open={openPDF} cpfcnpj={cpfcnpj} />
-                <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
+                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     )

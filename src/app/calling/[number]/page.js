@@ -5,21 +5,18 @@ import Loading from "@/Components/loading"
 import { AuthProvider } from "@/context"
 import Calling from "@/services/calling.service"
 import RGI from "@/services/rgi.service"
+import { showAlert } from "@/store/actions"
 import PrivateRoute from "@/utils/LayoutPerm"
 import withAuth from "@/utils/withAuth"
 import { Grid, Box, TextField, Container, Button, Autocomplete } from "@mui/material"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useDispatch } from "react-redux"
 
 const EditCallingByNumber = ({ params }) => {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
-    const [alert, setAlert] = useState({
-        open: false,
-        text: "",
-        type: "",
-        severity: ""
-    })
+    const dispatch = useDispatch()
     const [types, setTypes] = useState([])
     const [entity, setEntity] = useState([])
     const [entityOption, setEntityOption] = useState(null)
@@ -81,11 +78,11 @@ const EditCallingByNumber = ({ params }) => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await updateCallingByNumber(params.number, dataCalling, accessToken)
-            setAlert({ open: true, severity: "success", text: data.message, type: "file" })
+            dispatch(showAlert(data.message,"success", "file"))
             console.log(data)
             return data
         } catch (error) {
-            setAlert({ open: true, severity: "error", text: error.msg, type: "file" })
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Erro ao editar ofício!", error)
             throw error;
         }
@@ -97,11 +94,10 @@ const EditCallingByNumber = ({ params }) => {
 
 
 
-    return (
+    return loading ? <Loading /> :(
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Ofícios']}>
-                {loading ? <Loading />
-                    :
+                
                     <Box sx={{
                         width: "100%",
                         height: "100vh",
@@ -203,8 +199,7 @@ const EditCallingByNumber = ({ params }) => {
                             </Container>
                         </CustomContainer>
                     </Box>
-                }
-                <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
+                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     )

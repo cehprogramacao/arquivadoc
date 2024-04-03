@@ -13,10 +13,13 @@ import Button from '@mui/material/Button'
 import { useDispatch } from 'react-redux'
 import { showAlert } from '@/store/actions'
 import RPJService from '@/services/rpj.service'
+import SnackBar from '@/Components/SnackBar'
+import { useRouter } from 'next/navigation'
 
 
 const UpdateFileAutographCard = ({ params }) => {
     const dispatch = useDispatch()
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState({
         box: 0,
@@ -51,7 +54,8 @@ const UpdateFileAutographCard = ({ params }) => {
             throw error;
         }
         finally {
-            setLoading(true)
+            setLoading(false)
+            router.push("/autograph-card")
         }
     }
     
@@ -127,6 +131,7 @@ const UpdateFileAutographCard = ({ params }) => {
                         </CustomContainer>
                     </Container>
                 </Box>
+                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     )

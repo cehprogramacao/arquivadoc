@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, ListItemIcon, Typography, List, ListItem, useTheme, useMediaQuery, useRadioGroup } from '@mui/material';
+import { Box, ListItemIcon, Typography, List, ListItem, useTheme, useMediaQuery, useRadioGroup, IconButton } from '@mui/material';
 import PendingActionsSharpIcon from '@mui/icons-material/PendingActionsSharp';
 import QueryBuilderSharpIcon from '@mui/icons-material/QueryBuilderSharp';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -128,7 +128,7 @@ export const Sidebar = () => {
                         justifyContent: 'center',
                     }} >
                         <Link href={"/"}>
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -146,12 +146,12 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 Recentes
-                            </button>
+                            </IconButton>
                         </Link>
                         <Link href={"/notes"} style={{
                             display: permissions[6]?.view === 1 ? "flex" : "none"
                         }} >
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -168,13 +168,13 @@ export const Sidebar = () => {
                                     cursor: 'pointer'
                                 }} alt="" />
                                 Notas
-                            </button>
+                            </IconButton>
                         </Link>
 
                         <Link href={"/rgi"} style={{
                             display: permissions[1]?.view === 1 ? "flex" : "none"
                         }} >
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -192,12 +192,12 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 RGI
-                            </button>
+                            </IconButton>
                         </Link>
                         <Link href={"/protest"} style={{
                             display: permissions[0]?.view === 1 ? "flex" : "none"
                         }} >
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -215,12 +215,12 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 Protestos
-                            </button>
+                            </IconButton>
                         </Link>
                         <Link href={"/calling"} style={{
                             display: permissions[4]?.view === 1 ? "flex" : "none"
                         }}>
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -238,12 +238,12 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 Ofícios
-                            </button>
+                            </IconButton>
                         </Link>
                         <Link href="/rtd" style={{
                             display: permissions[2]?.view === 1 ? "flex" : "none"
                         }}>
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -261,12 +261,12 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 RTD
-                            </button>
+                            </IconButton>
                         </Link>
                         <Link href={"/rpj"} style={{
                             display: permissions[3]?.view === 1 ? "flex" : "none"
                         }}>
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -284,12 +284,12 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 RPJ
-                            </button>
+                            </IconButton>
                         </Link>
                         <Link href={"/autograph-card"} style={{
                             display: permissions[5]?.view === 1 ? "flex" : "none"
                         }}>
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -307,12 +307,12 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 Cartões de Autógrafo
-                            </button>
+                            </IconButton>
                         </Link>
                         <Link href={"/termos"} style={{
                             display: permissions[5]?.view === 1 ? "flex" : "none"
                         }}>
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -330,12 +330,12 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 Termos
-                            </button>
+                            </IconButton>
                         </Link>
                         <Link href={"/solicitantes"} style={{
                             display:permissions[6]?.view === 1 ? "flex" : "none"
                         }} >
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -353,12 +353,12 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 Solicitantes
-                            </button>
+                            </IconButton>
                         </Link>
                         <Link href={"/customers"} style={{
                             display: isAdmin === "1" || permissions[5]?.view === 1 ? "flex" : "none"
                         }} >
-                            <button style={{
+                            <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -376,7 +376,7 @@ export const Sidebar = () => {
 
                                 }} alt="" />
                                 Pessoas
-                            </button>
+                            </IconButton>
                         </Link>
                     </ListItemIcon>
                 </ListItem>
@@ -399,7 +399,7 @@ export const Sidebar = () => {
                         padding: '10px 0',
                         margin: '0 auto'
                     }}>
-                        <button style={{
+                        <IconButton sx={{
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
@@ -415,7 +415,7 @@ export const Sidebar = () => {
                                 flexShrink: 0,
                                 cursor: 'pointer'
                             }} alt="" />
-                        </button>
+                        </IconButton>
 
 
 

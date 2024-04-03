@@ -11,6 +11,7 @@ import RGI from '@/services/rgi.service';
 import CustomContainer from '@/Components/CustomContainer';
 import Customer from '@/services/customer.service';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const ModalListCards = ({ open, data, onClose, cpfcnpj }) => {
     const path = usePathname().split("/")[1]

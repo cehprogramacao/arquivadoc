@@ -1,9 +1,7 @@
 "use client"
 import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery, Grid } from "@mui/material"
 import { useEffect, useState } from "react"
-import { DocList } from "./tableLixeira"
-import { useSelector, useDispatch } from 'react-redux'
-import RPJService from "@/services/rpj.service"
+import { useDispatch } from 'react-redux'
 import { showAlert } from "@/store/actions"
 import SnackBar from "@/Components/SnackBar"
 import CustomContainer from "@/Components/CustomContainer"
@@ -13,6 +11,7 @@ import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
 import withAuth from "@/utils/withAuth"
 import RTDService from "@/services/rtd.service"
+import { DocList } from "./tableLixeira"
 
 
 const LixeiraRPJ = () => {
@@ -96,7 +95,7 @@ const LixeiraRPJ = () => {
                 }}>
                     <CustomContainer>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} >]
+                            <Grid item xs={12} >
                                 <Box sx={{
                                     width: "100%",
                                     display: "flex",

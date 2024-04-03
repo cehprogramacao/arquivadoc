@@ -1,7 +1,9 @@
 "use client"
 import CustomContainer from '@/Components/CustomContainer';
 import Loading from '@/Components/loading';
+import { AuthProvider } from '@/context';
 import Customer from '@/services/customer.service';
+import PrivateRoute from '@/utils/LayoutPerm';
 import withAuth from '@/utils/withAuth';
 import { Box, TextField, Typography, Button, Autocomplete, FormControl, FormLabel, FormHelperText, OutlinedInput, Grid } from "@mui/material";
 import { useRouter } from 'next/navigation';
@@ -60,15 +62,12 @@ const PageEditarPessoas = ({ params }) => {
         }
         finally {
             setLoading(false)
+            router.push("/customers")
         }
-        console.log(data)
     }
-    console.log(params)
-    return (
-        <>
-            {loading ?
-                <Loading />
-                :
+    return loading ? <Loading /> : (
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['Cadastros']} >
                 <Box sx={{
                     width: '100vw',
                     height: "100vh",
@@ -182,8 +181,8 @@ const PageEditarPessoas = ({ params }) => {
                         </Grid>
                     </CustomContainer>
                 </Box>
-            }
-        </>
+            </PrivateRoute>
+        </AuthProvider>
     )
 }
 export default withAuth(PageEditarPessoas)

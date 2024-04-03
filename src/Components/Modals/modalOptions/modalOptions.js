@@ -28,7 +28,6 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
     try {
       const accessToken = sessionStorage.getItem("accessToken")
       const { data } = await getUser(accessToken)
-      console.log(data)
       setUser(data)
     } catch (error) {
       console.error("Erro ao buscar usuário!", error)

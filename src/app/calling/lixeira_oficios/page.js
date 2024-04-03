@@ -73,7 +73,7 @@ const LixeiraOficio = () => {
         getAllCallingsInTrash()
     }, [])
 
-    return (
+    return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Ofícios']}>
                 <Box sx={{

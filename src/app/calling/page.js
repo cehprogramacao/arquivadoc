@@ -21,6 +21,8 @@ import SnackBar from '@/Components/SnackBar';
 import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
 import withAuth from '@/utils/withAuth';
+import { useDispatch } from 'react-redux';
+import { showAlert } from '@/store/actions';
 
 const top100Films = [
     { label: 'Número' },
@@ -30,8 +32,7 @@ const top100Films = [
 
 
 const PageOficio = () => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const dispatch = useDispatch()
     const { permissions } = useAuth()
     const [loading, setLoading] = useState(false)
     const [callingData, setCallingData] = useState([])
@@ -40,12 +41,6 @@ const PageOficio = () => {
     const [openPartes, setOpenPartes] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
-    const [alert, setAlert] = useState({
-        open: false,
-        type: "",
-        text: "",
-        severity: ""
-    })
 
     const [openPDF, setOpenPDF] = useState(false)
     const [selectOption, setSelectOption] = useState({
@@ -75,7 +70,6 @@ const PageOficio = () => {
 
     const handleClickMenu = (event) => {
         setAnchorEl(event.currentTarget);
-        console.log(number, 'Numbeeeeeeeeeeeeeee')
     };
     const handleCloseMenu = () => {
         setAnchorEl(null);
@@ -101,11 +95,11 @@ const PageOficio = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getAllCallings(accessToken)
             console.log(data)
-            setAlert({ open: true, severity: "success", type: "file", text: `Total de arquivos: ${Object.values(data).length}` })
+            dispatch(showAlert(`Total de arquivos: ${Object.values(data).length}`, "success", "file"))
             setCallingData(Object.values(data))
             return data
         } catch (error) {
-            setAlert({ open: true, severity: "error", type: "file", text: error.message })
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Erro ao pegar oficios!", error)
             throw error;
         }
@@ -125,13 +119,12 @@ const PageOficio = () => {
         try {
             setLoading(true)
             const { data } = await getCallingByNumber(value, accessToken)
-            console.log(data, 'number')
-            setAlert({ open: true, severity: "success", type: "file", text: `Arquivo filtrado com sucesso!` })
+            dispatch(showAlert(`Arquivo de ${data.entity}`, "success", "file"))
             newData.push(data)
             setCallingData(newData)
             return data
         } catch (error) {
-            setAlert({ open: true, severity: "success", type: "file", text: error.msg })
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Erro ao filtrar dados!", error)
             throw error;
         }
@@ -145,11 +138,11 @@ const PageOficio = () => {
             setLoading(true)
             const { data } = await getCallingByEntity(value, accessToken)
             console.log(data[0], 'Entity')
-            setAlert({ open: true, severity: "success", type: "file", text: `Arquivo filtrado com sucesso!` })
+            dispatch(showAlert(`Arquivo de ${data.entity}`, "success", "file"))
             setCallingData(Object.values(data))
             return data
         } catch (error) {
-            setAlert({ open: true, severity: "success", type: "file", text: error.msg })
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Erro ao filtrar dados!", error)
             throw error;
         }
@@ -176,32 +169,36 @@ const PageOficio = () => {
 
             } catch (error) {
                 console.error("Erro ao filtrar", error);
-                setAlert({ open: true, severity: "error", type: "file", text: error.msg })
+                dispatch(showAlert(error.msg, "error", "file"))
             }
         } else {
             console.error("Opção ou valor não definidos.");
-            setAlert({ open: true, severity: "error", type: "file", text: 'Opção ou valor não definidos.' })
+            dispatch(showAlert('Opção ou valores indefinidos!', "error", "file"))
         }
     }
 
     const handleDeleteByNumber = async () => {
         const { deleteCallingByNumber } = new Calling()
         try {
+            setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await deleteCallingByNumber(number, accessToken)
-            console.log(response.data)
-            window.location.reload()
+            dispatch(showAlert(response.data.message, "error", "file"))
             return response.data
         } catch (error) {
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Error ao deletar arquivo rgi!", error)
             throw error;
+        }
+        finally {
+            setLoading(false)
+            getCallingData()
         }
     }
 
     return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Ofícios']}>
-                
                     <Box
                         sx={{
                             width: '100%',
@@ -285,7 +282,7 @@ const PageOficio = () => {
                 <MenuOptionsFile deletePerm={permissions[4]?.delete_permission} editPerm={permissions[4]?.edit}
                     open={openMenu} anchorEl={anchorEl} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={number} handleDelete={handleDeleteByNumber} />
                 <ModalCalling open={openPDF} data={dataFile} number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />
-                <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
+                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     );
