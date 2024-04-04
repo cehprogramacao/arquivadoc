@@ -3,6 +3,7 @@ import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
 import ModalCadastroCallingEntity from "@/Components/ModalsRegistration/ModalCadastroCallingEntity";
 import CadastroModalCallingTypes from "@/Components/ModalsRegistration/ModalCadastroCallingTypes";
 import SnackBar from "@/Components/SnackBar";
+import ScannerModal from "@/Components/scanner";
 import Calling from "@/services/calling.service";
 import { CloseOutlined } from "@mui/icons-material";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton, Box, List, ListItem, ListItemText, ListItemButton, ListItemIcon, Grid } from "@mui/material";
@@ -10,9 +11,9 @@ import { useEffect, useState } from "react";
 
 
 export const CadastroOficio = ({ onClose, getData }) => {
-
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const [scan, setScan] = useState(false)
+  const handleOpenScan = () => setScan(true)
+  const handleCloseScan = () => setScan(false)
   const [dataCalling, setDataCalling] = useState({
     number: "",
     entity: 0,
@@ -134,241 +135,240 @@ export const CadastroOficio = ({ onClose, getData }) => {
 
 
   return (
-    <>
+    <Box sx={{
+      width: { md: 400, xs: "100%" },
+      height: '100vh',
+      padding: '8px 10px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '30px',
+      overflow: 'hidden'
+    }}>
       <Box sx={{
-        width: isSmallScreen ? '300px' : "409px",
-        height: '100vh',
-        padding: '8px 10px',
+        maxWidth: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <Typography sx={{
+          fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
+        }}>
+          Cadastro - Oficio
+        </Typography>
+        <IconButton onClick={onClose} >
+          <CloseOutlined />
+        </IconButton>
+      </Box>
+      <Box sx={{
         display: 'flex',
         flexDirection: 'column',
+        width: '100%',
         gap: '30px',
-        overflow: 'hidden'
+        height: "100vh",
+        overflowY: 'auto',
+        padding: '5px 0'
       }}>
-        <Box sx={{
-          maxWidth: '100%',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-          <Typography sx={{
-            fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
-          }}>
-            Cadastro - Oficio
-          </Typography>
-          <IconButton onClick={onClose} >
-          <CloseOutlined />
-          </IconButton>
-        </Box>
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
-          gap: isSmallScreen ? '20px' : '30px',
-          height: "100vh",
-          overflowY: 'auto',
-          padding: '5px 0'
-        }}>
 
-          <TextField
-            fullWidth
-            value={dataCalling.number}
-            name="number"
-            onChange={handleChangeValues}
-            sx={{
-              '& input': { color: 'success.main' },
-            }}
-            label="Número"
-            type="number"
-            color='success'
-          />
-          <TextField
-            fullWidth
-            value={dataCalling.box}
-            name="box"
-            onChange={handleChangeValues}
-            sx={{
-              '& input': { color: 'success.main' }
-            }}
-            label="N° da Caixa"
-            type="number"
-            color='success'
-          />
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={entity}
-            value={entityOption}
-            fullWidth
-            noOptionsText={<RenderNoOptions onClick={handleOpenModalCalling} title={'Cadastrar Entidade'} />}
-            getOptionLabel={(option) => option.name}
-            onChange={(e, value) => {
-              setEntityOption(value)
-              setDataCalling({ ...dataCalling, entity: value.id || "" })
-            }}
-            renderInput={(params) => (
-              <TextField
-                color="success"
-                {...params}
-                label="Entidade"
-                sx={{
-                  color: "#237117",
-                  '& input': {
-                    color: 'success.main',
-                  },
-                }}
-              />
-            )}
-            renderOption={(props, option) => (
-              <Box
-                {...props}
-                key={option.id}
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center"
-                }}
-              >
-                <Grid container alignItems={"center"} justifyContent="space-between" >
-                  <Grid item xs={10} lg={10} md={10} sm={10}>
-                    <Typography >
-                      {option.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={2} lg={2} md={2} sm={2}>
-                    <Box sx={{
-                      width: "100%",
-                      display: 'flex',
-                      justifyContent: "flex-end"
-                    }}>
-                      <IconButton onClick={() => handleDeleteEntityById(option.id)}>
-                        <CloseOutlined sx={{ width: 20, height: 20 }} />
-                      </IconButton>
-                    </Box>
-                  </Grid>
+        <TextField
+          fullWidth
+          value={dataCalling.number}
+          name="number"
+          onChange={handleChangeValues}
+          sx={{
+            '& input': { color: 'success.main' },
+          }}
+          label="Número"
+          type="number"
+          color='success'
+        />
+        <TextField
+          fullWidth
+          value={dataCalling.box}
+          name="box"
+          onChange={handleChangeValues}
+          sx={{
+            '& input': { color: 'success.main' }
+          }}
+          label="N° da Caixa"
+          type="number"
+          color='success'
+        />
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={entity}
+          value={entityOption}
+          fullWidth
+          noOptionsText={<RenderNoOptions onClick={handleOpenModalCalling} title={'Cadastrar Entidade'} />}
+          getOptionLabel={(option) => option.name}
+          onChange={(e, value) => {
+            setEntityOption(value)
+            setDataCalling({ ...dataCalling, entity: value.id || "" })
+          }}
+          renderInput={(params) => (
+            <TextField
+              color="success"
+              {...params}
+              label="Entidade"
+              sx={{
+                color: "#237117",
+                '& input': {
+                  color: 'success.main',
+                },
+              }}
+            />
+          )}
+          renderOption={(props, option) => (
+            <Box
+              {...props}
+              key={option.id}
+              sx={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center"
+              }}
+            >
+              <Grid container alignItems={"center"} justifyContent="space-between" >
+                <Grid item xs={10} lg={10} md={10} sm={10}>
+                  <Typography >
+                    {option.name}
+                  </Typography>
                 </Grid>
-
-              </Box>
-            )}
-          />
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={types}
-            value={groupOption}
-            getOptionLabel={(option) => option.name}
-            onChange={(e, value) => {
-              setGroupOption(value)
-              setDataCalling({ ...dataCalling, calling_type: value.id || "" })
-            }}
-            noOptionsText={<RenderNoOptions onClick={handleOpenModalTypes} title={'Cadastrar Tipo'} />}
-            fullWidth
-            renderInput={(params) => (
-              <TextField
-                color="success"
-                {...params}
-                label="Tipo"
-                sx={{
-                  color: "#237117",
-                  '& input': {
-                    color: 'success.main',
-                  },
-                }}
-              />
-            )}
-            renderOption={(props, option) => (
-              <Box
-                {...props}
-                key={option.id}
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center"
-                }}
-              >
-                <Grid container alignItems={"center"} justifyContent="space-between" >
-                  <Grid item xs={10} lg={10} md={10} sm={10}>
-                    <Typography >
-                      {option.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={2} lg={2} md={2} sm={2}>
-                    <Box sx={{
-                      width: "100%",
-                      display: 'flex',
-                      justifyContent: "flex-end"
-                    }}>
-                      <IconButton onClick={() => handleDeleteByTypeId(option.id)}>
-                        <CloseOutlined sx={{ width: 20, height: 20 }} />
-                      </IconButton>
-                    </Box>
-                  </Grid>
+                <Grid item xs={2} lg={2} md={2} sm={2}>
+                  <Box sx={{
+                    width: "100%",
+                    display: 'flex',
+                    justifyContent: "flex-end"
+                  }}>
+                    <IconButton onClick={() => handleDeleteEntityById(option.id)}>
+                      <CloseOutlined sx={{ width: 20, height: 20 }} />
+                    </IconButton>
+                  </Box>
                 </Grid>
+              </Grid>
 
-              </Box>
-            )}
+            </Box>
+          )}
+        />
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={types}
+          value={groupOption}
+          getOptionLabel={(option) => option.name}
+          onChange={(e, value) => {
+            setGroupOption(value)
+            setDataCalling({ ...dataCalling, calling_type: value.id || "" })
+          }}
+          noOptionsText={<RenderNoOptions onClick={handleOpenModalTypes} title={'Cadastrar Tipo'} />}
+          fullWidth
+          renderInput={(params) => (
+            <TextField
+              color="success"
+              {...params}
+              label="Tipo"
+              sx={{
+                color: "#237117",
+                '& input': {
+                  color: 'success.main',
+                },
+              }}
+            />
+          )}
+          renderOption={(props, option) => (
+            <Box
+              {...props}
+              key={option.id}
+              sx={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center"
+              }}
+            >
+              <Grid container alignItems={"center"} justifyContent="space-between" >
+                <Grid item xs={10} lg={10} md={10} sm={10}>
+                  <Typography >
+                    {option.name}
+                  </Typography>
+                </Grid>
+                <Grid item xs={2} lg={2} md={2} sm={2}>
+                  <Box sx={{
+                    width: "100%",
+                    display: 'flex',
+                    justifyContent: "flex-end"
+                  }}>
+                    <IconButton onClick={() => handleDeleteByTypeId(option.id)}>
+                      <CloseOutlined sx={{ width: 20, height: 20 }} />
+                    </IconButton>
+                  </Box>
+                </Grid>
+              </Grid>
 
-          />
-          <TextField
-            value={dataCalling.date}
-            name="date"
-            onChange={handleChangeValues}
-            type="date"
-            label="Data"
-            color='success'
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            fullWidth
-            type="file"
-            color='success'
-            onChange={handleFileChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            </Box>
+          )}
 
-          />
-          <Button sx={{
-            display: 'flex',
-            width: '169px',
+        />
+        <TextField
+          value={dataCalling.date}
+          name="date"
+          onChange={handleChangeValues}
+          type="date"
+          label="Data"
+          color='success'
+          InputLabelProps={{ shrink: true }}
+        />
+        <TextField
+          fullWidth
+          type="file"
+          color='success'
+          onChange={handleFileChange}
+          InputLabelProps={{
+            shrink: true,
+          }}
+
+        />
+        <Button sx={{
+          display: 'flex',
+          width: '169px',
+          background: 'transparent',
+          color: '#FFC117',
+          border: '1px solid #FFC117',
+          padding: '6px 12px',
+          textTransform: 'capitalize',
+          fontSize: ".9rem",
+          borderRadius: '8px',
+          ":hover": {
+            background: "#FFC117",
+            color: '#FFF',
+
+          }
+        }} onClick={handleOpenScan}>
+          Scannear Arquivos
+        </Button>
+        <Button sx={{
+          display: 'flex',
+          width: '169px',
+          background: "#237117",
+          color: '#fff',
+          border: '1px solid #237117',
+          textTransform: 'capitalize',
+          fontSize: ".9rem",
+          borderRadius: '8px',
+          ":hover": {
             background: 'transparent',
-            color: '#FFC117',
-            border: '1px solid #FFC117',
-            padding: '6px 12px',
-            textTransform: 'capitalize',
-            fontSize: ".9rem",
-            borderRadius: '8px',
-            ":hover": {
-              background: "#FFC117",
-              color: '#FFF',
+            color: '#237117',
 
-            }
-          }}>
-            Scannear Arquivos
-          </Button>
-          <Button sx={{
-            display: 'flex',
-            width: '169px',
-            background: "#237117",
-            color: '#fff',
-            border: '1px solid #237117',
-            textTransform: 'capitalize',
-            fontSize: ".9rem",
-            borderRadius: '8px',
-            ":hover": {
-              background: 'transparent',
-              color: '#237117',
+          }
+        }} onClick={handleCreateCalling}>
+          Realizar Cadastro
+        </Button>
 
-            }
-          }} onClick={handleCreateCalling}>
-            Realizar Cadastro
-          </Button>
-
-        </Box>
-
-      </Box >
+      </Box>
       <CadastroModalCallingTypes open={openModalCadastroTypes} onClose={handleCloseModalTypes} getTypes={getDataTypes} />
       <ModalCadastroCallingEntity open={openModalCalling} onClose={handleCloseModalCalling} getEntity={getDataEntity} />
       <SnackBar data={alert} handleClose={(e) => setAlert({ ...alert, open: false })} />
-    </>
+      <ScannerModal close={handleCloseScan} open={scan} />
+    </Box >
+
   );
 };

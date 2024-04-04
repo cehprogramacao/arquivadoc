@@ -22,6 +22,7 @@ const RootLayout = ({ children }) => {
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/x-icon" href="/image/favicon.ico"></link>
+        <script src="https://cdn.asprise.com/scannerjs/scanner.js" type="text/javascript"></script>
       </head>
       <body className={inter.className}>
         <AppRouterCacheProvider >
