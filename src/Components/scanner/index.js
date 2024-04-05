@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Box, Button, Typography, Grid, Paper } from '@mui/material';
 import Image from 'next/image';
-
-const ScannerModal = ({ open, close }) => {
+import { CloseOutlined } from '@mui/icons-material';
+const ScannerModal = ({ open, close, getFileUrl }) => {
   const [scannedImages, setScannedImages] = useState([]);
   const [scannedPdf, setScannedPdf] = useState(''); // Estado para armazenar o PDF digitalizado
   const [response, setResponse] = useState('');
@@ -23,20 +23,9 @@ const ScannerModal = ({ open, close }) => {
           return;
         }
 
-        // Processamento de imagens
-        const scannedImages = window.scanner.getScannedImages(response, true, false); // Imagens originais
-        scannedImages.forEach(scannedImage => {
-          const base64Image = scannedImage.src;
-          setScannedImages(prev => [...prev, base64Image]);
-        });
-
-        // Processamento do PDF
-        const pdfData = window.scanner.getScannedImage(response, false, false); // PDF
-        if (pdfData) {
-          setScannedPdf(pdfData.src); // Atualiza o estado com o PDF digitalizado
-        }
-
-        setResponse('Digitalização concluída com sucesso.');
+        const responseJson = JSON.parse(response);
+        getFileUrl(responseJson.output[0].result[0])
+        setScannedPdf(responseJson.output[0].result[0])
       };
     }
   }, []);
@@ -68,7 +57,7 @@ const ScannerModal = ({ open, close }) => {
          Digitalizar para PDF
         </Typography>
         <Button sx={{ mt: 2 }} variant="outlined" onClick={handleScan}>Digitalizar</Button>
-        <Grid container spacing={2} sx={{ mt: 2 }}>
+        {/* <Grid container spacing={2} sx={{ mt: 2 }}>
           {scannedImages.map((imgSrc, index) => (
             <Grid item xs={6} key={index}>
               <Paper elevation={3}>
@@ -76,7 +65,7 @@ const ScannerModal = ({ open, close }) => {
               </Paper>
             </Grid>
           ))}
-        </Grid>
+        </Grid> */}
         {scannedPdf && (
           <Typography sx={{ mt: 2 }}>
             PDF Digitalizado: <a href={`data:application/pdf;base64,${scannedPdf}`} download="scanned_document.pdf">Baixar PDF</a>

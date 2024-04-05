@@ -5,13 +5,17 @@ import CadastroModalCallingTypes from "@/Components/ModalsRegistration/ModalCada
 import SnackBar from "@/Components/SnackBar";
 import ScannerModal from "@/Components/scanner";
 import Calling from "@/services/calling.service";
+import { showAlert } from "@/store/actions";
 import { CloseOutlined } from "@mui/icons-material";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton, Box, List, ListItem, ListItemText, ListItemButton, ListItemIcon, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useDispatch } from 'react-redux'
 
 
 export const CadastroOficio = ({ onClose, getData }) => {
+  const dispatch = useDispatch()
   const [scan, setScan] = useState(false)
+
   const handleOpenScan = () => setScan(true)
   const handleCloseScan = () => setScan(false)
   const [dataCalling, setDataCalling] = useState({
@@ -54,7 +58,6 @@ export const CadastroOficio = ({ onClose, getData }) => {
     try {
       const accessToken = sessionStorage.getItem("accessToken")
       const { data } = await getAllCallingTypes(accessToken)
-      console.log(data, 'tty')
       setTypes(Object.values(data))
       return data
 
@@ -68,7 +71,6 @@ export const CadastroOficio = ({ onClose, getData }) => {
     try {
       const accessToken = sessionStorage.getItem("accessToken")
       const { data } = await getAllCallingEntities(accessToken)
-      console.log(data, 'tty')
       setEntity(Object.values(data))
       return data
     } catch (error) {
@@ -83,20 +85,20 @@ export const CadastroOficio = ({ onClose, getData }) => {
   }, [])
 
   const handleCreateCalling = async () => {
-    console.log(dataCalling)
     const { createCalling } = new Calling()
     try {
       const accessToken = sessionStorage.getItem("accessToken")
       const { data } = await createCalling(dataCalling, accessToken)
-      setAlert({ open: true, text: data.message, severity: "success", type: "file" })
-      getData()
-      onClose()
-      console.log(data)
+      dispatch(showAlert(data.message, "success", "file"))
       return data
     } catch (error) {
-      setAlert({ open: true, text: error.mesg, severity: "error", type: "file" })
+      dispatch(showAlert(error.msg, "error", "file"))
       console.error("Error ao adicionar arquivo!", error)
       throw error;
+    }
+    finally {
+      getData()
+      onClose()
     }
   }
   const handleDeleteEntityById = async (entityId) => {
@@ -105,7 +107,6 @@ export const CadastroOficio = ({ onClose, getData }) => {
       const accessToken = sessionStorage.getItem("accessToken")
       const { data } = await deleteCallingEntity(entityId, accessToken)
       getDataEntity()
-      console.log(data)
       return data
     } catch (error) {
       console.error("Erro ao deletar entidade", error)
@@ -118,7 +119,6 @@ export const CadastroOficio = ({ onClose, getData }) => {
       const accessToken = sessionStorage.getItem("accessToken")
       getDataTypes()
       const { data } = await deleteCallingType(typeId, accessToken)
-      console.log(data)
       return data
     } catch (error) {
       console.error("Erro ao deletar entidade", error)
@@ -133,6 +133,9 @@ export const CadastroOficio = ({ onClose, getData }) => {
   const handleOpenModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
   const handleCloseModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
 
+  const handleFileUrlScan = (file) => {
+    setDataCalling((state) => ({...state, file_url: file}))
+  }
 
   return (
     <Box sx={{
@@ -367,8 +370,7 @@ export const CadastroOficio = ({ onClose, getData }) => {
       <CadastroModalCallingTypes open={openModalCadastroTypes} onClose={handleCloseModalTypes} getTypes={getDataTypes} />
       <ModalCadastroCallingEntity open={openModalCalling} onClose={handleCloseModalCalling} getEntity={getDataEntity} />
       <SnackBar data={alert} handleClose={(e) => setAlert({ ...alert, open: false })} />
-      <ScannerModal close={handleCloseScan} open={scan} />
+      <ScannerModal close={handleCloseScan} open={scan} getFileUrl={(file) => handleFileUrlScan(file)} />
     </Box >
-
   );
 };

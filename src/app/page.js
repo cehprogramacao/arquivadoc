@@ -52,9 +52,7 @@ const Home = () => {
     }
   }, []);
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
+  
 
   return (
     <Box
