@@ -14,10 +14,6 @@ import { useDispatch } from 'react-redux'
 
 export const CadastroOficio = ({ onClose, getData }) => {
   const dispatch = useDispatch()
-  const [scan, setScan] = useState(false)
-
-  const handleOpenScan = () => setScan(true)
-  const handleCloseScan = () => setScan(false)
   const [dataCalling, setDataCalling] = useState({
     number: "",
     entity: 0,
@@ -86,13 +82,15 @@ export const CadastroOficio = ({ onClose, getData }) => {
 
   const handleCreateCalling = async () => {
     const { createCalling } = new Calling()
+    console.log(dataCalling)
     try {
       const accessToken = sessionStorage.getItem("accessToken")
       const { data } = await createCalling(dataCalling, accessToken)
       dispatch(showAlert(data.message, "success", "file"))
+
       return data
     } catch (error) {
-      dispatch(showAlert(error.msg, "error", "file"))
+      dispatch(showAlert('Erro ao criar ofício', "error", "file"))
       console.error("Error ao adicionar arquivo!", error)
       throw error;
     }
@@ -132,10 +130,55 @@ export const CadastroOficio = ({ onClose, getData }) => {
   const [openModalCadastroTypes, setOpenModalCadastroTypes] = useState(false)
   const handleOpenModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
   const handleCloseModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
+  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+    setDataCalling(prevData => ({
+      ...prevData,
+      [fieldToUpdate]: scannedPdfUrl
+    }));
+  };
+  const handleScanFile = () => {
+    window.scanner.scan((successful, mesg, response) => {
+      if (!successful) {
+        console.error('Failed: ' + mesg);
+        return;
+      }
+      if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+        console.info('User cancelled');
+        return;
+      }
+      const responseJson = JSON.parse(response);
+      const scannedPdfUrl = responseJson.output[0].result[0];
+      updateDataWithUrl('file_url', scannedPdfUrl);
+    }, {
+      "output_settings": [
+        {
+          "type": "return-base64",
+          "format": "pdf",
+          "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+        },
+        {
+          "type": "return-base64-thumbnail",
+          "format": "jpg",
+          "thumbnail_height": 200
+        }
+      ]
+    });
+  };
 
-  const handleFileUrlScan = (file) => {
-    setDataCalling((state) => ({...state, file_url: file}))
-  }
+  useEffect(() => {
+    if (window.scanner) {
+        window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
+            if (!successful) {
+                console.error('Failed: ' + mesg);
+                return;
+            }
+            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+                console.info('User cancelled');
+                return;
+            }
+        };
+    }
+}, []);
 
   return (
     <Box sx={{
@@ -345,7 +388,7 @@ export const CadastroOficio = ({ onClose, getData }) => {
             color: '#FFF',
 
           }
-        }} onClick={handleOpenScan}>
+        }} onClick={handleScanFile}>
           Scannear Arquivos
         </Button>
         <Button sx={{
@@ -370,7 +413,6 @@ export const CadastroOficio = ({ onClose, getData }) => {
       <CadastroModalCallingTypes open={openModalCadastroTypes} onClose={handleCloseModalTypes} getTypes={getDataTypes} />
       <ModalCadastroCallingEntity open={openModalCalling} onClose={handleCloseModalCalling} getEntity={getDataEntity} />
       <SnackBar data={alert} handleClose={(e) => setAlert({ ...alert, open: false })} />
-      <ScannerModal close={handleCloseScan} open={scan} getFileUrl={(file) => handleFileUrlScan(file)} />
     </Box >
   );
 };

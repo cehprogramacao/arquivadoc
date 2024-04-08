@@ -129,7 +129,6 @@ const PageTermos = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await getTermLGDP(dataOptions.cpfcnpj, accessToken)
-            console.log(response.data)
             newData.push(response.data)
             setData(newData)
             return response.data

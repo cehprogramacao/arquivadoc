@@ -1,7 +1,7 @@
 import { useMediaQuery, useTheme, TextField, Button, Typography, IconButton, FormControl, OutlinedInput } from "@mui/material";
 import { Box } from "@mui/system";
 import FilledInput from '@mui/material/FilledInput';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactInputMask from "react-input-mask";
 import Customer from "@/services/customer.service";
 
@@ -49,7 +49,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
   const handleCreateTerm = async () => {
     const { createTermLGDP } = new Customer();
     try {
-      onClose()
+      
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
         console.error("Access token is missing.");
@@ -62,8 +62,63 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
       console.error("Error creating customer:", error);
       throw error;
     }
-    
+    finally {
+      onClose()
+    }
+
   }
+
+  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+    setData(prevData => ({
+      ...prevData,
+      [fieldToUpdate]: scannedPdfUrl
+    }));
+  };
+  const handleScanFile = () => {
+    window.scanner.scan((successful, mesg, response) => {
+      if (!successful) {
+        console.error('Failed: ' + mesg);
+        return;
+      }
+      if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+        console.info('User cancelled');
+        return;
+      }
+      const responseJson = JSON.parse(response);
+      const scannedPdfUrl = responseJson.output[0].result[0];
+      updateDataWithUrl('file_url', scannedPdfUrl);
+    }, {
+      "output_settings": [
+        {
+          "type": "return-base64",
+          "format": "pdf",
+          "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+        },
+        {
+          "type": "return-base64-thumbnail",
+          "format": "jpg",
+          "thumbnail_height": 200
+        }
+      ]
+    });
+  };
+
+  useEffect(() => {
+    if (window.scanner) {
+      window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
+        if (!successful) {
+          console.error('Failed: ' + mesg);
+          return;
+        }
+        if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+          console.info('User cancelled');
+          return;
+        }
+      };
+    }
+  }, []);
+
+
   return (
     <Box sx={{
       width: { lg: 350, md: 350, sm: 350, xs: 250 },
@@ -202,7 +257,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
             color: '#FFF',
 
           }
-        }}>
+        }} onClick={handleScanFile}>
           Scannear Arquivos
         </Button>
         <Button sx={{

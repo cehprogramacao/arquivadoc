@@ -276,9 +276,7 @@ const PageOficio = () => {
                 <Drawer anchor='left' open={open} onClose={handleClose}>
                     <CadastroOficio getData={getCallingData} onClose={handleClose} onClickPartes={handleOpenPartes} />
                 </Drawer>
-                <Drawer anchor='right' open={openPartes} onClose={handleClosePartes}>
-                    <CadastroPartes onClose={handleClosePartes} />
-                </Drawer>
+                    <CadastroPartes open={openPartes} onClose={handleClosePartes} />
                 <MenuOptionsFile deletePerm={permissions[4]?.delete_permission} editPerm={permissions[4]?.edit}
                     open={openMenu} anchorEl={anchorEl} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={number} handleDelete={handleDeleteByNumber} />
                 <ModalCalling open={openPDF} data={dataFile} number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />

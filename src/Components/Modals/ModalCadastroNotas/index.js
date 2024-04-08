@@ -347,6 +347,57 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
     }
   }
 
+  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+    setFormData(prevData => ({
+      ...prevData,
+      [fieldToUpdate]: scannedPdfUrl
+    }));
+  };
+  const handleScanFile = () => {
+    window.scanner.scan((successful, mesg, response) => {
+      if (!successful) {
+        console.error('Failed: ' + mesg);
+        return;
+      }
+      if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+        console.info('User cancelled');
+        return;
+      }
+      const responseJson = JSON.parse(response);
+      const scannedPdfUrl = responseJson.output[0].result[0];
+      updateDataWithUrl('file_url', scannedPdfUrl);
+    }, {
+      "output_settings": [
+        {
+          "type": "return-base64",
+          "format": "pdf",
+          "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+        },
+        {
+          "type": "return-base64-thumbnail",
+          "format": "jpg",
+          "thumbnail_height": 200
+        }
+      ]
+    });
+  };
+
+  useEffect(() => {
+    if (window.scanner) {
+      window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
+        if (!successful) {
+          console.error('Failed: ' + mesg);
+          return;
+        }
+        if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+          console.info('User cancelled');
+          return;
+        }
+      };
+    }
+  }, []);
+
+
 
   return (
     <Box sx={{
@@ -585,7 +636,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
                     </Grid>
                   )}
                 </Grid>
-  
+
               </Box>
             )}
           />
@@ -748,7 +799,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         />
         <TextField type="file" onChange={handleSelectedFile} color="success" />
         <Stack sx={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-          <ButtonScanner>
+          <ButtonScanner onClick={handleScanFile}>
             Scannear Arquivo
           </ButtonScanner>
           <ButtonCadastrar onClick={handleCreateNotes}>
@@ -761,7 +812,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} getData={getAllNotesTag} />
       <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} />
       <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} getData={getTypeAndGroup} />
-      
+
       <CadastroNotesCurtomers getData={getCustumers} open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
       <ModalNotesGroup getData={getTypeAndGroup} onClose={handleCloseGroup} open={openModalGroup} />
     </Box >

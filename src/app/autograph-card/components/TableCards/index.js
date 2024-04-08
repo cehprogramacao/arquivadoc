@@ -57,7 +57,7 @@ export const DocList = ({ data, setCPF, handleClick }) => {
                                     fontWeight: 'bold',
                                 }}
                                 primary={item.box}
-                                secondary={`por ${item.cpf}`}
+                                secondary={`por ${item.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, '$1.$2.$3-$4')}`}
                             />
                         </ListItem>
                     </List>

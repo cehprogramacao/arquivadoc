@@ -83,6 +83,56 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
     getDataPresenter()
   }, [])
 
+  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+    setData(prevData => ({
+      ...prevData,
+      [fieldToUpdate]: scannedPdfUrl
+    }));
+  };
+  const handleScanFile = () => {
+    window.scanner.scan((successful, mesg, response) => {
+      if (!successful) {
+        console.error('Failed: ' + mesg);
+        return;
+      }
+      if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+        console.info('User cancelled');
+        return;
+      }
+      const responseJson = JSON.parse(response);
+      const scannedPdfUrl = responseJson.output[0].result[0];
+      updateDataWithUrl('file_url', scannedPdfUrl);
+    }, {
+      "output_settings": [
+        {
+          "type": "return-base64",
+          "format": "pdf",
+          "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+        },
+        {
+          "type": "return-base64-thumbnail",
+          "format": "jpg",
+          "thumbnail_height": 200
+        }
+      ]
+    });
+  };
+
+  useEffect(() => {
+    if (window.scanner) {
+      window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
+        if (!successful) {
+          console.error('Failed: ' + mesg);
+          return;
+        }
+        if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+          console.info('User cancelled');
+          return;
+        }
+      };
+    }
+  }, []);
+
 
   return (
     <Box sx={{
@@ -319,7 +369,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
             color: '#FFF',
 
           }
-        }}>
+        }} onClick={handleScanFile}>
           Scannear Arquivos
         </Button>
         <Button sx={{

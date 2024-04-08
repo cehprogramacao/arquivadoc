@@ -16,7 +16,7 @@ import { usePathname } from 'next/navigation';
 const ModalListCards = ({ open, data, onClose, cpfcnpj }) => {
     const path = usePathname().split("/")[1]
     const handlePrintFile = () => {
-        const base64Data = data.file_url;
+        const base64Data = data.doc_file;
         const byteCharacters = atob(base64Data);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
