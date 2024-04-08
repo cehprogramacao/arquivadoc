@@ -219,7 +219,7 @@ const PageAutographCards = () => {
                     <Drawer anchor='left' open={open} onClose={handleClose}>
                         <CadastrarCartoesModal onClose={handleClose} onClickPartes={handleOpenPartes} />
                     </Drawer>
-                    <CadastroPartes onClose={handleClosePartes} />
+                    <CadastroPartes open={openPartes} onClose={handleClosePartes} />
 
                 </Box>
                 <MenuOptionsFile

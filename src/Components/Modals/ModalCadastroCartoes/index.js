@@ -1,8 +1,10 @@
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro"
 import Customer from "@/services/customer.service"
+import { showAlert } from "@/store/actions"
 import { CloseOutlined } from "@mui/icons-material"
 import { Autocomplete, Box, Button, Stack, TextField, Typography, useMediaQuery, useTheme, IconButton } from "@mui/material"
 import { useEffect, useState } from "react"
+import { useDispatch } from "react-redux"
 
 
 export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
@@ -15,7 +17,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
         cpf_file_url: '',
         comp_resid_file_url: ''
     })
-
+    const dispatch = useDispatch()
 
 
     const handleChangeFiles = (name, event) => {
@@ -60,16 +62,156 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await createAutographCard(data, accessToken)
+            dispatch(showAlert(response.data.message, "success", "file"))
             console.log(response.data)
             return response.data
         } catch (error) {
             console.error('Erro ao criar cartão de autógrafo!', error)
+            dispatch(showAlert(error.msg, "error", "file"))
             throw error;
         }
         finally {
             onClose()
         }
     }
+
+    const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+        setData(prevData => ({
+            ...prevData,
+            [fieldToUpdate]: scannedPdfUrl
+        }));
+    };
+
+    const handleCardScan = () => {
+        window.scanner.scan((successful, mesg, response) => {
+            if (!successful) {
+                console.error('Failed: ' + mesg);
+                return;
+            }
+            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+                console.info('User cancelled');
+                return;
+            }
+            const responseJson = JSON.parse(response);
+            const scannedPdfUrl = responseJson.output[0].result[0];
+            updateDataWithUrl('card_file_url', scannedPdfUrl);
+        }, {
+            "output_settings": [
+                {
+                    "type": "return-base64",
+                    "format": "pdf",
+                    "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+                },
+                {
+                    "type": "return-base64-thumbnail",
+                    "format": "jpg",
+                    "thumbnail_height": 200
+                }
+            ]
+        });
+    };
+
+    const handleDocScan = () => {
+        window.scanner.scan((successful, mesg, response) => {
+            if (!successful) {
+                console.error('Failed: ' + mesg);
+                return;
+            }
+            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+                console.info('User cancelled');
+                return;
+            }
+            const responseJson = JSON.parse(response);
+            const scannedPdfUrl = responseJson.output[0].result[0];
+            updateDataWithUrl('doc_file_url', scannedPdfUrl);
+        }, {
+            "output_settings": [
+                {
+                    "type": "return-base64",
+                    "format": "pdf",
+                    "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+                },
+                {
+                    "type": "return-base64-thumbnail",
+                    "format": "jpg",
+                    "thumbnail_height": 200
+                }
+            ]
+        });
+    };
+
+    const handleCpfScan = () => {
+        window.scanner.scan((successful, mesg, response) => {
+            if (!successful) {
+                console.error('Failed: ' + mesg);
+                return;
+            }
+            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+                console.info('User cancelled');
+                return;
+            }
+            const responseJson = JSON.parse(response);
+            const scannedPdfUrl = responseJson.output[0].result[0];
+            updateDataWithUrl('cpf_file_url', scannedPdfUrl);
+        }, {
+            "output_settings": [
+                {
+                    "type": "return-base64",
+                    "format": "pdf",
+                    "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+                },
+                {
+                    "type": "return-base64-thumbnail",
+                    "format": "jpg",
+                    "thumbnail_height": 200
+                }
+            ]
+        });
+    };
+
+    const handleCompResidScan = () => {
+        window.scanner.scan((successful, mesg, response) => {
+            if (!successful) {
+                console.error('Failed: ' + mesg);
+                return;
+            }
+            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+                console.info('User cancelled');
+                return;
+            }
+            const responseJson = JSON.parse(response);
+            const scannedPdfUrl = responseJson.output[0].result[0];
+            updateDataWithUrl('comp_resid_file_url', scannedPdfUrl);
+        }, {
+            "output_settings": [
+                {
+                    "type": "return-base64",
+                    "format": "pdf",
+                    "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+                },
+                {
+                    "type": "return-base64-thumbnail",
+                    "format": "jpg",
+                    "thumbnail_height": 200
+                }
+            ]
+        });
+    };
+
+    useEffect(() => {
+        if (window.scanner) {
+            window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
+                if (!successful) {
+                    console.error('Failed: ' + mesg);
+                    return;
+                }
+                if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+                    console.info('User cancelled');
+                    return;
+                }
+            };
+        }
+    }, []);
 
     return (
         <Box sx={{
@@ -179,7 +321,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                             color: '#FFF',
 
                         }
-                    }}>
+                    }} onClick={() => handleCardScan()}>
                         Scannear Documentos
                     </Button>
                 </Stack>
@@ -214,7 +356,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                             color: '#FFF',
 
                         }
-                    }}>
+                    }} onClick={() => handleCpfScan()}>
                         Scannear CPF
                     </Button>
                 </Stack>
@@ -250,7 +392,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                             color: '#FFF',
 
                         }
-                    }}>
+                    }} onClick={() => handleCompResidScan()}>
                         Scannear Comprovante
                     </Button>
                 </Stack>
@@ -285,7 +427,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                             color: '#FFF',
 
                         }
-                    }}>
+                    }} onClick={() => handleDocScan()}>
                         Scannear Arquivo
                     </Button>
                 </Stack>
