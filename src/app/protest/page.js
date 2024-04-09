@@ -85,11 +85,11 @@ const PageProtesto = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getAllProtests(accessToken)
 
-            dispatch(showAlert(`Total de arquivos: ${Object.values(data).length}`,"success", "file"))
+            dispatch(showAlert(`Total de arquivos: ${Object.values(data).length}`, "success", "file"))
             console.log(data)
             setData(Object.values(data))
         } catch (error) {
-            dispatch(showAlert(error.msg,"error", "file"))
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Erro ao listar todos os arquivos!", error)
             throw error;
         }
@@ -255,9 +255,8 @@ const PageProtesto = () => {
                     <Drawer anchor='left' open={openModalCadastro} onClose={handleCloseModalCadastro} >
                         <CadastroProtesto onClickPartes={handleOpenModalPartes} onClose={handleCloseModalCadastro} />
                     </Drawer>
-                    <Drawer anchor='right' onClose={handleCloseModalPartes} open={openModalPartes}>
-                        <CadastroPartes onClose={handleCloseModalPartes} />
-                    </Drawer>
+
+                    <CadastroPartes open={openModalPartes} onClose={handleCloseModalPartes} />
                     <ModalList
                         open={openModalListFile}
                         onClose={handleCloseModalFile}

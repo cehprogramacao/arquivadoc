@@ -200,7 +200,7 @@ const PageTermos = () => {
                                                 options={top100Films}
                                                 fullWidth
                                                 autoHighlight
-                                           getOptionLabel={(option) => option.label || ""}
+                                                getOptionLabel={(option) => option.label || ""}
                                                 onChange={(e, newValue) => setDataOptions({ ...dataOptions, option: newValue })}
                                                 isOptionEqualToValue={(option, value) => option.label === value.label}
                                                 renderInput={(params) => (
@@ -236,16 +236,13 @@ const PageTermos = () => {
                         <Drawer anchor="left" open={open} onClose={handleClose} >
                             <CadastroTermosModal onClose={handleClose} onClickPartes={handleOpenPartes} />
                         </Drawer>
-                        <Drawer anchor="right" open={openPartes} onClose={handleClosePartes}>
-                            <CadastroPartes onClose={handleClosePartes} />
-                        </Drawer>
-
+                        <CadastroPartes open={openPartes} onClose={handleClosePartes} />
                     </Box>
                 }
-                <MenuOptionsFile 
-                editPerm={permissions[5]?.edit}
-                deletePerm={permissions[5]?.delete_permission} 
-                anchorEl={anchorEl} data={data} open={openMenu} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={cpfcnpj} handleDelete={handleDeleteByCPFCNPJ} />
+                <MenuOptionsFile
+                    editPerm={permissions[5]?.edit}
+                    deletePerm={permissions[5]?.delete_permission}
+                    anchorEl={anchorEl} data={data} open={openMenu} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={cpfcnpj} handleDelete={handleDeleteByCPFCNPJ} />
                 <ModalListTerm data={dataFile} onClose={handleCloseModalPDF} open={openPDF} cpfcnpj={cpfcnpj} />
                 <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
             </PrivateRoute>
