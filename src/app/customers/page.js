@@ -76,14 +76,12 @@ const PagePessoas = () => {
     };
 
     const handleFindCustomerByCpfCnpj = async () => {
-        console.log(options)
         if(options.option && options.value) {
             const { getCustomerByCPFCNPJ } = new Customer()
             let newData = []
             try {
                 const accessToken = sessionStorage.getItem("accessToken")
                 const { data } = await getCustomerByCPFCNPJ(options.value, accessToken)
-                console.log(data)
                 newData.push(data)
                 setRows(newData)
                 dispatch(showAlert("Usuário listado!", "success"))

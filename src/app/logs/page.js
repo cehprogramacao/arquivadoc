@@ -20,7 +20,6 @@ const PageLogs = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getLogs(accessToken)
-            console.log(data)
             setRows(Object.values(data))
             return data
         } catch (error) {

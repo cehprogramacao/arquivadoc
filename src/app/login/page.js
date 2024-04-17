@@ -7,9 +7,8 @@ import { login } from "@/services/auth.service";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { SET_LOGIN_DATA, showAlert } from "@/store/actions";
-import Snackbar from "@/Components/SnackBar";
-import SnackBar from "@/Components/SnackBar";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import SnackBar from "@/Components/SnackBar";
 const { Box } = require("@mui/system");
 
 const LoginPage = () => {
@@ -50,9 +49,7 @@ const LoginPage = () => {
   };
 
 
-  const handleClose = () => {
-    setAlert({ ...alert, open: false })
-  }
+
 
 
   return (

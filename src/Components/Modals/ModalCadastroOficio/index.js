@@ -412,7 +412,6 @@ export const CadastroOficio = ({ onClose, getData }) => {
       </Box>
       <CadastroModalCallingTypes open={openModalCadastroTypes} onClose={handleCloseModalTypes} getTypes={getDataTypes} />
       <ModalCadastroCallingEntity open={openModalCalling} onClose={handleCloseModalCalling} getEntity={getDataEntity} />
-      <SnackBar data={alert} handleClose={(e) => setAlert({ ...alert, open: false })} />
     </Box >
   );
 };

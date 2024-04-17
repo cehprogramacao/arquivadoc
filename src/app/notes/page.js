@@ -21,6 +21,8 @@ import PrivateRoute from "@/utils/LayoutPerm";
 import { AuthProvider, useAuth } from "@/context";
 import { Buttons } from "@/Components/Button/Button";
 import withAuth from "@/utils/withAuth";
+import { useDispatch } from "react-redux";
+import { showAlert } from "@/store/actions";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -32,15 +34,9 @@ const BoxMain = styled('section')({
 
 
 const PageNotas = () => {
-    const theme = useTheme()
     const [loading, setLoading] = useState(false)
     const { permissions, updatePermissions } = useAuth()
-    const [alert, setAlert] = useState({
-        open: false,
-        text: "",
-        severity: "",
-        type: ""
-    })
+    
 
     const [data, setData] = useState([])
     const [selectOption, setSelectOption] = useState({
@@ -56,7 +52,7 @@ const PageNotas = () => {
     const openMenu = Boolean(anchorEl);
     const handleOpen = () => setOpen(!open)
     const handleClose = () => setOpen(!open)
-
+    const dispatch = useDispatch()
     const handleClickMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -69,10 +65,10 @@ const PageNotas = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const dataNote = await getAllNotes(accessToken)
-            setAlert({ open: true, text: `Total de arquivos: ${Object.values(dataNote.data).length}`, type: "file", severity: "success" })
+            dispatch(showAlert(`Total de arquivos: ${Object.values(dataNote.data).length}`, "success", "file"))
             setData(Object.values(dataNote.data))
         } catch (error) {
-            setAlert({ open: true, text: error.message, type: "file", severity: "error" })
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Erro ao listar notas", error)
             throw error;
         }
@@ -86,7 +82,6 @@ const PageNotas = () => {
             setOpenPDF(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const noteFilter = await getNoteByNumber(number, accessToken)
-            console.log(noteFilter.data, 'noteeeeeeeeeee 88')
             setDataFileModal(noteFilter.data)
         } catch (error) {
             console.error("Error ao lista dados por apresentante", error)
@@ -101,11 +96,10 @@ const PageNotas = () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await deleteNoteByNumber(number, accessToken)
-            setAlert({ open: true, text: response.data.message, type: "file", severity: "success" })
-            console.log(response.data)
+            dispatch(showAlert(response.data.message, "success", "file"))
             return response.data
         } catch (error) {
-            setAlert({ open: true, text: error.message, type: "file", severity: "error" })
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Error ao deletar arquivo rgi!", error)
             throw error;
         }
@@ -115,14 +109,11 @@ const PageNotas = () => {
     }
 
     const handleSearchByPresenter = async (value, accessToken) => {
-        console.log('Filtrando por Apresentante com valor:', value);
         const { getNoteByPresenter } = new NoteService();
         let newData = [];
         try {
             setLoading(true);
             const response = await getNoteByPresenter(value, accessToken);
-            console.log('Resposta do Apresentante:', response.data);
-            // newData.push(response.data)
             setData(Object.values(response.data))
             return response.data
         } catch (error) {
@@ -133,13 +124,11 @@ const PageNotas = () => {
         }
     };
     const handleSearchByNumber = async (value, accessToken) => {
-        console.log('Filtrando por Prenotação com valor:', value);
         const { getNoteByNumber } = new NoteService();
         let newData = []
         try {
             setLoading(true);
             const response = await getNoteByNumber(value, accessToken);
-            console.log('Resposta da Number:', response.data);
             newData.push(response.data)
             setData(newData)
             return response
@@ -150,14 +139,8 @@ const PageNotas = () => {
         }
     };
     const handleSearchByPresenterOrNumber = async () => {
-        console.log('Iniciando filtragem com valor:', selectOption);
-
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log('AccessToken:', accessToken);
-
         if (selectOption.option && selectOption.value) {
-            console.log('Opção selecionada:', selectOption.option);
-
             try {
                 if (selectOption.option === "Número") {
                     await handleSearchByNumber(selectOption.value, accessToken);
@@ -179,121 +162,118 @@ const PageNotas = () => {
 
     }, [])
 
-    return (
+    return loading ? <Loading /> : (
         <AuthProvider >
             <PrivateRoute requiredPermissions={['Notas']} >
-                {loading ? <Loading />
-                    :
-                    <Box sx={{
-                        width: '100%',
-                        display: "flex",
-                        flexDirection: 'column',
-                        placeItems: 'center',
-                        py: 12,
-                        px: 3
-                    }}>
-                        <CustomContainer >
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} >
-                                    <Box sx={{
-                                        width: "100%",
-                                        display: 'flex',
-                                        justifyContent: "center"
-                                    }}>
-                                        <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                                            Notas
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} >
-                                    <Grid container spacing={5}>
-                                        <Grid item xs={12} lg={4} md={6} sm={6}>
-                                            <TextField
-                                                fullWidth
-                                                value={selectOption.value}
-                                                // isOptionEqualToValue={(option, value) => option.label === value.label}
-                                                onChange={(e) => setSelectOption((prev) => ({ ...prev, value: e.target.value }))}
-                                                label="Buscar"
-                                                color="success" />
-                                        </Grid>
-                                        <Grid item xs={12} lg={5} md={6} sm={6}>
-                                            <Autocomplete
-                                                disablePortal
-                                                id="combo-box-demo"
-                                                options={opt}
-                                                getOptionLabel={(option) => option}
-                                                value={selectOption.option}
-                                                isOptionEqualToValue={(option, value) => option === value}
-                                                onChange={(e, value) => {
-                                                    setSelectOption((prev) => ({ ...prev, option: value }))
-                                                }}
-                                                fullWidth
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        color="success"
-                                                        InputProps={{
-                                                            ...params.InputProps,
-                                                            classes: {
-                                                                root: 'no-options-input',
-                                                            },
-                                                        }}
-                                                        {...params}
-                                                        label="Buscar Por"
+                <Box sx={{
+                    width: '100%',
+                    display: "flex",
+                    flexDirection: 'column',
+                    placeItems: 'center',
+                    py: 12,
+                    px: 3
+                }}>
+                    <CustomContainer >
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} >
+                                <Box sx={{
+                                    width: "100%",
+                                    display: 'flex',
+                                    justifyContent: "center"
+                                }}>
+                                    <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
+                                        Notas
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} >
+                                <Grid container spacing={5}>
+                                    <Grid item xs={12} lg={4} md={6} sm={6}>
+                                        <TextField
+                                            fullWidth
+                                            value={selectOption.value}
+                                            // isOptionEqualToValue={(option, value) => option.label === value.label}
+                                            onChange={(e) => setSelectOption((prev) => ({ ...prev, value: e.target.value }))}
+                                            label="Buscar"
+                                            color="success" />
+                                    </Grid>
+                                    <Grid item xs={12} lg={5} md={6} sm={6}>
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={opt}
+                                            getOptionLabel={(option) => option}
+                                            value={selectOption.option}
+                                            isOptionEqualToValue={(option, value) => option === value}
+                                            onChange={(e, value) => {
+                                                setSelectOption((prev) => ({ ...prev, option: value }))
+                                            }}
+                                            fullWidth
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    color="success"
+                                                    InputProps={{
+                                                        ...params.InputProps,
+                                                        classes: {
+                                                            root: 'no-options-input',
+                                                        },
+                                                    }}
+                                                    {...params}
+                                                    label="Buscar Por"
 
-                                                        sx={{
-                                                            color: "#237117",
-                                                            '& input': {
-                                                                color: 'success.main',
-                                                            },
-                                                        }}
-                                                    />
-                                                )}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} lg={3} md={12} sm={12} >
-                                            <Box sx={{
-                                                width: "100%",
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                gap: 4
-                                            }}>
-                                                <Buttons title={"Buscar"} color={"green"} onClick={handleSearchByPresenterOrNumber} />
-                                                {permissions[6]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                                <ButtonLixeira href={"/notes/lixeira_notas"} />
-                                            </Box>
-
-                                        </Grid>
+                                                    sx={{
+                                                        color: "#237117",
+                                                        '& input': {
+                                                            color: 'success.main',
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={3} md={12} sm={12} >
+                                        <Box sx={{
+                                            width: "100%",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            gap: 4
+                                        }}>
+                                            <Buttons title={"Buscar"} color={"green"} onClick={handleSearchByPresenterOrNumber} />
+                                            {permissions[6]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
+                                            <ButtonLixeira href={"/notes/lixeira_notas"} />
+                                        </Box>
 
                                     </Grid>
-                                </Grid>
-                                <Grid item xs={12} >
-                                    <TableList data={data} handleClick={handleClickMenu} setNumber={(e) => setNumber(e)} />
+
                                 </Grid>
                             </Grid>
-                        </CustomContainer>
-                        <Drawer anchor="left" open={open} onClose={handleClose}>
-                            <CadastroNotas onClose={handleClose} getData={getData} dataSnack={(e) => setAlert({ ...e })} />
-                        </Drawer>
-                        <MenuOptionsFile open={openMenu}
-                            handleClose={handleCloseMenu}
-                            anchorEl={anchorEl}
-                            handleDelete={handleDeleteByNumber}
-                            handleOpenModalPDF={handleOpenModalPDF}
-                            type={number}
-                            deletePerm={permissions[6]?.delete_permission}
-                            editPerm={permissions[6]?.edit}
-                        />
-                        <ModalList
-                            data={dataFileModal}
-                            number={number}
-                            onClose={handleCloseModalPDF}
-                            open={openPDF}
-                            deletePerm={permissions[6]?.delete_permission}
-                            editPerm={permissions[6]?.edit}
-                        />
-                        <SnackBar  />
-                    </Box>
-                }
+                            <Grid item xs={12} >
+                                <TableList data={data} handleClick={handleClickMenu} setNumber={(e) => setNumber(e)} />
+                            </Grid>
+                        </Grid>
+                    </CustomContainer>
+                    <Drawer anchor="left" open={open} onClose={handleClose}>
+                        <CadastroNotas onClose={handleClose} getData={getData} dataSnack={(e) => setAlert({ ...e })} />
+                    </Drawer>
+                    <MenuOptionsFile open={openMenu}
+                        handleClose={handleCloseMenu}
+                        anchorEl={anchorEl}
+                        handleDelete={handleDeleteByNumber}
+                        handleOpenModalPDF={handleOpenModalPDF}
+                        type={number}
+                        deletePerm={permissions[6]?.delete_permission}
+                        editPerm={permissions[6]?.edit}
+                    />
+                    <ModalList
+                        data={dataFileModal}
+                        number={number}
+                        onClose={handleCloseModalPDF}
+                        open={openPDF}
+                        deletePerm={permissions[6]?.delete_permission}
+                        editPerm={permissions[6]?.edit}
+                    />
+                    <SnackBar />
+                </Box>
             </PrivateRoute>
         </AuthProvider>
     );

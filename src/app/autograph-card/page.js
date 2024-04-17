@@ -50,7 +50,6 @@ const PageAutographCards = () => {
             setOpenPDF(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await getAutographCard(cpfcnpj, accessToken)
-            console.log(response.data, 'PDFF')
             setDataFile(response.data)
             return response.data
         } catch (error) {
@@ -64,7 +63,6 @@ const PageAutographCards = () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await deleteAutographCard(cpfcnpj, accessToken)
-            console.log(response.data)
             dispatch(showAlert(response.data.message, "success", "file"))
             return response.data
         } catch (error) {
@@ -81,7 +79,6 @@ const PageAutographCards = () => {
             const accessToken = sessionStorage.getItem("accessToken")
 
             const response = await getAutographCard(dataOptions.cpfcnpj, accessToken)
-            console.log(response.data)
             newData.push(response.data)
             setData(newData)
             return response.data

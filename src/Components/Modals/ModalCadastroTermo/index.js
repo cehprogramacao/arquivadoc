@@ -4,10 +4,13 @@ import FilledInput from '@mui/material/FilledInput';
 import { useEffect, useState } from "react";
 import ReactInputMask from "react-input-mask";
 import Customer from "@/services/customer.service";
+import { useDispatch } from "react-redux";
+import { showAlert } from "@/store/actions";
 
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
-export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
+export const CadastroTermosModal = ({ onClose, getData}) => {
+  const dispatch = useDispatch()
   const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
   const [errors, setErrors] = useState({});
   const [data, setData] = useState({
@@ -43,7 +46,6 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         setData((prev) => ({ ...prev, file_url: resultURL }))
       }
       fileReader.readAsDataURL(files)
-      console.log(fileReader, 999)
     }
   }
   const handleCreateTerm = async () => {
@@ -56,9 +58,10 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         throw new Error("Access token is missing.");
       }
       const response = await createTermLGDP(data, accessToken);
-      console.log(response.data)
+      dispatch(showAlert(response.data.message, "success", "file"))
       return response.data;
     } catch (error) {
+      dispatch(showAlert(error.message, "error", "file"))
       console.error("Error creating customer:", error);
       throw error;
     }

@@ -39,7 +39,6 @@ const PageRGI = () => {
     const [openModalRGI, setOpenModalRGI] = useState(false)
     const [data, setData] = useState([])
     const [openFilterModalPDF, setOpenFilterModalPDF] = useState(false)
-    const [openModalPartes, setOpenModalPartes] = useState(false)
     const [prenotation, setPrenotation] = useState("")
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -74,13 +73,11 @@ const PageRGI = () => {
     };
     const handleOpenModalRGI = () => setOpenModalRGI(true)
     const handleCloseModalRGI = () => setOpenModalRGI(false)
-    const handleOpenModalPartes = () => setOpenModalPartes(true)
-    const handleCloseModalPartes = () => setOpenModalPartes(false)
 
 
 
     // Função para tratar o filtro de Apresentante
-    
+
     const handleDeleteByPrenotation = async () => {
         const { deleteByPrenotation } = new RGI()
         try {
@@ -187,95 +184,92 @@ const PageRGI = () => {
     return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['RGI']}>
-                
-                    <Box
-                        sx={{
-                            width: '100%',
-                            height: '100vh',
-                            py: 15,
-                            px: 4,
-                        }}
-                    >
-                        <CustomContainer>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12}>
-                                    <Box sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        justifyContent: "center"
-                                    }}>
-                                        <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                                            RGI
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Grid container spacing={3}>
-                                        <Grid item xs={12} lg={4} md={6} sm={6}>
-                                            <TextField
-                                                label="Buscar"
-                                                fullWidth
-                                                sx={{ '& input': { color: 'success.main' } }}
-                                                color="success"
-                                                value={value.value}
-                                                onChange={(e) => setValue({ ...value, value: e.target.value })}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} lg={4} md={6} sm={6}>
-                                            <Autocomplete
-                                                disablePortal
-                                                getOptionLabel={(option) => option.label || ""}
-                                                onChange={(e, newValue) => setValue({ ...value, option: newValue })}
-                                                isOptionEqualToValue={(option, value) => option.label === value.label}
-                                                id="combo-box-demo"
-                                                options={optionsFilter}
-                                                fullWidth
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        label="Buscar Por"
-                                                        color="success"
-                                                        sx={{
-                                                            '& .MuiInputBase-input': {
-                                                                color: '#237117',
-                                                            },
-                                                            '& label.Mui-focused': {
-                                                                color: '#237117',
-                                                            },
-                                                            '& .MuiOutlinedInput-root': {
-                                                                '&.Mui-focused fieldset': {
-                                                                    borderColor: '#237117',
-                                                                },
-                                                            },
-                                                        }}
-                                                    />
-                                                )}
-                                            />
 
-                                        </Grid>
-                                        <Grid item xs={12} lg={4} md={12} sm={12}>
-                                            <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", alignItems: "center", gap: '30px' }}>
-                                                <Buttons color={'green'} title={'Buscar'} onClick={handleFilter} />
-                                                {permissions[1]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpenModalRGI} />}
-                                                <ButtonLixeira href={"/rgi/lixeira_rgi"} />
-                                            </Box>
-                                        </Grid>
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '100vh',
+                        py: 15,
+                        px: 4,
+                    }}
+                >
+                    <CustomContainer>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <Box sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}>
+                                    <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
+                                        RGI
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} lg={4} md={6} sm={6}>
+                                        <TextField
+                                            label="Buscar"
+                                            fullWidth
+                                            sx={{ '& input': { color: 'success.main' } }}
+                                            color="success"
+                                            value={value.value}
+                                            onChange={(e) => setValue({ ...value, value: e.target.value })}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={4} md={6} sm={6}>
+                                        <Autocomplete
+                                            disablePortal
+                                            getOptionLabel={(option) => option.label || ""}
+                                            onChange={(e, newValue) => setValue({ ...value, option: newValue })}
+                                            isOptionEqualToValue={(option, value) => option.label === value.label}
+                                            id="combo-box-demo"
+                                            options={optionsFilter}
+                                            fullWidth
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label="Buscar Por"
+                                                    color="success"
+                                                    sx={{
+                                                        '& .MuiInputBase-input': {
+                                                            color: '#237117',
+                                                        },
+                                                        '& label.Mui-focused': {
+                                                            color: '#237117',
+                                                        },
+                                                        '& .MuiOutlinedInput-root': {
+                                                            '&.Mui-focused fieldset': {
+                                                                borderColor: '#237117',
+                                                            },
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        />
+
+                                    </Grid>
+                                    <Grid item xs={12} lg={4} md={12} sm={12}>
+                                        <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", alignItems: "center", gap: '30px' }}>
+                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFilter} />
+                                            {permissions[1]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpenModalRGI} />}
+                                            <ButtonLixeira href={"/rgi/lixeira_rgi"} />
+                                        </Box>
                                     </Grid>
                                 </Grid>
-                                <Grid item xs={12} >
-                                    <DocList data={data} setPrenotation={(prenotation) => setPrenotation(prenotation)} handleClick={handleClickMenu} />
-                                </Grid>
                             </Grid>
-                        </CustomContainer>
+                            <Grid item xs={12} >
+                                <DocList data={data} setPrenotation={(prenotation) => setPrenotation(prenotation)} handleClick={handleClickMenu} />
+                            </Grid>
+                        </Grid>
+                    </CustomContainer>
 
-                        {/* {openFilterModalPDF && <ModalList onClose={handleClose} data={data} open={open} />} */}
-                        <Drawer anchor='left' open={openModalRGI} onClose={handleCloseModalRGI} >
-                            <CadastroModalRGI onClose={handleCloseModalRGI} onClickPartes={handleOpenModalPartes} />
-                        </Drawer>
-                        <Drawer open={openModalPartes} onClose={handleCloseModalPartes} anchor='right' >
-                            <CadastroPartes onClose={handleCloseModalPartes} />
-                        </Drawer>
-                    </Box>
+                    {/* {openFilterModalPDF && <ModalList onClose={handleClose} data={data} open={open} />} */}
+                    <Drawer anchor='left' open={openModalRGI} onClose={handleCloseModalRGI} >
+                        <CadastroModalRGI onClose={handleCloseModalRGI} />
+                    </Drawer>
+                </Box>
                 <SnackBar />
                 <MenuOptionsFile
                     anchorEl={anchorEl}
@@ -295,6 +289,7 @@ const PageRGI = () => {
                     prenotation={prenotation}
                     deletePerm={permissions[1]?.delete_permission}
                     editPerm={permissions[1]?.edit}
+                    handleDeleteByPrenotation={handleDeleteByPrenotation}
                 />
             </PrivateRoute>
         </AuthProvider>

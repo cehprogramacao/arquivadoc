@@ -13,8 +13,6 @@ import { Box } from '@mui/material';
 import { Delete, FileOpen, Print } from '@mui/icons-material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import ModalList from '../Modals/ModalList';
-import RGI from '@/services/rgi.service';
 
 const StyledMenu = styled((props) => (
   <Menu

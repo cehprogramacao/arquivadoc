@@ -15,6 +15,8 @@ import {
     Checkbox,
     FormControl,
     OutlinedInput,
+    Grid,
+    Container,
 } from '@mui/material';
 import { styled, width } from '@mui/system';
 import CustomContainer from '@/Components/CustomContainer';
@@ -24,24 +26,8 @@ import Loading from '@/Components/loading';
 import ReactInputMask from 'react-input-mask';
 import withAuth from '@/utils/withAuth';
 
-const StyledFormContainer = styled(Box)({
-    width: '70%',
-    maxWidth: '700px',
-    margin: 'auto',
-    padding: '100px 0',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '0px'
-});
 
-const StyledContentContainer = styled(Box)({
-    width: '100%',
-    marginTop: '20px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-});
+
 
 const StyledButtonContainer = styled(Box)({
     marginTop: '20px',
@@ -95,13 +81,11 @@ const AddUser = () => {
         setSection('Permissoes');
     };
     const handleSend = async () => {
-        console.log(userData)
         const user = new User()
         try {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await user.addUserByAdmin(userData, accessToken)
-            console.log(data)
             return data
         } catch (error) {
             console.log('Erro ao adicionar usuário!', error)
@@ -128,50 +112,48 @@ const AddUser = () => {
         <Box sx={{
             width: "100%",
             height: "100vh",
-            px: 2
+            px: 2,
+            display: "flex",
         }}>
-            
-                <CustomContainer >
-                    <StyledFormContainer>
-                        <Box sx={{
-                            width: '100%',
-                            margin: '0 auto',
-                            height: 'auto',
-                            padding: '20px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            placeContent: 'center',
-                            placeItems: 'center',
-                            border: '1px solid #237117',
-                            borderRadius: '8px',
-                            gap: '30px',
-                            flexWrap: 'wrap'
-                        }}>
-                            <Typography variant="h5" sx={{
+            <CustomContainer >
+                <Container maxWidth="sm">
+                    <Grid container py={13} spacing={2}>
+                        <Grid item xs={12} >
+                            <Box sx={{
+                                width: '100%',
+                                padding: '20px',
                                 display: 'flex',
-                                background: section === 'Dados' ? '#237117' : 'transparent',
+                                justifyContent: "center",
+                                alignItems: 'center',
                                 border: '1px solid #237117',
-                                padding: '5px 40px',
-                                color: section === 'Dados' ? '#fff' : '#237117',
-                                borderRadius: '8px'
-                            }}>
-                                Dados
-                                {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
-                            </Typography>
-                            <Typography variant="h5" sx={{
-                                display: 'flex',
-                                border: '1px solid #237117',
-                                padding: '5px 26px',
-                                color: '#237171',
                                 borderRadius: '8px',
-                                background: section === 'Permissoes' ? '#237117' : 'transparent',
-                                color: section === 'Permissoes' ? '#fff' : '#237117',
+                                gap: '30px',
+                                flexWrap: 'wrap'
                             }}>
-                                {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
-                                Permissões
-                            </Typography>
-                        </Box>
-                        <StyledContentContainer>
+                                <Typography variant="h5" sx={{
+                                    display: 'flex',
+                                    background: section === 'Dados' ? '#237117' : 'transparent',
+                                    border: '1px solid #237117',
+                                    padding: '5px 40px',
+                                    color: section === 'Dados' ? '#fff' : '#237117',
+                                    borderRadius: '8px'
+                                }}>
+                                    Dados
+                                </Typography>
+                                <Typography variant="h5" sx={{
+                                    display: 'flex',
+                                    border: '1px solid #237117',
+                                    padding: '5px 26px',
+                                    color: '#237171',
+                                    borderRadius: '8px',
+                                    background: section === 'Permissoes' ? '#237117' : 'transparent',
+                                    color: section === 'Permissoes' ? '#fff' : '#237117',
+                                }}>
+                                    Permissões
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12}>
                             {section === 'Dados' && (
                                 <Box component="form" sx={{
                                     display: "flex",
@@ -234,10 +216,11 @@ const AddUser = () => {
                                     />
                                 </Box>
                             )}
+                        </Grid>
+                        <Grid item xs={12} >
                             {section === 'Permissoes' && (
                                 <Box
                                     component="form"
-
                                     sx={{
                                         width: '100%',
                                         '& .MuiFormControlLabel-root': { m: .8, },
@@ -276,7 +259,14 @@ const AddUser = () => {
 
                                 </Box>
                             )}
-                            <StyledButtonContainer>
+                        </Grid>
+                        <Grid item xs={12} >
+                            <Box sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                            }}>
                                 <Button onClick={handleBack} variant="contained" disabled={section === 'Dados'} sx={{
                                     background: "#237117",
                                     color: '#fff',
@@ -299,10 +289,11 @@ const AddUser = () => {
                                 }}>
                                     {section === 'Dados' ? 'Próximo' : 'Enviar'}
                                 </Button>
-                            </StyledButtonContainer>
-                        </StyledContentContainer>
-                    </StyledFormContainer>
-                </CustomContainer>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Container>
+            </CustomContainer>
         </Box>
     );
 };

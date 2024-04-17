@@ -38,7 +38,6 @@ const PageOficio = () => {
     const [callingData, setCallingData] = useState([])
     const [number, setNumber] = useState("")
     const [open, setOpen] = useState(false);
-    const [openPartes, setOpenPartes] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
 
@@ -80,21 +79,12 @@ const PageOficio = () => {
     const handleClose = () => {
         setOpen(false);
     }
-    const handleClosePartes = () => {
-        setOpenPartes(false)
-    }
-
-    const handleOpenPartes = () => {
-        setOpenPartes(true)
-    }
-
     const getCallingData = async () => {
         const { getAllCallings } = new Calling()
         try {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getAllCallings(accessToken)
-            console.log(data)
             dispatch(showAlert(`Total de arquivos: ${Object.values(data).length}`, "success", "file"))
             setCallingData(Object.values(data))
             return data
@@ -137,7 +127,6 @@ const PageOficio = () => {
         try {
             setLoading(true)
             const { data } = await getCallingByEntity(value, accessToken)
-            console.log(data[0], 'Entity')
             dispatch(showAlert(`Arquivo de ${data.entity}`, "success", "file"))
             setCallingData(Object.values(data))
             return data
@@ -152,14 +141,9 @@ const PageOficio = () => {
     }
 
     const handleFilterByNumberOrEntity = async () => {
-        console.log('Iniciando filtragem com valor:', selectOption);
-
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log('AccessToken:', accessToken);
-
         if (selectOption.option && selectOption.value) {
             console.log('Opção selecionada:', selectOption.option.label);
-
             try {
                 if (selectOption.option.label === "Número") {
                     await getCallingByNumber(selectOption.value, accessToken);
@@ -274,9 +258,8 @@ const PageOficio = () => {
                         </CustomContainer>
                     </Box>
                 <Drawer anchor='left' open={open} onClose={handleClose}>
-                    <CadastroOficio getData={getCallingData} onClose={handleClose} onClickPartes={handleOpenPartes} />
+                    <CadastroOficio getData={getCallingData} onClose={handleClose} />
                 </Drawer>
-                    <CadastroPartes open={openPartes} onClose={handleClosePartes} />
                 <MenuOptionsFile deletePerm={permissions[4]?.delete_permission} editPerm={permissions[4]?.edit}
                     open={openMenu} anchorEl={anchorEl} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={number} handleDelete={handleDeleteByNumber} />
                 <ModalCalling open={openPDF} data={dataFile} number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />
