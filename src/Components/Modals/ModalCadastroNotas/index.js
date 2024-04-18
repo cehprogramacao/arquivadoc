@@ -123,6 +123,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       const allData = await customers(accessToken)
       setOutorganteArray(Object.values(allData.data))
       setOutorgadoArray(Object.values(allData.data))
+      
       return allData.data
     } catch (error) {
       console.error("Erro ao listar cliente!", error)
@@ -136,10 +137,10 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
     const currentScrollPosition = boxInputsRef.current.scrollTop;
     if (tipo === "outorgante") {
       setOutorgantes((prev) => [...prev, ""]);
-      setValueOutorgante((prev) => [...prev, null]);
+      setValueOutorgante((prev) => [...prev, ""]);
     } else if (tipo === "outorgado") {
       setOutorgados((prev) => [...prev, ""]);
-      setValueOutorgado((prev) => [...prev, null]);
+      setValueOutorgado((prev) => [...prev, ""]);
     }
     setTimeout(() => {
       boxInputsRef.current.scrollTop = currentScrollPosition;
@@ -667,9 +668,9 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
           name="final_sheet"
         />
         {outorgantes.map((outorgante, index) => (
-          <Box key={`outorgante-${index}-${outorgantes.length}`} >
+          <Box key={index} >
             <Autocomplete
-              value={valueOutorgante[outorgante[index]]}
+              // value={valueOutorgante[index]}
               options={outorganteArray}
               getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -728,10 +729,10 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
           </Box>
         ))}
 
-        {outorgados.map((outorgado, index) => (
+        {/* {outorgados.map((outorgado, index) => (
           <Box key={`outorgado-${index}-${outorgados.length}`}>
             <Autocomplete
-              value={valueOutorgado[outorgado[index]]}
+              // value={valueOutorgado[index]}
               options={outorgadoArray}
               getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -788,7 +789,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
               </IconButton>
             </Box>
           </Box>
-        ))}
+        ))} */}
         <TextField
           value={formData.box}
           onChange={handleChangeFile}

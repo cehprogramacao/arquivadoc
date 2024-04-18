@@ -25,7 +25,6 @@ const RootLayout = ({ children }) => {
         <script src="https://cdn.asprise.com/scannerjs/scanner.js" type="text/javascript"></script>
       </head>
       <body className={inter.className}>
-        <AppRouterCacheProvider >
           <ThemeProvider theme={theme}>
             <Provider store={store}>
               <AuthProvider >
@@ -34,7 +33,6 @@ const RootLayout = ({ children }) => {
               </AuthProvider>
             </Provider>
           </ThemeProvider>
-        </AppRouterCacheProvider>
       </body>
     </html>
   );

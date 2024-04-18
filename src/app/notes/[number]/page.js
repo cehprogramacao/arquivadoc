@@ -56,7 +56,6 @@ const NoteUpdate = ({ params }) => {
             const accessToken = sessionStorage.getItem("accessToken")
             const allTags = await getAllNoteTags(accessToken)
             setTag(Object.values(allTags.data))
-            console.log(allTags.data, '99999999999')
             return allTags.data
         } catch (error) {
             console.error("Error list of tags", error)
@@ -87,7 +86,6 @@ const NoteUpdate = ({ params }) => {
             const types = await getAllNoteTypes(accessToken);
             setNotesType(Object.values(groups.data))
             setTypesGroup(Object.values(types.data))
-            console.log(groups.data, types.data, '88888')
             return groups.data && types.data
         } catch (error) {
             console.error(error);

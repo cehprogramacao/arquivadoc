@@ -58,7 +58,6 @@ const LixeiraProtestos = () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getNoteByNumber(number, accessToken)
-            console.log(data.file, 'noteeeeeeeeeee 88')
             handlePrintFile(data.file)
         } catch (error) {
             console.error("Error ao lista dados por número", error)

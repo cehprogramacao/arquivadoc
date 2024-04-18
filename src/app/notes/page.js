@@ -36,8 +36,6 @@ const BoxMain = styled('section')({
 const PageNotas = () => {
     const [loading, setLoading] = useState(false)
     const { permissions, updatePermissions } = useAuth()
-    
-
     const [data, setData] = useState([])
     const [selectOption, setSelectOption] = useState({
         option: null,

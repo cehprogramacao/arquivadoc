@@ -31,7 +31,6 @@ const LixeiraOficio = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const allData = await getAllCallingsInTrash(accessToken)
-            console.log(allData.data)
             setData(Object.values(allData.data))
             return allData.data
         } catch (error) {

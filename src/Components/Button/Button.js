@@ -1,15 +1,12 @@
-import Stack from '@mui/material/Stack';
 import { Button } from '@mui/material';
 import { Search } from '@mui/icons-material';
-
-
-export const Buttons = ({title, color, onClick}) => {
+export const Buttons = ({ title, color, onClick }) => {
     return (
-        <Stack>
+        <>
             <Button color='inherit' sx={{
                 display: 'flex',
-                width: '110px',
-                padding: '15px 12px',
+                py: 2,
+                px: 2,
                 fontSize: '11px',
                 gap: '5px',
                 background: `${color}`,
@@ -24,6 +21,6 @@ export const Buttons = ({title, color, onClick}) => {
                 }} />
                 {title}
             </Button>
-        </Stack>
+        </>
     )
 }

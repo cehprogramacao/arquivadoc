@@ -16,7 +16,6 @@ import { DocCalling } from './components/DocCalling';
 import Calling from '@/services/calling.service';
 import MenuOptionsFile from '@/Components/MenuPopUp';
 import ModalCalling from './components/modalCalling';
-import { NumbersRounded } from '@mui/icons-material';
 import SnackBar from '@/Components/SnackBar';
 import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
@@ -54,7 +53,6 @@ const PageOficio = () => {
             setOpenPDF(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await getCallingByNumber(number, accessToken)
-            console.log(response.data, 'PDFF')
             setDataFile(response.data)
             return response.data
         } catch (error) {
@@ -143,7 +141,6 @@ const PageOficio = () => {
     const handleFilterByNumberOrEntity = async () => {
         const accessToken = sessionStorage.getItem("accessToken");
         if (selectOption.option && selectOption.value) {
-            console.log('Opção selecionada:', selectOption.option.label);
             try {
                 if (selectOption.option.label === "Número") {
                     await getCallingByNumber(selectOption.value, accessToken);

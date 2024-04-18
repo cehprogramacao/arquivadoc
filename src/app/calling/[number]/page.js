@@ -34,7 +34,6 @@ const EditCallingByNumber = ({ params }) => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getAllCallingTypes(accessToken)
-            console.log(data)
             setTypes(Object.values(data))
             return data
         } catch (error) {
@@ -47,7 +46,6 @@ const EditCallingByNumber = ({ params }) => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getAllCallingEntities(accessToken)
-            console.log(data)
             setEntity(Object.values(data))
             return data
         } catch (error) {
@@ -79,7 +77,6 @@ const EditCallingByNumber = ({ params }) => {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await updateCallingByNumber(params.number, dataCalling, accessToken)
             dispatch(showAlert(data.message,"success", "file"))
-            console.log(data)
             return data
         } catch (error) {
             dispatch(showAlert(error.msg, "error", "file"))

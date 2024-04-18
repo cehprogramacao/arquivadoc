@@ -54,8 +54,6 @@ const PageEditarPessoas = ({ params }) => {
                 return false;
             }
             const customer = await customers.editCustomer(params.cpfcnpj, data, accessToken)
-            console.log(customer.data)
-            router.push("/pessoas")
             return customer.data
         } catch (error) {
             console.error("Error when editing client", error)
