@@ -80,6 +80,7 @@ const PageNotas = () => {
             setOpenPDF(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const noteFilter = await getNoteByNumber(number, accessToken)
+            console.log(noteFilter.data)
             setDataFileModal(noteFilter.data)
         } catch (error) {
             console.error("Error ao lista dados por apresentante", error)

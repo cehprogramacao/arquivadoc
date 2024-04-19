@@ -123,7 +123,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       const allData = await customers(accessToken)
       setOutorganteArray(Object.values(allData.data))
       setOutorgadoArray(Object.values(allData.data))
-      
+
       return allData.data
     } catch (error) {
       console.error("Erro ao listar cliente!", error)
@@ -729,7 +729,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
           </Box>
         ))}
 
-        {/* {outorgados.map((outorgado, index) => (
+        {outorgados.map((outorgado, index) => (
           <Box key={`outorgado-${index}-${outorgados.length}`}>
             <Autocomplete
               // value={valueOutorgado[index]}
@@ -789,7 +789,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
               </IconButton>
             </Box>
           </Box>
-        ))} */}
+        ))}
         <TextField
           value={formData.box}
           onChange={handleChangeFile}

@@ -2,7 +2,6 @@
 import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
-import { AutoComplete } from '@/Components/AutoComplete';
 import { DocList } from '@/Components/List/DocList';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import { Stack, Grid } from "@mui/material"
@@ -10,8 +9,6 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ModalList from '@/Components/Modals/ModalList';
 import { useEffect, useState } from 'react';
 import { CadastroModalRGI } from '@/Components/Modals/ModalCadastroRGI';
-import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
-import CadastroRGITypes from '@/Components/ModalsRegistration/ModalTypesRGI';
 import CustomContainer from '@/Components/CustomContainer';
 import RGI from '@/services/rgi.service';
 import { useDispatch, useSelector } from 'react-redux';
