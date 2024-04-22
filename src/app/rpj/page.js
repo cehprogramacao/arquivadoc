@@ -2,13 +2,11 @@
 import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
-import { AutoComplete } from '@/Components/AutoComplete';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import { Stack, Grid } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
 import { useEffect, useState } from 'react';
 import { CadastroModalRPJ } from '@/Components/Modals/ModalCadastroRPJ';
-import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
 import { useDispatch } from 'react-redux'
 import RPJService from '@/services/rpj.service';
 import { showAlert } from '@/store/actions';
