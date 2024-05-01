@@ -96,10 +96,11 @@ const PageNotas = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await deleteNoteByNumber(number, accessToken)
             dispatch(showAlert(response.data.message, "success", "file"))
+            console.log(response.data)
             return response.data
         } catch (error) {
             dispatch(showAlert(error.msg, "error", "file"))
-            console.error("Error ao deletar arquivo rgi!", error)
+            console.error("Error ao deletar arquivo de notas!", error)
             throw error;
         }
         finally {

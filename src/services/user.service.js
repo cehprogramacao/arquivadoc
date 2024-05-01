@@ -15,10 +15,10 @@ class User {
             }
         })
     }
-    addUserByAdmin(data, accssToken) {
+    addUserByAdmin(data, accessToken) {
         return customAxios.post("/user", data, {
             headers: {
-                Authorization: `Bearer ${accssToken}`
+                Authorization: `Bearer ${accessToken}`
             }
         })
     }

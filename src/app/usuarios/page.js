@@ -62,7 +62,7 @@ const PageUsuarios = () => {
             dispatch(showAlert(response.data.message, "success", "user"))
             return response.data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "user"))
+            dispatch(showAlert(error.message, "error", "user"))
             console.error("Erro ao excluir usuário!", error)
             throw error;
         }
@@ -83,7 +83,7 @@ const PageUsuarios = () => {
             getUsers()
             return response.data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "user"))
+            dispatch(showAlert(error.message, "error", "user"))
             console.error("Erro ao tornar admin", error)
             throw error;
         }
@@ -103,7 +103,7 @@ const PageUsuarios = () => {
             getUsers()
             return response.data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "user"))
+            dispatch(showAlert(error.message, "error", "user"))
             console.error("Erro ao tornar usuário", error)
             throw error;
         }
@@ -122,7 +122,7 @@ const PageUsuarios = () => {
             getUsers()
             return response.data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "user"))
+            dispatch(showAlert(error.message, "error", "user"))
             console.error("Erro ao habilitar usuário", error)
             throw error;
         }
@@ -141,7 +141,7 @@ const PageUsuarios = () => {
             getUsers()
             return response.data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "user"))
+            dispatch(showAlert(error.message, "error", "user"))
             console.error("Erro ao desabilitar usuário", error)
             throw error;
         }
@@ -160,7 +160,7 @@ const PageUsuarios = () => {
             setDataRows(data.user)
             return data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "user"))
+            dispatch(showAlert(error.message, "error", "user"))
             console.error("Erro ao filter usuário!", error)
             throw error;
         }

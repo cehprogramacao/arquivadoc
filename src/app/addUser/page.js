@@ -25,6 +25,7 @@ import User from '@/services/user.service';
 import Loading from '@/Components/loading';
 import ReactInputMask from 'react-input-mask';
 import withAuth from '@/utils/withAuth';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -46,6 +47,7 @@ const AddUser = () => {
         password: '',
         permissions: Array(7).fill().map(() => Array(4).fill(0)),
     });
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const handleCheckedPermission = (permIndex, checkboxIndex) => {
         const newPermissions = userData.permissions.map((perm, index) =>
@@ -93,7 +95,7 @@ const AddUser = () => {
         }
         finally {
             setLoading(false)
-            window.location.reload()
+            router.push("/usuarios")
         }
 
     }

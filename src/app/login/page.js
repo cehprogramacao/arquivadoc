@@ -44,14 +44,11 @@ const LoginPage = () => {
       }
     } catch (err) {
       dispatch(showAlert(err.message, "error", "file"))
+      console.error("Erro ao fazer login")
+      throw err
     }
 
   };
-
-
-
-
-
   return (
     <Box
       sx={{
