@@ -53,36 +53,40 @@ const LixeiraRPJ = () => {
     }
 
 
-    const handleOpenFilePDF = async () => {
-        const { getRPJByNotation } = new RPJService()
+    const handleRestoreFromTrash = async () => {
+        const { restoreRpjFromTrash } = new RPJService()
         try {
             const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getRPJByNotation(accessToken, notation)
-            handlePrintFile(data.file)
+            const { data } = await restoreRpjFromTrash(accessToken, notation)
+            dispatch(showAlert(data.message, "success", "file"))
+            return data
         } catch (error) {
+            dispatch(showAlert(error.message, "error", "file"))
             console.error("Error ao lista dados por número", error)
             throw error;
         }
     }
 
-    const handlePrintFile = (file) => {
-        const base64Data = file;
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
 
-        // Criar uma URL do Blob e abrir em uma nova janela
-        const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, '_blank');
-    }
     useEffect(() => {
         getAllFilesInTrash()
     }, [])
 
+    const handleDeleteFileRpjByNotation = async () => {
+        const { deleteRPJByNotation } = new RPJService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await deleteRPJByNotation(accessToken, notation)
+            dispatch(showAlert(data.message, "success", "file"))
+        } catch (error) {
+            console.error("Erro ao deletar arquivo!", error)
+            dispatch(showAlert(error?.message ? error.message : "Erro ao excluir arquivo!", "error", "file"))
+            throw error;
+        }
+        finally {
+            getAllFilesInTrash()
+        }
+    }
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -95,7 +99,7 @@ const LixeiraRPJ = () => {
                 }}>
                     <CustomContainer>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} >]
+                            <Grid item xs={12} >
                                 <Box sx={{
                                     width: "100%",
                                     display: "flex",
@@ -112,7 +116,13 @@ const LixeiraRPJ = () => {
                         </Grid>
                     </CustomContainer>
                     <SnackBar />
-                    <MenuOptionsFile open={open} anchorEl={anchorEl} handleClose={handleCloseMenuOptionsTrash} handleOpenFile={handleOpenFilePDF} />
+                    <MenuOptionsFile 
+                    open={open} 
+                    anchorEl={anchorEl} 
+                    handleClose={handleCloseMenuOptionsTrash} 
+                    handleDeleteFromTrash={handleDeleteFileRpjByNotation}
+                    handleRestoreFromTrash={handleRestoreFromTrash}
+/>
                 </Box>
             </PrivateRoute>
         </AuthProvider>

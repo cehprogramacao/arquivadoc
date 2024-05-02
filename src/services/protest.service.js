@@ -49,20 +49,20 @@ class ProtestService {
     }
 
     getProtestFromTrash(accessToken) {
-        return customAxios.get("/trash/protest", {
+        return customAxios.get("/protest/trash", {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
     }
 
-    // restoreProtestFromTrash(id, accessToken) {
-    //     return customAxios.put(`/protest/trash/${id}`, {}, {
-    //         headers: {
-    //             Authorization: `Bearer ${accessToken}`
-    //         }
-    //     });
-    // }
+    restoreProtestFromTrash(notation, accessToken) {
+        return customAxios.put(`/protest/trash/${notation}`, {}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+    }
 
     // deleteProtestFromTrash(id, accessToken) {
     //     return customAxios.delete(`/protest/trash/${id}`, {

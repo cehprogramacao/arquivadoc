@@ -9,6 +9,8 @@ import withAuth from "@/utils/withAuth"
 import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
 import MenuOptionsFile from "@/Components/ModalOptionsTrash"
+import { useDispatch } from "react-redux"
+import { showAlert } from "@/store/actions"
 
 
 
@@ -18,6 +20,7 @@ const LixeiraRGI = () => {
     const [rows, setRows] = useState([]);
     const [prenotation, setPrenotation] = useState("")
     const [anchorEl, setAnchorEl] = useState(null)
+    const dispatch = useDispatch()
     const open = Boolean(anchorEl)
     const handleOpenMenuTrash = (event) => {
         setAnchorEl(event.currentTarget)
@@ -32,9 +35,11 @@ const LixeiraRGI = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getTrash(accessToken)
             console.log(data)
+            dispatch(showAlert(`Total de arquivos na lixeira: ${Object.values(data).length}`, "success", "file"))
             setRows(Object.values(data))
             return data
         } catch (error) {
+            dispatch(error.msg, "error", "file")
             console.error("Error ao pegar arquivos!", error)
             throw error;
         }
@@ -43,37 +48,41 @@ const LixeiraRGI = () => {
         }
     }
 
-    const handleViewFileTrash = async () => {
-        const { getByPrenotation } = new RGI()
+    const handleRestoreFromTrash = async () => {
+        const { restoreRgiFromTrash } = new RGI()
         try {
             const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getByPrenotation(prenotation, accessToken)
-            handlePrintFile(data.file)
+            const { data } = await restoreRgiFromTrash(prenotation, accessToken)
+            dispatch(showAlert(data.message, "success", "file"))
+            return data
         } catch (error) {
+            
             console.error("Erro ao buscar arquivo", error)
             throw error;
         }
     }
 
-    const handlePrintFile = (file) => {
-        const base64Data = file;
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-        // Criar uma URL do Blob e abrir em uma nova janela
-        const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, '_blank');
-    }
 
     useEffect(() => {
         getData()
     }, [])
 
+    const handleDeleteByPrenotation = async () => {
+        const { deleteByPrenotation } = new RGI()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteByPrenotation(prenotation, accessToken)
+            dispatch(showAlert(response.data.message, "success", "file"))
+            return response.data
+        } catch (error) {
+            console.error("Error ao deletar arquivo rgi!", error)
+            dispatch(showAlert(error.msg, "error", "file"))
+            throw error;
+        }
+        finally {
+            getData()
+        }
+    }
 
 
     return loading ? <Loading /> : (
@@ -152,7 +161,9 @@ const LixeiraRGI = () => {
                         </Grid>
                     </CustomContainer>
                 </Box>
-                <MenuOptionsFile handleOpenFile={handleViewFileTrash} anchorEl={anchorEl} handleClose={handleCloseMenuTrash} open={open} />
+                <MenuOptionsFile handleRestoreFromTrash={handleRestoreFromTrash}
+                handleDeleteFromTrash={handleDeleteByPrenotation} 
+                anchorEl={anchorEl} handleClose={handleCloseMenuTrash} open={open} />
             </PrivateRoute>
         </AuthProvider>
     )

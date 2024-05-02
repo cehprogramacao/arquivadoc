@@ -27,6 +27,7 @@ const withAuth = (WrappedComponent) => {
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('isAdmin')
+        window.location.reload
         router.push('/login');
       }
     }, []);

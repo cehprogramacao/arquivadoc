@@ -16,9 +16,9 @@ import { DocList } from "./TableTrash"
 
 
 
-const LixeiraProtestos = () => {
+const LixeiraNotas = () => {
     const [data, setData] = useState([])
-    const [number, setNumber] = useState("")
+    const [number, setNumber] = useState(0)
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
@@ -53,33 +53,36 @@ const LixeiraProtestos = () => {
         getFetchingFilesFromTrash()
     }, [])
 
-    const handleOpenFilePDF = async () => {
-        const { getNoteByNumber } = new NoteService()
+    const handleRestoreNotesByTrash = async () => {
+        const { restoreNotesFromTrash } = new NoteService()
         try {
             const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getNoteByNumber(number, accessToken)
-            handlePrintFile(data.file)
+            const { data } = await restoreNotesFromTrash(number, accessToken)
+            console.log(data)
+            dispatch(showAlert(data.message, "success", "file"))
         } catch (error) {
-            console.error("Error ao lista dados por número", error)
+            dispatch(showAlert(error.message, "success", "file"))
+            console.error("Error restaurar arquivo", error)
             throw error;
         }
     }
-
-    const handlePrintFile = (file) => {
-        const base64Data = file;
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+    const handleDeleteByNumber = async () => {
+        const { deleteNoteByNumber } = new NoteService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteNoteByNumber(number, accessToken)
+            dispatch(showAlert(response.data.message, "success", "file"))
+            console.log(response.data)
+            return response.data
+        } catch (error) {
+            dispatch(showAlert(error.msg, "error", "file"))
+            console.error("Error ao deletar arquivo de notas!", error)
+            throw error;
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-        // Criar uma URL do Blob e abrir em uma nova janela
-        const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, '_blank');
+        finally {
+            getFetchingFilesFromTrash()
+        }
     }
-
 
 
     return loading ? <Loading /> : (
@@ -109,10 +112,15 @@ const LixeiraProtestos = () => {
                     </CustomContainer>
                 </Box>
                 <SnackBar />
-                <MenuOptionsFile anchorEl={anchorEl} open={open} handleClose={handleClose} handleOpenFile={handleOpenFilePDF} />
+                <MenuOptionsFile 
+                anchorEl={anchorEl} 
+                open={open} handleClose={handleClose} 
+                handleRestoreFromTrash={handleRestoreNotesByTrash} 
+                handleDeleteFromTrash={handleDeleteByNumber}
+                />
             </PrivateRoute>
         </AuthProvider>
     )
 }
 
-export default withAuth(LixeiraProtestos)
+export default withAuth(LixeiraNotas)

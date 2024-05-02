@@ -18,10 +18,19 @@ class RTDService {
     }
 
     getAllRTDInTrash(accessToken) {
-        return customAxios.get("/trash/rtd", {
+        return customAxios.get("/rtd/trash", {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
+        });
+    }
+
+    
+    restoreRtdFromTrash(notation, accessToken) {
+        return customAxios.post(`/rgi/restore/${notation}`, {}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }   
         });
     }
 

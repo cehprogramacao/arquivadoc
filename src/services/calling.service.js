@@ -17,9 +17,16 @@ class Calling {
       },
     });
   }
-
   getAllCallingsInTrash(accessToken) {
-    return customAxios.get('/trash/calling', {
+    return customAxios.get('/calling/trash', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
+  restoreCallingFromTrash(number, accessToken) {
+    return customAxios.post(`/calling/restore/${number}`,{}, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

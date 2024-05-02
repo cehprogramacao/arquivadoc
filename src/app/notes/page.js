@@ -41,6 +41,7 @@ const PageNotas = () => {
         option: null,
         value: ""
     })
+    const [isAdmin,setIsAdmin] = useState("")
     const [opt, setOpt] = useState(['Número', 'Apresentante'])
     const [open, setOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
@@ -66,7 +67,7 @@ const PageNotas = () => {
             dispatch(showAlert(`Total de arquivos: ${Object.values(dataNote.data).length}`, "success", "file"))
             setData(Object.values(dataNote.data))
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch(showAlert(error.message, "error", "file"))
             console.error("Erro ao listar notas", error)
             throw error;
         }
@@ -159,7 +160,8 @@ const PageNotas = () => {
 
     useEffect(() => {
         getData()
-
+        const isAdminUser = sessionStorage.getItem('isAdmin')
+        setIsAdmin(isAdminUser)
     }, [])
 
     return loading ? <Loading /> : (
@@ -240,7 +242,7 @@ const PageNotas = () => {
                                         }}>
                                             <Buttons title={"Buscar"} color={"green"} onClick={handleSearchByPresenterOrNumber} />
                                             {permissions[6]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                            <ButtonLixeira href={"/notes/lixeira_notas"} />
+                                            {isAdmin === "1" && <ButtonLixeira href={"/notes/lixeira_notas"} />}
                                         </Box>
 
                                     </Grid>

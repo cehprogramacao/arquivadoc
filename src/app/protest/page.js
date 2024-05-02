@@ -35,6 +35,7 @@ const PageProtesto = () => {
         option: "",
         value: ""
     })
+    const [isAdmin, setIsAdmin] = useState("")
     const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
     const handleOpenPopUp = (event) => {
@@ -174,6 +175,8 @@ const PageProtesto = () => {
     }
     useEffect(() => {
         getAllFilesProtest()
+        const isAdminUser = sessionStorage.getItem('isAdmin')
+        setIsAdmin(isAdminUser)
     }, [])
 
     return loading ? <Loading /> : (
@@ -242,7 +245,7 @@ const PageProtesto = () => {
                                             {permissions[0]?.create_permission === 1 && (
                                                 <ButtonOpenModals onClick={handleOpenModalCadastro} />
                                             )}
-                                            <ButtonLixeira href={"/protest/lixeira_protesto"} />
+                                            {isAdmin === "1" && <ButtonLixeira href={"/protest/lixeira_protesto"} />}
                                         </Box>
                                     </Grid>
                                 </Grid>

@@ -199,7 +199,7 @@ const PageTermos = () => {
                                         <Box sx={{ display: 'flex', justifyContent: "center", width: '100%', gap: '30px' }}>
                                             <Buttons color={'green'} title={'Buscar'} onClick={handleFilterTermLGPD} />
                                             {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                            <ButtonLixeira href={"/termos/lixeira_termo"} />
+                                            {/* <ButtonLixeira href={"/termos/lixeira_termo"} /> */}
                                         </Box>
                                     </Grid>
                                 </Grid>

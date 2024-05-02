@@ -10,13 +10,16 @@ import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
 import { DocList } from "./tableLixeira"
 import MenuOptionsFile from "@/Components/ModalOptionsTrash"
+import { useDispatch } from "react-redux"
+import { showAlert } from "@/store/actions"
 
 
 
 const LixeiraOficio = () => {
     const [data, setData] = useState([])
-    const [number, setNumber] = useState("")
+    const [number, setNumber] = useState(0)
     const [anchorEl, setAnchorEl] = useState(null)
+    const dispatch = useDispatch()
     const open = Boolean(anchorEl)
     const handleOpenMenuTrash = (e) => {
         setAnchorEl(e.currentTarget)
@@ -32,8 +35,10 @@ const LixeiraOficio = () => {
             const accessToken = sessionStorage.getItem("accessToken")
             const allData = await getAllCallingsInTrash(accessToken)
             setData(Object.values(allData.data))
+            dispatch(showAlert(`Total de arquivos na lixeira: ${Object.values(allData.data).length}`, "success", "file"))
             return allData.data
         } catch (error) {
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Error ao pegar arquivos da lixeira!", error)
             throw error;
         }
@@ -42,35 +47,49 @@ const LixeiraOficio = () => {
         }
     }
 
-    const fetchCallingByCpfCnpj = async () => {
-        const { getCallingByNumber } = new Calling()
+    const handleRestoreCallingByTrash = async () => {
+        const { restoreCallingFromTrash } = new Calling()
         try {
+            setLoading(true)
+            console.log(typeof Number(number), '123123 number')
             const accessToken = sessionStorage.getItem('accessToken')
-            const { data } = await getCallingByNumber (number, accessToken)
-            handlePrintFile(data.file)
+            const { data } = await restoreCallingFromTrash(number, accessToken)
+            dispatch(showAlert(data.message, "success", "file"))
+            return data
         } catch (error) {
-            console.error("Erro ao buscar arquivo", error)
+            dispatch(showAlert(error.message, "error", "file"))
+            console.error("Erro ao restaurar arquivo", error)
             throw error;
         }
-    }
-
-    const handlePrintFile = (file) => {
-        const base64Data = file;
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        finally {
+            getAllCallingsInTrash()
+            setLoading(false)
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-        // Criar uma URL do Blob e abrir em uma nova janela
-        const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, '_blank');
     }
+
+    
     useEffect(() => {
         getAllCallingsInTrash()
     }, [])
+
+    const handleDeleteByNumber = async () => {
+        const { deleteCallingByNumber } = new Calling()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteCallingByNumber(number, accessToken)
+            dispatch(showAlert(response.data.message, "error", "file"))
+            return response.data
+        } catch (error) {
+            dispatch(showAlert(error.msg, "error", "file"))
+            console.error("Error ao deletar arquivo rgi!", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+            getAllCallingsInTrash()
+        }
+    }
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -161,10 +180,13 @@ const LixeiraOficio = () => {
                     </CustomContainer>
                 </Box>
                 <SnackBar />
-                <MenuOptionsFile 
-                open={open}
-                anchorEl={anchorEl} handleOpenFile={fetchCallingByCpfCnpj} 
-                handleClose={handleCloseMenuTrash} />
+                <MenuOptionsFile
+                    open={open}
+                    anchorEl={anchorEl}
+                    handleClose={handleCloseMenuTrash}
+                    handleRestoreFromTrash={handleRestoreCallingByTrash}
+                    handleDeleteFromTrash={handleDeleteByNumber}
+                />
             </PrivateRoute>
         </AuthProvider>
     )

@@ -18,13 +18,19 @@ class RPJService {
     }
 
     getAllRPJInTrash(accessToken) {
-        return customAxios.get("/trash/rpj", {
+        return customAxios.get("/rpj/trash/", {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
     }
-
+    restoreRpjFromTrash(notation, accessToken) {
+        return customAxios.post(`/rpj/restore/${notation}`, {}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }   
+        });
+    }
     getRPJByPresenter(accessToken, presenter) {
         return customAxios.get(`/rpj/presenter/${presenter}`, {
             headers: {

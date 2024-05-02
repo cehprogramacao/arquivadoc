@@ -45,37 +45,44 @@ const LixeiraProtestos = () => {
             setLoading(false)
         }
     }
-    const handleViewFileTrash = async () => {
-        const { getProtestByNotation } = new ProtestService()
+    const handleRestoreFileTrash = async () => {
+        const { restoreProtestFromTrash } = new ProtestService()
         try {
             const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getProtestByNotation(notation, accessToken)
-            handlePrintFile(data.file)
-
+            const { data } = await restoreProtestFromTrash(notation, accessToken)
+            dispatch(showAlert(data.message, "success", "file"))
+            return data
         } catch (error) {
+            dispatch(showAlert(error.msg, "error", "file"))
             console.error("Erro ao buscar arquivo", error)
             throw error;
         }
     }
 
-    const handlePrintFile = (file) => {
-        const base64Data = file;
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-        // Criar uma URL do Blob e abrir em uma nova janela
-        const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, '_blank');
-    }
+   
     useEffect(() => {
         getFetchingFilesFromTrash()
     }, [])
 
+    const handleDeleteByNotation = async () => {
+        const { deleteProtestByNotation } = new ProtestService()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const response = await deleteProtestByNotation(notation, accessToken)
+            console.log(response.data)
+            dispatch(showAlert(response.data.message, 'success', 'file'))
+            return response.data
+        } catch (error) {
+            dispatch(showAlert(error.msg, "error", "file"))
+            console.error("Error ao deletar arquivo rgi!", error)
+            throw error;
+        }
+        finally {
+            setLoading(false)
+            getFetchingFilesFromTrash()
+        }
+    }
 
 
     return loading ? <Loading /> : (
@@ -165,7 +172,13 @@ const LixeiraProtestos = () => {
                     </CustomContainer>
                 </Box>
                 <SnackBar />
-                <MenuOptionsFile handleOpenFile={handleViewFileTrash} anchorEl={anchorEl} open={open} handleClose={handleClose} />
+                <MenuOptionsFile 
+                handleDeleteFromTrash={handleDeleteByNotation}
+                handleOpenFile={handleViewFileTrash}
+                handleRestoreFromTrash={handleRestoreFileTrash}
+                 anchorEl={anchorEl} 
+                 open={open} 
+                 handleClose={handleClose} />
             </PrivateRoute>
         </AuthProvider>
     )

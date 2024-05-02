@@ -32,6 +32,7 @@ const PageRGI = () => {
         option: "",
         value: ""
     })
+    const [isAdmin, setIsAdmin] = useState("")
     const [loading, setLoading] = useState(false)
     const [openModalRGI, setOpenModalRGI] = useState(false)
     const [data, setData] = useState([])
@@ -177,6 +178,8 @@ const PageRGI = () => {
 
     useEffect(() => {
         getDataRGI()
+        const isAdminUser = sessionStorage.getItem('isAdmin')
+        setIsAdmin(isAdminUser)
     }, [])
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -251,7 +254,7 @@ const PageRGI = () => {
                                         <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", alignItems: "center", gap: '30px' }}>
                                             <Buttons color={'green'} title={'Buscar'} onClick={handleFilter} />
                                             {permissions[1]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpenModalRGI} />}
-                                            <ButtonLixeira href={"/rgi/lixeira_rgi"} />
+                                            {isAdmin === "1" && <ButtonLixeira href={"/rgi/lixeira_rgi"} />}
                                         </Box>
                                     </Grid>
                                 </Grid>

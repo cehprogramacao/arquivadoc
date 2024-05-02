@@ -58,9 +58,7 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenFile }) => {
-
-  
+const MenuOptionsFile = ({ open, anchorEl, handleClose, handleRestoreFromTrash, handleDeleteFromTrash }) => {
   return (
     <>
       <Box>
@@ -73,12 +71,17 @@ const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenFile }) => {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem sx={{ color: "#0088F0" }} onClick={handleOpenFile}>
+          <MenuItem sx={{ color: "#0088F0" }} onClick={() => {
+            handleDeleteFromTrash()
+            handleClose()
+          }}>
             <FileOpen sx={{ fill: '#0088F0' }} />
-            Abrir Arquivo
-          </MenuItem>
-          {/* <Divider sx={{ my: 0 }} /> */}
-          <MenuItem sx={{ color: '#0dcaf0' }} >
+            Deletar arquivo
+          </MenuItem> 
+          <MenuItem sx={{ color: '#0dcaf0' }} onClick={() => {
+            handleRestoreFromTrash()
+            handleClose()
+          }}>
             <RestoreFromTrash sx={{ fill: '#0dcaf0' }} />
             Restaurar
           </MenuItem>

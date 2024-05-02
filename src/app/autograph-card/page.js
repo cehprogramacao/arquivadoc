@@ -43,7 +43,6 @@ const PageAutographCards = () => {
     const [dataFile, setDataFile] = useState([])
 
 
-
     const handleOpenModalPDF = async () => {
         const { getAutographCard } = new Customer()
         try {
@@ -203,7 +202,7 @@ const PageAutographCards = () => {
                                         <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", gap: '30px' }}>
                                             <Buttons color={'green'} title={'Buscar'} onClick={handleFilterAutographCard} />
                                             {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                            <ButtonLixeira href={"/autograph-card/lixeira_cartoes"} />
+                                            {sessionStorage.getItem("isAdmin") === 1 && <ButtonLixeira href={"/autograph-card/lixeira_cartoes"} />}
                                         </Box>
                                     </Grid>
                                 </Grid>

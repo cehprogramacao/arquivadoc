@@ -14,7 +14,7 @@ import RTDService from "@/services/rtd.service"
 import { DocList } from "./tableLixeira"
 
 
-const LixeiraRPJ = () => {
+const LixeiraRTD = () => {
     const dispatch = useDispatch()
     const [notation, setNotation] = useState("")
     const [data, setData] = useState()
@@ -24,6 +24,7 @@ const LixeiraRPJ = () => {
     const handleOpenMenuOptionsTrash = (event) => {
         setAnchorEl(event.currentTarget)
     }
+    const [isAdmin,setIsAdmin] = useState("")
 
     const handleCloseMenuOptionsTrash = () => {
         setAnchorEl(null)
@@ -53,35 +54,39 @@ const LixeiraRPJ = () => {
     }
 
 
-    const handleOpenFilePDF = async () => {
-        const { getRPJByNotation } = new RTDService()
+    const handleRestoreRtdFromTrash = async () => {
+        const { restoreRtdFromTrash } = new RTDService()
         try {
             const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getRPJByNotation(accessToken, notation)
-            handlePrintFile(data.file)
+            const { data } = await restoreRtdFromTrash(notation,accessToken )
+            dispatch(showAlert(data.message, "success", "file"))
         } catch (error) {
-            console.error("Error ao lista dados por número", error)
+            dispatch(showAlert(error.message, "error", "file"))
+            console.error("Error ao restaurar arquivo", error)
             throw error;
         }
     }
 
-    const handlePrintFile = (file) => {
-        const base64Data = file;
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-        // Criar uma URL do Blob e abrir em uma nova janela
-        const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, '_blank');
-    }
+    
     useEffect(() => {
         getAllFilesInTrash()
     }, [])
+
+    const handleDeleteFileRtdByNotation = async () => {
+        const { deleteRTDByNotation } = new RTDService()
+        try {
+            const accessToken = sessionStorage.getItem("accessToken")
+            const { data } = await deleteRTDByNotation(accessToken, notation)
+            dispatch(showAlert(data.message, "success", "file"))
+        } catch (error) {
+            console.error("Erro ao deletar arquivo!", error)
+            dispatch(showAlert(error?.message ? error.message : "Erro ao excluir arquivo!", "error", "file"))
+            throw error;
+        }
+        finally {
+            getAllFilesInTrash()
+        }
+    }
 
 
     return loading ? <Loading /> : (
@@ -112,11 +117,17 @@ const LixeiraRPJ = () => {
                         </Grid>
                     </CustomContainer>
                     <SnackBar />
-                    <MenuOptionsFile open={open} anchorEl={anchorEl} handleClose={handleCloseMenuOptionsTrash} handleOpenFile={handleOpenFilePDF} />
+                    <MenuOptionsFile 
+                    open={open} 
+                    anchorEl={anchorEl} 
+                    handleClose={handleCloseMenuOptionsTrash} 
+                    handleDeleteFromTrash={handleDeleteFileRtdByNotation} 
+                    handleRestoreFromTrash={handleRestoreRtdFromTrash}
+                    />
                 </Box>
             </PrivateRoute>
         </AuthProvider>
     )
 }
 
-export default withAuth(LixeiraRPJ)
+export default withAuth(LixeiraRTD)

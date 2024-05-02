@@ -72,7 +72,7 @@ const PageRPJ = () => {
     }
     const handleOpenModalCadastroRTD = () => setOpenModalCadastroRTD(true)
     const handleCloseModalCadastroRTD = () => setOpenModalCadastroRTD(false)
-
+    const [isAdmin, setIsAdmin] = useState("")
 
 
     const getAllFilesRTD = async () => {
@@ -239,7 +239,7 @@ const PageRPJ = () => {
                                             {permissions[2]?.create_permission === 1 && (
                                                 <ButtonOpenModals onClick={handleOpenModalCadastroRTD} />
                                             )}
-                                            <ButtonLixeira href={"/rpj/lixeira_rpj"} />
+                                            {isAdmin === "1" && <ButtonLixeira href={"/rpj/lixeira_rpj"} />}
                                         </Box>
                                     </Grid>
                                 </Grid>

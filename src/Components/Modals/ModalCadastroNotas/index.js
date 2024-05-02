@@ -730,7 +730,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         ))}
 
         {outorgados.map((outorgado, index) => (
-          <Box key={`outorgado-${index}-${outorgados.length}`}>
+          <Box key={index}>
             <Autocomplete
               // value={valueOutorgado[index]}
               options={outorgadoArray}

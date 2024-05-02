@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
                 const accessToken = sessionStorage.getItem("accessToken");
                 const { getUser } = new User();
                 const { data } = await getUser(accessToken);
+                console.log(data)
                 await updatePermissions(data.permissions)
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário!", error);

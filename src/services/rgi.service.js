@@ -18,7 +18,15 @@ class RGI {
     }
 
     getTrash(accessToken) {
-        return customAxios.get("/trash/rgi", {
+        return customAxios.get("/rgi/trash", {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }   
+        });
+    }
+
+    restoreRgiFromTrash(prenotation, accessToken) {
+        return customAxios.post(`/rgi/restore/${prenotation}`, {}, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }   

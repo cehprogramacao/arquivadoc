@@ -52,7 +52,7 @@ const PageRPJ = () => {
     const [loading, setLoading] = useState(false)
     const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
     const [openModalCadastroRPJ, setOpenModalCadastroRPJ] = useState(false)
-    
+    const [isAdmin, setIsAdmin] = useState("")
 
     const handleOpenModalListFilePDF = async () => {
         const { getRPJByNotation } = new RPJService()
@@ -165,6 +165,8 @@ const PageRPJ = () => {
         }
     }
     useEffect(() => {
+        const isAdminUser = sessionStorage.getItem("isAdmin")
+        setIsAdmin(isAdminUser)
         getAllFilesRPJ()
     }, [])
 
@@ -239,7 +241,7 @@ const PageRPJ = () => {
                                             {permissions[3]?.create_permission === 1 && (
                                                 <ButtonOpenModals onClick={handleOpenModalCadastroRPJ} />
                                             )}
-                                            <ButtonLixeira href={"/rpj/lixeira_rpj"} />
+                                            {isAdmin === "1" && <ButtonLixeira href={"/rpj/lixeira_rpj"} />}
                                         </Box>
                                     </Grid>
                                 </Grid>

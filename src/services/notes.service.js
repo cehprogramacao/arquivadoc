@@ -1,7 +1,7 @@
 import customAxios from "./middleware";
 
 class NoteService {
-    createNotes(data,accessToken) {
+    createNotes(data, accessToken) {
         return customAxios.post('/note', data, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
@@ -17,13 +17,19 @@ class NoteService {
     }
 
     getNotesInTrash(accessToken) {
-        return customAxios.get('/trash/note', {
+        return customAxios.get('/note/trash', {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
     }
-
+    restoreNotesFromTrash(ordernum, accessToken) {
+        return customAxios.post(`/note/restore/${ordernum}`, {}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+    }
     getNoteByPresenter(presenterId, accessToken) {
         return customAxios.get(`/note/presenter/${presenterId}`, {
             headers: {
