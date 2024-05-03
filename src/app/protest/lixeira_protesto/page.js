@@ -59,7 +59,7 @@ const LixeiraProtestos = () => {
         }
     }
 
-   
+
     useEffect(() => {
         getFetchingFilesFromTrash()
     }, [])
@@ -172,13 +172,12 @@ const LixeiraProtestos = () => {
                     </CustomContainer>
                 </Box>
                 <SnackBar />
-                <MenuOptionsFile 
-                handleDeleteFromTrash={handleDeleteByNotation}
-                handleOpenFile={handleViewFileTrash}
-                handleRestoreFromTrash={handleRestoreFileTrash}
-                 anchorEl={anchorEl} 
-                 open={open} 
-                 handleClose={handleClose} />
+                <MenuOptionsFile
+                    handleDeleteFromTrash={handleDeleteByNotation}
+                    handleRestoreFromTrash={handleRestoreFileTrash}
+                    anchorEl={anchorEl}
+                    open={open}
+                    handleClose={handleClose} />
             </PrivateRoute>
         </AuthProvider>
     )

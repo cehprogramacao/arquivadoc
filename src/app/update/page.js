@@ -1,9 +1,10 @@
 "use client"
+import CustomContainer from '@/Components/CustomContainer'
 import SnackBar from '@/Components/SnackBar'
 import Loading from '@/Components/loading'
 import User from '@/services/user.service'
 import withAuth from '@/utils/withAuth'
-import { Box, Button, TextField, Typography, useTheme, useMediaQuery, FormControl, OutlinedInput } from '@mui/material'
+import { Box, Button, TextField, Typography, useTheme, useMediaQuery, FormControl, OutlinedInput, Grid, Container } from '@mui/material'
 import { useEffect, useState } from 'react'
 import ReactInputMask from 'react-input-mask'
 
@@ -73,88 +74,101 @@ const UpdateProfile = () => {
 
     return !loading ? (
         <Box sx={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: isSmallScreen ? '10px' : '10px',
-
+            width: "100%",
+            height: "100vh",
+            px: 2,
+            display: "flex",
         }}>
-            <Typography sx={{
-                fontSize: "clamp(36px, 5vw, 48px)",
-                textAlign: 'center'
-            }} fontWeight='bold' marginTop={isSmallScreen ? 15 : 14} color={"black"}>
-                Editar Perfil
-            </Typography>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: 'auto',
-                gap: '20px'
-            }}>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '20px',
-
-                }}>
-                    <TextField sx={{
-                        '& input': { color: 'success.main' },
-                    }}
-                        fullWidth
-                        value={userData.name}
-                        onChange={(e) => setUserData((prev) => ({ ...prev, name: e.target.value }))}
-                        label="Nome"
-                        placeholder='Digite seu nome'
-                        color='success'
-                    />
-
-                    <FormControl fullWidth error={Boolean(errors['phone'])}>
-                        <ReactInputMask
-
-                            mask={numberMask}
-                            value={userData.phone}
-                            onChange={handleInputChange}
-                            onBlur={handleInputBlur}
-                            name="phone"
-                        >
-                            {(inputProps) => (
-                                <OutlinedInput
+            <CustomContainer >
+                <Container maxWidth="sm" >
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <Box sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center"
+                            }} >
+                                <Typography sx={{
+                                    fontSize: "clamp(36px, 5vw, 48px)",
+                                    textAlign: 'center'
+                                }} fontWeight='bold' marginTop={isSmallScreen ? 15 : 14} color={"black"}>
+                                    Editar Perfil
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Box sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                flexDirection: "column",
+                                gap: '20px'
+                            }}>
+                                <TextField sx={{
+                                    '& input': { color: 'success.main' },
+                                }}
                                     fullWidth
-                                    {...inputProps}
-                                    id={'id-documento'}
-                                    color="success"
-                                    placeholder={'Número de Telefone'}
-                                    sx={{
-                                        borderRadius: '12.5px',
-                                        '& .MuiOutlinedInput-notchedOutline': {
-                                            borderRadius: '4px',
-                                        },
-                                    }}
+                                    value={userData.name}
+                                    onChange={(e) => setUserData((prev) => ({ ...prev, name: e.target.value }))}
+                                    label="Nome"
+                                    placeholder='Digite seu nome'
+                                    color='success'
                                 />
-                            )}
-                        </ReactInputMask>
-                    </FormControl>
+                                <FormControl fullWidth error={Boolean(errors['phone'])}>
+                                    <ReactInputMask
 
-                </Box>
-                <Button sx={{
-                    display: 'flex',
-                    alignSelf: "center",
-                    width: 'max-content',
-                    background: "#237117",
-                    color: '#fff',
-                    border: '1px solid #237117',
-                    padding: '7px 22px',
-                    ":hover": {
-                        background: 'transparent',
-                        color: '#237117',
+                                        mask={numberMask}
+                                        value={userData.phone}
+                                        onChange={handleInputChange}
+                                        onBlur={handleInputBlur}
+                                        name="phone"
+                                    >
+                                        {(inputProps) => (
+                                            <OutlinedInput
+                                                fullWidth
+                                                {...inputProps}
+                                                id={'id-documento'}
+                                                color="success"
+                                                placeholder={'Número de Telefone'}
+                                                sx={{
+                                                    borderRadius: '12.5px',
+                                                    '& .MuiOutlinedInput-notchedOutline': {
+                                                        borderRadius: '4px',
+                                                    },
+                                                }}
+                                            />
+                                        )}
+                                    </ReactInputMask>
+                                </FormControl>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Box sx={{
+                                display: "flex",
+                                width: "100%",
+                                justifyContent: "center"
+                            }}>
+                                <Button sx={{
+                                    display: 'flex',
+                                    alignSelf: "center",
+                                    width: 'max-content',
+                                    background: "#237117",
+                                    color: '#fff',
+                                    border: '1px solid #237117',
+                                    padding: '7px 22px',
+                                    ":hover": {
+                                        background: 'transparent',
+                                        color: '#237117',
 
-                    }
-                }} onClick={handleUpdateUser}>
-                    Atualizar
-                </Button>
-            </Box>
+                                    }
+                                }} onClick={handleUpdateUser}>
+                                    Atualizar
+                                </Button>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Container>
+            </CustomContainer>
             <SnackBar data={alert} handleClose={() => setAlert((prev) => ({ ...prev, open: false }))} />
         </Box>
     )

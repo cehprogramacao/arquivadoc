@@ -811,7 +811,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
 
       </Box>
       <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} getData={getAllNotesTag} />
-      <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} />
+      <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} getData={getCustomersPresenter} />
       <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} getData={getTypeAndGroup} />
       <CadastroNotesCurtomers getData={getCustumers} open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
       <ModalNotesGroup getData={getTypeAndGroup} onClose={handleCloseGroup} open={openModalGroup} />

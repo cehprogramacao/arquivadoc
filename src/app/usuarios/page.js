@@ -68,7 +68,8 @@ const PageUsuarios = () => {
         }
         finally {
             setLoading(false)
-        }
+            getUsers()
+        }   
     }
     
 

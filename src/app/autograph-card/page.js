@@ -5,7 +5,7 @@ import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import Autocomplete from '@mui/material/Autocomplete';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import { CadastrarCartoesModal } from '@/Components/Modals/ModalCadastroCartoes';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
 import CustomContainer from '@/Components/CustomContainer';
 import withAuth from '@/utils/withAuth';
@@ -38,7 +38,7 @@ const PageAutographCards = () => {
     const [cpfcnpj, setCpfcnpj] = useState("")
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
-
+    const [isAdmin, setIsAdmin] = useState("")
     const [openPDF, setOpenPDF] = useState(false)
     const [dataFile, setDataFile] = useState([])
 
@@ -127,7 +127,10 @@ const PageAutographCards = () => {
         dataOptions.cpfcnpj?.replace(/\D/g, '').length === 11 && setCpfCnpjMask(cpfMask);
     };
 
-
+    useEffect(() => {
+        const isAdminUser = sessionStorage.getItem("isAdmin")
+        setIsAdmin(isAdminUser)
+    })
     const service = ['CPF']
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -202,7 +205,7 @@ const PageAutographCards = () => {
                                         <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", gap: '30px' }}>
                                             <Buttons color={'green'} title={'Buscar'} onClick={handleFilterAutographCard} />
                                             {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                            {sessionStorage.getItem("isAdmin") === 1 && <ButtonLixeira href={"/autograph-card/lixeira_cartoes"} />}
+                                            {isAdmin === "1" && <ButtonLixeira href={"/autograph-card/lixeira_cartoes"} />}
                                         </Box>
                                     </Grid>
                                 </Grid>

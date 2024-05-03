@@ -166,6 +166,8 @@ const PageRPJ = () => {
     }
     useEffect(() => {
         getAllFilesRTD()
+        const isAdminUser = sessionStorage.getItem("isAdmin")
+        setIsAdmin(isAdminUser)
     }, [])
 
 

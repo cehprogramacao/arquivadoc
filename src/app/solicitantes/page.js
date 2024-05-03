@@ -11,6 +11,7 @@ import SnackBar from "@/Components/SnackBar"
 import Loading from "@/Components/loading"
 import NoteService from "@/services/notes.service"
 import withAuth from "@/utils/withAuth"
+import { useAuth } from "@/context"
 
 
 
@@ -23,8 +24,7 @@ const PageSolicitantes = () => {
         severity: ""
     })
     const [loading, setLoading] = useState(false)
-
-
+    const { permissions } = useAuth()
     const [open, setOpen] = useState(false)
     const handleOpenModal = () => setOpen(true)
     const handleCloseModal = () => setOpen(false)
@@ -141,7 +141,7 @@ const PageSolicitantes = () => {
                                             justifyContent: "flex-end"
                                         }}>
                                             {/* <Buttons color={'green'} title={'Buscar'} /> */}
-                                            <ButtonOpenModals onClick={handleOpenModal} />
+                                            {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpenModal} />}
                                         </Box>
                                     </Grid>
                                 </Grid>

@@ -37,13 +37,13 @@ const LoginPage = () => {
       const { accessToken, refreshToken } = data;
       sessionStorage.setItem('accessToken', accessToken);
       sessionStorage.setItem('refreshToken', refreshToken);
-      dispatch(showAlert(data.message, "success", "file"))
+      dispatch(showAlert(data.message, "success", "user"))
       dispatch({ type: SET_LOGIN_DATA })
       if (data.auth) {
         router.push('/');
       }
     } catch (err) {
-      dispatch(showAlert(err.message, "error", "file"))
+      dispatch(showAlert(err.message, "error", "key"))
       console.error("Erro ao fazer login")
       throw err
     }

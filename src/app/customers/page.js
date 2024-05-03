@@ -11,7 +11,7 @@ import Loading from "@/Components/loading"
 import withAuth from "@/utils/withAuth"
 import { useDispatch } from "react-redux"
 import { showAlert } from "@/store/actions"
-import { AuthProvider } from "@/context"
+import { AuthProvider, useAuth } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
 import SnackBar from "@/Components/SnackBar"
 
@@ -34,6 +34,7 @@ const PagePessoas = () => {
             label: 'CPF/CNPJ'
         },
     ];
+    const { permissions } = useAuth()
 
     const getData = async () => {
         try {
@@ -169,7 +170,7 @@ const PagePessoas = () => {
                                             gap: 3
                                         }}>
                                             <Buttons color={'green'} title={'Buscar'} onClick={handleFindCustomerByCpfCnpj} />
-                                            <ButtonOpenModals onClick={handleOpenModal} />
+                                           {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpenModal} />}
                                         </Box>
                                     </Grid>
 

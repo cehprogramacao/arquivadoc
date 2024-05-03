@@ -9,6 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
+import { useAuth } from '@/context';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,7 +39,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export const UserTable = ({ data, onClick }) => {
 
   const dataArray = Array.isArray(data) ? data : Object.values(data)
-
+  const { permissions } = useAuth()
 
 
   return (
@@ -49,8 +50,8 @@ export const UserTable = ({ data, onClick }) => {
             <StyledTableCell>DOCUMENTO</StyledTableCell>
             <StyledTableCell align='center'>TIPO</StyledTableCell>
             <StyledTableCell align='center'>NOME COMPLETO</StyledTableCell>
-            <StyledTableCell align='center'>Excluir</StyledTableCell>
-            <StyledTableCell align='center'>Editar</StyledTableCell>
+            {permissions[5]?.delete_permission === 1 && <StyledTableCell align='center'>Excluir</StyledTableCell>}
+            {permissions[5]?.edit === 1 && <StyledTableCell align='center'>Editar</StyledTableCell>}
           </TableRow>
         </TableHead>
         <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
@@ -59,7 +60,7 @@ export const UserTable = ({ data, onClick }) => {
               <StyledTableCell align='left'>{row.cpfcnpj}</StyledTableCell>
               <StyledTableCell align='center' >{row.type}</StyledTableCell>
               <StyledTableCell align='center' sx={{ textTransform: 'uppercase' }}>{row.name}</StyledTableCell>
-              <StyledTableCell align='center'>
+              {permissions[5]?.delete_permission === 1 && <StyledTableCell align='center'>
                 <Button sx={{
                   fontSize: '15px',
                   textTransform: 'none',
@@ -75,8 +76,8 @@ export const UserTable = ({ data, onClick }) => {
                 }} onClick={() => onClick(row.cpfcnpj)}>
                   Excluir
                 </Button>
-              </StyledTableCell>
-              <StyledTableCell align='center'>
+              </StyledTableCell>}
+              {permissions[5]?.edit === 1 && <StyledTableCell align='center'>
                 <Link href={`/customers/[cpfcnpj]`} as={`/customers/${row.cpfcnpj}`}>
                   <Button sx={{
                     fontSize: '15px',
@@ -93,7 +94,7 @@ export const UserTable = ({ data, onClick }) => {
                     Editar
                   </Button>
                 </Link>
-              </StyledTableCell>
+              </StyledTableCell>}
             </StyledTableRow>
           ))}
         </TableBody>
