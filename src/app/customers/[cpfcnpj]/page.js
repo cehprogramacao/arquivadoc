@@ -1,14 +1,17 @@
 "use client"
 import CustomContainer from '@/Components/CustomContainer';
+import SnackBar from '@/Components/SnackBar';
 import Loading from '@/Components/loading';
 import { AuthProvider } from '@/context';
 import Customer from '@/services/customer.service';
+import { showAlert } from '@/store/actions';
 import PrivateRoute from '@/utils/LayoutPerm';
 import withAuth from '@/utils/withAuth';
 import { Box, TextField, Typography, Button, Autocomplete, FormControl, FormLabel, FormHelperText, OutlinedInput, Grid } from "@mui/material";
 import { useRouter } from 'next/navigation';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactInputMask from 'react-input-mask';
+import { useDispatch } from 'react-redux';
 // const cpfMask = '999.999.999-99';
 // const cnpjMask = '99.999.999/9999-99';
 
@@ -24,6 +27,7 @@ const PageEditarPessoas = ({ params }) => {
         // type: "",
         name: ""
     });
+    const dispatch = useDispatch()
     // const handleInputChange = (e) => {
     //     e.target.value?.replace(/\D/g, '').length < 11
     //         ? setCpfCnpjMask(cpfMask)
@@ -34,16 +38,24 @@ const PageEditarPessoas = ({ params }) => {
     //     data.cpfcnpj?.replace(/\D/g, '').length === 11 && setCpfCnpjMask(cpfMask);
     // };
 
-    const opt = [
-        {
-            id: 1,
-            label: 'Física'
-        },
-        {
-            id: 2,
-            label: 'Jurídica'
+    const getCustomer = async () => {
+        const customers = new Customer()
+        try {
+            setLoading(true)
+            const accessToken = sessionStorage.getItem("accessToken")
+            const customer = await customers.getCustomerByCPFCNPJ(params.cpfcnpj, accessToken)
+            setData({
+                name: customer.data.name
+            })
+
+        } catch (error) {
+            console.error('Erro ao listar usuário!', error)
+            throw error;
         }
-    ]
+        finally {
+            setLoading(false)
+        }
+    }
 
     const handleEditCustomer = async () => {
         const customers = new Customer()
@@ -54,15 +66,23 @@ const PageEditarPessoas = ({ params }) => {
                 return false;
             }
             const customer = await customers.editCustomer(params.cpfcnpj, data, accessToken)
+            dispatch(showAlert(customer.data.message, "success"))
             return customer.data
         } catch (error) {
             console.error("Error when editing client", error)
+            dispatch(showAlert(error.msg, "error"))
+            throw error;
         }
         finally {
             setLoading(false)
             router.push("/customers")
         }
     }
+
+    useEffect(() => {
+        getCustomer()
+    }, [])
+
     return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Cadastros']} >
@@ -178,6 +198,7 @@ const PageEditarPessoas = ({ params }) => {
                             </Grid>
                         </Grid>
                     </CustomContainer>
+                    <SnackBar />
                 </Box>
             </PrivateRoute>
         </AuthProvider>

@@ -3,10 +3,12 @@ import CustomContainer from '@/Components/CustomContainer'
 import SnackBar from '@/Components/SnackBar'
 import Loading from '@/Components/loading'
 import User from '@/services/user.service'
+import { showAlert } from '@/store/actions'
 import withAuth from '@/utils/withAuth'
 import { Box, Button, TextField, Typography, useTheme, useMediaQuery, FormControl, OutlinedInput, Grid, Container } from '@mui/material'
 import { useEffect, useState } from 'react'
 import ReactInputMask from 'react-input-mask'
+import { useDispatch } from 'react-redux'
 
 
 const numberMaskEstruct = '(99) 99999-9999'
@@ -15,13 +17,7 @@ const UpdateProfile = () => {
     const [numberMask, setNumberMask] = useState(numberMaskEstruct)
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false)
-    const [alert, setAlert] = useState({
-        text: "",
-        open: false,
-        severity: "",
-        type: ""
-
-    })
+    const dispatch = useDispatch()
     const [userData, setUserData] = useState({
         name: "",
         phone: ""
@@ -42,13 +38,17 @@ const UpdateProfile = () => {
     const getUser = async () => {
         const { getUser } = new User()
         try {
+            setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getUser(accessToken)
-            setUserData({ name: data.name, phone: data.phone })
+            setUserData({ name: data.user[0]?.name, phone: data.user[0]?.phone })
             console.log(data)
         } catch (error) {
             console.error("Erro ao buscar usuários!", error)
             throw error;
+        }
+        finally {
+            setLoading(false)
         }
     }
     const handleUpdateUser = async () => {
@@ -56,11 +56,12 @@ const UpdateProfile = () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await updateUser(userData, accessToken)
-            setAlert({ open: true, severity: "success", type: "user", text: data.message })
+            dispatch(showAlert(data.message, "success", "user"))
+            console.log(data)
             setLoading(true)
         } catch (error) {
             console.log("Erro ao editar usuários!", error)
-            setAlert({ open: true, severity: "error", type: 'user', text: error.message })
+            dispatch(showAlert(error.msg, "error", "user"))
             throw error;
         }
         finally {
@@ -72,7 +73,7 @@ const UpdateProfile = () => {
         getUser()
     }, [])
 
-    return !loading ? (
+    return loading ? <Loading /> : (
         <Box sx={{
             width: "100%",
             height: "100vh",
@@ -131,6 +132,7 @@ const UpdateProfile = () => {
                                                 color="success"
                                                 placeholder={'Número de Telefone'}
                                                 sx={{
+                                                    '& input': { color: 'success.main' },
                                                     borderRadius: '12.5px',
                                                     '& .MuiOutlinedInput-notchedOutline': {
                                                         borderRadius: '4px',
@@ -169,10 +171,8 @@ const UpdateProfile = () => {
                     </Grid>
                 </Container>
             </CustomContainer>
-            <SnackBar data={alert} handleClose={() => setAlert((prev) => ({ ...prev, open: false }))} />
+            <SnackBar />
         </Box>
     )
-        :
-        <Loading />
 }
 export default withAuth(UpdateProfile)

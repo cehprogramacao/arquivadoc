@@ -51,6 +51,7 @@ const PageOficio = () => {
             setOpenPDF(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await getCallingByNumber(number, accessToken)
+            console.log(response.data, 'data-modal')
             setDataFile(response.data)
             return response.data
         } catch (error) {
@@ -257,9 +258,15 @@ const PageOficio = () => {
                 <Drawer anchor='left' open={open} onClose={handleClose}>
                     <CadastroOficio getData={getCallingData} onClose={handleClose} />
                 </Drawer>
-                <MenuOptionsFile deletePerm={permissions[4]?.delete_permission} editPerm={permissions[4]?.edit}
+                <MenuOptionsFile
+                    deletePerm={permissions[4]?.delete_permission} editPerm={permissions[4]?.edit}
                     open={openMenu} anchorEl={anchorEl} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={number} handleDelete={handleDeleteByNumber} />
-                <ModalCalling open={openPDF} data={dataFile} number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />
+                <ModalCalling
+                    deletePerm={permissions[4]?.delete_permission}
+                    editPerm={permissions[4]?.edit}
+                    open={openPDF}
+                    data={dataFile}
+                    number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />
                 <SnackBar />
             </PrivateRoute>
         </AuthProvider>

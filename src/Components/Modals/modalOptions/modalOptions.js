@@ -17,7 +17,7 @@ import User from '@/services/user.service';
 import KeyIcon from '@mui/icons-material/Key';
 
 
-export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
+export const  ModalOptions = ({ open, logout, onClose, anchorEl }) => {
   const [user, setUser] = useState("")
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -29,7 +29,7 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
       const accessToken = sessionStorage.getItem("accessToken")
       const { data } = await getUser(accessToken)
       console.log(data.user[0].name, '123123921')
-      console.log(Object.values(data.user))
+      // console.log(Object.values(data.user))
       setUser(data.user[0].name)
     } catch (error) {
       console.error("Erro ao buscar usuário!", error)
@@ -57,7 +57,7 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
         transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
         anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
       >
-        <Typography sx={{ padding: '4px', mb: '5px', textAlign: "center" }}>
+        <Typography sx={{ margin: "6px auto", textAlign: "center", maxWidth: 120, width: "100%" }}>
           {user && `Bem vindo, ${user}`}
         </Typography>
 

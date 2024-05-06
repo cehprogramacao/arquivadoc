@@ -28,7 +28,7 @@ const RootLayout = ({ children }) => {
           <ThemeProvider theme={theme}>
             <Provider store={store}>
               <AuthProvider >
-                {pathname !== "/login" && <Header />}
+                {pathname !== "/" && <Header />}
                 {children}
               </AuthProvider>
             </Provider>

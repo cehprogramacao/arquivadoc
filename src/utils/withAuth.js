@@ -18,7 +18,7 @@ const withAuth = (WrappedComponent) => {
       const refreshToken = sessionStorage.getItem('refreshToken');
 
       if (!accessToken || !refreshToken) {
-        router.push('/login');
+        router.push('/');
         return;
       }
       const isAccessTokenExpired = !verifyJWTExpiration(accessToken);
@@ -28,7 +28,7 @@ const withAuth = (WrappedComponent) => {
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('isAdmin')
         window.location.reload
-        router.push('/login');
+        router.push('/');
       }
     }, []);
 

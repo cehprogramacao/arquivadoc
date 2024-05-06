@@ -83,7 +83,7 @@ export const LogsTable = ({ data }) => {
                 <StyledTableCell align='center'>{row.user_name}</StyledTableCell>
                 <StyledTableCell align='center' >{row.service_group}</StyledTableCell>
                 <StyledTableCell align='center'>{row.action}</StyledTableCell>
-                <StyledTableCell align='center'>{row.created_at}</StyledTableCell>
+                <StyledTableCell align='center'>{new Date(row.created_at).toLocaleDateString("pt-BR")}</StyledTableCell>
 
               </StyledTableRow>
             ))}
