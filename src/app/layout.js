@@ -1,21 +1,17 @@
-"use client"
 import React from 'react';
-import Header from '@/Components/Header/Header';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter'
-import './globals.css';
 import { Poppins } from 'next/font/google';
-import { usePathname } from 'next/navigation';
-import { Provider } from 'react-redux';
-import { store } from '@/store';
-import { ThemeProvider } from '@mui/material/styles'
-import theme from '@/theme/theme';
 import withAuth from '@/utils/withAuth';
-import { AuthProvider } from '@/context';
 
 const inter = Poppins({ subsets: ['latin'], weight: '500' });
 
+export const metadata = {
+  title: 'ArquivaDoc | Login',
+};
+
 const RootLayout = ({ children }) => {
-  const pathname = usePathname();
+
+ 
+
   return (
     <html lang="pt-br">
       <head>
@@ -25,17 +21,10 @@ const RootLayout = ({ children }) => {
         <script src="https://cdn.asprise.com/scannerjs/scanner.js" type="text/javascript"></script>
       </head>
       <body className={inter.className}>
-          <ThemeProvider theme={theme}>
-            <Provider store={store}>
-              <AuthProvider >
-                {pathname !== "/" && <Header />}
-                {children}
-              </AuthProvider>
-            </Provider>
-          </ThemeProvider>
+        {children}
       </body>
     </html>
   );
 }
 
-export default withAuth(RootLayout)
+export default RootLayout

@@ -17,7 +17,7 @@ import User from '@/services/user.service';
 import KeyIcon from '@mui/icons-material/Key';
 
 
-export const  ModalOptions = ({ open, logout, onClose, anchorEl }) => {
+export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
   const [user, setUser] = useState("")
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -62,14 +62,14 @@ export const  ModalOptions = ({ open, logout, onClose, anchorEl }) => {
         </Typography>
 
         <Divider />
-        <Link href={"/update"}>
+        <Link href={"/update"} style={{ textDecoration: "none" }}>
           <MenuItem>
             <ListItemIcon>
               <EditIcon fontSize="small" />
             </ListItemIcon> Editar Perfil
           </MenuItem>
         </Link>
-        <Link href={"/updatePassword"}>
+        <Link href={"/updatePassword"} style={{ textDecoration: "none" }}>
           <MenuItem>
             <ListItemIcon>
               <KeyIcon fontSize="small" />
@@ -77,7 +77,7 @@ export const  ModalOptions = ({ open, logout, onClose, anchorEl }) => {
           </MenuItem>
         </Link>
         {isAdmin &&
-          <Link href={"/logs"}>
+          <Link href={"/logs"} style={{ textDecoration: "none" }}>
             <MenuItem >
               <ListItemIcon>
                 <HistoryIcon fontSize="small" />
@@ -87,7 +87,7 @@ export const  ModalOptions = ({ open, logout, onClose, anchorEl }) => {
           </Link>
         }
         {isAdmin &&
-          <Link href={"/usuarios"}>
+          <Link href={"/usuarios"} style={{ textDecoration: "none" }}>
             <MenuItem>
               <ListItemIcon>
                 <GroupIcon fontSize="small" />

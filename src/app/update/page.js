@@ -54,11 +54,12 @@ const UpdateProfile = () => {
     const handleUpdateUser = async () => {
         const { updateUser } = new User()
         try {
+            setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await updateUser(userData, accessToken)
             dispatch(showAlert(data.message, "success", "user"))
             console.log(data)
-            setLoading(true)
+            
         } catch (error) {
             console.log("Erro ao editar usuários!", error)
             dispatch(showAlert(error.msg, "error", "user"))
@@ -80,7 +81,6 @@ const UpdateProfile = () => {
             px: 2,
             display: "flex",
         }}>
-            <CustomContainer >
                 <Container maxWidth="sm" >
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
@@ -170,7 +170,6 @@ const UpdateProfile = () => {
                         </Grid>
                     </Grid>
                 </Container>
-            </CustomContainer>
             <SnackBar />
         </Box>
     )

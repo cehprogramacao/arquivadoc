@@ -40,7 +40,7 @@ const Home = () => {
       dispatch(showAlert(data.message, "success", "user"))
       dispatch({ type: SET_LOGIN_DATA })
       if (data.auth) {
-        router.push('/recentes');
+        router.push('/bem-vindo');
       }
     } catch (err) {
       dispatch(showAlert(err.message, "error", "key"))

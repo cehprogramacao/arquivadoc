@@ -34,7 +34,7 @@ export const Sidebar = () => {
         sessionStorage.removeItem("refreshToken")
         sessionStorage.removeItem("isAdmin")
         dispatch({ type: SET_LOGOUT })
-        router.push("/login")
+        router.push("/")
     };
     const handleClose = () => {
         setAnchorEl(null);
@@ -127,7 +127,7 @@ export const Sidebar = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                     }} >
-                        <Link href={"/"}>
+                        <Link href={"/bem-vindo"} style={{textDecoration: "none"}}>
                             <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -149,7 +149,8 @@ export const Sidebar = () => {
                             </IconButton>
                         </Link>
                         <Link href={"/notes"} style={{
-                            display: permissions[6]?.view === 1 ? "flex" : "none"
+                            display: permissions[6]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }} >
                             <IconButton sx={{
                                 display: 'flex',
@@ -172,7 +173,8 @@ export const Sidebar = () => {
                         </Link>
 
                         <Link href={"/rgi"} style={{
-                            display: permissions[1]?.view === 1 ? "flex" : "none"
+                            display: permissions[1]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }} >
                             <IconButton sx={{
                                 display: 'flex',
@@ -195,7 +197,8 @@ export const Sidebar = () => {
                             </IconButton>
                         </Link>
                         <Link href={"/protest"} style={{
-                            display: permissions[0]?.view === 1 ? "flex" : "none"
+                            display: permissions[0]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }} >
                             <IconButton sx={{
                                 display: 'flex',
@@ -218,7 +221,8 @@ export const Sidebar = () => {
                             </IconButton>
                         </Link>
                         <Link href={"/calling"} style={{
-                            display: permissions[4]?.view === 1 ? "flex" : "none"
+                            display: permissions[4]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }}>
                             <IconButton sx={{
                                 display: 'flex',
@@ -241,7 +245,8 @@ export const Sidebar = () => {
                             </IconButton>
                         </Link>
                         <Link href="/rtd" style={{
-                            display: permissions[2]?.view === 1 ? "flex" : "none"
+                            display: permissions[2]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }}>
                             <IconButton sx={{
                                 display: 'flex',
@@ -264,7 +269,8 @@ export const Sidebar = () => {
                             </IconButton>
                         </Link>
                         <Link href={"/rpj"} style={{
-                            display: permissions[3]?.view === 1 ? "flex" : "none"
+                            display: permissions[3]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }}>
                             <IconButton sx={{
                                 display: 'flex',
@@ -287,7 +293,8 @@ export const Sidebar = () => {
                             </IconButton>
                         </Link>
                         <Link href={"/autograph-card"} style={{
-                            display: permissions[5]?.view === 1 ? "flex" : "none"
+                            display: permissions[5]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }}>
                             <IconButton sx={{
                                 display: 'flex',
@@ -310,7 +317,8 @@ export const Sidebar = () => {
                             </IconButton>
                         </Link>
                         <Link href={"/termos"} style={{
-                            display: permissions[5]?.view === 1 ? "flex" : "none"
+                            display: permissions[5]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }}>
                             <IconButton sx={{
                                 display: 'flex',
@@ -333,7 +341,8 @@ export const Sidebar = () => {
                             </IconButton>
                         </Link>
                         <Link href={"/solicitantes"} style={{
-                            display:permissions[6]?.view === 1 ? "flex" : "none"
+                            display:permissions[6]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }} >
                             <IconButton sx={{
                                 display: 'flex',
@@ -356,7 +365,8 @@ export const Sidebar = () => {
                             </IconButton>
                         </Link>
                         <Link href={"/customers"} style={{
-                            display: isAdmin === "1" || permissions[5]?.view === 1 ? "flex" : "none"
+                            display: isAdmin === "1" || permissions[5]?.view === 1 ? "flex" : "none",
+                            textDecoration: "none"
                         }} >
                             <IconButton sx={{
                                 display: 'flex',
