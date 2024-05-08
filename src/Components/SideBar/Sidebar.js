@@ -127,7 +127,7 @@ export const Sidebar = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                     }} >
-                        <Link href={"/bem-vindo"} style={{textDecoration: "none"}}>
+                        <Link href={"/recentes"} style={{textDecoration: "none"}}>
                             <IconButton sx={{
                                 display: 'flex',
                                 flexDirection: 'column',

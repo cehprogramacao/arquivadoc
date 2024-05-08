@@ -105,6 +105,28 @@ const Welcome = () => {
                                         </Grid>
                                     )
                                 ))}
+
+                                <Grid item lg={4} md={4} sm={6} xs={6}>
+                                    <Link
+                                        href={`/recentes`}
+                                    >
+                                        <Button
+
+                                            sx={{
+                                                width: "100%",
+                                                bgcolor: "#247117",
+                                                color: "#fff",
+                                                ":hover": {
+                                                    bgcolor: "#fff",
+                                                    color: "#247117",
+                                                }
+                                            }}
+                                            variant="contained"
+                                        >
+                                            Recentes
+                                        </Button>
+                                    </Link>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
