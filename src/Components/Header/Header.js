@@ -29,7 +29,7 @@ const Header = () => {
                     </IconButton>
                     <Box sx={{ width: "100%", height: "90px", display: 'flex', justifyContent: 'center', alignItems: 'center' }}
                     >
-                        <Link href={"/"} passHref>
+                        <Link href={"/bem-vindo"} passHref>
                             <Image src="/image/logo.png" alt="logo" width={200} height={80} style={{ objectFit: "cover", cursor: 'pointer' }} />
                         </Link>
                     </Box>

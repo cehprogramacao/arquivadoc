@@ -146,22 +146,28 @@ const Recentes = () => {
                                             </>
                                         ))}
                                         <Grid item xs={12} sm={6} md={3} lg={2}>
-                                            <Link href="/notes">
-                                                <Button variant="container"
-                                                    sx={{
-                                                        bgcolor: "#247117",
-                                                        border: "1px solid #247117",
-                                                        color: "#fff",
-                                                        mt: 5,
-                                                        ml: 3,
-                                                        ":hover": {
-                                                            bgcolor: "#fff",
-                                                            color: "#247117",
-                                                        }
-                                                    }}>
-                                                    Ver mais
-                                                </Button>
-                                            </Link>
+                                            <Box sx={{
+                                                width: "100%",
+                                                display: "flex",
+                                                justifyContent: { lg: 'flex-end', xs: 'flex-start' },
+                                            }}>
+                                                <Link href="/notes">
+                                                    <Button variant="container"
+                                                        sx={{
+                                                            bgcolor: "#247117",
+                                                            border: "1px solid #247117",
+                                                            color: "#fff",
+                                                            mt: 5,
+                                                            ml: 3,
+                                                            ":hover": {
+                                                                bgcolor: "#fff",
+                                                                color: "#247117",
+                                                            }
+                                                        }}>
+                                                        Ver mais
+                                                    </Button>
+                                                </Link>
+                                            </Box>
                                         </Grid>
 
                                     </Grid>
@@ -209,24 +215,31 @@ const Recentes = () => {
                                             </>
                                         ))}
                                         <Grid item xs={12} sm={6} md={3} lg={2}>
-                                            <Link href="/protest">
-                                                <Button variant="container"
-                                                    sx={{
-                                                        bgcolor: "#247117",
-                                                        border: "1px solid #247117",
-                                                        color: "#fff",
-                                                        mt: 5,
-                                                        ml: 3,
-                                                        ":hover": {
-                                                            bgcolor: "#fff",
-                                                            color: "#247117",
-                                                        }
-                                                    }}>
-                                                    Ver mais
-                                                </Button>
-                                            </Link>
+                                            <Box
+                                                sx={{
+                                                    width: "100%",
+                                                    display: "flex",
+                                                    justifyContent: { lg: 'flex-end', xs: 'flex-start' },
+                                                }}
+                                            >
+                                                <Link href="/protest">
+                                                    <Button variant="container"
+                                                        sx={{
+                                                            bgcolor: "#247117",
+                                                            border: "1px solid #247117",
+                                                            color: "#fff",
+                                                            mt: 5,
+                                                            ml: 3,
+                                                            ":hover": {
+                                                                bgcolor: "#fff",
+                                                                color: "#247117",
+                                                            }
+                                                        }}>
+                                                        Ver mais
+                                                    </Button>
+                                                </Link>
+                                            </Box>
                                         </Grid>
-
                                     </Grid>
                                 </Grid>
                             )}
@@ -272,22 +285,31 @@ const Recentes = () => {
                                             </>
                                         ))}
                                         <Grid item xs={12} sm={6} md={3} lg={2}>
-                                            <Link href="/calling">
-                                                <Button variant="container"
-                                                    sx={{
-                                                        bgcolor: "#247117",
-                                                        border: "1px solid #247117",
-                                                        color: "#fff",
-                                                        mt: 3,
-                                                        ml: 3,
-                                                        ":hover": {
-                                                            bgcolor: "#fff",
-                                                            color: "#247117",
-                                                        }
-                                                    }}>
-                                                    Ver mais
-                                                </Button>
-                                            </Link>
+                                            <Box
+                                                sx={{
+                                                    width: "100%",
+                                                    display: "flex",
+                                                    justifyContent: { lg: 'flex-end', xs: 'flex-start' },
+                                                }}
+                                            >
+                                                <Link href="/calling">
+                                                    <Button variant="container"
+                                                        sx={{
+                                                            bgcolor: "#247117",
+                                                            border: "1px solid #247117",
+                                                            color: "#fff",
+                                                            mt: 3,
+                                                            ml: 3,
+                                                            ":hover": {
+                                                                bgcolor: "#fff",
+                                                                color: "#247117",
+                                                            }
+                                                        }}>
+                                                        Ver mais
+                                                    </Button>
+                                                </Link>
+                                            </Box>
+
                                         </Grid>
 
                                     </Grid>
@@ -335,22 +357,31 @@ const Recentes = () => {
                                             </>
                                         ))}
                                         <Grid item xs={12} sm={6} md={3} lg={2}>
-                                            <Link href="/calling">
-                                                <Button variant="container"
-                                                    sx={{
-                                                        bgcolor: "#247117",
-                                                        border: "1px solid #247117",
-                                                        color: "#fff",
-                                                        mt: 3,
-                                                        ml: 3,
-                                                        ":hover": {
-                                                            bgcolor: "#fff",
-                                                            color: "#247117",
-                                                        }
-                                                    }}>
-                                                    Ver mais
-                                                </Button>
-                                            </Link>
+                                            <Box
+                                                sx={{
+                                                    width: "100%",
+                                                    display: "flex",
+                                                    justifyContent: { lg: 'flex-end', xs: 'flex-start' },
+                                                }}
+                                            >
+                                                <Link href="/rgi">
+                                                    <Button variant="container"
+                                                        sx={{
+                                                            bgcolor: "#247117",
+                                                            border: "1px solid #247117",
+                                                            color: "#fff",
+                                                            mt: 3,
+                                                            ml: 3,
+                                                            ":hover": {
+                                                                bgcolor: "#fff",
+                                                                color: "#247117",
+                                                            }
+                                                        }}>
+                                                        Ver mais
+                                                    </Button>
+                                                </Link>
+                                            </Box>
+
                                         </Grid>
 
                                     </Grid>
@@ -398,29 +429,38 @@ const Recentes = () => {
                                             </>
                                         ))}
                                         <Grid item xs={12} sm={6} md={3} lg={2}>
-                                            <Link href="/calling">
-                                                <Button variant="container"
-                                                    sx={{
-                                                        bgcolor: "#247117",
-                                                        border: "1px solid #247117",
-                                                        color: "#fff",
-                                                        mt: 3,
-                                                        ml: 3,
-                                                        ":hover": {
-                                                            bgcolor: "#fff",
-                                                            color: "#247117",
-                                                        }
-                                                    }}>
-                                                    Ver mais
-                                                </Button>
-                                            </Link>
+                                            <Box
+                                                sx={{
+                                                    width: "100%",
+                                                    display: "flex",
+                                                    justifyContent: { lg: 'flex-end', xs: 'flex-start' },
+                                                }}
+                                            >
+                                                <Link href="/rtd">
+                                                    <Button variant="container"
+                                                        sx={{
+                                                            bgcolor: "#247117",
+                                                            border: "1px solid #247117",
+                                                            color: "#fff",
+                                                            mt: 3,
+                                                            ml: 3,
+                                                            ":hover": {
+                                                                bgcolor: "#fff",
+                                                                color: "#247117",
+                                                            }
+                                                        }}>
+                                                        Ver mais
+                                                    </Button>
+                                                </Link>
+                                            </Box>
+
                                         </Grid>
 
                                     </Grid>
                                 </Grid>
                             )}
                             {permissions[3]?.view === 1 && "RPJ" in data && typeof data["RPJ"] === 'object' && Object.keys(data["RPJ"]).length > 0 && (
-                                <Grid item container spacing={0}>
+                                <Grid item container spacing={0} xs={12}>
                                     <Grid item xs={12}>
                                         <Box sx={{
                                             width: "100%",
@@ -436,11 +476,10 @@ const Recentes = () => {
                                             </Typography>
                                         </Box>
                                     </Grid>
-
                                     <Grid item xs={12} container>
                                         {"RPJ" in data && typeof data["RPJ"] === 'object' && Object.values(data["RPJ"]).map((item, index) => (
                                             <>
-                                                <Grid item key={index} xs={6} sm={6} md={3} lg={2}>
+                                                <Grid item key={index} xs={6} sm={6} md={3} lg={6}>
                                                     <List sx={{ width: '100%' }} >
                                                         <ListItem sx={{ cursor: 'pointer' }} >
                                                             <ListItemAvatar>
@@ -460,23 +499,32 @@ const Recentes = () => {
                                                 </Grid>
                                             </>
                                         ))}
-                                        <Grid item xs={12} sm={6} md={3} lg={2}>
-                                            <Link href="/calling">
-                                                <Button variant="container"
-                                                    sx={{
-                                                        bgcolor: "#247117",
-                                                        border: "1px solid #247117",
-                                                        color: "#fff",
-                                                        mt: 3,
-                                                        ml: 3,
-                                                        ":hover": {
-                                                            bgcolor: "#fff",
-                                                            color: "#247117",
-                                                        }
-                                                    }}>
-                                                    Ver mais
-                                                </Button>
-                                            </Link>
+                                        <Grid item xs={12} sm={6} md={3} lg={6}>
+                                            <Box
+                                                sx={{
+                                                    width: "100%",
+                                                    display: "flex",
+                                                    justifyContent: { lg: 'flex-end', xs: 'flex-start' },
+                                                }}
+                                            >
+                                                <Link href="/rpj">
+                                                    <Button variant="container"
+                                                        sx={{
+                                                            bgcolor: "#247117",
+                                                            border: "1px solid #247117",
+                                                            color: "#fff",
+                                                            mt: 3,
+                                                            ml: 3,
+                                                            ":hover": {
+                                                                bgcolor: "#fff",
+                                                                color: "#247117",
+                                                            }
+                                                        }}>
+                                                        Ver mais
+                                                    </Button>
+                                                </Link>
+                                            </Box>
+
                                         </Grid>
 
                                     </Grid>

@@ -7,6 +7,9 @@ import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 
 export const TableList = ({ data, handleClick, setNumber }) => {
+
+    console.log(data, '21921')
+
     return (
         <>
             <Grid
@@ -20,7 +23,7 @@ export const TableList = ({ data, handleClick, setNumber }) => {
                     overflowY: 'auto',
                 }}
             >
-                {data && data.map((item, index) => (
+                {data && data.length > 0 && data.map((item, index) => (
                     <Grid
                         item
                         key={index}

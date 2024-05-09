@@ -41,7 +41,7 @@ const PageNotas = () => {
         option: null,
         value: ""
     })
-    const [isAdmin,setIsAdmin] = useState("")
+    const [isAdmin, setIsAdmin] = useState("")
     const [opt, setOpt] = useState(['Número', 'Apresentante'])
     const [open, setOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
@@ -115,8 +115,13 @@ const PageNotas = () => {
         try {
             setLoading(true);
             const response = await getNoteByPresenter(value, accessToken);
-            setData(Object.values(response.data))
-            return response.data
+            const validData = Array.isArray(response.data)
+                ? response.data.filter(item => Object.keys(item).length > 0)
+                : [];
+
+            setData(validData);
+
+            return validData;
         } catch (error) {
             console.error("Erro ao filtrar por Apresentante", error);
             throw error;
@@ -130,9 +135,13 @@ const PageNotas = () => {
         try {
             setLoading(true);
             const response = await getNoteByNumber(value, accessToken);
-            newData.push(response.data)
-            setData(newData)
-            return response
+            const validData = Array.isArray(response.data)
+                ? response.data.filter(item => Object.keys(item).length > 0)
+                : [];
+
+            setData(validData);
+
+            return validData;
         } catch (error) {
             console.error("Erro ao filtrar por número", error);
         } finally {

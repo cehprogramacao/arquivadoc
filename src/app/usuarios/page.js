@@ -156,7 +156,7 @@ const PageUsuarios = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getUserById(filter.userId, accessToken)
-            dispatch(showAlert(response.data.message, "success", "user"))
+            dispatch(showAlert('Usuário Listado', "success", "user"))
             console.log(data.user[0].email)
             setDataRows(data.user)
             return data

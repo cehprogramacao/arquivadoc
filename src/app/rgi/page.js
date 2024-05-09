@@ -100,10 +100,11 @@ const PageRGI = () => {
         try {
             setLoading(true);
             const response = await getByPresenter(value, accessToken);
-            console.log('Resposta do Apresentante:', response.data);
-            setOpenFilterModalPDF(!openFilterModalPDF)
-            newData.push(response.data)
-            setData(newData)
+            const validData = Array.isArray(response.data)
+                ? response.data.filter(item => Object.keys(item).length > 0)
+                : [];
+            setData(validData);
+            return validData;
             return response.data
         } catch (error) {
             console.error("Erro ao filtrar por Apresentante", error);
@@ -119,11 +120,12 @@ const PageRGI = () => {
         try {
             setLoading(true);
             const response = await getByPrenotation(value, accessToken);
-            console.log('Resposta da Prenotação:', response.data);
-            setOpenFilterModalPDF(!openFilterModalPDF)
-            console.log(data, 9090)
-            newData.push(response.data)
-            setData(newData)
+            const validData = Array.isArray(response.data)
+                ? response.data.filter(item => Object.keys(item).length > 0)
+                : [];
+
+            setData(validData);
+            return validData;
             return response
         } catch (error) {
             console.error("Erro ao filtrar por Prenotação", error);
