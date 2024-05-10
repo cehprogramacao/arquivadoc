@@ -115,13 +115,9 @@ const PageNotas = () => {
         try {
             setLoading(true);
             const response = await getNoteByPresenter(value, accessToken);
-            const validData = Array.isArray(response.data)
-                ? response.data.filter(item => Object.keys(item).length > 0)
-                : [];
-
-            setData(validData);
-
-            return validData;
+            console.log(value, response.data, 'Kauan CLeuqdad')
+            setData(Object.values(response.data))
+            return response.data;
         } catch (error) {
             console.error("Erro ao filtrar por Apresentante", error);
             throw error;
@@ -135,13 +131,10 @@ const PageNotas = () => {
         try {
             setLoading(true);
             const response = await getNoteByNumber(value, accessToken);
-            const validData = Array.isArray(response.data)
-                ? response.data.filter(item => Object.keys(item).length > 0)
-                : [];
-
-            setData(validData);
-
-            return validData;
+            console.log(response.data, '112312321312321323123')
+            newData.push(response.data)
+            setData(newData)
+            return response.data;
         } catch (error) {
             console.error("Erro ao filtrar por número", error);
         } finally {

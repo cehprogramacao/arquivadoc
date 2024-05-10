@@ -73,7 +73,7 @@ const PageRPJ = () => {
     const handleOpenModalCadastroRPJ = () => setOpenModalCadastroRPJ(true)
     const handleCloseModalCadastroRPJ = () => setOpenModalCadastroRPJ(false)
 
-    
+
 
     const getAllFilesRPJ = async () => {
         const { getAllRPJ } = new RPJService()
@@ -103,8 +103,8 @@ const PageRPJ = () => {
                 dispatch(showAlert("Nenhum arquivo com notação", "success", "file"))
                 return false
             }
-            newData.push(data)
-            setData(newData)
+            setData(Object.values(data));
+            return data
         } catch (error) {
             console.error("Erro ao buscar arquivo!", error)
             dispatch(showAlert(error.msg, "error", "file"))
@@ -120,8 +120,8 @@ const PageRPJ = () => {
                 dispatch(showAlert("Nenhum arquivo com esse apresentante", "success", "file"))
                 return false
             }
-            newData.push(data)
-            setData(newData)
+            setData(Object.values(data));
+            return data
         } catch (error) {
             console.error("Erro ao buscar arquivo!", error)
             dispatch(showAlert(error.msg, "error", "file"))

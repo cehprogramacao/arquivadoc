@@ -76,10 +76,8 @@ const PageAutographCards = () => {
         try {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
-
             const response = await getAutographCard(dataOptions.cpfcnpj, accessToken)
-            newData.push(response.data)
-            setData(newData)
+            setData(Object.values(response.data))
             return response.data
         } catch (error) {
             console.error("Erro ao filtrar Termos", error);

@@ -47,7 +47,7 @@ const TableComponente = ({ data, handleDeleteByID, handleSetAdmin, handleUnsetAd
     const { permissions } = useAuth()
     // console.log("Transformado em array:", dataArray);
     // dataArray.forEach(item => console.log(item, 'MMMMMMMMMMMMMMMMMMMMMMkkkk'));
-
+    console.log(dataArray,'12321312312')
 
     return (
         <TableContainer component={Paper} sx={{
@@ -73,7 +73,7 @@ const TableComponente = ({ data, handleDeleteByID, handleSetAdmin, handleUnsetAd
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {dataArray.length > 0 && dataArray.map((row, index) => (
+                    {dataArray && dataArray.map((row, index) => (
                         <StyledTableRow
                             key={index}
                             sx={{

@@ -109,8 +109,7 @@ const PageOficio = () => {
             setLoading(true)
             const { data } = await getCallingByNumber(value, accessToken)
             dispatch(showAlert(`Arquivo de ${data.entity}`, "success", "file"))
-            newData.push(data)
-            setCallingData(newData)
+            setCallingData(Object.values(data));
             return data
         } catch (error) {
             dispatch(showAlert(error.msg, "error", "file"))
@@ -127,7 +126,7 @@ const PageOficio = () => {
             setLoading(true)
             const { data } = await getCallingByEntity(value, accessToken)
             dispatch(showAlert(`Arquivo de ${data.entity}`, "success", "file"))
-            setCallingData(Object.values(data))
+            setCallingData(Object.values(data));
             return data
         } catch (error) {
             dispatch(showAlert(error.msg, "error", "file"))

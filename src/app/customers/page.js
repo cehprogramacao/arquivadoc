@@ -25,7 +25,7 @@ const PagePessoas = () => {
     const [loading, setLoading] = useState(false)
     const handleOpenModal = () => setOpen(true)
     const handleCloseModal = () => setOpen(false)
-    const [options,setOptions] = useState({
+    const [options, setOptions] = useState({
         option: "",
         value: ""
     })
@@ -77,14 +77,14 @@ const PagePessoas = () => {
     };
 
     const handleFindCustomerByCpfCnpj = async () => {
-        if(options.option && options.value) {
+        if (options.option && options.value) {
             const { getCustomerByCPFCNPJ } = new Customer()
             let newData = []
             try {
                 const accessToken = sessionStorage.getItem("accessToken")
                 const { data } = await getCustomerByCPFCNPJ(options.value, accessToken)
-                newData.push(data)
-                setRows(newData)
+
+                setRows(Object.values(data));
                 dispatch(showAlert("Usuário listado!", "success"))
             } catch (error) {
                 console.error("Erro ao buscar usuário!", error)
@@ -102,7 +102,7 @@ const PagePessoas = () => {
     return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Cadastros']}>
-            <Box sx={{
+                <Box sx={{
                     width: '100%',
                     height: '100vh',
                     px: 3,
@@ -127,7 +127,7 @@ const PagePessoas = () => {
                                         <TextField label="Buscar"
                                             fullWidth
                                             value={options.value}
-                                            onChange={(e) => setOptions(state => ({...state, value: e.target.value}))}
+                                            onChange={(e) => setOptions(state => ({ ...state, value: e.target.value }))}
                                             sx={{
                                                 '& input': {
                                                     color: 'success.main',
@@ -142,8 +142,8 @@ const PagePessoas = () => {
                                             fullWidth
                                             isOptionEqualToValue={(option, label) => option.label === label.label}
                                             autoHighlight
-                                            onChange={(e,value) => {
-                                                setOptions(state => ({...state, option: value.label}))
+                                            onChange={(e, value) => {
+                                                setOptions(state => ({ ...state, option: value.label }))
                                             }}
                                             getOptionLabel={(option) => option.label}
                                             renderInput={(params) => (
@@ -170,7 +170,7 @@ const PagePessoas = () => {
                                             gap: 3
                                         }}>
                                             <Buttons color={'green'} title={'Buscar'} onClick={handleFindCustomerByCpfCnpj} />
-                                           {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpenModal} />}
+                                            {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpenModal} />}
                                         </Box>
                                     </Grid>
 

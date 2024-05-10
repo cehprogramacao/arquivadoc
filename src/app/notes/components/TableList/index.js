@@ -23,7 +23,7 @@ export const TableList = ({ data, handleClick, setNumber }) => {
                     overflowY: 'auto',
                 }}
             >
-                {data && data.length > 0 && data.map((item, index) => (
+                {data && data.map((item, index) => (
                     <Grid
                         item
                         key={index}

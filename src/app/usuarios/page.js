@@ -69,9 +69,9 @@ const PageUsuarios = () => {
         finally {
             setLoading(false)
             getUsers()
-        }   
+        }
     }
-    
+
 
     const handleSetAdmin = async (userId) => {
         const { setAdmin } = new User()
@@ -156,9 +156,9 @@ const PageUsuarios = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const { data } = await getUserById(filter.userId, accessToken)
+            console.log(data.user)
             dispatch(showAlert('Usuário Listado', "success", "user"))
-            console.log(data.user[0].email)
-            setDataRows(data.user)
+            setDataRows(Object.values(data.user))
             return data
         } catch (error) {
             dispatch(showAlert(error.message, "error", "user"))

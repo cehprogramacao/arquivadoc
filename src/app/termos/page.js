@@ -72,8 +72,8 @@ const PageTermos = () => {
     const handleClose = () => {
         setOpen(false);
     }
-    
-   
+
+
 
     const handleInputChange = (e) => {
         e.target.value?.replace(/\D/g, '').length < 11
@@ -108,8 +108,7 @@ const PageTermos = () => {
             setLoading(true)
             const accessToken = sessionStorage.getItem("accessToken")
             const response = await getTermLGDP(dataOptions.cpfcnpj, accessToken)
-            newData.push(response.data)
-            setData(newData)
+            setData(Object.values(response.data));
             return response.data
         } catch (error) {
             console.error("Erro ao filtrar Termos", error);

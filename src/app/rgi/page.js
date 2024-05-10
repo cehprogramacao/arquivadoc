@@ -100,11 +100,7 @@ const PageRGI = () => {
         try {
             setLoading(true);
             const response = await getByPresenter(value, accessToken);
-            const validData = Array.isArray(response.data)
-                ? response.data.filter(item => Object.keys(item).length > 0)
-                : [];
-            setData(validData);
-            return validData;
+            setData(Object.values(response.data));
             return response.data
         } catch (error) {
             console.error("Erro ao filtrar por Apresentante", error);
@@ -120,13 +116,8 @@ const PageRGI = () => {
         try {
             setLoading(true);
             const response = await getByPrenotation(value, accessToken);
-            const validData = Array.isArray(response.data)
-                ? response.data.filter(item => Object.keys(item).length > 0)
-                : [];
-
-            setData(validData);
-            return validData;
-            return response
+            setData(Object.values(response.data));
+            return response.data
         } catch (error) {
             console.error("Erro ao filtrar por Prenotação", error);
         } finally {
