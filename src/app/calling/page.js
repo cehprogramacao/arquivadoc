@@ -112,7 +112,7 @@ const PageOficio = () => {
             setCallingData(Object.values(data));
             return data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch(showAlert(error.msg || error.message, "error", "file"))
             console.error("Erro ao filtrar dados!", error)
             throw error;
         }
@@ -129,7 +129,7 @@ const PageOficio = () => {
             setCallingData(Object.values(data));
             return data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch(showAlert(error.msg || error.message, "error", "file"))
             console.error("Erro ao filtrar dados!", error)
             throw error;
         }

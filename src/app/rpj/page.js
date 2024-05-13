@@ -101,6 +101,7 @@ const PageRPJ = () => {
             const { data } = await getRPJByNotation(accessToken, notation)
             if (Object.values(data).length === 0) {
                 dispatch(showAlert("Nenhum arquivo com notação", "success", "file"))
+                setData([])
                 return false
             }
             setData(Object.values(data));
@@ -118,6 +119,7 @@ const PageRPJ = () => {
             const { data } = await getRPJByPresenter(accessToken, presenter)
             if (Object.values(data).length === 0) {
                 dispatch(showAlert("Nenhum arquivo com esse apresentante", "success", "file"))
+                setData([])
                 return false
             }
             setData(Object.values(data));

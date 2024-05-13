@@ -115,7 +115,7 @@ const PageRGI = () => {
         let newData = [];
         try {
             setLoading(true);
-            const response = await getByPrenotation(value, accessToken);
+            const response = await getByPrenotation(Number(value), accessToken);
             setData(Object.values(response.data));
             return response.data
         } catch (error) {

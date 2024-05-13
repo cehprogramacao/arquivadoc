@@ -124,7 +124,7 @@ const PageProtesto = () => {
             setLoading(true)
             const { data } = await getProtestByNotation(value, accessToken)
             setData(Object.values(data))
-            return validData;
+            return data;
         } catch (error) {
             console.error("Erro ao buscar arquivo", error)
             throw error;
@@ -139,12 +139,8 @@ const PageProtesto = () => {
         try {
             setLoading(true)
             const { data } = await getProtestByPresenter(value, accessToken)
-            const validData = Array.isArray(response.data)
-                ? response.data.filter(item => Object.keys(item).length > 0)
-                : [];
-
-            setData(validData);
-            return validData;
+            setData(Object.values(data))
+            return data;
         } catch (error) {
             console.error("Erro ao buscar arquivo", error)
             throw error;
