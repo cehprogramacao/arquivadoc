@@ -10,14 +10,14 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import { useDispatch } from 'react-redux'
-import { showAlert } from '@/store/actions'
+import { SET_ALERT, showAlert } from '@/store/actions'
 import Button from '@mui/material/Button'
 import SnackBar from '@/Components/SnackBar'
 import Loading from '@/Components/loading'
 import RTDService from '@/services/rtd.service'
 
 
-
+const rtdSv = new RTDService()
 const UpdateRpj = ({ params }) => {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
@@ -33,11 +33,9 @@ const UpdateRpj = ({ params }) => {
         file_url: ""
     })
     const fetchData = async () => {
-        const { getAllRTDTypes } = new RTDService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const responseTypes = await getAllRTDTypes(accessToken)
-            setTypes(Object.values(responseTypes.data))
+            const responseTypes = await getAllRTDTypes()
+            setTypes(Object.values(responseTypes))
 
         } catch (error) {
             console.error('Erro ao buscar dados!', error)
@@ -63,16 +61,14 @@ const UpdateRpj = ({ params }) => {
     }
 
     const handleUpdateRtdByNotation = async () => {
-        const { updateRTDByNotation } = new RTDService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await updateRTDByNotation(accessToken, params.notation, data)
-            console.log(response.data)
-            dispatch(showAlert(response.data.message, "success", "file"))
+            const response = await rtdSv.updateRTDByNotation(params.notation, data)
+            console.log(response)
+            dispatch({type: SET_ALERT, message: "Registro atualizado com sucesso!", severity: "success", typeAlert: "file"})
         } catch (error) {
             console.error('Erro ao editar arquivo!', error)
-            dispatch(showAlert(error.message, "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao atualizar registro!", severity: "error", typeAlert: "file"})
             throw error
         }
         finally {
@@ -206,7 +202,6 @@ const UpdateRpj = ({ params }) => {
                     </CustomContainer>
 
                 </Box>
-                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     )

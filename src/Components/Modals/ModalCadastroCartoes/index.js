@@ -1,12 +1,13 @@
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro"
 import Customer from "@/services/customer.service"
-import { showAlert } from "@/store/actions"
+import { SET_ALERT, showAlert } from "@/store/actions"
 import { CloseOutlined } from "@mui/icons-material"
 import { Autocomplete, Box, Button, Stack, TextField, Typography, useMediaQuery, useTheme, IconButton } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 
 
+const customerSv = new Customer()
 export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
     const [data, setData] = useState({
         number: 0,
@@ -35,11 +36,10 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
 
     const [presenter, setPresenter] = useState([])
     const getDataPresenter = async () => {
-        const { customers } = new Customer()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await customers(accessToken)
+            const data = await customerSv.customers()
             setPresenter(Object.values(data))
+            console.log(data, '21212')
 
         } catch (error) {
             console.error("Erro ao buscar clientes", error)
@@ -57,17 +57,14 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
     }
 
     const handleCreateAutographCard = async () => {
-        const { createAutographCard } = new Customer()
-        console.log(data)
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await createAutographCard(data, accessToken)
-            dispatch(showAlert(response.data.message, "success", "file"))
+            const response = await customerSv.createAutographCard(data)
+            dispatch({type: SET_ALERT, message: "Cartão de autógrafo cadastrado com sucesso!", type: "success", severity: "success"})
             console.log(response.data)
             return response.data
         } catch (error) {
             console.error('Erro ao criar cartão de autógrafo!', error)
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao cadastrar cartão de autógrafo!", type: "error", severity: "error"})
             throw error;
         }
         finally {

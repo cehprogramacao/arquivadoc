@@ -12,17 +12,14 @@ import Loading from "@/Components/loading"
 import NoteService from "@/services/notes.service"
 import withAuth from "@/utils/withAuth"
 import { useAuth } from "@/context"
+import { useDispatch } from "react-redux"
+import { HIDE_ALERT, SET_ALERT, SHOW_ALERT } from "@/store/actions"
 
 
-
+const noteSv = new NoteService()
 const PageSolicitantes = () => {
     const [data, setData] = useState([])
-    const [alert, setAlert] = useState({
-        open: false,
-        text: "",
-        type: "",
-        severity: ""
-    })
+    const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const { permissions } = useAuth()
     const [open, setOpen] = useState(false)
@@ -31,16 +28,14 @@ const PageSolicitantes = () => {
 
 
     const getAllNoteTags = async () => {
-        const { getAllNoteTags } = new NoteService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const allData = await getAllNoteTags(accessToken)
-            setAlert({ open: true, severity: "success", text: `Solicitantes: ${Object.values(allData.data).length}` })
-            setData(Object.values(allData.data))
-            return allData.data
+
+            const allData = await noteSv.getAllNoteTags()
+            // dispatch({type: SET_ALERT,  message: `Solicitantes: ${Object.values(allData).length}`, severity: "success",})
+            setData(Object.values(allData))
         } catch (error) {
-            setAlert({ open: true, severity: "error", text: error.msg })
+            // dispatch({type: SET_ALERT, message: `Erro ao buscar solicitantes: ${error.message}`, severity: "error", })
             console.error("error when searching all notes tags", error)
             throw error;
         }
@@ -54,14 +49,12 @@ const PageSolicitantes = () => {
     }, [])
 
     const handleDeleteTagById = async (tagId) => {
-        const { deleteNoteTag } = new NoteService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem('accessToken')
-            const { data } = await deleteNoteTag(tagId, accessToken)
-            setAlert({ open: true, severity: "success", text: data.message })
+            const data = await noteSv.deleteNoteTag(tagId)
+            dispatch({ type: SET_ALERT, severity: "success", message: data.message })
         } catch (error) {
-            setAlert({ open: true, severity: "error", text: error.msg })
+            dispatch({ type: SET_ALERT, severity: "error", message: `Erro ao deletar solicitante: ${error.message}` })
             console.error('Erro ao deletar solicitante', error)
             throw error;
         }
@@ -70,7 +63,13 @@ const PageSolicitantes = () => {
             getAllNoteTags()
         }
     }
+    const [isClient, setIsClient] = useState(false);
 
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
     return (
         <>
@@ -97,43 +96,43 @@ const PageSolicitantes = () => {
                             </Grid>
                             <Grid item xs={12} >
                                 <Grid container >
-                                    {/* <Grid item xs={12} lg={5} md={5} sm={6}>
-                                <TextField label="Buscar"
-                                    sx={{
-                                        '& input': {
-                                            color: 'success.main',
-                                        },
-                                    }} color="success" />
-                            </Grid>
-                            <Grid item xs={12} lg={5} md={5} sm={6}>
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={top100Films}
-                                    sx={{ width: isSmallScreen ? '100%' : 400 }}
-                                    autoHighlight
-                                    getOptionLabel={(option) => option.label}
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            color="success"
-                                            label="Buscar Por"
-                                            onChange={(e) => {
-                                                const selected = top100Films.find(
-                                                    (item) => item.label === e.target.value
-                                                );
-                                                setSelect(selected)
-                                            }}
+                                    <Grid item xs={12} lg={5} md={5} sm={6}>
+                                        <TextField label="Buscar"
                                             sx={{
-                                                color: "#237117",
-                                                "& input": {
-                                                    color: "success.main",
+                                                '& input': {
+                                                    color: 'success.main',
                                                 },
-                                            }}
+                                            }} color="success" />
+                                    </Grid>
+                                    <Grid item xs={12} lg={5} md={5} sm={6}>
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={top100Films}
+                                            sx={{ width: isSmallScreen ? '100%' : 400 }}
+                                            autoHighlight
+                                            getOptionLabel={(option) => option.label}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    color="success"
+                                                    label="Buscar Por"
+                                                    onChange={(e) => {
+                                                        const selected = top100Films.find(
+                                                            (item) => item.label === e.target.value
+                                                        );
+                                                        setSelect(selected)
+                                                    }}
+                                                    sx={{
+                                                        color: "#237117",
+                                                        "& input": {
+                                                            color: "success.main",
+                                                        },
+                                                    }}
+                                                />
+                                            )}
                                         />
-                                    )}
-                                />
-                            </Grid> */}
+                                    </Grid>
                                     <Grid item xs={12}>
                                         <Box sx={{
                                             display: 'flex',
@@ -155,11 +154,10 @@ const PageSolicitantes = () => {
                     <Drawer anchor="left" open={open} onClose={handleCloseModal}>
                         <CadastroSolicitantes onClose={handleCloseModal} getTag={getAllNoteTags} />
                     </Drawer>
-                    <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
                 </Box>
             }
         </>
     )
 }
 
-export default withAuth(PageSolicitantes)
+export default PageSolicitantes

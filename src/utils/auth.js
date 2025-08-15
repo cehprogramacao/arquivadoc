@@ -25,9 +25,9 @@ const verifyJWTExpiration = (decoded) => {
   }
 };
 export const isLoggedIn = (tokenType = 'refreshToken') => {
-  if (typeof sessionStorage !== 'undefined') {
-    const accessToken = sessionStorage.getItem('accessToken');
-    const refreshToken = sessionStorage.getItem('refreshToken');
+  if (typeof localStorage !== 'undefined') {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
 
     if (!refreshToken || refreshToken === 'undefined') {
       console.log('kkk23');
@@ -41,20 +41,19 @@ export const isLoggedIn = (tokenType = 'refreshToken') => {
           ? jwtDecode(accessToken)
           : jwtDecode(refreshToken);
       return verifyJWTExpiration(decoded);
-    } 
+    }
 
     console.log('kkk20');
     return false;
   } else {
     console.error(
-      'O objeto sessionStorage não está disponível neste ambiente.'
+      'O objeto localStorage não está disponível neste ambiente.'
     );
-    // Trate o erro de acordo com as necessidades do seu aplicativo.
   }
 };
 
 export const isclientCredentialsExpired = () => {
-  const clientCredentials = sessionStorage.getItem('clientCredentials');
+  const clientCredentials = localStorage.getItem('clientCredentials');
   if (clientCredentials) {
     const decoded = jwtDecode(clientCredentials);
     if (decoded?.exp * 1000 > new Date().getTime()) {
@@ -67,11 +66,11 @@ export const isclientCredentialsExpired = () => {
 
 export const extractDataFromSession = () => {
   try {
-    const accessToken = sessionStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) throw new Error('Nao possui accessToken');
     const decoded = jwtDecode(accessToken);
     const { data } = decoded;
-    sessionStorage.setItem("isAdmin", data.is_admin)
+    localStorage.setItem("isAdmin", data.is_admin)
     console.log(decoded, 7373731);
     return data;
   } catch (error) {
@@ -82,3 +81,4 @@ export const extractDataFromSession = () => {
 };
 
 export const decodeToken = (token) => jwtDecode(token).data;
+

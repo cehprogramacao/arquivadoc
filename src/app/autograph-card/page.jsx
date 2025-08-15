@@ -19,11 +19,12 @@ import { DocList } from './components/TableCards';
 import ReactInputMask from "react-input-mask"
 import Loading from '@/Components/loading';
 import { useDispatch } from 'react-redux';
-import { showAlert } from '@/store/actions';
+import { SET_ALERT, showAlert } from '@/store/actions';
 
 
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
+const custumerSv = new Customer()
 const PageAutographCards = () => {
     const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
     const [errors, setErrors] = useState({});
@@ -35,6 +36,7 @@ const PageAutographCards = () => {
         cpfcnpj: null,
         option: null
     })
+    
     const [cpfcnpj, setCpfcnpj] = useState("")
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
@@ -44,13 +46,11 @@ const PageAutographCards = () => {
 
 
     const handleOpenModalPDF = async () => {
-        const { getAutographCard } = new Customer()
         try {
             setOpenPDF(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await getAutographCard(cpfcnpj, accessToken)
-            setDataFile(response.data)
-            return response.data
+            const response = await custumerSv.getAutographCard(cpfcnpj)
+            setDataFile(response)
+            return response
         } catch (error) {
             console.error("Erro ao listar dados!", error)
             throw error;
@@ -58,27 +58,23 @@ const PageAutographCards = () => {
     }
 
     const handleDeleteByCPFCNPJ = async () => {
-        const { deleteAutographCard } = new Customer()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteAutographCard(cpfcnpj, accessToken)
-            dispatch(showAlert(response.data.message, "success", "file"))
-            return response.data
+            const response = await custumerSv.deleteAutographCard(cpfcnpj)
+            dispatch({type: SET_ALERT, massage: "Termo deletado com sucesso!", severity: "success", alertType: "file"})
+            return response
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, massage: "Erro ao deletar cartão de autografo!", severity: "error", alertType: "file"})
             console.error("Error ao deletar termo !", error)
             throw error;
         }
     }
     const handleFilterAutographCard = async () => {
-        const { getAutographCard } = new Customer()
         let newData = []
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await getAutographCard(dataOptions.cpfcnpj, accessToken)
-            setData(Object.values(response.data))
-            return response.data
+            const response = await custumerSv.getAutographCard(dataOptions.cpfcnpj)
+            setData(response)
+            return response
         } catch (error) {
             console.error("Erro ao filtrar Termos", error);
             throw error;
@@ -86,6 +82,8 @@ const PageAutographCards = () => {
             setLoading(false);
         }
     }
+
+    
     const handleCloseModalPDF = async () => {
         setOpenPDF(false)
     }
@@ -130,6 +128,14 @@ const PageAutographCards = () => {
         setIsAdmin(isAdminUser)
     })
     const service = ['CPF']
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
     return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Cadastros']} >
@@ -224,7 +230,6 @@ const PageAutographCards = () => {
                     deletePerm={permissions[5]?.delete_permission}
                     anchorEl={anchorEl} data={data} open={openMenu} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={cpfcnpj} handleDelete={handleDeleteByCPFCNPJ} />
                 <ModalListCards data={dataFile} onClose={handleCloseModalPDF} open={openPDF} cpfcnpj={cpfcnpj} />
-                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     )

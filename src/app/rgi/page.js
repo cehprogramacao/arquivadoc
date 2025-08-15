@@ -18,13 +18,15 @@ import MenuOptionsFile from '@/Components/MenuPopUp';
 import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
 import withAuth from '@/utils/withAuth';
-import { showAlert } from '@/store/actions';
+import { SET_ALERT, showAlert } from '@/store/actions';
 
 const optionsFilter = [
     { label: 'Prenotação' },
     { label: 'Apresentante' },
 ];
 
+
+const rgiSv = new RGI();
 const PageRGI = () => {
     const dispatch = useDispatch()
     const payload = useSelector(state => state.login)
@@ -44,15 +46,14 @@ const PageRGI = () => {
     const [openPDF, setOpenPDF] = useState(false)
     const [dataFile, setDataFile] = useState([])
 
+
     const handleOpenModalPDF = async () => {
-        const { getByPrenotation } = new RGI()
         try {
             setOpenPDF(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await getByPrenotation(prenotation, accessToken)
-            console.log(response.data, 'PDFF')
-            setDataFile(response.data)
-            return response.data
+            const response = await rgiSv.getByPrenotation(prenotation)
+            console.log(response, 'PDFF')
+            setDataFile(response)
+            return response
         } catch (error) {
             console.error("Erro ao listar dados!", error)
             throw error;
@@ -73,19 +74,14 @@ const PageRGI = () => {
     const handleCloseModalRGI = () => setOpenModalRGI(false)
 
 
-
-    // Função para tratar o filtro de Apresentante
-
     const handleDeleteByPrenotation = async () => {
-        const { deleteByPrenotation } = new RGI()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteByPrenotation(prenotation, accessToken)
-            dispatch(showAlert(response.data.message, "success", "file"))
-            return response.data
+            const response = await rgiSv.deleteByPrenotation(prenotation)
+            dispatch({type: SET_ALERT, message: "Prenotação deletada com sucesso!", severity: "success", alertType: "file"})
+            return response
         } catch (error) {
             console.error("Error ao deletar arquivo rgi!", error)
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file"})
             throw error;
         }
         finally {
@@ -93,31 +89,31 @@ const PageRGI = () => {
         }
     }
 
-    const handlePresenterFilter = async (value, accessToken) => {
+    const handlePresenterFilter = async (value) => {
         console.log('Filtrando por Apresentante com valor:', value);
-        const { getByPresenter } = new RGI();
         let newData = [];
         try {
             setLoading(true);
-            const response = await getByPresenter(value, accessToken);
-            setData(Object.values(response.data));
-            return response.data
+            const response = await rgiSv.getByPresenter(value.replace(/[^\d]+/g, ''));
+            setData(Object.values(response));
+            dispatch({type: SET_ALERT, message: response ? `Dados filtrados por Apresentante com sucesso! ` : 'Documento inexistente!', severity: "success", alertType: "file"})
+            return response
         } catch (error) {
+            dispatch({type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file"})
             console.error("Erro ao filtrar por Apresentante", error);
             throw error;
         } finally {
             setLoading(false);
         }
     };
-    const handlePrenotationFilter = async (value, accessToken) => {
+    const handlePrenotationFilter = async (value) => {
         console.log('Filtrando por Prenotação com valor:', value);
-        const { getByPrenotation } = new RGI();
         let newData = [];
         try {
             setLoading(true);
-            const response = await getByPrenotation(Number(value), accessToken);
-            setData(Object.values(response.data));
-            return response.data
+            const response = await rgi.getByPrenotation(Number(value));
+            setData(Object.values(response));
+            return response
         } catch (error) {
             console.error("Erro ao filtrar por Prenotação", error);
         } finally {
@@ -127,17 +123,14 @@ const PageRGI = () => {
     const handleFilter = async () => {
         console.log('Iniciando filtragem com valor:', value);
 
-        const accessToken = sessionStorage.getItem("accessToken");
-        console.log('AccessToken:', accessToken);
-
         if (value.option && value.value) {
             console.log('Opção selecionada:', value.option.label);
 
             try {
                 if (value.option.label === "Prenotação") {
-                    await handlePrenotationFilter(value.value, accessToken);
+                    await handlePrenotationFilter(value.value);
                 } else if (value.option.label === "Apresentante") {
-                    await handlePresenterFilter(value.value, accessToken);
+                    await handlePresenterFilter(value.value);
                 }
 
             } catch (error) {
@@ -148,18 +141,15 @@ const PageRGI = () => {
         }
     }
     const getDataRGI = async () => {
-        const { getData } = new RGI()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await getData(accessToken)
-            console.log(response.data, 'Kauannnnnnnnnnnnnnnn')
-            setData(Object.values(response.data))
-            dispatch(showAlert(`Total de arquivos:${Object.values(response.data).length}`, "success", "file"))
-            return response.data
+            const response = await rgiSv.getData()
+            setData(Object.values(response))
+            dispatch({type: SET_ALERT, message: `Dados carregados com sucesso! `, severity: "success", alertType: "file"})
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch()
             console.error("error listing all rgi files", error)
+            dispatch({type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file"})
             throw error;
         }
         finally {
@@ -174,6 +164,15 @@ const PageRGI = () => {
         const isAdminUser = sessionStorage.getItem('isAdmin')
         setIsAdmin(isAdminUser)
     }, [])
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
+
     return loading ? <Loading /> : (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['RGI']}>
@@ -263,7 +262,6 @@ const PageRGI = () => {
                         <CadastroModalRGI onClose={handleCloseModalRGI} />
                     </Drawer>
                 </Box>
-                <SnackBar />
                 <MenuOptionsFile
                     anchorEl={anchorEl}
                     data={data}

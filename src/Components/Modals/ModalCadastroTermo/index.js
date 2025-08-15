@@ -5,10 +5,13 @@ import { useEffect, useState } from "react";
 import ReactInputMask from "react-input-mask";
 import Customer from "@/services/customer.service";
 import { useDispatch } from "react-redux";
-import { showAlert } from "@/store/actions";
+import { SET_ALERT, showAlert } from "@/store/actions";
 
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
+
+    const customerSv = new Customer();
+
 export const CadastroTermosModal = ({ onClose, getData}) => {
   const dispatch = useDispatch()
   const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
@@ -22,7 +25,7 @@ export const CadastroTermosModal = ({ onClose, getData}) => {
     e.target.value?.replace(/\D/g, '').length < 11
       ? setCpfCnpjMask(cpfMask)
       : setCpfCnpjMask(cnpjMask);
-    setData({ ...data, customer_cpfcnpj: e.target.value });
+    setData({ ...data, customer_cpfcnpj: e.target.value.replace(/[^\d]+/g, '') });
   };
 
   const handleInputBlur = () => {
@@ -49,19 +52,13 @@ export const CadastroTermosModal = ({ onClose, getData}) => {
     }
   }
   const handleCreateTerm = async () => {
-    const { createTermLGDP } = new Customer();
     try {
-      
-      const accessToken = sessionStorage.getItem("accessToken");
-      if (!accessToken) {
-        console.error("Access token is missing.");
-        throw new Error("Access token is missing.");
-      }
-      const response = await createTermLGDP(data, accessToken);
-      dispatch(showAlert(response.data.message, "success", "file"))
-      return response.data;
+    
+      const response = await customerSv.createTermLGDP(data);
+      dispatch({type: SET_ALERT, message: "Termo cadastrado com sucesso!", severity: "success", actionType: "file"})
+      return response;
     } catch (error) {
-      dispatch(showAlert(error.message, "error", "file"))
+      dispatch({type: SET_ALERT, message: "Erro ao cadastrar termo!", severity: "error", actionType: "file"})
       console.error("Error creating customer:", error);
       throw error;
     }

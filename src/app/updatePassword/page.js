@@ -2,9 +2,13 @@
 import SnackBar from '@/Components/SnackBar';
 import Loading from '@/Components/loading';
 import User from '@/services/user.service';
+import { SET_ALERT } from '@/store/actions';
 import withAuth from '@/utils/withAuth';
 import { Box, Button, TextField, Typography, useTheme, useMediaQuery } from '@mui/material'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+
+const userSv = new User()
 
 const ChangePassoword = () => {
     const theme = useTheme();
@@ -21,18 +25,16 @@ const ChangePassoword = () => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const handleChangePassword = async () => {
-        const { changeUserPassword } = new User()
         try {
             setLoading(true)
             if (!password) {
                 throw new Error('Campo vazio')
             }
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await changeUserPassword(password, accessToken)
-            setAlert({ open: true, type: "key", severity: "success", text: data.message })
+            const data = await userSv.changeUserPassword(password)
+            setAlert({ type: SET_ALERT, message: 'Senha atualizada com sucesso!', severity: 'success', alertType: "user" })
         } catch (error) {
             console.error("Erro ao alterar senha!", error)
-            setAlert({ open: true, type: "key", severity: "error", text: error.message })
+            setAlert({ type: SET_ALERT, message: 'Erro ao atualizar senha!' })
             throw error;
         }
         finally {
@@ -40,6 +42,14 @@ const ChangePassoword = () => {
             setPassword({ password: "" })
         }
     }
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true); // agora rodando no cliente
+    }, []);
+
+    if (!isClient) return null;
 
     return !loading ? (
         <Box sx={{
@@ -98,4 +108,4 @@ const ChangePassoword = () => {
         :
         <Loading />
 }
-export default withAuth(ChangePassoword)
+export default ChangePassoword

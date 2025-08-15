@@ -10,11 +10,11 @@ import Loading from "@/Components/loading"
 import ProtestService from "@/services/protest.service"
 import SnackBar from "@/Components/SnackBar"
 import { useDispatch } from "react-redux"
-import { showAlert } from "@/store/actions"
+import { SET_ALERT, showAlert } from "@/store/actions"
 import MenuOptionsFile from "@/Components/ModalOptionsTrash"
 
 
-
+const protestSv = new ProtestService()
 const LixeiraProtestos = () => {
     const [data, setData] = useState([])
     const dispatch = useDispatch()
@@ -29,12 +29,11 @@ const LixeiraProtestos = () => {
         setAnchorEl(null)
     }
 
+    
     const getFetchingFilesFromTrash = async () => {
-        const { getProtestFromTrash } = new ProtestService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getProtestFromTrash(accessToken)
+            const data = await protestSv.getProtestFromTrash()
 
             setData(Object.values(data))
         } catch (error) {
@@ -46,14 +45,11 @@ const LixeiraProtestos = () => {
         }
     }
     const handleRestoreFileTrash = async () => {
-        const { restoreProtestFromTrash } = new ProtestService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await restoreProtestFromTrash(notation, accessToken)
-            dispatch(showAlert(data.message, "success", "file"))
-            return data
+            const data = await protestSv.restoreProtestFromTrash(notation)
+            dispatch({ type: SET_ALERT, message: "Arquivo restaurado com sucesso!", severity: "success", alertType: "file" })
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: error.msg, severity: "error", alertType: "file" })
             console.error("Erro ao buscar arquivo", error)
             throw error;
         }
@@ -65,16 +61,12 @@ const LixeiraProtestos = () => {
     }, [])
 
     const handleDeleteByNotation = async () => {
-        const { deleteProtestByNotation } = new ProtestService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteProtestByNotation(notation, accessToken)
-            console.log(response.data)
-            dispatch(showAlert(response.data.message, 'success', 'file'))
-            return response.data
+            const response = await protestSv.deleteProtestByNotation(notation,)
+            dispatch({type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file" })
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: error.msg, severity: "error", alertType: "file" })
             console.error("Error ao deletar arquivo rgi!", error)
             throw error;
         }
@@ -83,6 +75,14 @@ const LixeiraProtestos = () => {
             getFetchingFilesFromTrash()
         }
     }
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
 
     return loading ? <Loading /> : (
@@ -103,7 +103,7 @@ const LixeiraProtestos = () => {
                                     </Typography>
                                 </Box>
                             </Grid>
-                            {/* <Grid item xs={12} >
+                            <Grid item xs={12} >
                                 <Grid container spacing={3}>
                                     <Grid item xs={12} lg={5} md={5} sm={6} >
                                         <TextField label="Buscar"
@@ -163,7 +163,7 @@ const LixeiraProtestos = () => {
                                         </Box>
                                     </Grid>
                                 </Grid>
-                            </Grid> */}
+                            </Grid>
                             <Grid item xs={12}>
                                 <DocList data={data} handleClick={handleClick} setNotation={(e) => setNotation(e)} />
                             </Grid>
@@ -171,7 +171,6 @@ const LixeiraProtestos = () => {
 
                     </CustomContainer>
                 </Box>
-                <SnackBar />
                 <MenuOptionsFile
                     handleDeleteFromTrash={handleDeleteByNotation}
                     handleRestoreFromTrash={handleRestoreFileTrash}

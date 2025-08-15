@@ -10,11 +10,11 @@ import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
 import MenuOptionsFile from "@/Components/ModalOptionsTrash"
 import { useDispatch } from "react-redux"
-import { showAlert } from "@/store/actions"
+import { SET_ALERT, showAlert } from "@/store/actions"
 
 
 
-
+const rgiSv = new RGI()
 const LixeiraRGI = () => {
     const [loading, setLoading] = useState(false)
     const [rows, setRows] = useState([]);
@@ -29,17 +29,15 @@ const LixeiraRGI = () => {
         setAnchorEl(null)
     }
     const getData = async () => {
-        const { getTrash } = new RGI()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getTrash(accessToken)
+            const data = await rgiSv.getTrash()
             console.log(data)
-            dispatch(showAlert(`Total de arquivos na lixeira: ${Object.values(data).length}`, "success", "file"))
+            dispatch({type: SET_ALERT, message: "Dados carregados com sucesso!", severity: "success", context: "file"})
             setRows(Object.values(data))
             return data
         } catch (error) {
-            dispatch(error.msg, "error", "file")
+            dispatch({type: SET_ALERT, message: "Erro ao carregar dados!", severity: "error", context: "file"})
             console.error("Error ao pegar arquivos!", error)
             throw error;
         }
@@ -49,14 +47,12 @@ const LixeiraRGI = () => {
     }
 
     const handleRestoreFromTrash = async () => {
-        const { restoreRgiFromTrash } = new RGI()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await restoreRgiFromTrash(prenotation, accessToken)
-            dispatch(showAlert(data.message, "success", "file"))
+            const data = await rgiSv.restoreRgiFromTrash(prenotation)
+            dispatch({type: SET_ALERT, message: "Arquivo restaurado com sucesso!", severity: "success", context: "file"})
             return data
         } catch (error) {
-            
+            dispatch({type: SET_ALERT, message: "Erro ao restaurar arquivo!", severity: "error", context: "file"})
             console.error("Erro ao buscar arquivo", error)
             throw error;
         }
@@ -68,15 +64,12 @@ const LixeiraRGI = () => {
     }, [])
 
     const handleDeleteByPrenotation = async () => {
-        const { deleteByPrenotation } = new RGI()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteByPrenotation(prenotation, accessToken)
-            dispatch(showAlert(response.data.message, "success", "file"))
-            return response.data
+            const response = await rgiSv.deleteByPrenotation(prenotation)
+            dispatch({type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", context: "file"})
         } catch (error) {
             console.error("Error ao deletar arquivo rgi!", error)
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao deletar arquivo!", severity: "error", context: "file"})
             throw error;
         }
         finally {

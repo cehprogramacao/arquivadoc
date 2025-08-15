@@ -41,7 +41,7 @@ const theme = createTheme({
         allVariants: {
             color: '#000', // Set default text color for all variants
         },
-        fontFamily: roboto.style.fontFamily,
+        fontFamily: 'Roboto, sans-serif',
         h2: {
             color: 'rgba(18, 25, 38, 1)',
             lineHeight: 1.2,
@@ -94,7 +94,7 @@ const theme = createTheme({
             textDecorationLine: 'inherit',
         },
         color: '#000',
-        fontFamily: roboto.style.fontFamily,
+        fontFamily: 'Roboto, sans-serif',
     },
 });
 // theme.components = componentStyleOverrides();

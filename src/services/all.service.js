@@ -1,20 +1,15 @@
-import customAxios from "./middleware"
+import ServiceBase from "./service.base"
 
 
-class All {
-    getLogs(accessToken) {
-        return customAxios.get("/logs", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
+class All extends ServiceBase {
+    constructor(){
+        super("user")
     }
-    getAllRecents(accessToken) {
-        return customAxios.get("/all", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
+    getLogs() {
+        return this.get("/logs")
+    }
+    getAllRecents() {
+        return this.get("/all")
     }
 }
 

@@ -8,8 +8,7 @@ import {
   Box,
   Stack,
   styled,
-  IconButton,
-  Grid
+  IconButton
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
@@ -21,10 +20,6 @@ import CadastroNotesCurtomers from "@/Components/ModalsRegistration/ModalNotesCu
 import NoteService from "@/services/notes.service";
 import Customer from "@/services/customer.service";
 import { ModalNotesGroup } from "@/Components/ModalsRegistration/ModalNotesGroup";
-import { CloseOutlined } from "@mui/icons-material";
-import { useAuth } from "@/context";
-import { showAlert } from "@/store/actions";
-import { useDispatch } from "react-redux";
 
 
 
@@ -72,20 +67,20 @@ const ButtonCadastrar = styled("button")({
   }
 });
 
+const customerSv = new Customer()
+const noteSv = new NoteService()
 export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
-  const dispatch = useDispatch()
   const [outorgantes, setOutorgantes] = useState([""]);
   const [outorgados, setOutorgados] = useState([""]);
-  const { permissions } = useAuth()
-  const [valuePresenter, setValuePresenter] = useState(null)
-  const [valueTag, setValueTag] = useState(null)
+  const [valuePresenter, setValuePresenter] = useState("")
+  const [valueTag, setValueTag] = useState("")
   const [valueOutorgante, setValueOutorgante] = useState(Array(outorgantes.length).fill(''));
   const [valueOutorgado, setValueOutorgado] = useState(Array(outorgados.length).fill(''));
   const [formData, setFormData] = useState({
     order_num: 0,
-    tag: null,
-    presenter: null,
-    service_type: null,
+    tag: 0,
+    presenter: '',
+    service_type: 0,
     book: 0,
     initial_sheet: 0,
     final_sheet: 0,
@@ -117,14 +112,13 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
 
 
   const getCustumers = async () => {
-    const { customers } = new Customer()
+    
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const allData = await customers(accessToken)
-      setOutorganteArray(Object.values(allData.data))
-      setOutorgadoArray(Object.values(allData.data))
-
-      return allData.data
+      const allData = await customerSv.customers()
+      setOutorganteArray(Object.values(allData))
+      setOutorgadoArray(Object.values(allData))
+      console.log(allData)
+      return allData
     } catch (error) {
       console.error("Erro ao listar cliente!", error)
       throw error;
@@ -137,10 +131,10 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
     const currentScrollPosition = boxInputsRef.current.scrollTop;
     if (tipo === "outorgante") {
       setOutorgantes((prev) => [...prev, ""]);
-      setValueOutorgante((prev) => [...prev, ""]);
+      setValueOutorgante((prev) => [...prev, null]);
     } else if (tipo === "outorgado") {
       setOutorgados((prev) => [...prev, ""]);
-      setValueOutorgado((prev) => [...prev, ""]);
+      setValueOutorgado((prev) => [...prev, null]);
     }
     setTimeout(() => {
       boxInputsRef.current.scrollTop = currentScrollPosition;
@@ -184,12 +178,12 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   const [tag, setTag] = useState([])
   const [presenter, setPresenter] = useState([])
   const getAllNotesTag = async () => {
-    const { getAllNoteTags } = new NoteService()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const allTags = await getAllNoteTags(accessToken)
-      setTag(Object.values(allTags.data))
-      return allTags.data
+      
+      const allTags = await noteSv.getAllNoteTags()
+      setTag(Object.values(allTags))
+      console.log(allTags, '99999999999')
+      return allTags
     } catch (error) {
       console.error("Error list of tags", error)
       throw error;
@@ -197,13 +191,11 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   }
 
   const getCustomersPresenter = async () => {
-    const customer = new Customer();
     try {
-      const accessToken = sessionStorage.getItem("accessToken");
-      const allPresenter = await customer.customers(accessToken);
-      const newData = Object.values(allPresenter.data);
+      const allPresenter = await customerSv.customers();
+      const newData = Object.values(allPresenter);
       setPresenter(newData);
-      return allPresenter.data;
+      console.log(allPresenter);
     } catch (error) {
       console.error("Error when listing presenters", error);
       throw error;
@@ -215,14 +207,14 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   const [typesGroup, setTypesGroup] = useState([])
   const [option, setOption] = useState(null);
   const getTypeAndGroup = async () => {
-    const { getAllNoteGroups, getAllNoteTypes } = new NoteService();
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const groups = await getAllNoteGroups(accessToken);
-      const types = await getAllNoteTypes(accessToken);
-      setNotesType(Object.values(groups.data))
-      setTypesGroup(Object.values(types.data))
-      return groups.data && types.data
+      
+      const groups = await noteSv.getAllNoteGroups();
+      const types = await noteSv.getAllNoteTypes();
+      setNotesType(Object.values(groups))
+      setTypesGroup(Object.values(types))
+      console.log(groups, types, '88888')
+      return groups && types
     } catch (error) {
       console.error(error);
     }
@@ -272,17 +264,61 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
     setOpenModalNotesCustomers(!openModalNotesCustomers)
   }
 
+  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+        setFormData(prevData => ({
+            ...prevData,
+            file_url: scannedPdfUrl
+        }));
+    };
+
+  const handleDocScan = () => {
+        window.scanner.scan((successful, mesg, response) => {
+            if (!successful) {
+                console.error('Failed: ' + mesg);
+                return;
+            }
+            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+                console.info('User cancelled');
+                return;
+            }
+            const responseJson = JSON.parse(response);
+            const scannedPdfUrl = responseJson.output[0].result[0];
+            updateDataWithUrl('doc_file_url', scannedPdfUrl);
+        }, {
+            "output_settings": [
+                {
+                    "type": "return-base64",
+                    "format": "pdf",
+                    "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+                },
+                {
+                    "type": "return-base64-thumbnail",
+                    "format": "jpg",
+                    "thumbnail_height": 200
+                }
+            ]
+        });
+    };
+
   const handleCreateNotes = async () => {
-    const { createNotes } = new NoteService()
-    console.log(formData)
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const allData = await createNotes(formData, accessToken)
-      console.log(allData.data)
-      dispatch(showAlert(allData.data.message, "success", "file"))
-      return allData.data
+      
+      const allData = await noteSv.createNotes(formData)
+      console.log(allData)
+      dataSnack({
+        open: true,
+        text: allData.message,
+        severity: "success",
+        type: "file"
+      })
+      return allData
     } catch (error) {
-      dispatch(showAlert(error.msg, "error", "file"))
+      dataSnack({
+        open: true,
+        text: error.msg,
+        severity: "error",
+        type: "file"
+      })
       console.error("Erro ao criar nota!", error)
       throw error;
     }
@@ -291,115 +327,6 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
       onClose()
     }
   }
-
-
-  const handleDeleteTagById = async (tagId) => {
-    const { deleteNoteTag } = new NoteService()
-    try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await deleteNoteTag(tagId, accessToken)
-    } catch (error) {
-      console.error("Erro ao deletar tag", error)
-      throw error;
-    }
-    finally {
-      getAllNotesTag()
-    }
-  }
-
-  const handleDeletePresenterById = async (presenterId) => {
-    const { deleteCustomer } = new Customer()
-    try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await deleteCustomer(presenterId, accessToken)
-    } catch (error) {
-      console.error("Erro ao deletar apresentante", error)
-      throw error;
-    }
-    finally {
-      getCustomersPresenter()
-    }
-  }
-
-  const handleDeleteGroupNoteById = async (groupId) => {
-    const { deleteNoteGroup } = new NoteService()
-    try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await deleteNoteGroup(groupId, accessToken)
-    } catch (error) {
-      console.error("Erro ao deletar grupo de notas!", error)
-      throw error;
-    }
-    finally {
-      getTypeAndGroup()
-    }
-  }
-  const handleDeleteTypeNoteById = async (typeId) => {
-    const { deleteNoteType } = new NoteService()
-    try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await deleteNoteType(typeId, accessToken)
-    } catch (error) {
-      console.error("Erro ao deletar tipo de notas!", error)
-      throw error;
-    }
-    finally {
-      getTypeAndGroup()
-    }
-  }
-
-  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
-    setFormData(prevData => ({
-      ...prevData,
-      [fieldToUpdate]: scannedPdfUrl
-    }));
-  };
-  const handleScanFile = () => {
-    window.scanner.scan((successful, mesg, response) => {
-      if (!successful) {
-        console.error('Failed: ' + mesg);
-        return;
-      }
-      if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
-        console.info('User cancelled');
-        return;
-      }
-      const responseJson = JSON.parse(response);
-      const scannedPdfUrl = responseJson.output[0].result[0];
-      updateDataWithUrl('file_url', scannedPdfUrl);
-    }, {
-      "output_settings": [
-        {
-          "type": "return-base64",
-          "format": "pdf",
-          "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
-        },
-        {
-          "type": "return-base64-thumbnail",
-          "format": "jpg",
-          "thumbnail_height": 200
-        }
-      ]
-    });
-  };
-
-  useEffect(() => {
-    if (window.scanner) {
-      window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
-        if (!successful) {
-          console.error('Failed: ' + mesg);
-          return;
-        }
-        if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
-          console.info('User cancelled');
-          return;
-        }
-      };
-    }
-  }, []);
-
-
-
   return (
     <Box sx={{
       width: { lg: 420, md: 390, sm: 350, xs: 320 },
@@ -437,7 +364,6 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         <Autocomplete
           value={valueTag}
           options={tag}
-          isOptionEqualToValue={(option, label) => option.name === label.name}
           getOptionLabel={(option) => option.name || ''}
           onChange={(event, newValue) => {
             handleAutocompleteChange("tag", newValue.id)
@@ -453,47 +379,18 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
             />
           )}
           renderOption={(props, option) => (
-            <Box
-              {...props}
-              key={option.id}
-              sx={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center"
-              }}
-            >
-              <Grid container alignItems={"center"} justifyContent="space-between" >
-                <Grid item xs={10} lg={10} md={10} sm={10}>
-                  <Typography >
-                    {option.name}
-                  </Typography>
-                </Grid>
-                {permissions[6]?.delete_permission === 1 && (
-                  <Grid item xs={2} lg={2} md={2} sm={2}>
-                    <Box sx={{
-                      width: "100%",
-                      display: 'flex',
-                      justifyContent: "flex-end"
-                    }}>
-                      <IconButton onClick={() => handleDeleteTagById(option.id)}>
-                        <CloseOutlined sx={{ width: 20, height: 20 }} />
-                      </IconButton>
-                    </Box>
-                  </Grid>
-                )}
-              </Grid>
-
-            </Box>
+            <li {...props} key={option.id}>
+              {option.name}
+            </li>
           )}
         />
 
         <Autocomplete
           value={valuePresenter}
           options={presenter}
-          isOptionEqualToValue={(option, label) => option.name === label.name}
           getOptionLabel={(option) => option.name || ''}
           onChange={(event, newValue) => {
-            setFormData({ ...formData, presenter: newValue.cpfcnpj || null })
+            setFormData({ ...formData, presenter: newValue.cpfcnpj })
             setValuePresenter(newValue)
           }}
           noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title="Cadastrar Apresentante" />}
@@ -506,44 +403,15 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
             />
           )}
           renderOption={(props, option) => (
-            <Box
-              {...props}
-              key={option.cpfcnpj}
-              sx={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center"
-              }}
-            >
-              <Grid container alignItems={"center"} justifyContent="space-between" >
-                <Grid item xs={10} lg={10} md={10} sm={10}>
-                  <Typography >
-                    {option.name}
-                  </Typography>
-                </Grid>
-                {permissions[5]?.delete_permission === 1 && (
-                  <Grid item xs={2} lg={2} md={2} sm={2}>
-                    <Box sx={{
-                      width: "100%",
-                      display: 'flex',
-                      justifyContent: "flex-end"
-                    }}>
-                      <IconButton onClick={() => handleDeletePresenterById(option.cpfcnpj)}>
-                        <CloseOutlined sx={{ width: 20, height: 20 }} />
-                      </IconButton>
-                    </Box>
-                  </Grid>
-                )}
-              </Grid>
-
-            </Box>
+            <li {...props} key={option.id}>
+              {option.name}
+            </li>
           )}
         />
 
         <Autocomplete
           // value={formData.service_type}
           options={notesType}
-          isOptionEqualToValue={(option, label) => option.name === label.name}
           getOptionLabel={(option) => option.name || ''}
           onChange={(e, newValue) => setValueNotesType(newValue)}
           noOptionsText={<RenderNoOptions onClick={handleOpenGroup} title={"Cadastrar Grupo"} />}
@@ -556,37 +424,9 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
             />
           )}
           renderOption={(props, option) => (
-            <Box
-              {...props}
-              key={option.id}
-              sx={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center"
-              }}
-            >
-              <Grid container alignItems={"center"} justifyContent="space-between" >
-                <Grid item xs={10} lg={10} md={10} sm={10}>
-                  <Typography >
-                    {option.name}
-                  </Typography>
-                </Grid>
-                {permissions[6]?.delete_permission === 1 && (
-                  <Grid item xs={2} lg={2} md={2} sm={2}>
-                    <Box sx={{
-                      width: "100%",
-                      display: 'flex',
-                      justifyContent: "flex-end"
-                    }}>
-                      <IconButton onClick={() => handleDeleteGroupNoteById(option.id)}>
-                        <CloseOutlined sx={{ width: 20, height: 20 }} />
-                      </IconButton>
-                    </Box>
-                  </Grid>
-                )}
-              </Grid>
-
-            </Box>
+            <li {...props} key={option.id}>
+              {option.name}
+            </li>
           )}
         />
 
@@ -597,7 +437,6 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
               setOption(newValue)
               setFormData((prev) => ({ ...prev, service_type: newValue.id }))
             }}
-            isOptionEqualToValue={(option, label) => option.name === label.name}
             options={typesGroup.filter(item => item.id === valueNotesType.id)} // Assegurar que as opções sejam baseadas na seleção de valueNotesType
             getOptionLabel={(opcao) => opcao.name || ''} // Como opcao é uma string, apenas a retornamos
             fullWidth
@@ -606,39 +445,6 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
             />}
             renderInput={(params) => (
               <TextField {...params} label={`Selecione o tipo de ${valueNotesType.name}`} color="success" variant="outlined" />
-            )}
-            renderOption={(props, option) => (
-              <Box
-                {...props}
-                key={option.id}
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center"
-                }}
-              >
-                <Grid container alignItems={"center"} justifyContent="space-between" >
-                  <Grid item xs={10} lg={10} md={10} sm={10}>
-                    <Typography >
-                      {option.name}
-                    </Typography>
-                  </Grid>
-                  {permissions[6]?.delete_permission === 1 && (
-                    <Grid item xs={2} lg={2} md={2} sm={2}>
-                      <Box sx={{
-                        width: "100%",
-                        display: 'flex',
-                        justifyContent: "flex-end"
-                      }}>
-                        <IconButton onClick={() => handleDeleteTypeNoteById(option.id)}>
-                          <CloseOutlined sx={{ width: 20, height: 20 }} />
-                        </IconButton>
-                      </Box>
-                    </Grid>
-                  )}
-                </Grid>
-
-              </Box>
             )}
           />
         )}
@@ -668,9 +474,9 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
           name="final_sheet"
         />
         {outorgantes.map((outorgante, index) => (
-          <Box key={index} >
+          <Box key={`outorgante-${index}-${outorgantes.length}`} >
             <Autocomplete
-              // value={valueOutorgante[index]}
+              value={valueOutorgante[outorgante[index]]}
               options={outorganteArray}
               getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -730,9 +536,9 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         ))}
 
         {outorgados.map((outorgado, index) => (
-          <Box key={index}>
+          <Box key={`outorgado-${index}-${outorgados.length}`}>
             <Autocomplete
-              // value={valueOutorgado[index]}
+              value={valueOutorgado[outorgado[index]]}
               options={outorgadoArray}
               getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -800,7 +606,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         />
         <TextField type="file" onChange={handleSelectedFile} color="success" />
         <Stack sx={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-          <ButtonScanner onClick={handleScanFile}>
+          <ButtonScanner onClick={handleDocScan}>
             Scannear Arquivo
           </ButtonScanner>
           <ButtonCadastrar onClick={handleCreateNotes}>
@@ -810,8 +616,8 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         </Stack>
 
       </Box>
-      <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} getData={getAllNotesTag} />
-      <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} getData={getCustomersPresenter} />
+      <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} />
+      <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} />
       <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} getData={getTypeAndGroup} />
       <CadastroNotesCurtomers getData={getCustumers} open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
       <ModalNotesGroup getData={getTypeAndGroup} onClose={handleCloseGroup} open={openModalGroup} />

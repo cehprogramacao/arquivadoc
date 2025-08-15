@@ -1,93 +1,52 @@
-import customAxios from "./middleware";
+import ServiceBase from "./service.base";
 
-class RTDService {
-    createRTD(accessToken, rtdData) {
-        return customAxios.post("/rtd", rtdData, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+class RTDService extends ServiceBase {
+    constructor() {
+        super();
     }
 
-    getAllRTD(accessToken) {
-        return customAxios.get("/rtd", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    createRTD(rtdData) {
+        return this.post("/rtd", rtdData);
     }
 
-    getAllRTDInTrash(accessToken) {
-        return customAxios.get("/rtd/trash", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    getAllRTD() {
+        return this.get("/rtd");
     }
 
-    
-    restoreRtdFromTrash(notation, accessToken) {
-        return customAxios.post(`/rgi/restore/${notation}`, {}, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }   
-        });
+    getAllRTDInTrash() {
+        return this.get("/rtd/trash");
     }
 
-    getRTDByPresenter(accessToken, presenter) {
-        return customAxios.get(`/rtd/presenter/${presenter}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    restoreRtdFromTrash(notation) {
+        return this.post(`/rgi/restore/${notation}`, {});
     }
 
-    getRTDByNotation(accessToken, notation) {
-        return customAxios.get(`/rtd/${notation}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    getRTDByPresenter(presenter) {
+        return this.get(`/rtd/presenter/${presenter}`);
     }
 
-    updateRTDByNotation(accessToken, notation, newData) {
-        return customAxios.put(`/rtd/${notation}`, newData, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    getRTDByNotation(notation) {
+        return this.get(`/rtd/${notation}`);
     }
 
-    deleteRTDByNotation(accessToken, notation) {
-        return customAxios.delete(`/rtd/${notation}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    updateRTDByNotation(notation, newData) {
+        return this.put(`/rtd/${notation}`, newData);
     }
 
-    createRTDType(accessToken, typeData) {
-        return customAxios.post("/rtd/type", typeData, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    deleteRTDByNotation(notation) {
+        return this.delete(`/rtd/${notation}`);
     }
 
-    getAllRTDTypes(accessToken) {
-        return customAxios.get("/rtd/type/all", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    createRTDType(typeData) {
+        return this.post("/rtd/type", typeData);
     }
 
-    deleteRTDTypeById(accessToken, typeId) {
-        return customAxios.delete(`/rtd/type/${typeId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    getAllRTDTypes() {
+        return this.get("/rtd/type/all");
+    }
+
+    deleteRTDTypeById(typeId) {
+        return this.delete(`/rtd/type/${typeId}`);
     }
 }
 

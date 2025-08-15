@@ -8,6 +8,8 @@ import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Calling from '@/services/calling.service';
 
+
+const callingSv = new Calling();
 const ModalCadastroCallingEntity = ({ onClose, open, getEntity }) => {
 
   const [data, setData] = useState({
@@ -15,13 +17,11 @@ const ModalCadastroCallingEntity = ({ onClose, open, getEntity }) => {
   })
 
   const handleCreateTypeEntity = async () => {
-    const { createCallingEntity } = new Calling()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const response = await createCallingEntity(data, accessToken)
+      const response = await callingSv.createCallingEntity(data)
       getEntity()
-      console.log(response.data)
-      return response.data
+      console.log(response)
+      return response
     } catch (error) {
       console.error('Erro ao adicionar endidade!', error)
       throw error;

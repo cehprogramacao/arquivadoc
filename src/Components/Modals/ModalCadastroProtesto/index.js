@@ -10,6 +10,10 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { v4 as randomUUID } from "uuid";
 
+
+
+const customerSv = new Customer()
+const protestSv = new ProtestService()
 export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
   const dispatch = useDispatch()
   const [data, setData] = useState({
@@ -42,10 +46,8 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
     setData((prev) => ({ ...prev, [name]: value }))
   }
   const getDataPresenter = async () => {
-    const { customers } = new Customer()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await customers(accessToken)
+      const data = await customerSv.customers()
       setPresenter(Object.values(data))
     } catch (error) {
       console.error("Erro ao buscar clientes", error)
@@ -64,12 +66,10 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
     }
   }
   const handleCreateProtest = async () => {
-    const { createProtest } = new ProtestService()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const response = await createProtest(data, accessToken)
-      console.log(response.data)
-      dispatch(showAlert(response.data.message, "success", "file"))
+      const response = await protestSv.createProtest(data)
+      console.log(response)
+      dispatch(showAlert(response.message, "success", "file"))
     } catch (error) {
       dispatch(showAlert(error.msg, "error", "file"))
       console.error("Erro ao criar protesto!", error)

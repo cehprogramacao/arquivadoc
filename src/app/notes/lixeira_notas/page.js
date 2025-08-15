@@ -15,6 +15,7 @@ import NoteService from "@/services/notes.service"
 import { DocList } from "./TableTrash"
 
 
+const noteSv = new NoteService()
 
 const LixeiraNotas = () => {
     const [data, setData] = useState([])
@@ -30,17 +31,16 @@ const LixeiraNotas = () => {
     const handleClose = () => {
         setAnchorEl(null)
     }
+    
 
     const getFetchingFilesFromTrash = async () => {
-        const { getNotesInTrash } = new NoteService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getNotesInTrash(accessToken)
-            dispatch(showAlert(`Total de arquivos na lixera: ${Object.values(data).length}`, "success", "file"))
+            const data = await noteSv.getNotesInTrash()
+            dispatch({ type: SET_ALERT, message: "Arquivos da lixeira carregados com sucesso!", severity: "success", alertType: "file" })
             setData(Object.values(data))
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "file"))
+            dispatch({ type: SET_ALERT, message: error.message, severity: "error", alertType: "file" })
             console.error("Erro ao buscar arquivos da lixeira!", error)
             throw error;
         }
@@ -54,28 +54,24 @@ const LixeiraNotas = () => {
     }, [])
 
     const handleRestoreNotesByTrash = async () => {
-        const { restoreNotesFromTrash } = new NoteService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await restoreNotesFromTrash(number, accessToken)
+            const data = await noteSv.restoreNotesFromTrash(number)
             console.log(data)
-            dispatch(showAlert(data.message, "success", "file"))
+            dispatch({ type: SET_ALERT, message: "Arquivo restaurado com sucesso!", severity: "success", alertType: "file" })
         } catch (error) {
-            dispatch(showAlert(error.message, "success", "file"))
+            dispatch({ type: SET_ALERT, message: error.message, severity: "error", alertType: "file" })
             console.error("Error restaurar arquivo", error)
             throw error;
         }
     }
     const handleDeleteByNumber = async () => {
-        const { deleteNoteByNumber } = new NoteService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteNoteByNumber(number, accessToken)
-            dispatch(showAlert(response.data.message, "success", "file"))
-            console.log(response.data)
-            return response.data
+            const response = await noteSv.deleteNoteByNumber(number)
+            dispatch({ type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file" })
+            console.log(response)
+            return response
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({ type: SET_ALERT, message: error.message, severity: "error", alertType: "file" })
             console.error("Error ao deletar arquivo de notas!", error)
             throw error;
         }
@@ -83,6 +79,14 @@ const LixeiraNotas = () => {
             getFetchingFilesFromTrash()
         }
     }
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
 
     return loading ? <Loading /> : (
@@ -111,12 +115,12 @@ const LixeiraNotas = () => {
 
                     </CustomContainer>
                 </Box>
-                <SnackBar />
-                <MenuOptionsFile 
-                anchorEl={anchorEl} 
-                open={open} handleClose={handleClose} 
-                handleRestoreFromTrash={handleRestoreNotesByTrash} 
-                handleDeleteFromTrash={handleDeleteByNumber}
+                
+                <MenuOptionsFile
+                    anchorEl={anchorEl}
+                    open={open} handleClose={handleClose}
+                    handleRestoreFromTrash={handleRestoreNotesByTrash}
+                    handleDeleteFromTrash={handleDeleteByNumber}
                 />
             </PrivateRoute>
         </AuthProvider>

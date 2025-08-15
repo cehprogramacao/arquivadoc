@@ -8,7 +8,9 @@ import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useDispatch } from 'react-redux'
 import RPJService from '@/services/rpj.service';
-import { showAlert } from '@/store/actions';
+import { SET_ALERT, showAlert } from '@/store/actions';
+
+const rpjSv = new RPJService()
 const ModalTypesRPJ = ({ onClose, open, getData }) => {
   const dispatch = useDispatch()
   const [data, setData] = useState({
@@ -17,13 +19,12 @@ const ModalTypesRPJ = ({ onClose, open, getData }) => {
 
 
   const handleCreateTypeRpj = async () => {
-    const { createRPJType } = new RPJService()
+    
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const response = await createRPJType(accessToken, data)
-      dispatch(showAlert(response.data.message, "success"))
+      const response = await rpjSv.createRPJType(accessToken, data)
+      dispatch({type: SET_ALERT, message: "Tipo de RPJ cadastrado com sucesso!", alertType: "file", severity: "success"})
     } catch (error) {
-      dispatch(showAlert(error.msg, "error"))
+      dispatch({type: SET_ALERT, message: "Erro ao criar tipo de rpj", alertType: "file", severity: "error"})
       console.error("Erro ao criar tipo de rpj", error)
       throw error;
     }

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton, Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
-import ModalTypesRTD from '@/Components/ModalsRegistration/ModalCadastroTypesRPJ';
 import RenderNoOptions from '@/Components/ButtonOpenModalCadastro';
 import { CloseOutlined } from '@mui/icons-material';
 import Customer from '@/services/customer.service';
@@ -10,7 +9,12 @@ import { useDispatch } from 'react-redux'
 import { showAlert } from '@/store/actions';
 import { useAuth } from '@/context';
 import RTDService from '@/services/rtd.service';
+import ModalTypesRTD from '@/Components/ModalsRegistration/ModalCadastroTypesRTD';
 
+
+
+const rtdSv = new RTDService()
+const customerSv = new Customer()
 export const CadastroModalRTD = ({ onClose, getData }) => {
     const dispatch = useDispatch()
     const [data, setData] = useState({
@@ -35,14 +39,11 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
     const handleCloseModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
 
     const fetchData = async () => {
-        const { getAllRTDTypes } = new RTDService()
-        const { customers } = new Customer()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const responseCustomers = await customers(accessToken)
-            const responseTypes = await getAllRTDTypes(accessToken)
-            setPresenter(Object.values(responseCustomers.data))
-            setTypes(Object.values(responseTypes.data))
+            const responseCustomers = await customerSv.customers()
+            const responseTypes = await customerSv.getAllRTDTypes()
+            setPresenter(Object.values(responseCustomers))
+            setTypes(Object.values(responseTypes))
 
         } catch (error) {
             console.error('Erro ao buscar dados!', error)
@@ -68,14 +69,12 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
     }
 
     const handleCreateFileRtd = async () => {
-        const { createRTD } = new RTDService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await createRTD(accessToken, data)
-            dispatch(showAlert(response.data.message, "success", "file"))
+            const response = await rtdSv.createRTD(data)
+            dispatch({type: SET_ALERT, message: "Arquivo de RTD cadastrado com sucesso!", alertType: "file", severity: "success"})
         } catch (error) {
             console.error("Erro ao arquivar arquivo de rpj", error)
-            dispatch(showAlert(error.message, "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao cadastrar arquivo RTD!", alertType: "file", severity: "error"})
             throw error
         }
         finally {
@@ -84,12 +83,12 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
         }
     }
     const deletePresenterById = async (typeId) => {
-        const { deleteCustomer } = new Customer()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await deleteCustomer(typeId, accessToken)
+            const data = await customerSv.deleteCustomer(typeId)
             console.log(data)
+            dispatch({type: SET_ALERT, message: "Apresentante deletado com sucesso!", alertType: "file", severity: "success"})
         } catch (error) {
+            dispatch({type: SET_ALERT, message: "Erro ao deletar apresentante", alertType: "file", severity: "error"})
             console.error('Erro ao deletar tipo de rgi!', error)
             throw error;
         }
@@ -97,11 +96,11 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
     }
 
     const handleDeleteTypeRpjById = async (typeId) => {
-        const { deleteRTDTypeById } = new RTDService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await deleteRTDTypeById(accessToken, typeId)
+            const data = await rtdSv.deleteRTDTypeById(typeId)
+            dispatch({type: SET_ALERT, message: "Tipo de RTD deletado com sucesso!", alertType: "file", severity: "success"})
         } catch (error) {
+            dispatch({type: SET_ALERT, message: "Erro ao deletar tipo de RTD", alertType: "file", severity: "error"})
             console.error("Erro ao deletar tipo de rpj!", error)
             throw error;
         }
@@ -119,40 +118,40 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
 
     const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
         setData(prevData => ({
-          ...prevData,
-          [fieldToUpdate]: scannedPdfUrl
+            ...prevData,
+            [fieldToUpdate]: scannedPdfUrl
         }));
-      };
-      const handleScanFile = () => {
+    };
+    const handleScanFile = () => {
         window.scanner.scan((successful, mesg, response) => {
-          if (!successful) {
-            console.error('Failed: ' + mesg);
-            return;
-          }
-          if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
-            console.info('User cancelled');
-            return;
-          }
-          const responseJson = JSON.parse(response);
-          const scannedPdfUrl = responseJson.output[0].result[0];
-          updateDataWithUrl('file_url', scannedPdfUrl);
-        }, {
-          "output_settings": [
-            {
-              "type": "return-base64",
-              "format": "pdf",
-              "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
-            },
-            {
-              "type": "return-base64-thumbnail",
-              "format": "jpg",
-              "thumbnail_height": 200
+            if (!successful) {
+                console.error('Failed: ' + mesg);
+                return;
             }
-          ]
+            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+                console.info('User cancelled');
+                return;
+            }
+            const responseJson = JSON.parse(response);
+            const scannedPdfUrl = responseJson.output[0].result[0];
+            updateDataWithUrl('file_url', scannedPdfUrl);
+        }, {
+            "output_settings": [
+                {
+                    "type": "return-base64",
+                    "format": "pdf",
+                    "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+                },
+                {
+                    "type": "return-base64-thumbnail",
+                    "format": "jpg",
+                    "thumbnail_height": 200
+                }
+            ]
         });
-      };
-    
-      useEffect(() => {
+    };
+
+    useEffect(() => {
         if (window.scanner) {
             window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
                 if (!successful) {
@@ -166,7 +165,7 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
             };
         }
     }, []);
-    
+
 
     return (
         <Box sx={{

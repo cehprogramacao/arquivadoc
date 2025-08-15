@@ -14,9 +14,9 @@ import SnackBar from "@/Components/SnackBar"
 import { AuthProvider } from "@/context"
 import withAuth from "@/utils/withAuth"
 import { useDispatch } from "react-redux"
-import { showAlert } from "@/store/actions"
+import { SET_ALERT, showAlert } from "@/store/actions"
 
-
+ const userSv = new User();
 const PageUsuarios = () => {
     const dispatch = useDispatch()
     const [dataRows, setDataRows] = useState([])
@@ -24,15 +24,22 @@ const PageUsuarios = () => {
         userId: "",
         option: ""
     })
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
     const [loading, setLoading] = useState(false)
     const getUsers = async () => {
-        const user = new User();
+       
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken");
-            const response = await user.getUsers(accessToken)
-            console.log(response.data, '788812akaakak');
-            setDataRows(response.data)
+            
+            const response = await userSv.getUsers()
+            console.log(response, '788812akaakak');
+            setDataRows(response)
         } catch (error) {
             console.error("Erro ao listar usuários!", error);
             throw error;
@@ -46,7 +53,7 @@ const PageUsuarios = () => {
         getUsers()
     }, []);
 
-    const top100Films = [
+    const labels = [
         {
             id: 1,
             label: 'ID'
@@ -54,15 +61,12 @@ const PageUsuarios = () => {
     ];
 
     const handleDeleteByID = async (userId) => {
-        const { deleteUser } = new User()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteUser(userId, accessToken)
-            dispatch(showAlert(response.data.message, "success", "user"))
-            return response.data
+            const response = await userSv.deleteUser(userId)
+            dispatch({type: SET_ALERT, message: 'Documento deletado com sucesso!', alertType: 'user', severity: 'success'})
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "user"))
+            dispatch({type: SET_ALERT, message: 'Erro ao deletar documento!', alertType: 'user', severity: 'error'})
             console.error("Erro ao excluir usuário!", error)
             throw error;
         }
@@ -74,17 +78,13 @@ const PageUsuarios = () => {
 
 
     const handleSetAdmin = async (userId) => {
-        const { setAdmin } = new User()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await setAdmin(userId, accessToken)
-            dispatch(showAlert(response.data.message, "success", "user"))
-            console.log(response.data, '77777')
+            const response = await userSv.setAdmin(userId)
+            dispatch({type: SET_ALERT, message: 'Novo administrador definido!', type: 'user', severity: "success" })
             getUsers()
-            return response.data
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "user"))
+            dispatch({type: SET_ALERT, message: 'Erro ao adicionar novo administrador! ', type: 'user', severity: "error" })
             console.error("Erro ao tornar admin", error)
             throw error;
         }
@@ -94,11 +94,9 @@ const PageUsuarios = () => {
     }
 
     const handleUnsetAdmin = async (userId) => {
-        const { unsetAdmin } = new User()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await unsetAdmin(userId, accessToken)
+            const response = await unsetAdmin(userId)
             dispatch(showAlert(response.data.message, "success", "user"))
             console.log(response.data, '77777')
             getUsers()
@@ -114,11 +112,9 @@ const PageUsuarios = () => {
     }
 
     const handleEnable = async (userId) => {
-        const { enableUser } = new User()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await enableUser(userId, accessToken)
+            const response = await enableUser(userId)
             dispatch(showAlert(response.data.message, "success", "user"))
             getUsers()
             return response.data
@@ -132,11 +128,9 @@ const PageUsuarios = () => {
         }
     }
     const handleDisabled = async (userId) => {
-        const { disableUser } = new User()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await disableUser(userId, accessToken)
+            const response = await disableUser(userId)
             dispatch(showAlert(response.data.message, "success", "user"))
             console.log(response.data, '77777')
             getUsers()
@@ -151,11 +145,9 @@ const PageUsuarios = () => {
         }
     }
     const handleFilterById = async () => {
-        const { getUserById } = new User()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getUserById(filter.userId, accessToken)
+            const { data } = await getUserById(filter.userId)
             console.log(data.user)
             dispatch(showAlert('Usuário Listado', "success", "user"))
             setDataRows(Object.values(data.user))
@@ -211,7 +203,7 @@ const PageUsuarios = () => {
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
-                                        options={top100Films}
+                                        options={labels}
                                         fullWidth
                                         // value={filter.option}
                                         autoHighlight
@@ -260,7 +252,6 @@ const PageUsuarios = () => {
                     </Grid>
                 </CustomContainer>
             </Box>
-            <SnackBar />
         </AuthProvider>
     )
 }

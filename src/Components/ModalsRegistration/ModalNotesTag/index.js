@@ -8,16 +8,19 @@ import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import NoteService from '@/services/notes.service';
 
+
+    const noteSv = new NoteService()
+
 export const ModalNotesTag = ({ onClose, open, getData }) => {
   const [data, setData] = useState({
     name: ""
   })
   const handleCreateTag = async () => {
-    const { createNoteTag } = new NoteService()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const response = await createNoteTag(data, accessToken)
+      const response = await noteSv.createNoteTag(data)
+      dispatch({ type: SET_ALERT, message: "Tag cadastrada com sucesso!", severity: "success", alertType: 'file' });
     } catch (error) {
+      dispatch({ type: SET_ALERT, message: error.message, severity: "error", alertType: 'file' });
       console.error("Erro ao criar tag", error)
       throw error;
     }

@@ -3,15 +3,11 @@ import customAxios from './middleware';
 import ServiceError from './service.error';
 
 export default class ServiceBase {
-  constructor(authenticationType = 'user') {
-    if (authenticationType === 'user') {
-      this.defaultConfig = { headers: { isAuth: true } };
-    } else if (authenticationType === 'client2') {
-      this.defaultConfig = { headers: { isClientCredentials: true } };
-    } else if (authenticationType === 'upload') {
-      this.defaultConfig = {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      };
+  constructor(authenticationType = 'user', config = {}) {
+    if (authenticationType !== 'noAuth') {
+      this.defaultConfig = { headers: { isAuth: true }, ...config };
+    } else {
+      this.defaultConfig = config;
     }
   }
 
@@ -28,12 +24,13 @@ export default class ServiceBase {
   }
 
   patch(url, payload, config = {}) {
-    return this.request('put', url, payload, config);
+    return this.request('patch', url, payload, config);
   }
 
   delete(url, config = {}) {
     return this.request('delete', url, config);
   }
+
 
   async request(method, url, payload, config) {
     try {
@@ -48,12 +45,21 @@ export default class ServiceBase {
       } else {
         response = await customAxios[method](url, requestConfig);
       }
+      let data;
       if (!response?.data?.data) {
-        return response.data;
+        data = response.data;
+      } else {
+        data = response.data.data;
       }
-      const {
-        data: { data },
-      } = response;
+      console.log(data, 33);
+      if (requestConfig.getWPPageCount)
+        data = {
+          data,
+          pagesInfo: {
+            count: response.headers.get('X-WP-Total'),
+            WPTotal: response.headers.get('WP-Total'),
+          },
+        };
 
       return data;
     } catch (error) {
@@ -73,9 +79,6 @@ export default class ServiceBase {
         if (error.type === 'PAYMENT_REQUIRED') {
           console.log(737373);
           window.location = '/pagamento?atualizar=true';
-        } else if (error.type === 'SUBSCRIPTION_NOTFOUND') {
-          console.log(737373);
-          window.location = '/pagamento';
         }
         throw new ServiceError(error.message, error.type);
       }

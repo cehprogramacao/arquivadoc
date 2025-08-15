@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
 
+const user = new User();
+
 export const AuthProvider = ({ children }) => {
     const [permissions, setPermissions] = useState([]);
 
@@ -12,9 +14,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const getDataUser = async () => {
             try {
-                const accessToken = sessionStorage.getItem("accessToken");
-                const { getUser } = new User();
-                const { data } = await getUser(accessToken);
+                const data = await user.getUser();
                 console.log(data)
                 await updatePermissions(data.permissions)
             } catch (error) {

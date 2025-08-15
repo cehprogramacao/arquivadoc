@@ -6,7 +6,9 @@ import Customer from "@/services/customer.service";
 
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
-export const CadastroPartes = ({ open, onClose, getData }) => {
+
+const customerSv = new Customer();
+export const CadastroPartes = ({ open, onClose }) => {
   const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false)
@@ -19,7 +21,7 @@ export const CadastroPartes = ({ open, onClose, getData }) => {
     e.target.value?.replace(/\D/g, '').length < 11
       ? setCpfCnpjMask(cpfMask)
       : setCpfCnpjMask(cnpjMask);
-    setData({ ...data, cpfcnpj: e.target.value });
+    setData({ ...data, cpfcnpj: e.target.value.replace(/[^\d]+/g, '') });
   };
 
   const handleInputBlur = () => {
@@ -40,13 +42,9 @@ export const CadastroPartes = ({ open, onClose, getData }) => {
     console.log(data)
     try {
       setLoading(true)
-      const accessToken = sessionStorage.getItem("accessToken");
-      if (!accessToken) {
-        console.error("Access token is missing.");
-        throw new Error("Access token is missing.");
-      }
-      const customer = new Customer();
-      const response = await customer.createCustomer(data, accessToken);
+      onClose()
+      
+      const response = await customerSv.createCustomer(data);
       console.log(response)
       return response;
     } catch (error) {
@@ -55,8 +53,6 @@ export const CadastroPartes = ({ open, onClose, getData }) => {
     }
     finally {
       setLoading(false)
-      onClose()
-      getData()
     }
   };
 

@@ -1,7 +1,6 @@
 "use client"
 import { Autocomplete, Box, Button, Grid, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
 import { useState } from "react"
-import ModalList from "@/Components/Modals/ModalList"
 import CustomContainer from "@/Components/CustomContainer"
 import withAuth from "@/utils/withAuth"
 import { AuthProvider } from "@/context"

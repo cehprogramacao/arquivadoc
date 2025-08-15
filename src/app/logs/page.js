@@ -6,20 +6,19 @@ import CustomContainer from "@/Components/CustomContainer";
 import withIsAdmin from "@/utils/isAdmin";
 import All from "@/services/all.service";
 import Loading from "@/Components/loading";
-import withAuth from "@/utils/withAuth";
 
 
+const allSv = new All()
 const PageLogs = () => {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false)
 
 
     const getAllLogs = async () => {
-        const { getLogs } = new All()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getLogs(accessToken)
+            const data = await allSv.getLogs()
+            console.log(data)
             setRows(Object.values(data))
             return data
         } catch (error) {
@@ -34,6 +33,14 @@ const PageLogs = () => {
         getAllLogs()
     }, []);
 
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
     return (
         <>
@@ -73,4 +80,4 @@ const PageLogs = () => {
         </>
     )
 }
-export default withAuth(withIsAdmin(PageLogs))
+export default withIsAdmin(PageLogs)

@@ -18,13 +18,15 @@ import ProtestService from '@/services/protest.service';
 import Loading from '@/Components/loading';
 import MenuOptionsFile from '@/Components/MenuPopUp';
 import { useDispatch } from 'react-redux';
-import { showAlert } from '@/store/actions';
+import { SET_ALERT, showAlert } from '@/store/actions';
 import ModalList from './components/ModalPDF';
 
 const options = [
     { label: 'Apontamento' },
     { label: 'Apresentante' }
 ]
+
+const protestSv = new ProtestService();
 const PageProtesto = () => {
     const dispatch = useDispatch()
     const [data, setData] = useState([])
@@ -63,11 +65,9 @@ const PageProtesto = () => {
         setOpenModalCadastro(false)
     }
     const handleOpenModalFile = async () => {
-        const { getProtestByNotation } = new ProtestService()
         try {
             setOpenModalListFile(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getProtestByNotation(notation, accessToken)
+            const data = await protestSv.getProtestByNotation(notation)
             console.log(data)
             setDataFile(data)
         } catch (error) {
@@ -80,17 +80,15 @@ const PageProtesto = () => {
     }
 
     const getAllFilesProtest = async () => {
-        const { getAllProtests } = new ProtestService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getAllProtests(accessToken)
+            const data = await protestSv.getAllProtests()
 
-            dispatch(showAlert(`Total de arquivos: ${Object.values(data).length}`, "success", "file"))
+            dispatch({type: SET_ALERT, message: `Total de arquivos: ${Object.values(data).length}`, severity: "success", alertType: "file" })
             console.log(data)
             setData(Object.values(data))
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: error.message, severity: "error", alertType: "file" })
             console.error("Erro ao listar todos os arquivos!", error)
             throw error;
         }
@@ -100,15 +98,12 @@ const PageProtesto = () => {
     }
 
     const handleDeleteByNotation = async () => {
-        const { deleteProtestByNotation } = new ProtestService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteProtestByNotation(notation, accessToken)
-            console.log(response.data)
-            dispatch(showAlert(response.data.message, 'success', 'file'))
-            return response.data
+            const response = await protestSv.deleteProtestByNotation(notation)
+            dispatch({type: SET_ALERT, message: response.message, severity: "success", alertType: "file" })
+            
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: error.message, severity: "error", alertType: "file" })
             console.error("Error ao deletar arquivo rgi!", error)
             throw error;
         }
@@ -117,12 +112,11 @@ const PageProtesto = () => {
         }
     }
 
-    const getProtestByNotation = async (value, accessToken) => {
-        const { getProtestByNotation } = new ProtestService()
+    const getProtestByNotation = async (value) => {
         let newData = []
         try {
             setLoading(true)
-            const { data } = await getProtestByNotation(value, accessToken)
+            const data = await protestSv.getProtestByNotation(value.replace(/\D/g, ''))
             setData(Object.values(data))
             return data;
         } catch (error) {
@@ -133,12 +127,11 @@ const PageProtesto = () => {
             setLoading(false)
         }
     }
-    const getProtestByPresenter = async (value, accessToken) => {
-        const { getProtestByPresenter } = new ProtestService()
+    const getProtestByPresenter = async (value) => {
         let newData = []
         try {
             setLoading(true)
-            const { data } = await getProtestByPresenter(value, accessToken)
+            const data = await protestSv.getProtestByPresenter(value.replace(/\D/g, ''))
             setData(Object.values(data))
             return data;
         } catch (error) {
@@ -151,14 +144,13 @@ const PageProtesto = () => {
     }
 
     const handleSearchProtest = async () => {
-        const accessToken = sessionStorage.getItem("accessToken")
         if (option.value && option.value) {
             try {
                 if (option.option === 'Apontamento') {
-                    await getProtestByNotation(option.value, accessToken)
+                    await getProtestByNotation(option.value)
                 }
                 else if (option.option === 'Apresentante') {
-                    await getProtestByPresenter(option.value, accessToken)
+                    await getProtestByPresenter(option.value)
                 }
 
             } catch (error) {
@@ -176,6 +168,14 @@ const PageProtesto = () => {
         const isAdminUser = sessionStorage.getItem('isAdmin')
         setIsAdmin(isAdminUser)
     }, [])
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -268,7 +268,6 @@ const PageProtesto = () => {
                         deletePerm={permissions[0]?.delete_permission} editPerm={permissions[0]?.edit}
                     />
                 </Box>
-                <SnackBar />
                 <MenuOptionsFile
                     handleDelete={handleDeleteByNotation}
                     handleOpenModalPDF={handleOpenModalFile}

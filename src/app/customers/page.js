@@ -10,13 +10,13 @@ import Customer from "@/services/customer.service"
 import Loading from "@/Components/loading"
 import withAuth from "@/utils/withAuth"
 import { useDispatch } from "react-redux"
-import { showAlert } from "@/store/actions"
+import { SET_ALERT, showAlert } from "@/store/actions"
 import { AuthProvider, useAuth } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
 import SnackBar from "@/Components/SnackBar"
 
 
-
+const customerSv = new Customer()
 const PagePessoas = () => {
     const dispatch = useDispatch()
     const theme = useTheme();
@@ -29,7 +29,7 @@ const PagePessoas = () => {
         option: "",
         value: ""
     })
-    const top100Films = [
+    const label = [
         {
             label: 'CPF/CNPJ'
         },
@@ -39,9 +39,7 @@ const PagePessoas = () => {
     const getData = async () => {
         try {
             setLoading(true)
-            const customer = new Customer()
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await customer.customers(accessToken)
+            const data = await customerSv.customers()
             setRows(data)
             return data
         } catch (error) {
@@ -59,16 +57,13 @@ const PagePessoas = () => {
 
 
     const handleDeleteCustomer = async (cpfcnpj) => {
-        const customer = new Customer()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await customer.deleteCustomer(cpfcnpj, accessToken)
-            dispatch(showAlert(response.data.message, "success", "user"))
-            return data
+            const data = await customerSv.deleteCustomer(cpfcnpj)
+            dispatch({ type: SET_ALERT, message: "Cliente deletado com sucesso!", severity: "success", alertType: "user" })
         } catch (error) {
             console.error("error when deleting client", error)
-            dispatch(showAlert(error.msg, "error", "user"))
+            dispatch({ type: SET_ALERT, message: error.message, severity: "error", alertType: "user" })
             throw error
         }
         finally {
@@ -78,25 +73,30 @@ const PagePessoas = () => {
 
     const handleFindCustomerByCpfCnpj = async () => {
         if (options.option && options.value) {
-            const { getCustomerByCPFCNPJ } = new Customer()
-            let newData = []
             try {
-                const accessToken = sessionStorage.getItem("accessToken")
-                const { data } = await getCustomerByCPFCNPJ(options.value, accessToken)
+                const data = await getCustomerByCPFCNPJ(options.value)
 
                 setRows(Object.values(data));
-                dispatch(showAlert("Usuário listado!", "success"))
+                dispatch({ type: SET_ALERT, message: "Cliente encontrado com sucesso!", severity: "success", alertType: "user" })
             } catch (error) {
                 console.error("Erro ao buscar usuário!", error)
-                dispatch(showAlert(error.msg, "error"))
+                dispatch({ type: SET_ALERT, message: error.message, severity: "error", alertType: "user" })
                 throw error;
             }
         }
         else {
             console.error("Campos vazios!")
-            dispatch(showAlert("Campos vazios!", "error"))
+            dispatch({ type: SET_ALERT, message: "Preencha os campos corretamente!", severity: "error", alertType: "user" })
         }
     }
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
 
     return loading ? <Loading /> : (
@@ -138,7 +138,7 @@ const PagePessoas = () => {
                                         <Autocomplete
                                             disablePortal
                                             id="combo-box-demo"
-                                            options={top100Films}
+                                            options={label}
                                             fullWidth
                                             isOptionEqualToValue={(option, label) => option.label === label.label}
                                             autoHighlight
@@ -184,7 +184,7 @@ const PagePessoas = () => {
                     <Drawer anchor="left" open={open} onClose={handleCloseModal}>
                         <CadastroPessoas onClose={handleCloseModal} />
                     </Drawer>
-                    <SnackBar />
+
                 </Box>
             </PrivateRoute>
         </AuthProvider>

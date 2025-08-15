@@ -9,6 +9,9 @@ import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useDispatch } from 'react-redux'
 import { showAlert } from '@/store/actions';
 import RTDService from '@/services/rtd.service';
+
+const rtdSv = new RTDService()
+
 const ModalTypesRTD = ({ onClose, open, getData }) => {
   const dispatch = useDispatch()
   const [data, setData] = useState({
@@ -17,13 +20,11 @@ const ModalTypesRTD = ({ onClose, open, getData }) => {
 
 
   const handleCreateTypeRtd = async () => {
-    const { createRTDType } = new RTDService()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const response = await createRTDType(accessToken, data)
-      dispatch(showAlert(response.data.message, "success"))
+      const response = await rtdSv.createRTDType(accessToken, data)
+      dispatch({type: SET_ALERT, message: "Tipo de RPJ cadastrado com sucesso!", alertType: "type", severity: "success"})
     } catch (error) {
-      dispatch(showAlert(error.msg, "error"))
+      dispatch({type: SET_ALERT, message: "Erro ao cadastrar tipo de RPJ!", alertType: "type", severity: "error"})
       console.error("Erro ao criar tipo de rpj", error)
       throw error;
     }
@@ -82,7 +83,7 @@ const ModalTypesRTD = ({ onClose, open, getData }) => {
         <TextField
           fullWidth
           value={data.name}
-          onChange={(e) => setData((state) => ({...state, name: e.target.value}))}
+          onChange={(e) => setData((state) => ({ ...state, name: e.target.value }))}
           sx={{
             '& input': { color: 'success.main' },
             mb: 7

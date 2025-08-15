@@ -11,13 +11,13 @@ import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import RPJService from '@/services/rpj.service'
 import { useDispatch } from 'react-redux'
-import { showAlert } from '@/store/actions'
+import { SET_ALERT, showAlert } from '@/store/actions'
 import Button from '@mui/material/Button'
 import SnackBar from '@/Components/SnackBar'
 import Loading from '@/Components/loading'
 
 
-
+const rpjSv = new RPJService()
 const UpdateRpj = ({ params }) => {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
@@ -33,11 +33,10 @@ const UpdateRpj = ({ params }) => {
         file_url: ""
     })
     const fetchData = async () => {
-        const { getAllRPJTypes } = new RPJService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const responseTypes = await getAllRPJTypes(accessToken)
-            setTypes(Object.values(responseTypes.data))
+            
+            const responseTypes = await rpjSv.getAllRPJTypes()
+            setTypes(Object.values(responseTypes))
 
         } catch (error) {
             console.error('Erro ao buscar dados!', error)
@@ -63,16 +62,14 @@ const UpdateRpj = ({ params }) => {
     }
 
     const handleUpdateRpjByNotation = async () => {
-        const { updateRPJByNotation } = new RPJService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await updateRPJByNotation(accessToken, params.notation, data)
-            console.log(response.data)
-            dispatch(showAlert(response.data.message, "success", "file"))
+            
+            const response = await rpjSv.updateRPJByNotation(params.notation, data)
+            dispatch({type: SET_ALERT, message: "Arquivo atualizado com sucesso!", severity: "success", alertType: "file"})
         } catch (error) {
             console.error('Erro ao editar arquivo!', error)
-            dispatch(showAlert(error.message, "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao editar arquivo!", severity: "error", alertType: "file"})
             throw error
         }
         finally {
@@ -206,10 +203,9 @@ const UpdateRpj = ({ params }) => {
                     </CustomContainer>
 
                 </Box>
-                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     )
 }
 
-export default withAuth(UpdateRpj)
+export default UpdateRpj

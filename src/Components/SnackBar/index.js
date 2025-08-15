@@ -12,18 +12,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { hideAlert } from '@/store/actions';
 
 
-const SnackBar = ({ data }) => {
-  const dispatch = useDispatch();
-  const { open, message, severity,type } = useSelector(state => state.alert);
+const SnackBar = ({ open, message, alertType, severity, onClose}) => {
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    dispatch(hideAlert());
+    onClose()
   };
   const getIcon = () => {
-    switch (type) {
+    switch (alertType) {
       case 'user':
         return <PersonIcon />;
       case 'key':

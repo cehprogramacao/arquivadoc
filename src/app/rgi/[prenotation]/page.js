@@ -6,8 +6,11 @@ import withAuth from "@/utils/withAuth"
 import { Grid, Box, TextField, Container, Button, Autocomplete } from "@mui/material"
 import { useEffect, useState } from "react"
 
+
+
+const rgiSv = new RGI()
 const Prenotation = ({ params }) => {
-    const [grupo, setGrupo] = useState(null); // Estado para armazenar o grupo selecionado
+    const [grupo, setGrupo] = useState(null);
     const [types, setTypes] = useState([]);
     const [loading, setLoading] = useState(false)
     const [dataField, setDataField] = useState({
@@ -19,10 +22,8 @@ const Prenotation = ({ params }) => {
         file_url: "",
     })
     const getDataByPrenotation = async () => {
-        const { getByPrenotation } = new RGI()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getByPrenotation(params.prenotation, accessToken)
+            const data = await rgiSv.getByPrenotation(params.prenotation)
             console.log(data.prenotation, 'preeee')
             console.log(data, 'DATTTTTTA')
             setDataField({
@@ -52,11 +53,9 @@ const Prenotation = ({ params }) => {
     const tiposFiltrados = grupo ? types.filter(tipo => tipo.group === grupo) : [];
     // useEffect
     const getTypesRGI = async () => {
-        const { getType } = new RGI()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken");
-            const { data } = await getType(accessToken);
+            const data = await getType();
             const newData = Object.values(data);
             console.log(data);
             console.log(newData, '7777777777777')
@@ -104,11 +103,9 @@ const Prenotation = ({ params }) => {
 
     const handleToUpdateByPrenotation = async () => {
         console.log(dataField)
-        const { putByPrenotation } = new RGI()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await putByPrenotation(dataField.prenotation,dataField, accessToken)
+            const data = await rgiSv.putByPrenotation(dataField.prenotation,dataField)
             console.log(data)
             return data
         } catch (error) {

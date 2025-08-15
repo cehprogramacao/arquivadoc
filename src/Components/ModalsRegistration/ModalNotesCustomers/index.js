@@ -3,6 +3,8 @@ import { useMediaQuery, useTheme, Box, TextField, Typography, Button, Autocomple
 import Customer from "@/services/customer.service";
 import { CloseOutlined } from "@mui/icons-material";
 import ReactInputMask from "react-input-mask";
+import { useDispatch } from "react-redux";
+import { SET_ALERT } from "@/store/actions";
 
 const ButtonClose = styled('button')({
     boxSizing: 'content-box',
@@ -39,6 +41,8 @@ const ButtonCadastrar = styled('button')({
 })
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
+
+const customerSv = new Customer();
 const CadastroNotesCurtomers = ({ open, onClose, getData }) => {
     const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
     const [errors, setErrors] = useState({});
@@ -48,6 +52,8 @@ const CadastroNotesCurtomers = ({ open, onClose, getData }) => {
         name: ""
     });
 
+
+    const dispatch = useDispatch();
     const handleInputChange = (e) => {
         const onlyDigits = e.target.value?.replace(/\D/g, '');
         console.log(onlyDigits);
@@ -64,19 +70,15 @@ const CadastroNotesCurtomers = ({ open, onClose, getData }) => {
     };
 
     const handleCreateCustomers = async () => {
-        const { createCustomer } = new Customer()
         console.log(data)
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken");
-            if (!accessToken) {
-                console.error("Access token is missing.");
-                throw new Error("Access token is missing.");
-            }
-            const response = await createCustomer(data, accessToken);
+            const response = await customerSv.createCustomer(data);
             console.log(response)
+            dispatch({type: SET_ALERT, message: "Cliente cadastrado com sucesso!", severity: "success", alertType: 'file'});
             return response;
         } catch (error) {
+            dispatch({type: SET_ALERT, message: error.message, severity: "error", alertType: 'file'});
             console.error("Error creating customer:", error.message);
             throw error;
         }

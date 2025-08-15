@@ -1,116 +1,60 @@
-import customAxios from './middleware';
+import ServiceBase from "./service.base";
 
-class Calling {
-
-  createCalling(calling, accessToken) {
-    return customAxios.post('/calling', calling, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+class Calling extends ServiceBase {
+  constructor() {
+    super("user");
   }
 
-  getAllCallings(accessToken) {
-    return customAxios.get('/calling', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-  }
-  getAllCallingsInTrash(accessToken) {
-    return customAxios.get('/calling/trash', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  createCalling(calling) {
+    return this.post("/calling/", calling);
   }
 
-  restoreCallingFromTrash(number, accessToken) {
-    return customAxios.post(`/calling/restore/${number}`,{}, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  getAllCallings() {
+    return this.get("/calling/");
   }
 
-  getCallingByEntity(entity, accessToken) {
-    return customAxios.get(`/calling/entity/${entity}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  getAllCallingsInTrash() {
+    return this.get("/calling/trash/calling");
   }
 
-  getCallingByNumber(number, accessToken) {
-    return customAxios.get(`/calling/${number}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  getCallingByEntity(entity) {
+    return this.get(`/calling/entity/${entity}`);
   }
 
-  updateCallingByNumber(number, calling, accessToken) {
-    return customAxios.put(`/calling/${number}`, calling, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  getCallingByNumber(number) {
+    return this.get(`/calling/${number}`);
   }
 
-  deleteCallingByNumber(number, accessToken) {
-    return customAxios.delete(`/calling/${number}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  updateCallingByNumber(number, calling) {
+    return this.put(`/calling/${number}`, calling);
   }
 
-  createCallingType(type, accessToken) {
-    return customAxios.post('/calling/type', type, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  deleteCallingByNumber(number) {
+    return this.delete(`/calling/${number}`);
   }
 
-  getAllCallingTypes(accessToken) {
-    return customAxios.get('/calling/types/all', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  createCallingType(type) {
+    return this.post("/calling/type", type);
   }
 
-  deleteCallingType(typeid, accessToken) {
-    return customAxios.delete(`/calling/type/${typeid}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  getAllCallingTypes() {
+    return this.get("/calling/types/all");
   }
 
-  createCallingEntity(entity, accessToken) {
-    return customAxios.post('/calling/entity', entity, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  deleteCallingType(typeid) {
+    return this.delete(`/calling/type/${typeid}`);
   }
 
-  getAllCallingEntities(accessToken) {
-    return customAxios.get('/calling/entitys/all', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  createCallingEntity(entity) {
+    return this.post("/calling/entity", entity);
   }
 
-  deleteCallingEntity(entityid, accessToken) {
-    return customAxios.delete(`/calling/entity/${entityid}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  getAllCallingEntities() {
+    return this.get("/calling/entitys/all");
+  }
+
+  deleteCallingEntity(entityid) {
+    return this.delete(`/calling/entity/${entityid}`);
   }
 }
 

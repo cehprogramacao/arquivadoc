@@ -13,6 +13,7 @@ import { Box } from '@mui/material';
 import { Delete, FileOpen, Print } from '@mui/icons-material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { textTransform } from '@mui/system';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -72,7 +73,10 @@ const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenModalPDF, type
           onClose={handleClose}
         >
           {editPerm === 1 &&
-            <Link href={`/${path}/${[type]}`} as={`/${path}/${type}`}>
+            <Link href={`/${path}/${[type]}`} as={`/${path}/${type}`} style={{
+              textDecoration: 'none',
+              textTransform: "none"
+            }}>
               <MenuItem sx={{ color: "#FFD500" }} onClick={handleClose} disableRipple >
                 <EditIcon sx={{ fill: '#FFD500' }} />
                 Editar

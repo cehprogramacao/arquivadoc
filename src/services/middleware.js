@@ -1,95 +1,99 @@
 import axios from 'axios';
-import { isLoggedIn } from '../utils/auth';
 import ServiceError from './service.error';
+import { isLoggedIn } from '@/utils/auth'; // importa sua função isLoggedIn
 
 const customAxios = axios.create({
-  baseURL: `${process.env.BACKEND_BASE_URL}`,
+  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}`,
   timeout: 20000,
 });
 
-const setclientCredentials = async () => {
+const setClientCredentials = async () => {
   const {
     data: { data },
   } = await axios.post(
-    `${process.env.BACKEND_BASE_URL}/api/v1/connect/token`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/connect/token`,
     {
       client_id: process.env.REACT_APP_CLIENT_ID,
     }
   );
-  sessionStorage.setItem('clientCredentials', data.client_token);
+  localStorage.setItem('clientCredentials', data.client_token);
 };
 
-let isclientCredentialsRefreshed = false;
+let isClientCredentialsRefreshed = false;
 
 customAxios.interceptors.response.use(
   (response) => {
     if (response.status === 401) {
-      window.location = '/login';
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('refreshToken');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('redirectUrl');
+      localStorage.removeItem('isAdmin');
+      window.location.href = '/';
     } else if (response.status === 402) {
-      console.log(767676);
-      window.location = '/';
+      window.location.href = '/pagamento';
     }
 
     return response;
   },
   async (error) => {
-    if (error.response?.data.code === 401) {
-      if (error.response?.data.data.error === 'invalid client_token') {
-        if (!isclientCredentialsRefreshed) {
-          await setclientCredentials();
-          isclientCredentialsRefreshed = true;
-          const { request } = error;
-          request.config.headers.Authorization = `Bearer ${sessionStorage.getItem(
-            'clientCredentials'
-          )}`;
-          const ret = await customAxios.request(request.config);
-          return ret;
-        }
-        isclientCredentialsRefreshed = false;
-      }
-    } else if (error.response?.data.code === 402) {
-      console.log(787878);
+    const status = error.response?.status;
+    const code = error.response?.data?.code;
+    const data = error.response?.data?.data;
+
+    if (status === 500 && !isLoggedIn()) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('redirectUrl');
+      localStorage.removeItem('isAdmin');
+      window.location.href = '/';
+      return Promise.reject(
+        new ServiceError('Sessão expirada, faça login novamente.', 'not_auth')
+      );
     }
+
+    if (code === 401 && data?.error === 'invalid client_token') {
+      if (!isClientCredentialsRefreshed) {
+        isClientCredentialsRefreshed = true;
+        await setClientCredentials();
+        const originalRequest = error.config;
+        originalRequest.headers.Authorization = `Bearer ${localStorage.getItem('clientCredentials')}`;
+        return customAxios.request(originalRequest);
+      }
+      isClientCredentialsRefreshed = false;
+    }
+
+    if (code === 401) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.setItem('redirectUrl', window.location.pathname);
+      window.location.href = '/';
+      return Promise.reject(
+        new ServiceError('Sessão expirada, faça login novamente.', 'not_auth')
+      );
+    }
+
     return Promise.reject(error.response?.data);
   }
 );
 
 customAxios.interceptors.request.use(
   async (request) => {
-    if (request.headers.auth) {
-      if (!isLoggedIn('accessToken')) {
-        const refreshToken = sessionStorage.getItem('refreshToken');
-        if (refreshToken) {
-          try {
-            const { data } = await customAxios.post(
-              'auth/refresh-token',
-              { refreshToken: refreshToken },
-              { headers: { isClientCredentials: true } }
-            );
-            sessionStorage.setItem('accessToken', data.accessToken);
-          } catch (e) {
-            console.error('Erro ao renovar o token:', e, '88888888888888llllllllllllllll');
-            sessionStorage.removeItem('accessToken');
-            sessionStorage.removeItem('refreshToken');
-            sessionStorage.setItem('redirectUrl', window.location.pathname);
-            window.location = '/login';
-            throw new ServiceError('Usuário não autenticado', 'not_auth');
-          }
-        } else {
-          sessionStorage.setItem('redirectUrl', window.location.pathname);
-          window.location = '/login';
-          throw new ServiceError('Usuário não autenticado', 'not_auth');
-        }
+    if (request.headers.isAuth) {
+      delete request.headers.isAuth;
+      const accessToken = localStorage.getItem('accessToken');
+
+      if (!accessToken) {
+        localStorage.setItem('redirectUrl', window.location.pathname);
+        window.location.href = '/';
+        throw new ServiceError('Usuário não autenticado', 'not_auth');
       }
 
-      request.headers.Authorization = `Bearer ${sessionStorage.getItem('accessToken')}`;
-      return request;
+      request.headers.Authorization = `Bearer ${accessToken}`;
     }
+
     return request;
   },
   (error) => Promise.reject(error)
 );
 
-export default customAxios; 
+export default customAxios;

@@ -20,6 +20,7 @@ import withAuth from "@/utils/withAuth"
 
 
 const cpfMask = '999.999.999-99';
+const customerSv = new Customer()
 const cnpjMask = '99.999.999/9999-99';
 const PageTermos = () => {
     const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
@@ -41,19 +42,19 @@ const PageTermos = () => {
     const [dataFile, setDataFile] = useState([])
 
     const handleOpenModalPDF = async () => {
-        const { getTermLGDP } = new Customer()
         try {
             setOpenPDF(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await getTermLGDP(cpfcnpj, accessToken)
-            console.log(response.data, 'PDFF')
-            setDataFile(response.data)
-            return response.data
+            const response = await customerSv.getTermLGDP(cpfcnpj)
+            console.log(response, 'PDFF')
+            setDataFile(response)
+            return response
         } catch (error) {
             console.error("Erro ao listar dados!", error)
             throw error;
         }
     }
+
+
 
     const handleCloseModalPDF = async () => {
         setOpenPDF(false)
@@ -79,37 +80,33 @@ const PageTermos = () => {
         e.target.value?.replace(/\D/g, '').length < 11
             ? setCpfCnpjMask(cpfMask)
             : setCpfCnpjMask(cnpjMask);
-        setDataOptions({ ...dataOptions, cpfcnpj: e.target.value });
+        setDataOptions({ ...Options, cpfcnpj: e.target.value.replace(/[^\d]+/g, '') });
     };
 
     const handleInputBlur = () => {
         dataOptions.cpfcnpj?.replace(/\D/g, '').length === 11 && setCpfCnpjMask(cpfMask);
     };
-    const top100Films = [
+    const labels = [
         {
             label: 'CPF/CNPJ'
         },
     ];
     const handleDeleteByCPFCNPJ = async () => {
-        const { deleteTermLGDP } = new Customer()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteTermLGDP(cpfcnpj, accessToken)
-            return response.data
+            const response = await customerSv.deleteTermLGDP(cpfcnpj)
+            return response
         } catch (error) {
             console.error("Error ao deletar termo !", error)
             throw error;
         }
     }
     const handleFilterTermLGPD = async () => {
-        const { getTermLGDP } = new Customer()
         let newData = []
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await getTermLGDP(dataOptions.cpfcnpj, accessToken)
-            setData(Object.values(response.data));
-            return response.data
+            const response = await customerSv.getTermLGDP(dataOptions.cpfcnpj)
+            setData(Object.values(response));
+            return response
         } catch (error) {
             console.error("Erro ao filtrar Termos", error);
             throw error;
@@ -117,6 +114,15 @@ const PageTermos = () => {
             setLoading(false);
         }
     }
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
+
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -173,11 +179,11 @@ const PageTermos = () => {
                                         <Autocomplete
                                             disablePortal
                                             id="combo-box-demo"
-                                            options={top100Films}
+                                            options={labels}
                                             fullWidth
                                             autoHighlight
                                             getOptionLabel={(option) => option.label || ""}
-                                            onChange={(e, newValue) => setDataOptions({ ...dataOptions, option: newValue })}
+                                            onChange={(e, newValue) => setDataOptions({ ...Options, option: newValue })}
                                             isOptionEqualToValue={(option, value) => option.label === value.label}
                                             renderInput={(params) => (
                                                 <TextField
@@ -217,7 +223,6 @@ const PageTermos = () => {
                     deletePerm={permissions[5]?.delete_permission}
                     anchorEl={anchorEl} data={data} open={openMenu} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={cpfcnpj} handleDelete={handleDeleteByCPFCNPJ} />
                 <ModalListTerm data={dataFile} onClose={handleCloseModalPDF} open={openPDF} cpfcnpj={cpfcnpj} />
-                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     )

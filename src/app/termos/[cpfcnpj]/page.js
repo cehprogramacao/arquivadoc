@@ -4,12 +4,13 @@ import SnackBar from "@/Components/SnackBar"
 import Loading from "@/Components/loading"
 import { AuthProvider } from "@/context"
 import Customer from "@/services/customer.service"
+import { SET_ALERT } from "@/store/actions"
 import PrivateRoute from "@/utils/LayoutPerm"
 import withAuth from "@/utils/withAuth"
 import { Box, Button, Container, Grid, TextField } from "@mui/material"
 import { useState } from "react"
 
-
+const customerSv = new Customer()
 const PageToUpdate = ({ params }) => {
 
     const [data, setData] = useState({
@@ -36,15 +37,13 @@ const PageToUpdate = ({ params }) => {
     }
 
     const handleToUpdate = async () => {
-        const { putTermLGDP } = new Customer()
+        
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const putTerm = await putTermLGDP(params.cpfcnpj, data, accessToken)
-            setAlert({ open: true, text: putTerm.data.message, severity: "success", type: "file" })
-            return putTerm.data
+            const putTerm = await customerSv.putTermLGDP(params.cpfcnpj, data)
+            setAlert({type: SET_ALERT, message: putTerm.message, severity: "success", alertType: "file"})
         } catch (error) {
-            setAlert({ open: true, text: error.msg, severity: "error", type: "file" })
+            setAlert({ type: SET_ALERT, message: `Erro ao editar termo: ${error.message}`, severity: "error", alertType: "file" })
             console.error("Erro ao editar termo!")
             throw error;
 

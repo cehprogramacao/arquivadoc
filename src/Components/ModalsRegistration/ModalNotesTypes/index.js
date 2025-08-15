@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import { Box, TextField, Typography, Button, Autocomplete, Modal, styled, IconButton } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
 import NoteService from "@/services/notes.service";
+import { useDispatch } from "react-redux";
 
 
+const noteSv = new NoteService()
 
 const CadastroNotesType = ({ open, onClose, getData }) => {
     const [dataOptions, setDataOptions] = useState([])
@@ -14,14 +16,14 @@ const CadastroNotesType = ({ open, onClose, getData }) => {
         group_id: 0
     })
 
+    const dispatch = useDispatch()
+
 
     const getAllNoteGroups = async () => {
-        const { getAllNoteGroups } = new NoteService()
         try {
             getData()
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getAllNoteGroups(accessToken)
-            
+            const data = await noteSv.getAllNoteGroups()
+            dispat
             setDataOptions(Object.values(data))
         } catch (error) {
             console.log('Erro ao buscar grupos de notas!', error)
@@ -37,7 +39,7 @@ const CadastroNotesType = ({ open, onClose, getData }) => {
                 throw new Error("Campos vazios")
             }
             const { data } = await createNoteType(dataTypes, accessToken)
-            
+
             console.log(data)
         } catch (error) {
             console.log(`Erro ao cadastrar tipo ao grupo de ${dataTypes.name}`, error)
@@ -47,7 +49,7 @@ const CadastroNotesType = ({ open, onClose, getData }) => {
             onClose()
             getData()
         }
-        
+
     }
 
 

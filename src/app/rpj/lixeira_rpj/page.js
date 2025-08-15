@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { DocList } from "./tableLixeira"
 import { useSelector, useDispatch } from 'react-redux'
 import RPJService from "@/services/rpj.service"
-import { showAlert } from "@/store/actions"
+import { SET_ALERT, showAlert } from "@/store/actions"
 import SnackBar from "@/Components/SnackBar"
 import CustomContainer from "@/Components/CustomContainer"
 import MenuOptionsFile from "@/Components/ModalOptionsTrash"
@@ -13,7 +13,7 @@ import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
 import withAuth from "@/utils/withAuth"
 
-
+const rpjService = new RPJService()
 const LixeiraRPJ = () => {
     const dispatch = useDispatch()
     const [notation, setNotation] = useState("")
@@ -29,21 +29,16 @@ const LixeiraRPJ = () => {
         setAnchorEl(null)
     }
 
+    
     const getAllFilesInTrash = async () => {
-        const { getAllRPJInTrash } = new RPJService()
 
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getAllRPJInTrash(accessToken)
-            if (Object.values(data).length === 0) {
-                dispatch(showAlert("Sem arquivos na lixeira!", "success", "file"))
-                return false
-            }
-            dispatch(showAlert(`Total de arquivos na lixeira: ${Object.values(data).length}`, "success", "file"))
+            const data = await rpjService.getAllRPJInTrash()
+            dispatch({type: SET_ALERT, message: "Arquivos da lixeira carregados com sucesso!", severity: "success", alertType: "file"})
             setData(Object.values(data))
         } catch (error) {
-            dispatch(showAlert(error.message, "success", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao buscar arquivos da lixeira!", severity: "error", alertType: "file"})
             console.error("Erro ao buscar arquivos da lixeira", error)
             throw error
         }
@@ -54,14 +49,12 @@ const LixeiraRPJ = () => {
 
 
     const handleRestoreFromTrash = async () => {
-        const { restoreRpjFromTrash } = new RPJService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await restoreRpjFromTrash(accessToken, notation)
-            dispatch(showAlert(data.message, "success", "file"))
+            const data = await rpjService.restoreRpjFromTrash(notation)
+            dispatch({type: SET_ALERT, message: "Arquivo restaurado com sucesso!", severity: "success", alertType: "file"})
             return data
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao restaurar arquivo!", severity: "error", alertType: "file"})
             console.error("Error ao lista dados por número", error)
             throw error;
         }
@@ -73,20 +66,26 @@ const LixeiraRPJ = () => {
     }, [])
 
     const handleDeleteFileRpjByNotation = async () => {
-        const { deleteRPJByNotation } = new RPJService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await deleteRPJByNotation(accessToken, notation)
-            dispatch(showAlert(data.message, "success", "file"))
+            const data = await rpjService.deleteRPJByNotation(notation)
+            dispatch({type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file"})
         } catch (error) {
             console.error("Erro ao deletar arquivo!", error)
-            dispatch(showAlert(error?.message ? error.message : "Erro ao excluir arquivo!", "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao deletar arquivo!", severity: "error", alertType: "file"})
             throw error;
         }
         finally {
             getAllFilesInTrash()
         }
     }
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -115,14 +114,13 @@ const LixeiraRPJ = () => {
                             </Grid>
                         </Grid>
                     </CustomContainer>
-                    <SnackBar />
-                    <MenuOptionsFile 
-                    open={open} 
-                    anchorEl={anchorEl} 
-                    handleClose={handleCloseMenuOptionsTrash} 
-                    handleDeleteFromTrash={handleDeleteFileRpjByNotation}
-                    handleRestoreFromTrash={handleRestoreFromTrash}
-/>
+                    <MenuOptionsFile
+                        open={open}
+                        anchorEl={anchorEl}
+                        handleClose={handleCloseMenuOptionsTrash}
+                        handleDeleteFromTrash={handleDeleteFileRpjByNotation}
+                        handleRestoreFromTrash={handleRestoreFromTrash}
+                    />
                 </Box>
             </PrivateRoute>
         </AuthProvider>

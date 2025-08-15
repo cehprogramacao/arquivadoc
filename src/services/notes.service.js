@@ -1,138 +1,73 @@
-import customAxios from "./middleware";
+import ServiceBase from "./service.base";
 
-class NoteService {
-    createNotes(data, accessToken) {
-        return customAxios.post('/note', data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
-    getAllNotes(accessToken) {
-        return customAxios.get('/note', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+class NoteService extends ServiceBase {
+  constructor() {
+    super("user");
+  }
 
-    getNotesInTrash(accessToken) {
-        return customAxios.get('/note/trash', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
-    restoreNotesFromTrash(ordernum, accessToken) {
-        return customAxios.post(`/note/restore/${ordernum}`, {}, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
-    getNoteByPresenter(presenterId, accessToken) {
-        return customAxios.get(`/note/presenter/${presenterId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  createNotes(data) {
+    return this.post("/note", data);
+  }
 
-    getNoteByNumber(number, accessToken) {
-        return customAxios.get(`/note/${number}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getAllNotes() {
+    return this.get("/note");
+  }
 
-    updateNoteByNumber(number, data, accessToken) {
-        return customAxios.put(`/note/${number}`, data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getNotesInTrash() {
+    return this.get("/note/trash/note");
+  }
 
-    deleteNoteByNumber(number, accessToken) {
-        return customAxios.delete(`/note/${number}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getNoteByPresenter(presenterId) {
+    return this.get(`/note/presenter/${presenterId}`);
+  }
 
-    createNoteType(data, accessToken) {
-        return customAxios.post('/note/type', data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getNoteByNumber(number) {
+    return this.get(`/note/${number}`);
+  }
 
-    getAllNoteTypes(accessToken) {
-        return customAxios.get('/note/type/all', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  updateNoteByNumber(number, data) {
+    return this.put(`/note/${number}`, data);
+  }
 
-    deleteNoteType(typeId, accessToken) {
-        return customAxios.delete(`/note/type/${typeId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  deleteNoteByNumber(number) {
+    return this.delete(`/note/${number}`);
+  }
 
-    createNoteGroup(data, accessToken) {
-        return customAxios.post('/note/group', data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  createNoteType(data) {
+    return this.post("/note/type", data);
+  }
 
-    getAllNoteGroups(accessToken) {
-        return customAxios.get('/note/group/all', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getAllNoteTypes() {
+    return this.get("/note/type/all");
+  }
 
-    deleteNoteGroup(groupId, accessToken) {
-        return customAxios.delete(`/note/group/${groupId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  deleteNoteType(typeId) {
+    return this.delete(`/note/type/${typeId}`);
+  }
 
-    createNoteTag(data, accessToken) {
-        return customAxios.post('/note/tag', data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  createNoteGroup(data) {
+    return this.post("/note/group", data);
+  }
 
-    getAllNoteTags(accessToken) {
-        return customAxios.get('/note/tag/all', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getAllNoteGroups() {
+    return this.get("/note/group/all");
+  }
 
-    deleteNoteTag(tagId, accessToken) {
-        return customAxios.delete(`/note/tag/${tagId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  deleteNoteGroup(groupId) {
+    return this.delete(`/note/group/${groupId}`);
+  }
+
+  createNoteTag(data) {
+    return this.post("/note/tag", data);
+  }
+
+  getAllNoteTags() {
+    return this.get("/note/tag/all");
+  }
+
+  deleteNoteTag(tagId) {
+    return this.delete(`/note/tag/${tagId}`);
+  }
 }
 
 export default NoteService;

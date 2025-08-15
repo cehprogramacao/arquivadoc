@@ -30,8 +30,9 @@ const options = [
 ];
 
 
+const rtdSv = new RTDService();
 
-const PageRPJ = () => {
+const PageRTD = () => {
     const dispatch = useDispatch()
     const { permissions } = useAuth()
     const [notation, setNotation] = useState("")
@@ -49,17 +50,16 @@ const PageRPJ = () => {
         option: "",
         value: ""
     })
+
     const [loading, setLoading] = useState(false)
     const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
     const [openModalCadastroRTD, setOpenModalCadastroRTD] = useState(false)
 
 
     const handleOpenModalListFilePDF = async () => {
-        const { getRTDByNotation } = new RTDService()
         try {
             setOpenModalListFilePDF(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getRTDByNotation(accessToken, notation)
+            const data = await rtdSv.getRTDByNotation(notation)
             setDataFile(data)
         } catch (error) {
             console.error("Erro ao buscar arquivo", error)
@@ -76,15 +76,13 @@ const PageRPJ = () => {
 
 
     const getAllFilesRTD = async () => {
-        const { getAllRTD } = new RTDService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getAllRTD(accessToken)
-            dispatch(showAlert(`Total de arquivos: ${Object.values(data).length}`, "success", "file"))
+            const data = await rtdSv.getAllRTD(accessToken)
+            dispatch({type: SET_ALERT, message: "Arquivos carregados com sucesso!", severity: "success", alertType: "file"})
             setData(Object.values(data))
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao buscar todos os arquivos!", severity: "error", alertType: "file"})
             console.error("Error ao buscar todos os arquivos", error)
             throw error;
         }
@@ -94,13 +92,12 @@ const PageRPJ = () => {
     }
 
 
-    const fetchAllFilesByNotation = async (notation, accessToken) => {
-        const { getRTDByNotation } = new RTDService()
+    const fetchAllFilesByNotation = async (notation) => {
         let newData = []
         try {
-            const { data } = await getRTDByNotation(accessToken, notation)
+            const data = await rtdSv.getRTDByNotation(notation)
             if (Object.values(data).length === 0) {
-                dispatch(showAlert("Nenhum arquivo com notação", "success", "file"))
+                dispatch({type: SET_ALERT, message: "Nenhum arquivo encontrado com a notação informada!", severity: "success", alertType: "file"})
                 setData([])
                 return false
             }
@@ -108,17 +105,16 @@ const PageRPJ = () => {
             return data
         } catch (error) {
             console.error("Erro ao buscar arquivo!", error)
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: error.msg, severity: "error", alertType: "file"})
             throw error;
         }
     }
-    const fetchAllFilesByPresenter = async (presenter, accessToken) => {
-        const { getRTDByPresenter } = new RTDService()
+    const fetchAllFilesByPresenter = async (presenter) => {
         let newData = []
         try {
-            const { data } = await getRTDByPresenter(accessToken, presenter)
+            const data = await rtdSv.getRTDByPresenter(presenter)
             if (Object.values(data).length === 0) {
-                dispatch(showAlert("Nenhum arquivo com esse apresentante", "success", "file"))
+                dispatch({type: SET_ALERT, message: "Nenhum arquivo encontrado com o apresentante informado!", severity: "success", alertType: "file"})
                 setData([])
                 return false
             }
@@ -126,20 +122,19 @@ const PageRPJ = () => {
             return data
         } catch (error) {
             console.error("Erro ao buscar arquivo!", error)
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: error.msg, severity: "error", alertType: "file"})
             throw error;
         }
     }
 
     const handleFetchFileByNotationOrPresenter = async () => {
-        const accessToken = sessionStorage.getItem("accessToken")
         if (option.option && option.value) {
             try {
                 if (option.option === 'Notação') {
-                    await fetchAllFilesByNotation(option.value, accessToken)
+                    await fetchAllFilesByNotation(option.value)
                 }
                 if (option.option === 'Apresentante') {
-                    await fetchAllFilesByPresenter(option.value, accessToken)
+                    await fetchAllFilesByPresenter(option.value)
                 }
             } catch (error) {
                 console.log("Erro ao buscar arquivo!", error)
@@ -147,19 +142,17 @@ const PageRPJ = () => {
             }
         }
         else {
-            dispatch(showAlert("Campos vazios!", "error", "file"))
+            dispatch({type: SET_ALERT, message: "Campos vazios!", severity: "error", alertType: "file"})
             console.error("Campos vazios!")
         }
     }
     const handleDeleteFileRtdByNotation = async () => {
-        const { deleteRTDByNotation } = new RTDService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await deleteRTDByNotation(accessToken, notation)
-            dispatch(showAlert(data.message, "success", "file"))
+            const data = await rtdSv.deleteRTDByNotation(notation)
+            dispatch({type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file"})
         } catch (error) {
             console.error("Erro ao deletar arquivo!", error)
-            dispatch(showAlert(error?.message ? error.message : "Erro ao excluir arquivo!", "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao deletar arquivo!", severity: "error", alertType: "file"})
             throw error;
         }
         finally {
@@ -172,6 +165,14 @@ const PageRPJ = () => {
         setIsAdmin(isAdminUser)
     }, [])
 
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -267,7 +268,7 @@ const PageRPJ = () => {
                         <CadastroModalRTD onClose={handleCloseModalCadastroRTD} getData={getAllFilesRTD} />
                     </Drawer>
                 </Box>
-                <SnackBar />
+
                 <MenuOptionsFile
                     deletePerm={permissions[2]?.delete_permission}
                     editPerm={permissions[2]?.edit}
@@ -283,4 +284,4 @@ const PageRPJ = () => {
     );
 };
 
-export default withAuth(PageRPJ);
+export default PageRTD

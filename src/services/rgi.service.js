@@ -1,93 +1,49 @@
-import customAxios from "./middleware";
+import ServiceBase from "./service.base";
 
-class RGI {
-    create(data, accessToken) {
-        return customAxios.post("/rgi", data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+class RGI extends ServiceBase {
+  constructor() {
+    super("user");
+  }
 
-    getData(accessToken) {
-        return customAxios.get("/rgi", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  create(data) {
+    return this.post("/rgi", data);
+  }
 
-    getTrash(accessToken) {
-        return customAxios.get("/rgi/trash", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }   
-        });
-    }
+  getData() {
+    return this.get("/rgi");
+  }
 
-    restoreRgiFromTrash(prenotation, accessToken) {
-        return customAxios.post(`/rgi/restore/${prenotation}`, {}, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }   
-        });
-    }
+  getTrash() {
+    return this.get("/rgi/trash/rgi");
+  }
 
-    getByPresenter(presenter, accessToken) {
-        return customAxios.get(`/rgi/presenter/${presenter}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getByPresenter(presenter) {
+    return this.get(`/rgi/presenter/${presenter}`);
+  }
 
-    getByPrenotation(prenotation, accessToken) {
-        return customAxios.get(`/rgi/${prenotation}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getByPrenotation(prenotation) {
+    return this.get(`/rgi/${prenotation}`);
+  }
 
-    putByPrenotation(prenotation, data, accessToken) {
-        return customAxios.put(`/rgi/${prenotation}`, data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  putByPrenotation(prenotation, data) {
+    return this.put(`/rgi/${prenotation}`, data);
+  }
 
-    deleteByPrenotation(prenotation, accessToken) {
-        return customAxios.delete(`/rgi/${prenotation}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  deleteByPrenotation(prenotation) {
+    return this.delete(`/rgi/${prenotation}`);
+  }
 
-    createType(data, accessToken) {
-        return customAxios.post("/rgi/type", data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  createType(data) {
+    return this.post("/rgi/type", data);
+  }
 
-    getType(accessToken) {
-        return customAxios.get("/rgi/type/all", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getType() {
+    return this.get("/rgi/type/all");
+  }
 
-    deleteType(typeID, accessToken) {
-        return customAxios.delete(`/rgi/type/${typeID}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  deleteType(typeID) {
+    return this.delete(`/rgi/type/${typeID}`);
+  }
 }
 
 export default RGI;

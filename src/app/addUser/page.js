@@ -36,6 +36,8 @@ const StyledButtonContainer = styled(Box)({
     justifyContent: 'space-between',
     width: "100%",
 });
+const user = new User()
+
 const numberMaskEstruct = '(99) 99999-9999'
 const AddUser = () => {
     const [numberMask, setNumberMask] = useState(numberMaskEstruct)
@@ -47,6 +49,7 @@ const AddUser = () => {
         password: '',
         permissions: Array(7).fill().map(() => Array(4).fill(0)),
     });
+    
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const handleCheckedPermission = (permIndex, checkboxIndex) => {
@@ -71,7 +74,7 @@ const AddUser = () => {
         e.target.value?.replace(/\D/g, '').length < 11
             ? setNumberMask(numberMask)
             : setNumberMask(numberMask);
-        setUserData({ ...userData, phone: e.target.value });
+        setUserData({ ...userData, phone: e.target.value.replace(/[^\d]+/g, '')});
     };
     const handleInputBlur = () => {
         userData.phone?.replace(/\D/g, '').length === 11 && setNumberMask(numberMask);
@@ -83,11 +86,9 @@ const AddUser = () => {
         setSection('Permissoes');
     };
     const handleSend = async () => {
-        const user = new User()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await user.addUserByAdmin(userData, accessToken)
+            const data = await user.addUserByAdmin(userData)
             return data
         } catch (error) {
             console.log('Erro ao adicionar usuário!', error)

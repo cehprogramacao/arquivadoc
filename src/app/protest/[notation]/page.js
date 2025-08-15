@@ -12,6 +12,9 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { v4 as randomUUID } from 'uuid'
 
+
+const protestSv = new ProtestService()
+const customerSv = new Customer()
 const UpdateProtestByNotation = ({ params }) => {
     const dispatch = useDispatch()
     const [data, setData] = useState({
@@ -42,10 +45,8 @@ const UpdateProtestByNotation = ({ params }) => {
         setData((prev) => ({ ...prev, [name]: value }))
     }
     const getDataPresenter = async () => {
-        const { customers } = new Customer()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await customers(accessToken)
+            const data = await customerSv.customers()
             setPresenter(Object.values(data))
         } catch (error) {
             console.error("Erro ao buscar clientes", error)
@@ -64,14 +65,13 @@ const UpdateProtestByNotation = ({ params }) => {
         }
     }
     const handleUpdateProtestByNotation = async () => {
-        const { editProtestByNotation } = new ProtestService()
+
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await editProtestByNotation(params.notation,data, accessToken)
-            console.log(response.data)
-            dispatch(showAlert(response.data.message, "success", "file"))
+            const response = await protestSv.editProtestByNotation(params.notation, data)
+            console.log(response)
+            dispatch({ type: SET_ALERT, message: "Protesto atualizado com sucesso!", severity: "success", alertType: true })
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({ type: SET_ALERT, message: "Erro ao atualizar protesto!", severity: "error", alertType: true })
             console.error("Erro ao criar protesto!", error)
             throw new Error("Erro ao criar protesto!")
         }
@@ -297,7 +297,6 @@ const UpdateProtestByNotation = ({ params }) => {
                     </CustomContainer>
 
                 </Box>
-                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     )

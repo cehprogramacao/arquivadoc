@@ -11,10 +11,10 @@ import PrivateRoute from "@/utils/LayoutPerm"
 import { DocList } from "./tableLixeira"
 import MenuOptionsFile from "@/Components/ModalOptionsTrash"
 import { useDispatch } from "react-redux"
-import { showAlert } from "@/store/actions"
+import { SET_ALERT, showAlert } from "@/store/actions"
 
 
-
+const callingSv = new Calling()
 const LixeiraOficio = () => {
     const [data, setData] = useState([])
     const [number, setNumber] = useState(0)
@@ -29,16 +29,13 @@ const LixeiraOficio = () => {
     }
     const [loading, setLoading] = useState(false)
     const getAllCallingsInTrash = async () => {
-        const { getAllCallingsInTrash } = new Calling()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const allData = await getAllCallingsInTrash(accessToken)
-            setData(Object.values(allData.data))
-            dispatch(showAlert(`Total de arquivos na lixeira: ${Object.values(allData.data).length}`, "success", "file"))
-            return allData.data
+            const allData = await callingSv.getAllCallingsInTrash()
+            setData(Object.values(allData))
+            dispatch({ type: SET_ALERT, message: `Total de arquivos na lixeira: ${allData.lenght}`, severity: "success", alertType: "file" })
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({ type: SET_ALERT, message: error.message, severity: "error", alertType: "file" })
             console.error("Error ao pegar arquivos da lixeira!", error)
             throw error;
         }
@@ -48,16 +45,13 @@ const LixeiraOficio = () => {
     }
 
     const handleRestoreCallingByTrash = async () => {
-        const { restoreCallingFromTrash } = new Calling()
         try {
             setLoading(true)
-            console.log(typeof Number(number), '123123 number')
-            const accessToken = sessionStorage.getItem('accessToken')
-            const { data } = await restoreCallingFromTrash(number, accessToken)
-            dispatch(showAlert(data.message, "success", "file"))
+            const data = await callingSv.restoreCallingFromTrash(number)
+            dispatch({ type: SET_ALERT, message: data.message, severity: "success", alertType: "file" })
             return data
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "file"))
+            dispatch({ type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file" })
             console.error("Erro ao restaurar arquivo", error)
             throw error;
         }
@@ -67,21 +61,19 @@ const LixeiraOficio = () => {
         }
     }
 
-    
+
+
     useEffect(() => {
         getAllCallingsInTrash()
     }, [])
 
     const handleDeleteByNumber = async () => {
-        const { deleteCallingByNumber } = new Calling()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteCallingByNumber(number, accessToken)
-            dispatch(showAlert(response.data.message, "error", "file"))
-            return response.data
+            const response = await callingSv.deleteCallingByNumber(number)
+            dispatch({ type: SET_ALERT, message: response.message, severity: "success", alertType: "file" })
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({ type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file" })
             console.error("Error ao deletar arquivo rgi!", error)
             throw error;
         }
@@ -90,6 +82,15 @@ const LixeiraOficio = () => {
             getAllCallingsInTrash()
         }
     }
+
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -113,73 +114,72 @@ const LixeiraOficio = () => {
                                     </Typography>
                                 </Box>
                             </Grid>
-                            {/* <Grid item xs={12} >
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} lg={5} md={5} sm={6} >
-                                <TextField
-                                    fullWidth
-                                    label="Buscar"
-                                    sx={{
-                                        '& input': {
-                                            color: 'success.main',
-                                        },
-                                    }} color="success" />
-                            </Grid>
-                            <Grid item xs={12} lg={5} md={5} sm={6} >
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    fullWidth
-                                    options={top100Films}
-                                    autoHighlight
-                                    getOptionLabel={(option) => option.label}
-                                    renderInput={(params) => (
+                            <Grid item xs={12} >
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} lg={5} md={5} sm={6} >
                                         <TextField
-                                            {...params}
-                                            color="success"
-                                            label="Buscar Por"
-                                            onChange={(e) => {
-                                                const selected = top100Films.find(
-                                                    (item) => item.label === e.target.value
-                                                );
-                                                setSelect(selected)
-                                            }}
+                                            fullWidth
+                                            label="Buscar"
                                             sx={{
-                                                color: "#237117",
-                                                "& input": {
-                                                    color: "success.main",
+                                                '& input': {
+                                                    color: 'success.main',
                                                 },
-                                            }}
+                                            }} color="success" />
+                                    </Grid>
+                                    <Grid item xs={12} lg={5} md={5} sm={6} >
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            fullWidth
+                                            options={top100Films}
+                                            autoHighlight
+                                            getOptionLabel={(option) => option.label}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    color="success"
+                                                    label="Buscar Por"
+                                                    onChange={(e) => {
+                                                        const selected = top100Films.find(
+                                                            (item) => item.label === e.target.value
+                                                        );
+                                                        setSelect(selected)
+                                                    }}
+                                                    sx={{
+                                                        color: "#237117",
+                                                        "& input": {
+                                                            color: "success.main",
+                                                        },
+                                                    }}
+                                                />
+                                            )}
                                         />
-                                    )}
-                                />
+                                    </Grid>
+                                    <Grid item xs={12} lg={2} md={2} sm={12} >
+                                        <Box sx={{
+                                            width: "100%",
+                                            display: "flex",
+                                            justifyContent: "flex-end"
+                                        }}>
+                                            <Button variant="contained" onClick={handleBuscar} sx={{
+                                                background: '#247117',
+                                                padding: '14px 10px',
+                                                ":hover": {
+                                                    background: '#247117'
+                                                }
+                                            }}>
+                                                BUSCAR
+                                            </Button>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} lg={2} md={2} sm={12} >
-                                <Box sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "flex-end"
-                                }}>
-                                    <Button variant="contained" onClick={handleBuscar} sx={{
-                                        background: '#247117',
-                                        padding: '14px 10px',
-                                        ":hover": {
-                                            background: '#247117'
-                                        }
-                                    }}>
-                                        BUSCAR
-                                    </Button>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Grid> */}
                             <Grid item xs={12} >
                                 <DocList data={data} handleClick={handleOpenMenuTrash} setNumber={(e) => setNumber(e)} />
                             </Grid>
                         </Grid>
                     </CustomContainer>
                 </Box>
-                <SnackBar />
                 <MenuOptionsFile
                     open={open}
                     anchorEl={anchorEl}

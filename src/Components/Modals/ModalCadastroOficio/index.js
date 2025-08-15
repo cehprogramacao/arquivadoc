@@ -5,13 +5,15 @@ import CadastroModalCallingTypes from "@/Components/ModalsRegistration/ModalCada
 import SnackBar from "@/Components/SnackBar";
 import ScannerModal from "@/Components/scanner";
 import Calling from "@/services/calling.service";
-import { showAlert } from "@/store/actions";
+import { SET_ALERT, showAlert } from "@/store/actions";
 import { CloseOutlined } from "@mui/icons-material";
 import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton, Box, List, ListItem, ListItemText, ListItemButton, ListItemIcon, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from 'react-redux'
 
 
+
+const callingSv = new Calling()
 export const CadastroOficio = ({ onClose, getData }) => {
   const dispatch = useDispatch()
   const [dataCalling, setDataCalling] = useState({
@@ -50,10 +52,8 @@ export const CadastroOficio = ({ onClose, getData }) => {
   }
 
   const getDataTypes = async () => {
-    const { getAllCallingTypes } = new Calling()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await getAllCallingTypes(accessToken)
+      const data = await callingSv.getAllCallingTypes()
       setTypes(Object.values(data))
       return data
 
@@ -63,10 +63,8 @@ export const CadastroOficio = ({ onClose, getData }) => {
     }
   }
   const getDataEntity = async () => {
-    const { getAllCallingEntities } = new Calling()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await getAllCallingEntities(accessToken)
+      const data = await callingSv.getAllCallingEntities()
       setEntity(Object.values(data))
       return data
     } catch (error) {
@@ -81,16 +79,14 @@ export const CadastroOficio = ({ onClose, getData }) => {
   }, [])
 
   const handleCreateCalling = async () => {
-    const { createCalling } = new Calling()
     console.log(dataCalling)
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await createCalling(dataCalling, accessToken)
-      dispatch(showAlert(data.message, "success", "file"))
+      const data = await callingSv.createCalling(dataCalling)
+      dispatch({type: SET_ALERT, message: "Ofício cadastrado com sucesso!", severity: "success", alertType: "file"})
 
       return data
     } catch (error) {
-      dispatch(showAlert('Erro ao criar ofício', "error", "file"))
+      dispatch({type: SET_ALERT, message: "Erro ao cadastrar ofício!", severity: "error", alertType: "file"})
       console.error("Error ao adicionar arquivo!", error)
       throw error;
     }
@@ -100,26 +96,25 @@ export const CadastroOficio = ({ onClose, getData }) => {
     }
   }
   const handleDeleteEntityById = async (entityId) => {
-    const { deleteCallingEntity } = new Calling()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await deleteCallingEntity(entityId, accessToken)
+      const data = await callingSv.deleteCallingEntity(entityId)
       getDataEntity()
+      dispatch({type: SET_ALERT, message: "Editade deletada com sucesso!", severity: "success", alertType: "file"})
       return data
     } catch (error) {
+      dispatch({type: SET_ALERT, message: "Erro ao deletar entidade", severity: "success", alertType: "file"})
       console.error("Erro ao deletar entidade", error)
       throw error;
     }
   }
   const handleDeleteByTypeId = async (typeId) => {
-    const { deleteCallingType } = new Calling()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
       getDataTypes()
-      const { data } = await deleteCallingType(typeId, accessToken)
+      const data = await callingSv.deleteCallingType(typeId)
+      dispatch({type: SET_ALERT, message: "Tipo deletado com sucesso!", severity: "success", alertType: "file"})
       return data
     } catch (error) {
-      console.error("Erro ao deletar entidade", error)
+      console.error("Erro ao deletar tipo da entidade!", error)
       throw error;
     }
   }

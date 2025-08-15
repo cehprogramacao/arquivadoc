@@ -1,75 +1,44 @@
-import { default as customAxios } from "./middleware";
+import ServiceBase from "./service.base";
 
-class ProtestService {
-    createProtest(data, accessToken) {
-        return customAxios.post("/protest", data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+class ProtestService extends ServiceBase {
+    constructor() {
+        super();
     }
 
-    getAllProtests(accessToken) {
-        return customAxios.get("/protest", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    createProtest(data) {
+        return this.post("/protest", data);
     }
 
-    getProtestByPresenter(presenter, accessToken) {
-        return customAxios.get(`/protest/presenter/${presenter}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
-    getProtestByNotation(notation, accessToken) {
-        return customAxios.get(`/protest/${notation}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    getAllProtests() {
+        return this.get("/protest");
     }
 
-    deleteProtestByNotation(notation, accessToken) {
-        return customAxios.delete(`/protest/${notation}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    getProtestByPresenter(presenter) {
+        return this.get(`/protest/presenter/${presenter}`);
     }
 
-    editProtestByNotation(notation, data, accessToken) {
-        return customAxios.put(`/protest/${notation}`, data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    getProtestByNotation(notation) {
+        return this.get(`/protest/${notation}`);
     }
 
-    getProtestFromTrash(accessToken) {
-        return customAxios.get("/protest/trash", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    deleteProtestByNotation(notation) {
+        return this.delete(`/protest/${notation}`);
     }
 
-    restoreProtestFromTrash(notation, accessToken) {
-        return customAxios.put(`/protest/trash/${notation}`, {}, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+    editProtestByNotation(notation, data) {
+        return this.put(`/protest/${notation}`, data);
     }
 
-    // deleteProtestFromTrash(id, accessToken) {
-    //     return customAxios.delete(`/protest/trash/${id}`, {
-    //         headers: {
-    //             Authorization: `Bearer ${accessToken}`
-    //         }
-    //     });
+    getProtestFromTrash() {
+        return this.get("/protest/trash");
+    }
+
+    restoreProtestFromTrash(notation) {
+        return this.put(`/protest/trash/${notation}`, {});
+    }
+
+    // deleteProtestFromTrash(id) {
+    //     return this.delete(`/protest/trash/${id}`);
     // }
 }
 

@@ -12,7 +12,7 @@ export const DocList = ({ data, setCPF, handleClick }) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
     const columns = isSmallScreen ? 1 : 4;
 
-
+    console.log("Data in DocList:", data, Array.from(data));
 
     return (
         <Grid
@@ -27,7 +27,7 @@ export const DocList = ({ data, setCPF, handleClick }) => {
                 overflowY: 'auto',
             }}
         >
-            {data && data.map((item, index) => (
+            {data && (Array.isArray(data) ? data : [data]).map((item, index) => (
                 <Grid
                     item
                     key={index}
@@ -57,7 +57,7 @@ export const DocList = ({ data, setCPF, handleClick }) => {
                                     fontWeight: 'bold',
                                 }}
                                 primary={item.box}
-                                secondary={`por ${item.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, '$1.$2.$3-$4')}`}
+                                secondary={`por ${item?.cpf?.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, '$1.$2.$3-$4')}`}
                             />
                         </ListItem>
                     </List>

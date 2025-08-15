@@ -18,14 +18,15 @@ import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
 import withAuth from '@/utils/withAuth';
 import { useDispatch } from 'react-redux';
-import { showAlert } from '@/store/actions';
+import { SET_ALERT, showAlert } from '@/store/actions';
 
-const top100Films = [
+const labels = [
     { label: 'Número' },
     { label: 'Entidade' },
 ];
 
 
+const callingSv = new Calling()
 
 const PageOficio = () => {
     const dispatch = useDispatch()
@@ -45,15 +46,15 @@ const PageOficio = () => {
     const [isAdmin, setIsAdmin] = useState("")
     const [dataFile, setDataFile] = useState([])
 
+
+
     const handleOpenModalPDF = async () => {
-        const { getCallingByNumber } = new Calling()
         try {
             setOpenPDF(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await getCallingByNumber(number, accessToken)
-            console.log(response.data, 'data-modal')
-            setDataFile(response.data)
-            return response.data
+            const response = await callingSv.getCallingByNumber(number)
+            console.log(response, 'data-modal')
+            setDataFile(response)
+            return response
         } catch (error) {
             console.error("Erro ao listar dados!", error)
             throw error;
@@ -77,16 +78,14 @@ const PageOficio = () => {
         setOpen(false);
     }
     const getCallingData = async () => {
-        const { getAllCallings } = new Calling()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getAllCallings(accessToken)
-            dispatch(showAlert(`Total de arquivos: ${Object.values(data).length}`, "success", "file"))
+            const data = await callingSv.getAllCallings()
+            dispatch({ type: SET_ALERT, message: `Foram encontrados ${Object.values(data).length} arquivos!`, severity: "success", alertType: "file" })
             setCallingData(Object.values(data))
             return data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({ type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file" })
             console.error("Erro ao pegar oficios!", error)
             throw error;
         }
@@ -102,12 +101,11 @@ const PageOficio = () => {
     }, [])
 
 
-    const getCallingByNumber = async (value, accessToken) => {
-        const { getCallingByNumber } = new Calling()
+    const getCallingByNumber = async (value) => {
         let newData = []
         try {
             setLoading(true)
-            const { data } = await getCallingByNumber(value, accessToken)
+            const data = await callingSv.getCallingByNumber(value)
             dispatch(showAlert(`Arquivo de ${data.entity}`, "success", "file"))
             setCallingData(Object.values(data));
             return data
@@ -120,11 +118,10 @@ const PageOficio = () => {
             setLoading(false)
         }
     }
-    const getCallingByEntity = async (value, accessToken) => {
-        const { getCallingByEntity } = new Calling()
+    const getCallingByEntity = async (value) => {
         try {
             setLoading(true)
-            const { data } = await getCallingByEntity(value, accessToken)
+            const data = await callingSv.getCallingByEntity(value)
             dispatch(showAlert(`Arquivo de ${data.entity}`, "success", "file"))
             setCallingData(Object.values(data));
             return data
@@ -139,35 +136,32 @@ const PageOficio = () => {
     }
 
     const handleFilterByNumberOrEntity = async () => {
-        const accessToken = sessionStorage.getItem("accessToken");
         if (selectOption.option && selectOption.value) {
             try {
                 if (selectOption.option.label === "Número") {
-                    await getCallingByNumber(selectOption.value, accessToken);
+                    await callingSv.getCallingByNumber(selectOption.value);
                 } else if (selectOption.option.label === "Entidade") {
-                    await getCallingByEntity(selectOption.value, accessToken);
+                    await callingSv.getCallingByEntity(selectOption.value);
                 }
 
             } catch (error) {
                 console.error("Erro ao filtrar", error);
-                dispatch(showAlert(error.msg, "error", "file"))
+                dispatch({ type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file" })
             }
         } else {
             console.error("Opção ou valor não definidos.");
-            dispatch(showAlert('Opção ou valores indefinidos!', "error", "file"))
+            dispatch({ type: SET_ALERT, message: "Opção ou valor não definidos.", severity: "error", alertType: "file" })
         }
     }
 
     const handleDeleteByNumber = async () => {
-        const { deleteCallingByNumber } = new Calling()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteCallingByNumber(number, accessToken)
-            dispatch(showAlert(response.data.message, "error", "file"))
-            return response.data
+            const response = await callingSv.deleteCallingByNumber(number)
+            dispatch(showAlert(response.message, "error", "file"))
+            return response
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({ type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file" })
             console.error("Error ao deletar arquivo rgi!", error)
             throw error;
         }
@@ -176,6 +170,14 @@ const PageOficio = () => {
             getCallingData()
         }
     }
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -219,7 +221,7 @@ const PageOficio = () => {
                                         <Autocomplete
                                             disablePortal
                                             id="combo-box-demo"
-                                            options={top100Films}
+                                            options={labels}
                                             getOptionLabel={(option) => option.label}
                                             fullWidth
                                             value={selectOption.option}
@@ -266,7 +268,6 @@ const PageOficio = () => {
                     open={openPDF}
                     data={dataFile}
                     number={number} onClose={handleCloseModalPDF} handleDeleteByNumber={handleDeleteByNumber} />
-                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     );

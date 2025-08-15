@@ -8,8 +8,11 @@ import { CloseOutlined } from '@mui/icons-material';
 import RPJService from '@/services/rpj.service';
 import Customer from '@/services/customer.service';
 import { useDispatch } from 'react-redux'
-import { showAlert } from '@/store/actions';
+import { SET_ALERT, showAlert } from '@/store/actions';
 import { useAuth } from '@/context';
+
+const rpjSv = new RPJService()
+const customerSv = new Customer()
 
 export const CadastroModalRPJ = ({ onClose, getData }) => {
     const dispatch = useDispatch()
@@ -35,14 +38,11 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
     const handleCloseModalTypes = () => setOpenModalCadastroTypes(!openModalCadastroTypes)
 
     const fetchData = async () => {
-        const { getAllRPJTypes } = new RPJService()
-        const { customers } = new Customer()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const responseCustomers = await customers(accessToken)
-            const responseTypes = await getAllRPJTypes(accessToken)
-            setPresenter(Object.values(responseCustomers.data))
-            setTypes(Object.values(responseTypes.data))
+            const responseCustomers = await customerSv.customers()
+            const responseTypes = await rpjSv.getAllRPJTypes()
+            setPresenter(Object.values(responseCustomers))
+            setTypes(Object.values(responseTypes))
 
         } catch (error) {
             console.error('Erro ao buscar dados!', error)
@@ -68,14 +68,12 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
     }
 
     const handleCreateFileRpj = async () => {
-        const { createRPJ } = new RPJService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await createRPJ(accessToken, data)
-            dispatch(showAlert(response.data.message, "success", "file"))
+            const response = await rpjSv.createRPJ(data)
+            dispatch({type: SET_ALERT, message: "Arquivo de rpj cadastrado com sucesso!", alertType: "file", severity: "success"})
         } catch (error) {
             console.error("Erro ao arquivar arquivo de rpj", error)
-            dispatch(showAlert(error.message, "error", "file"))
+            dispatch({type: SET_ALERT, message: "Erro ao arquivar arquivo de rpj", alertType: "file", severity: "error"})
             throw error
         }
         finally {
@@ -84,12 +82,12 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
         }
     }
     const deletePresenterById = async (typeId) => {
-        const { deleteCustomer } = new Customer()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await deleteCustomer(typeId, accessToken)
+            const data = await customerSv.deleteCustomer(typeId)
+            dispatch({type: SET_ALERT, message: "Apresentante deletado com sucesso!", alertType: "file", severity: "success"})
             console.log(data)
         } catch (error) {
+             dispatch({type: SET_ALERT, message: "Erro ao deletar apresentante", alertType: "file", severity: "error"})
             console.error('Erro ao deletar tipo de rgi!', error)
             throw error;
         }
@@ -97,12 +95,12 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
     }
 
     const handleDeleteTypeRpjById = async (typeId) => {
-        const { deleteRPJTypeById } = new RPJService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await deleteRPJTypeById(accessToken, typeId)
+            const data = await customerSv.deleteRPJTypeById(typeId)
+             dispatch({type: SET_ALERT, message: "Tipo de rpj deletado com sucesso!", alertType: "file", severity: "success"})
         } catch (error) {
             console.error("Erro ao deletar tipo de rpj!", error)
+            dispatch({type: SET_ALERT, message: "Erro ao deletar tipo de rpj", alertType: "file", severity: "error"})
             throw error;
         }
         finally {

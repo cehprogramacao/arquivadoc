@@ -1,165 +1,329 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Grid, Modal, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { 
+    Box, 
+    Button, 
+    Modal, 
+    Typography, 
+    useMediaQuery, 
+    useTheme,
+    Paper,
+    Chip,
+    IconButton,
+    Tooltip,
+    Alert,
+    CircularProgress
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import PrintIcon from '@mui/icons-material/Print';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Viewer, Worker } from '@react-pdf-viewer/core';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import RGI from '@/services/rgi.service';
-import CustomContainer from '@/Components/CustomContainer';
+import CloseIcon from '@mui/icons-material/Close';
+import DescriptionIcon from '@mui/icons-material/Description';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import NoteService from '@/services/notes.service';
 
-const ModalList = ({ open, data, onClose, number, deletePerm, editPerm }) => {
-    const path = usePathname().split("/")[1]
-    // console.log(data, '696969696996969696')
-    const theme = useTheme()
+const noteSv = new NoteService();
+
+const ModalList = ({ 
+    open, 
+    data, 
+    onClose, 
+    number, 
+    deletePerm = 0, 
+    editPerm = 0 
+}) => {
+    const path = usePathname().split("/")[1];
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    
+    const [loading, setLoading] = useState(false);
+    const [pdfError, setPdfError] = useState(false);
+
     const createBlobUrl = (base64Data) => {
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
+        if (!base64Data) return null;
+        
+        try {
+            // Remove data URL prefix if present
+            const cleanBase64 = base64Data.replace(/^data:application\/pdf;base64,/, '');
+            const byteCharacters = atob(cleanBase64);
+            const byteNumbers = new Array(byteCharacters.length);
 
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+            return URL.createObjectURL(blob);
+        } catch (error) {
+            console.error('Erro ao criar blob URL:', error);
+            setPdfError(true);
+            return null;
         }
-
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-        return URL.createObjectURL(blob);
     };
+
     const handlePrintFile = () => {
-        const base64Data = data.file;
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        if (!data?.file) {
+            alert("Arquivo não disponível para impressão.");
+            return;
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
 
-        // Criar uma URL do Blob e abrir em uma nova janela
-        const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, '_blank');
-    }
-    const defaultLayoutPluginInstance = defaultLayoutPlugin();
-
-    // console.log(data, 'ModalListaaaaaaaaaaaaaaaaaaaaaaa')
-    // console.log(data.file, 'Index e Filllllllllllllllllllllllle')
+        const blobUrl = createBlobUrl(data.file);
+        if (blobUrl) {
+            window.open(blobUrl, '_blank');
+        } else {
+            alert("Não foi possível abrir o arquivo PDF.");
+        }
+    };
 
     const handleDeleteByNumber = async () => {
-        const { deleteNoteByNumber } = new NoteService()
+        if (!confirm('Tem certeza que deseja deletar este documento?')) return;
+        
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await deleteNoteByNumber(number, accessToken)
-            console.log(response.data)
-            onClose()
-            return response.data
+            setLoading(true);
+            await noteSv.deleteNoteByNumber(number);
+            onClose();
         } catch (error) {
-            console.error("Error ao deletar arquivo rgi!", error)
-            throw error;
+            console.error("Erro ao deletar arquivo rgi!", error);
+            alert('Erro ao deletar documento. Tente novamente.');
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+
+    const renderPDFViewer = () => {
+        if (!data?.file) {
+            return (
+                <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '400px'
+                }}>
+                    <Alert severity="warning" sx={{ textAlign: 'center' }}>
+                        <Typography>
+                            Documento não disponível ou arquivo inválido.
+                        </Typography>
+                    </Alert>
+                </Box>
+            );
+        }
+
+        if (pdfError) {
+            return (
+                <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '400px'
+                }}>
+                    <Alert severity="error" sx={{ textAlign: 'center' }}>
+                        <Typography>
+                            Erro ao carregar o documento PDF.
+                        </Typography>
+                    </Alert>
+                </Box>
+            );
+        }
+
+        const src = `data:application/pdf;base64,${data.file}`;
+
+        return (
+            <iframe
+                title="PDF Viewer"
+                src={src}
+                width="100%"
+                height="100%"
+                style={{ 
+                    border: 'none',
+                    minHeight: isMobile ? '300px' : '500px'
+                }}
+                onError={() => setPdfError(true)}
+            />
+        );
+    };
+
+    useEffect(() => {
+        console.log(data, 'data do modal');
+    }, [data]);
 
     return (
-        <>
-
-
-            <Modal
-                open={open}
-                onClose={onClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={{
-                    position: 'absolute',
-                    width: '80%',
-                    maxWidth: '100%',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    bgcolor: 'background.paper',
-                    border: '1px solid #e9e9e9',
-                    boxShadow: 24,
-                    p: 4,
-                    borderRadius: "20px"
+        <Modal
+            open={open}
+            onClose={onClose}
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
+        >
+            <Box sx={{
+                position: 'absolute',
+                width: isMobile ? '95%' : '90%',
+                maxWidth: '1200px',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'background.paper',
+                border: '1px solid #e0e0e0',
+                boxShadow: 24,
+                borderRadius: "16px",
+                overflow: 'hidden',
+                maxHeight: '90vh',
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
+                {/* Header */}
+                <Box sx={{ 
+                    p: 2, 
+                    borderBottom: '1px solid #e0e0e0',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    bgcolor: '#f5f5f5'
                 }}>
-                    <Grid container alignItems={"flex-start"} justifyContent={"space-between"}>
-                        <Grid item xs={12} lg={8} md={8} sm={12}>
-                            <Box sx={{
-                                width: "100%",
-                                py: 2,
-                                px: 2,
-                                height: { lg: 500, md: 500, sm: 400, xs: 350 }
-                            }}>
-                                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                    <Viewer fileUrl={`data:application/pdf;base64,${data.file}`} plugins={[defaultLayoutPluginInstance]} />
-                                    {/* <Viewer fileUrl={createBlobUrl(data[index]?.file)} plugins={[defaultLayoutPluginInstance]} /> */}
-                                    {/* <Viewer fileUrl={data[0]?.file} plugins={[defaultLayoutPluginInstance]} /> */}
-                                </Worker>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} lg={4} md={4} sm={12}>
-                            <Box sx={{
-                                width: "100%",
-                                display: 'flex',
-                                gap: '25px',
-                                alignItems: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" },
-                                flexDirection: { lg: "column", md: "column", sm: "row", xs: "row" },
-                                py: 2,
-                                justifyContent: { lg: "flex-end", md: "flex-end", sm: "center", xs: "center" }
-                            }}>
-                                {/* Add your buttons here */}
-                                {editPerm === 1 && (
-                                    <Link href={`/${path}/[number]`} as={`/${path}/${number}`}>
-                                        <Button variant="outlined" color='inherit' sx={{
-                                            color: '#FFD500',
-                                            ":hover": {
-                                                color: '#FFD500'
-                                            }
-                                        }}>
-                                            <EditIcon />
-                                        </Button>
-                                    </Link>
-                                )}
-
-                                <Button variant="outlined" color='inherit' sx={{
-                                    color: "#0dcaf0",
-                                    ":hover": {
-                                        color: "#0DCAF0"
-                                    }
-                                }} onClick={() => handlePrintFile()} >
-                                    <PrintIcon />
-                                </Button>
-                                {deletePerm === 1 && (
-                                    <Button variant="outlined" color='error' onClick={handleDeleteByNumber}>
-                                        <DeleteIcon sx={{
-                                            fill: '#dc3545'
-                                        }} />
-                                    </Button>
-                                )}
-                            </Box>
-                        </Grid>
-                    </Grid>
-                    {/* <Box sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "row",
-                        mt: 2,
-                        gap: " 80px",
-                        flexWrap: "wrap",
-                        placeContent: "center"
-                    }}>
-
-
-                        
-                    </Box> */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <DescriptionIcon color="primary" />
+                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                            Visualização de Documento
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {number && (
+                            <Chip 
+                                label={`Nº: ${number}`} 
+                                size="small" 
+                                color="primary" 
+                                variant="outlined"
+                            />
+                        )}
+                        <IconButton onClick={onClose} size="small">
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
                 </Box>
-            </Modal>
-        </>
+
+                {/* Content Area */}
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}>
+                    {/* PDF Viewer */}
+                    <Box sx={{ 
+                        flex: 1, 
+                        p: 2,
+                        minHeight: isMobile ? '300px' : '500px'
+                    }}>
+                        <Paper 
+                            elevation={1} 
+                            sx={{ 
+                                height: '100%',
+                                border: '1px solid #e0e0e0',
+                                borderRadius: '8px',
+                                overflow: 'hidden',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}
+                        >
+                            <Box sx={{
+                                p: 1,
+                                borderBottom: '1px solid #e0e0e0',
+                                bgcolor: '#fafafa',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1
+                            }}>
+                                <VisibilityIcon sx={{ fontSize: '1rem', color: 'text.secondary' }} />
+                                <Typography variant="body2" color="text.secondary">
+                                    Documento PDF
+                                </Typography>
+                            </Box>
+                            <Box sx={{ flex: 1 }}>
+                                {renderPDFViewer()}
+                            </Box>
+                        </Paper>
+                    </Box>
+
+                    {/* Action Panel */}
+                    <Box sx={{ 
+                        width: isMobile ? '100%' : '200px',
+                        p: 2,
+                        display: 'flex',
+                        flexDirection: isMobile ? 'row' : 'column',
+                        gap: 2,
+                        justifyContent: isMobile ? 'center' : 'flex-start',
+                        flexWrap: isMobile ? 'wrap' : 'nowrap'
+                    }}>
+                        {/* Edit Button - Only show if permission is granted */}
+                        {editPerm === 1 && (
+                            <Tooltip title="Editar documento">
+                                <Link href={`/${path}/[number]`} as={`/${path}/${number}`}>
+                                    <Button 
+                                        variant="outlined" 
+                                        fullWidth={!isMobile}
+                                        sx={{
+                                            color: '#ed6c02',
+                                            borderColor: '#ed6c02',
+                                            minWidth: isMobile ? '120px' : 'auto',
+                                            ":hover": {
+                                                backgroundColor: '#fff3e0',
+                                                borderColor: '#ed6c02'
+                                            }
+                                        }}
+                                        startIcon={<EditIcon />}
+                                    >
+                                        Editar
+                                    </Button>
+                                </Link>
+                            </Tooltip>
+                        )}
+
+                        {/* Print Button */}
+                        <Tooltip title="Imprimir documento">
+                            <Button 
+                                variant="outlined" 
+                                fullWidth={!isMobile}
+                                onClick={handlePrintFile}
+                                disabled={!data?.file}
+                                sx={{
+                                    color: "#0dcaf0",
+                                    borderColor: "#0dcaf0",
+                                    minWidth: isMobile ? '120px' : 'auto',
+                                    ":hover": {
+                                        backgroundColor: '#e3f2fd',
+                                        borderColor: "#0dcaf0"
+                                    }
+                                }}
+                                startIcon={<PrintIcon />}
+                            >
+                                Imprimir
+                            </Button>
+                        </Tooltip>
+
+                        {/* Delete Button - Only show if permission is granted */}
+                        {deletePerm === 1 && (
+                            <Tooltip title="Deletar documento">
+                                <Button 
+                                    variant="outlined" 
+                                    color='error'
+                                    fullWidth={!isMobile}
+                                    onClick={handleDeleteByNumber}
+                                    disabled={loading}
+                                    sx={{
+                                        minWidth: isMobile ? '120px' : 'auto',
+                                        ":hover": {
+                                            backgroundColor: '#ffebee'
+                                        }
+                                    }}
+                                    startIcon={loading ? <CircularProgress size={16} /> : <DeleteIcon />}
+                                >
+                                    {loading ? 'Deletando...' : 'Deletar'}
+                                </Button>
+                            </Tooltip>
+                        )}
+                    </Box>
+                </Box>
+            </Box>
+        </Modal>
     );
-}
+};
 
 export default ModalList;

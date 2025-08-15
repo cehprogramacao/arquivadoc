@@ -5,7 +5,7 @@ import Loading from "@/Components/loading"
 import { AuthProvider } from "@/context"
 import Calling from "@/services/calling.service"
 import RGI from "@/services/rgi.service"
-import { showAlert } from "@/store/actions"
+import { SET_ALERT, showAlert } from "@/store/actions"
 import PrivateRoute from "@/utils/LayoutPerm"
 import withAuth from "@/utils/withAuth"
 import { Grid, Box, TextField, Container, Button, Autocomplete } from "@mui/material"
@@ -13,6 +13,8 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 
+
+const callingSv = new Calling()
 const EditCallingByNumber = ({ params }) => {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -30,10 +32,8 @@ const EditCallingByNumber = ({ params }) => {
     })
 
     const getTypes = async () => {
-        const { getAllCallingTypes } = new Calling()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getAllCallingTypes(accessToken)
+            const data = await callingSv.getAllCallingTypes()
             setTypes(Object.values(data))
             return data
         } catch (error) {
@@ -42,10 +42,8 @@ const EditCallingByNumber = ({ params }) => {
         }
     }
     const getEntity = async () => {
-        const { getAllCallingEntities } = new Calling()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await getAllCallingEntities(accessToken)
+            const data = await callingSv.getAllCallingEntities()
             setEntity(Object.values(data))
             return data
         } catch (error) {
@@ -71,15 +69,13 @@ const EditCallingByNumber = ({ params }) => {
 
     const handleToUpdateCalling = async () => {
         console.log(dataCalling)
-        const { updateCallingByNumber } = new Calling()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await updateCallingByNumber(params.number, dataCalling, accessToken)
-            dispatch(showAlert(data.message,"success", "file"))
+            const data = await callingSv.updateCallingByNumber(params.number, dataCalling )
+            dispatch({type: SET_ALERT, message: "Chamado atualizado com sucesso!", severity: "success", alertType: "user"})
             return data
         } catch (error) {
-            dispatch(showAlert(error.msg, "error", "file"))
+            dispatch({type: SET_ALERT, message: error.message, severity: "error", alertType: "user"})
             console.error("Erro ao editar ofício!", error)
             throw error;
         }
@@ -196,7 +192,6 @@ const EditCallingByNumber = ({ params }) => {
                             </Container>
                         </CustomContainer>
                     </Box>
-                <SnackBar />
             </PrivateRoute>
         </AuthProvider>
     )
