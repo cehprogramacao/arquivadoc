@@ -7,7 +7,7 @@ import { Grid } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux'
-import { showAlert } from '@/store/actions';
+import { SET_ALERT, showAlert } from '@/store/actions';
 import Loading from '@/Components/loading';
 import withAuth from '@/utils/withAuth';
 import CustomContainer from '@/Components/CustomContainer';
@@ -19,6 +19,8 @@ import RTDService from '@/services/rtd.service';
 import ModalList from './components/ModalPDF';
 import { DocList } from './components/TableRTD';
 import { CadastroModalRTD } from '@/Components/Modals/ModalCadastroRTD';
+import { useRouter } from 'next/navigation';
+import { isLoggedIn } from '@/utils/auth';
 const options = [
     {
         label: 'Apresentante'
@@ -51,6 +53,8 @@ const PageRTD = () => {
         value: ""
     })
 
+    const router = useRouter()
+
     const [loading, setLoading] = useState(false)
     const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
     const [openModalCadastroRTD, setOpenModalCadastroRTD] = useState(false)
@@ -66,6 +70,11 @@ const PageRTD = () => {
             throw error;
         }
     }
+    useEffect(() => {
+        if (!isLoggedIn()) {
+            router.push("/")
+        }
+    }, [])
 
     const handleCloseModalListFilePDF = () => {
         setOpenModalListFilePDF(false)
@@ -78,11 +87,11 @@ const PageRTD = () => {
     const getAllFilesRTD = async () => {
         try {
             setLoading(true)
-            const data = await rtdSv.getAllRTD(accessToken)
-            dispatch({type: SET_ALERT, message: "Arquivos carregados com sucesso!", severity: "success", alertType: "file"})
+            const data = await rtdSv.getAllRTD()
+            dispatch({ type: SET_ALERT, message: "Arquivos carregados com sucesso!", severity: "success", alertType: "file" })
             setData(Object.values(data))
         } catch (error) {
-            dispatch({type: SET_ALERT, message: "Erro ao buscar todos os arquivos!", severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: "Erro ao buscar todos os arquivos!", severity: "error", alertType: "file" })
             console.error("Error ao buscar todos os arquivos", error)
             throw error;
         }
@@ -97,7 +106,7 @@ const PageRTD = () => {
         try {
             const data = await rtdSv.getRTDByNotation(notation)
             if (Object.values(data).length === 0) {
-                dispatch({type: SET_ALERT, message: "Nenhum arquivo encontrado com a notação informada!", severity: "success", alertType: "file"})
+                dispatch({ type: SET_ALERT, message: "Nenhum arquivo encontrado com a notação informada!", severity: "success", alertType: "file" })
                 setData([])
                 return false
             }
@@ -105,7 +114,7 @@ const PageRTD = () => {
             return data
         } catch (error) {
             console.error("Erro ao buscar arquivo!", error)
-            dispatch({type: SET_ALERT, message: error.msg, severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: error.msg, severity: "error", alertType: "file" })
             throw error;
         }
     }
@@ -114,7 +123,7 @@ const PageRTD = () => {
         try {
             const data = await rtdSv.getRTDByPresenter(presenter)
             if (Object.values(data).length === 0) {
-                dispatch({type: SET_ALERT, message: "Nenhum arquivo encontrado com o apresentante informado!", severity: "success", alertType: "file"})
+                dispatch({ type: SET_ALERT, message: "Nenhum arquivo encontrado com o apresentante informado!", severity: "success", alertType: "file" })
                 setData([])
                 return false
             }
@@ -122,7 +131,7 @@ const PageRTD = () => {
             return data
         } catch (error) {
             console.error("Erro ao buscar arquivo!", error)
-            dispatch({type: SET_ALERT, message: error.msg, severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: error.msg, severity: "error", alertType: "file" })
             throw error;
         }
     }
@@ -142,17 +151,17 @@ const PageRTD = () => {
             }
         }
         else {
-            dispatch({type: SET_ALERT, message: "Campos vazios!", severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: "Campos vazios!", severity: "error", alertType: "file" })
             console.error("Campos vazios!")
         }
     }
     const handleDeleteFileRtdByNotation = async () => {
         try {
             const data = await rtdSv.deleteRTDByNotation(notation)
-            dispatch({type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file" })
         } catch (error) {
             console.error("Erro ao deletar arquivo!", error)
-            dispatch({type: SET_ALERT, message: "Erro ao deletar arquivo!", severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: "Erro ao deletar arquivo!", severity: "error", alertType: "file" })
             throw error;
         }
         finally {

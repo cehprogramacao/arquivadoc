@@ -5,21 +5,18 @@ import SnackBar from "@/Components/SnackBar"
 import { AuthProvider } from "@/context"
 import Customer from "@/services/customer.service"
 import NoteService from "@/services/notes.service"
+import { SET_ALERT } from "@/store/actions"
 import PrivateRoute from "@/utils/LayoutPerm"
 import { Autocomplete, Box, Grid, TextField, Button } from "@mui/material"
 import { Container } from "@mui/system"
 import { useEffect, useState } from "react"
+import { useDispatch } from "react-redux"
 
 
-
+const noteSv = new NoteService()
 const NoteUpdate = ({ params }) => {
     const [loading, setLoading] = useState(false)
-    const [alert, setAlert] = useState({
-        open: false,
-        severity: "",
-        text: "",
-        type: ""
-    })
+   
     const [data, setData] = useState({
         tag: 0,
         presenter: 0,
@@ -42,6 +39,8 @@ const NoteUpdate = ({ params }) => {
             fileReader.readAsDataURL(files)
         }
     }
+
+    const dispatch = useDispatch()
     const [optionTag, setOptionTag] = useState(null)
     const [optionPresenter, setOptionPresenter] = useState(null)
     const [notesType, setNotesType] = useState([]);
@@ -51,12 +50,9 @@ const NoteUpdate = ({ params }) => {
     const [tag, setTag] = useState([])
     const [presenter, setPresenter] = useState([])
     const getAllNotesTag = async () => {
-        const { getAllNoteTags } = new NoteService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const allTags = await getAllNoteTags(accessToken)
-            setTag(Object.values(allTags.data))
-            return allTags.data
+            const allTags = await noteSv.getAllNoteTags()
+            setTag(Object.values(allTags))
         } catch (error) {
             console.error("Error list of tags", error)
             throw error;
@@ -64,14 +60,12 @@ const NoteUpdate = ({ params }) => {
     }
 
     const getCustomersPresenter = async () => {
-        const customer = new Customer();
-        try {
-            const accessToken = sessionStorage.getItem("accessToken");
-            const allPresenter = await customer.customers(accessToken);
-            const newData = Object.values(allPresenter.data);
+        try {;
+            const allPresenter = await customer.customers();
+            const newData = Object.values(allPresenter);
             setPresenter(newData);
-            console.log(allPresenter.data);
-            return allPresenter.data;
+            console.log(allPresenter);
+            return allPresenter;
         } catch (error) {
             console.error("Error when listing presenters", error);
             throw error;
@@ -79,14 +73,11 @@ const NoteUpdate = ({ params }) => {
     };
 
     const getTypeAndGroup = async () => {
-        const { getAllNoteGroups, getAllNoteTypes } = new NoteService();
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const groups = await getAllNoteGroups(accessToken);
-            const types = await getAllNoteTypes(accessToken);
-            setNotesType(Object.values(groups.data))
-            setTypesGroup(Object.values(types.data))
-            return groups.data && types.data
+            const groups = await noteSv.getAllNoteGroups();
+            const types = await noteSv.getAllNoteTypes();
+            setNotesType(Object.values(groups))
+            setTypesGroup(Object.values(types))
         } catch (error) {
             console.error(error);
         }
@@ -98,16 +89,14 @@ const NoteUpdate = ({ params }) => {
     }, [])
 
     const handleUpdadeNote = async () => {
-        const { updateNoteByNumber } = new NoteService()
         console.log(data)
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await updateNoteByNumber(params.number, data, accessToken)
-            setAlert({ open: true, severity: "success", type: "file", text: response.data.message })
+            const response = await noteSv.updateNoteByNumber(params.number, data)
+            dispatch({type: SET_ALERT, message: "Arquivo atualizado!", severity: 'success', alertType: 'file'})
         } catch (error) {
             console.log('Erro ao editar arquivo!', error)
-            setAlert({ open: true, severity: "error", type: "file", text: error.message })
+            dispatch({type: SET_ALERT, message: "Erro ao atualizar arquivo!", severity: 'error', alertType: 'file'})
             throw error
         }
         finally {
@@ -120,11 +109,9 @@ const NoteUpdate = ({ params }) => {
         setData((prev) => ({ ...prev, [name]: value }))
     }
     const getDataNoteByNumber = async () => {
-        const { getNoteByNumber } = new NoteService()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await getNoteByNumber(params.number, accessToken)
+            const response = await noteSv.getNoteByNumber(params.number)
             setData({
                 ...data,
                 book: response.data.book,
@@ -305,7 +292,6 @@ const NoteUpdate = ({ params }) => {
                                 </Grid>
                             </Container>
                         </CustomContainer>
-                        <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
                     </Box>
                 </PrivateRoute>
             </AuthProvider>

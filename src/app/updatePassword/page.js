@@ -6,6 +6,7 @@ import { SET_ALERT } from '@/store/actions';
 import withAuth from '@/utils/withAuth';
 import { Box, Button, TextField, Typography, useTheme, useMediaQuery } from '@mui/material'
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 
 const userSv = new User()
@@ -16,14 +17,8 @@ const ChangePassoword = () => {
         password: ""
     })
     const [loading, setLoading] = useState(false)
-    const [alert, setAlert] = useState({
-        open: false,
-        text: "",
-        severity: "",
-        type: ""
-    })
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
+    const dispatch = useDispatch()
     const handleChangePassword = async () => {
         try {
             setLoading(true)
@@ -31,10 +26,10 @@ const ChangePassoword = () => {
                 throw new Error('Campo vazio')
             }
             const data = await userSv.changeUserPassword(password)
-            setAlert({ type: SET_ALERT, message: 'Senha atualizada com sucesso!', severity: 'success', alertType: "user" })
+            dispatch({ type: SET_ALERT, message: 'Senha atualizada com sucesso!', severity: 'success', alertType: "user" })
         } catch (error) {
             console.error("Erro ao alterar senha!", error)
-            setAlert({ type: SET_ALERT, message: 'Erro ao atualizar senha!' })
+            dispatch({ type: SET_ALERT, message: 'Erro ao atualizar senha!', severity: "error", alertType: 'user' })
             throw error;
         }
         finally {
@@ -102,7 +97,6 @@ const ChangePassoword = () => {
                     Atualizar
                 </Button>
             </Box>
-            <SnackBar data={alert} handleClose={(prev) => setAlert({ ...prev, open: false })} />
         </Box>
     )
         :

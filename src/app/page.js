@@ -37,12 +37,6 @@ const LoginPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [alert, setAlert] = useState({
-    open: false,
-    text: '',
-    type: '',
-    severity: ''
-  });
 
   const initialValues = {
     email: "",
@@ -71,22 +65,16 @@ const LoginPage = () => {
       }, 1500);
 
     } catch (err) {
-      const errorMessage = err?.response?.data?.message ||
-        err?.message ||
-        "Erro inesperado. Tente novamente.";
-      setAlert({
-        message: errorMessage,
-        alertType: 'error',
-        severity: "error"
+      dispatch({
+        type: SET_ALERT,
+        message: "Erro ao realizar login!",
+        alertType: "success",
+        severity: "success"
       });
     } finally {
       setIsLoading(false);
       setSubmitting(false);
     }
-  };
-
-  const handleClose = () => {
-    setAlert({ ...alert, open: false });
   };
 
   const [isClient, setIsClient] = useState(false);

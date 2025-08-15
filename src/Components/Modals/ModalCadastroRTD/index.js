@@ -40,10 +40,18 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
 
     const fetchData = async () => {
         try {
-            const responseCustomers = await customerSv.customers()
-            const responseTypes = await customerSv.getAllRTDTypes()
-            setPresenter(Object.values(responseCustomers))
+            const responseTypes = await rtdSv.getAllRTDTypes()
             setTypes(Object.values(responseTypes))
+
+        } catch (error) {
+            console.error('Erro ao buscar dados!', error)
+            throw error
+        }
+    }
+    const fetchDataCustomers = async () => {
+        try {
+            const responseCustomers = await customerSv.customers()
+            setPresenter(Object.values(responseCustomers))
 
         } catch (error) {
             console.error('Erro ao buscar dados!', error)
@@ -114,6 +122,7 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
     const handleCloseModalPartes = () => setOpenModalCadastroPartes(false)
     useEffect(() => {
         fetchData()
+        fetchDataCustomers()
     }, [])
 
     const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {

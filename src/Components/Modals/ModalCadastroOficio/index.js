@@ -28,12 +28,7 @@ export const CadastroOficio = ({ onClose, getData }) => {
   const [entity, setEntity] = useState([])
   const [entityOption, setEntityOption] = useState(null)
   const [groupOption, setGroupOption] = useState(null)
-  const [alert, setAlert] = useState({
-    open: false,
-    severity: "",
-    text: "",
-    type: ""
-  })
+
 
   const handleFileChange = (e) => {
     const files = e.target.files[0]

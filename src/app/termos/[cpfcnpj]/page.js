@@ -9,21 +9,17 @@ import PrivateRoute from "@/utils/LayoutPerm"
 import withAuth from "@/utils/withAuth"
 import { Box, Button, Container, Grid, TextField } from "@mui/material"
 import { useState } from "react"
+import { useDispatch } from "react-redux"
 
 const customerSv = new Customer()
 const PageToUpdate = ({ params }) => {
-
+    const dispatch = useDispatch()
     const [data, setData] = useState({
         box: "",
         file_url: ""
     })
     const [loading, setLoading] = useState(false)
-    const [alert, setAlert] = useState({
-        open: false,
-        type: "file",
-        severity: "",
-        text: ""
-    })
+    
     const handleChangeToUpdate = (e) => {
         const files = e.target.files[0]
         if (files) {
@@ -41,9 +37,9 @@ const PageToUpdate = ({ params }) => {
         try {
             setLoading(true)
             const putTerm = await customerSv.putTermLGDP(params.cpfcnpj, data)
-            setAlert({type: SET_ALERT, message: putTerm.message, severity: "success", alertType: "file"})
+            dispa({type: SET_ALERT, message: 'Termo editado com sucesso!', severity: "success", alertType: "file"})
         } catch (error) {
-            setAlert({ type: SET_ALERT, message: `Erro ao editar termo: ${error.message}`, severity: "error", alertType: "file" })
+            dispatch({ type: SET_ALERT, message: 'Erro ao editar termo!', severity: "error", alertType: "file" })
             console.error("Erro ao editar termo!")
             throw error;
 
@@ -107,10 +103,9 @@ const PageToUpdate = ({ params }) => {
                         </CustomContainer>
                     </Box>
                 }
-                <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
             </PrivateRoute>
         </AuthProvider>
     )
 }
 
-export default withAuth(PageToUpdate)
+export default PageToUpdate

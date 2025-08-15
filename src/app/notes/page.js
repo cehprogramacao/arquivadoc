@@ -20,6 +20,9 @@ import User from "@/services/user.service";
 import PrivateRoute from "@/utils/LayoutPerm";
 import { AuthProvider, useAuth } from "@/context";
 import { SET_ALERT } from "@/store/actions";
+import { useDispatch } from "react-redux";
+import { isLoggedIn } from "@/utils/auth";
+import { useRouter } from "next/navigation";
 
 const BoxMain = styled('section')({
     maxWidth: '1300px',
@@ -34,17 +37,13 @@ const PageNotas = () => {
     const theme = useTheme()
     const [loading, setLoading] = useState(false)
     const { permissions, updatePermissions } = useAuth()
-    const [alert, setAlert] = useState({
-        open: false,
-        text: "",
-        severity: "",
-        type: ""
-    })
     const [opt, setOpt] = useState(['Nome', 'CPF', 'Ordem', 'Livro', 'Livro Folha'])
     const [optService, setOptService] = useState(['Escrituras', 'Procuração', 'Substabelecimento', 'Divórcio',
         'Ata Notarial', 'Inventário'
     ])
 
+    const dispatch = useDispatch()
+    const router = useRouter()
     const [data, setData] = useState([])
     const [open, setOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
@@ -67,12 +66,11 @@ const PageNotas = () => {
         try {
             setLoading(true)
             const dataNote = await noteSv.getAllNotes()
-            // setAlert({ open: true, text: `Total de arquivos: ${Object.values(dataNote).length}`, type: "file", severity: "success" })
-            // console.log(dataNote)
+            
             dispatch({type: SET_ALERT, message: `Total de arquivos: ${Object.values(dataNote).length}`, severity: "success", alertType: "file"})
             setData(Object.values(dataNote))
         } catch (error) {
-            setAlert({type: SET_ALERT, message: error.message, severity: "error", alertType: "file"})
+            dispatch({type: SET_ALERT, message: 'Erro ao listar arquivos!', severity: 'error', alertType: 'file'})
             console.error("Erro ao listar notas", error)
             throw error;
         }
@@ -121,6 +119,12 @@ const PageNotas = () => {
         console.log(permissions, dataFileModal, 'permissões')
         getData()
 
+    }, [])
+
+    useEffect(() => {
+        if(!isLoggedIn()) {
+            router.push("/")
+        }
     }, [])
 
     const [isClient, setIsClient] = useState(false);
@@ -241,7 +245,7 @@ const PageNotas = () => {
                             </Grid>
                         </CustomContainer>
                         <Drawer anchor="left" open={open} onClose={handleClose}>
-                            <CadastroNotas onClose={handleClose} getData={getData} dataSnack={(e) => setAlert({ ...e })} />
+                            <CadastroNotas onClose={handleClose} getData={getData} />
                         </Drawer>
                         <MenuOptionsFile open={openMenu}
                             handleClose={handleCloseMenu}
@@ -254,7 +258,6 @@ const PageNotas = () => {
                         />
                         <ModalList data={dataFileModal} number={number} onClose={handleCloseModalPDF} open={openPDF} deletePerm={permissions[6]?.delete_permission}
                             editPerm={permissions[6]?.edit} />
-                        <SnackBar data={alert} handleClose={() => setAlert({ ...alert, open: false })} />
                     </Box>
                 }
             </PrivateRoute>

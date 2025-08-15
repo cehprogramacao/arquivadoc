@@ -16,7 +16,7 @@ import withAuth from "@/utils/withAuth"
 import { useDispatch } from "react-redux"
 import { SET_ALERT, showAlert } from "@/store/actions"
 
- const userSv = new User();
+const userSv = new User();
 const PageUsuarios = () => {
     const dispatch = useDispatch()
     const [dataRows, setDataRows] = useState([])
@@ -33,10 +33,10 @@ const PageUsuarios = () => {
     if (!isClient) return null;
     const [loading, setLoading] = useState(false)
     const getUsers = async () => {
-       
+
         try {
             setLoading(true)
-            
+
             const response = await userSv.getUsers()
             console.log(response, '788812akaakak');
             setDataRows(response)
@@ -64,9 +64,9 @@ const PageUsuarios = () => {
         try {
             setLoading(true)
             const response = await userSv.deleteUser(userId)
-            dispatch({type: SET_ALERT, message: 'Documento deletado com sucesso!', alertType: 'user', severity: 'success'})
+            dispatch({ type: SET_ALERT, message: 'Documento deletado com sucesso!', alertType: 'user', severity: 'success' })
         } catch (error) {
-            dispatch({type: SET_ALERT, message: 'Erro ao deletar documento!', alertType: 'user', severity: 'error'})
+            dispatch({ type: SET_ALERT, message: 'Erro ao deletar documento!', alertType: 'user', severity: 'error' })
             console.error("Erro ao excluir usuário!", error)
             throw error;
         }
@@ -79,88 +79,126 @@ const PageUsuarios = () => {
 
     const handleSetAdmin = async (userId) => {
         try {
-            setLoading(true)
-            const response = await userSv.setAdmin(userId)
-            dispatch({type: SET_ALERT, message: 'Novo administrador definido!', type: 'user', severity: "success" })
-            getUsers()
+            setLoading(true);
+            await userSv.setAdmin(userId);
+            dispatch({
+                type: SET_ALERT,
+                message: 'Novo administrador definido!',
+                alertType: 'user',
+                severity: "success"
+            });
+            getUsers();
         } catch (error) {
-            dispatch({type: SET_ALERT, message: 'Erro ao adicionar novo administrador! ', type: 'user', severity: "error" })
-            console.error("Erro ao tornar admin", error)
-            throw error;
+            dispatch({
+                type: SET_ALERT,
+                message: 'Erro ao adicionar novo administrador!',
+                alertType: 'user',
+                severity: "error"
+            });
+            console.error("Erro ao tornar admin", error);
+        } finally {
+            setLoading(false);
         }
-        finally {
-            setLoading(false)
-        }
-    }
+    };
 
     const handleUnsetAdmin = async (userId) => {
         try {
-            setLoading(true)
-            const response = await unsetAdmin(userId)
-            dispatch(showAlert(response.data.message, "success", "user"))
-            console.log(response.data, '77777')
-            getUsers()
-            return response.data
+            setLoading(true);
+            await userSv.unsetAdmin(userId);
+            dispatch({
+                type: SET_ALERT,
+                message: "Administrador desabilitado com sucesso!",
+                alertType: 'user',
+                severity: 'success'
+            });
+            getUsers();
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "user"))
-            console.error("Erro ao tornar usuário", error)
-            throw error;
+            dispatch({
+                type: SET_ALERT,
+                message: "Erro ao desabilitar administrador",
+                alertType: 'user',
+                severity: 'error'
+            });
+            console.error("Erro ao remover admin", error);
+        } finally {
+            setLoading(false);
         }
-        finally {
-            setLoading(false)
-        }
-    }
+    };
 
     const handleEnable = async (userId) => {
         try {
-            setLoading(true)
-            const response = await enableUser(userId)
-            dispatch(showAlert(response.data.message, "success", "user"))
-            getUsers()
-            return response.data
+            setLoading(true);
+            await enableUser(userId);
+            dispatch({
+                type: SET_ALERT,
+                message: "Usuário habilitado com sucesso!",
+                alertType: 'user',
+                severity: 'success'
+            });
+            getUsers();
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "user"))
-            console.error("Erro ao habilitar usuário", error)
-            throw error;
+            dispatch({
+                type: SET_ALERT,
+                message: error.message || "Erro ao habilitar usuário",
+                alertType: 'user',
+                severity: 'error'
+            });
+            console.error("Erro ao habilitar usuário", error);
+        } finally {
+            setLoading(false);
         }
-        finally {
-            setLoading(false)
-        }
-    }
+    };
+
     const handleDisabled = async (userId) => {
         try {
-            setLoading(true)
-            const response = await disableUser(userId)
-            dispatch(showAlert(response.data.message, "success", "user"))
-            console.log(response.data, '77777')
-            getUsers()
-            return response.data
+            setLoading(true);
+            const response = await disableUser(userId);
+            dispatch({
+                type: SET_ALERT,
+                message: "Usuário desabilitado com sucesso!",
+                alertType: 'user',
+                severity: 'success'
+            });
+            getUsers();
+            return response.data;
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "user"))
-            console.error("Erro ao desabilitar usuário", error)
-            throw error;
+            dispatch({
+                type: SET_ALERT,
+                message: error.message || "Erro ao desabilitar usuário",
+                alertType: 'user',
+                severity: 'error'
+            });
+            console.error("Erro ao desabilitar usuário", error);
+        } finally {
+            setLoading(false);
         }
-        finally {
-            setLoading(false)
-        }
-    }
+    };
+
     const handleFilterById = async () => {
         try {
-            setLoading(true)
-            const { data } = await getUserById(filter.userId)
-            console.log(data.user)
-            dispatch(showAlert('Usuário Listado', "success", "user"))
-            setDataRows(Object.values(data.user))
-            return data
+            setLoading(true);
+            const data = await getUserById(filter.userId);
+            dispatch({
+                type: SET_ALERT,
+                message: "Usuário encontrado com sucesso!",
+                alertType: 'user',
+                severity: 'success'
+            });
+            setDataRows(Object.values(data.user));
+            return data;
         } catch (error) {
-            dispatch(showAlert(error.message, "error", "user"))
-            console.error("Erro ao filter usuário!", error)
-            throw error;
+            dispatch({
+                type: SET_ALERT,
+                message: error.message || "Erro ao filtrar usuário",
+                alertType: 'user',
+                severity: 'error'
+            });
+            console.error("Erro ao filtrar usuário!", error);
+        } finally {
+            setLoading(false);
         }
-        finally {
-            setLoading(false)
-        }
-    }
+    };
+
 
     return loading ? <Loading /> : (
         <AuthProvider>
