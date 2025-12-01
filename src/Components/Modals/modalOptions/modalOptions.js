@@ -62,11 +62,11 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
         <Divider />
         <Link style={{
           textDecoration: "none"
-        }} href={"/mudarSenha"}>
+        }} href={"/updatePassword"}>
           <MenuItem>
             <ListItemIcon>
               <EditIcon fontSize="small" />
-            </ListItemIcon> Editar Perfil
+            </ListItemIcon> Alterar senha
           </MenuItem>
         </Link>
         {isAdmin &&
