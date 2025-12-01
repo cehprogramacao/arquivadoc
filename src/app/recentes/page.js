@@ -318,13 +318,10 @@ const Recentes = () => {
         <AuthProvider>
             <Box sx={{
                 minHeight: "100vh",
-                background: `linear-gradient(135deg, 
-                    ${alpha('#f8f9fa', 0.8)} 0%, 
-                    ${alpha('#e9ecef', 0.3)} 50%, 
-                    ${alpha('#fff', 0.9)} 100%)`,
+                background: "#fff",
                 py: 15
             }}>
-                <Container fixed>
+                <Container maxWidth="">
                     {/* Header Principal */}
                     <Fade in timeout={600}>
                         <Box sx={{ mb: 6 }}>

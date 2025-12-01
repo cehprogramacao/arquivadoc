@@ -20,8 +20,9 @@ import withAuth from "@/utils/withAuth"
 
 
 const cpfMask = '999.999.999-99';
-const customerSv = new Customer()
 const cnpjMask = '99.999.999/9999-99';
+const customerSv = new Customer()
+
 const PageTermos = () => {
     const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
     const [errors, setErrors] = useState({});
@@ -31,15 +32,25 @@ const PageTermos = () => {
 
     const [dataOptions, setDataOptions] = useState({
         cpfcnpj: "",
-        option: ""
+        option: null
     })
 
     const [cpfcnpj, setCpfcnpj] = useState("")
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
-
+    const [isAdmin, setIsAdmin] = useState("")
+    useEffect(() => {
+        const isAdminUser = sessionStorage.getItem("isAdmin")
+        setIsAdmin(isAdminUser)
+    })
     const [openPDF, setOpenPDF] = useState(false)
     const [dataFile, setDataFile] = useState([])
+    const [data, setData] = useState([])
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const handleOpenModalPDF = async () => {
         try {
@@ -54,75 +65,101 @@ const PageTermos = () => {
         }
     }
 
-
-
-    const handleCloseModalPDF = async () => {
+    const handleCloseModalPDF = () => {
         setOpenPDF(false)
     }
 
     const handleClickMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
+
     const handleCloseMenu = () => {
         setAnchorEl(null);
     };
-    const [data, setData] = useState([])
+
     const handleOpen = () => {
         setOpen(true)
     }
+
     const handleClose = () => {
         setOpen(false);
     }
 
-
-
     const handleInputChange = (e) => {
-        e.target.value?.replace(/\D/g, '').length < 11
-            ? setCpfCnpjMask(cpfMask)
-            : setCpfCnpjMask(cnpjMask);
-        setDataOptions({ ...Options, cpfcnpj: e.target.value.replace(/[^\d]+/g, '') });
+        const rawValue = e.target.value.replace(/\D/g, '');
+
+        // Atualiza a máscara baseado no tamanho
+        if (rawValue.length <= 11) {
+            setCpfCnpjMask(cpfMask);
+        } else {
+            setCpfCnpjMask(cnpjMask);
+        }
+
+        // Atualiza o estado com o valor limpo
+        setDataOptions(prev => ({
+            ...prev,
+            cpfcnpj: rawValue
+        }));
     };
 
     const handleInputBlur = () => {
-        dataOptions.cpfcnpj?.replace(/\D/g, '').length === 11 && setCpfCnpjMask(cpfMask);
+        const rawValue = dataOptions.cpfcnpj.replace(/\D/g, '');
+        if (rawValue.length === 11) {
+            setCpfCnpjMask(cpfMask);
+        }
     };
+
     const labels = [
         {
             label: 'CPF/CNPJ'
         },
     ];
+
     const handleDeleteByCPFCNPJ = async () => {
         try {
             const response = await customerSv.deleteTermLGDP(cpfcnpj)
+            // Atualiza a lista após deletar
+            await handleFilterTermLGPD()
             return response
         } catch (error) {
-            console.error("Error ao deletar termo !", error)
+            console.error("Error ao deletar termo!", error)
             throw error;
         }
     }
+
     const handleFilterTermLGPD = async () => {
-        let newData = []
+        // Validação antes de buscar
+        if (!dataOptions.cpfcnpj || dataOptions.cpfcnpj.length < 11) {
+            setErrors({ cpfcnpj: 'CPF/CNPJ inválido' });
+            return;
+        }
+
         try {
             setLoading(true)
+            setErrors({})
             const response = await customerSv.getTermLGDP(dataOptions.cpfcnpj)
-            setData(Object.values(response));
+
+            console.log(response, "1828328");
+
+            if (Array.isArray(response)) {
+                setData(response);
+            } else if (response && typeof response === "object") {
+                setData([response]);
+            } else {
+                setData([]);
+            }
+
             return response
         } catch (error) {
             console.error("Erro ao filtrar Termos", error);
+            setData([]);
             throw error;
         } finally {
             setLoading(false);
         }
     }
 
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
     if (!isClient) return null;
-
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -133,7 +170,6 @@ const PageTermos = () => {
                     py: 12,
                     px: 3
                 }}>
-
                     <CustomContainer>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
@@ -147,7 +183,7 @@ const PageTermos = () => {
                                     </Typography>
                                 </Box>
                             </Grid>
-                            <Grid item xs={12} >
+                            <Grid item xs={12}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} lg={4} md={6} sm={12}>
                                         <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
@@ -164,6 +200,7 @@ const PageTermos = () => {
                                                         id={'id-documento'}
                                                         color="success"
                                                         placeholder={'CPF/CNPJ'}
+                                                        error={Boolean(errors['cpfcnpj'])}
                                                         sx={{
                                                             borderRadius: '12.5px',
                                                             '& .MuiOutlinedInput-notchedOutline': {
@@ -173,6 +210,11 @@ const PageTermos = () => {
                                                     />
                                                 )}
                                             </ReactInputMask>
+                                            {errors['cpfcnpj'] && (
+                                                <Typography color="error" variant="caption" sx={{ mt: 0.5 }}>
+                                                    {errors['cpfcnpj']}
+                                                </Typography>
+                                            )}
                                         </FormControl>
                                     </Grid>
                                     <Grid item xs={12} lg={4} md={6} sm={12}>
@@ -182,8 +224,12 @@ const PageTermos = () => {
                                             options={labels}
                                             fullWidth
                                             autoHighlight
+                                            value={dataOptions.option}
                                             getOptionLabel={(option) => option.label || ""}
-                                            onChange={(e, newValue) => setDataOptions({ ...Options, option: newValue })}
+                                            onChange={(e, newValue) => setDataOptions(prev => ({
+                                                ...prev,
+                                                option: newValue
+                                            }))}
                                             isOptionEqualToValue={(option, value) => option.label === value.label}
                                             renderInput={(params) => (
                                                 <TextField
@@ -204,25 +250,40 @@ const PageTermos = () => {
                                         <Box sx={{ display: 'flex', justifyContent: "center", width: '100%', gap: '30px' }}>
                                             <Buttons color={'green'} title={'Buscar'} onClick={handleFilterTermLGPD} />
                                             {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                            {/* <ButtonLixeira href={"/termos/lixeira_termo"} /> */}
+                                            {isAdmin === 1 || isAdmin === "1" && <ButtonLixeira href={"/termos/lixeira_termo"} /> }
                                         </Box>
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item xs={12} >
+                            <Grid item xs={12}>
                                 <DocList data={data} setCPF={(cpf) => setCpfcnpj(cpf)} handleClick={handleClickMenu} />
                             </Grid>
                         </Grid>
                     </CustomContainer>
-                    <Drawer anchor="left" open={open} onClose={handleClose} >
+                    <Drawer anchor="left" open={open} onClose={handleClose}>
                         <CadastroTermosModal onClose={handleClose} />
                     </Drawer>
                 </Box>
                 <MenuOptionsFile
                     editPerm={permissions[5]?.edit}
                     deletePerm={permissions[5]?.delete_permission}
-                    anchorEl={anchorEl} data={data} open={openMenu} handleClose={handleCloseMenu} handleOpenModalPDF={handleOpenModalPDF} type={cpfcnpj} handleDelete={handleDeleteByCPFCNPJ} />
-                <ModalListTerm data={dataFile} onClose={handleCloseModalPDF} open={openPDF} cpfcnpj={cpfcnpj} />
+                    anchorEl={anchorEl}
+                    data={data}
+                    open={openMenu}
+                    handleClose={handleCloseMenu}
+                    handleOpenModalPDF={handleOpenModalPDF}
+                    type={cpfcnpj}
+                    handleDelete={handleDeleteByCPFCNPJ}
+                />
+                <ModalListTerm
+                    data={dataFile}
+                    onClose={handleCloseModalPDF}
+                    open={openPDF}
+                    cpfcnpj={cpfcnpj}
+                    handleDeleteByNotation={handleDeleteByCPFCNPJ}
+                    editPerm={permissions[5]?.edit}
+                    deletePerm={permissions[5]?.delete_permission}
+                />
             </PrivateRoute>
         </AuthProvider>
     )

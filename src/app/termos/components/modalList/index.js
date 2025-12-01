@@ -63,13 +63,13 @@ const ModalList = ({
     };
 
     const handlePrintFile = () => {
-        if (!data?.file) {
+        if (!data?.file_url) {
             alert("Arquivo não disponível para impressão.");
             return;
         }
 
         try {
-            const base64Data = data.file;
+            const base64Data = data.file_url;
             const byteCharacters = atob(base64Data);
             const byteNumbers = new Array(byteCharacters.length);
             
@@ -103,7 +103,7 @@ const ModalList = ({
     };
 
     const renderPDFViewer = () => {
-        if (!data?.file) {
+        if (!data?.file_url) {
             return (
                 <Box sx={{ 
                     display: 'flex', 
@@ -139,7 +139,7 @@ const ModalList = ({
             );
         }
 
-        const src = `data:application/pdf;base64,${data.file}`;
+        const src = `data:application/pdf;base64,${data.file_url}`;
 
         return (
             <iframe
@@ -300,7 +300,7 @@ const ModalList = ({
                                 variant="outlined" 
                                 fullWidth={!isMobile}
                                 onClick={handlePrintFile}
-                                disabled={!data?.file}
+                                disabled={!data?.file_url}
                                 sx={{
                                     color: "#0dcaf0",
                                     borderColor: "#0dcaf0",

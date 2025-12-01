@@ -247,14 +247,14 @@ export const Sidebar = () => {
     }, [dispatch, permissions]);
 
     const menuItems = [...MENU_ITEMS];
-    if (isAdmin === "1" || isAdmin === 1) {
-        menuItems.push({
-            href: '/customers',
-            icon: NoteAltOutlinedIcon,
-            label: 'customers',
-            showCondition: () => isAdmin === "1",
-        });
-    }
+    // if (isAdmin === "1" || isAdmin === 1) {
+    //     menuItems.push({
+    //         href: '/customers',
+    //         icon: NoteAltOutlinedIcon,
+    //         label: 'customers',
+    //         showCondition: () => isAdmin === "1",
+    //     });
+    // }
 
     return (
         <Box sx={SIDEBAR_STYLES.container(theme)}>

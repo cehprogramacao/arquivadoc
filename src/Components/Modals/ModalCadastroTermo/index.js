@@ -1,4 +1,4 @@
-import { useMediaQuery, useTheme, TextField, Button, Typography, IconButton, FormControl, OutlinedInput } from "@mui/material";
+import { useMediaQuery, useTheme, TextField, Button, Typography, IconButton, FormControl, OutlinedInput, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
 import FilledInput from '@mui/material/FilledInput';
 import { useEffect, useState } from "react";
@@ -6,13 +6,14 @@ import ReactInputMask from "react-input-mask";
 import Customer from "@/services/customer.service";
 import { useDispatch } from "react-redux";
 import { SET_ALERT, showAlert } from "@/store/actions";
+import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
 
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
 
-    const customerSv = new Customer();
+const customerSv = new Customer();
 
-export const CadastroTermosModal = ({ onClose, getData}) => {
+export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
   const dispatch = useDispatch()
   const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
   const [errors, setErrors] = useState({});
@@ -53,17 +54,18 @@ export const CadastroTermosModal = ({ onClose, getData}) => {
   }
   const handleCreateTerm = async () => {
     try {
-    
+
       const response = await customerSv.createTermLGDP(data);
-      dispatch({type: SET_ALERT, message: "Termo cadastrado com sucesso!", severity: "success", actionType: "file"})
+      dispatch({ type: SET_ALERT, message: "Termo cadastrado com sucesso!", severity: "success", actionType: "file" })
       return response;
     } catch (error) {
-      dispatch({type: SET_ALERT, message: "Erro ao cadastrar termo!", severity: "error", actionType: "file"})
+      dispatch({ type: SET_ALERT, message: "Erro ao cadastrar termo!", severity: "error", actionType: "file" })
       console.error("Error creating customer:", error);
       throw error;
     }
     finally {
       onClose()
+      window.location.reload()
     }
 
   }
@@ -118,6 +120,24 @@ export const CadastroTermosModal = ({ onClose, getData}) => {
     }
   }, []);
 
+  const [presenter, setPresenter] = useState([])
+
+
+  const getDataPresenter = async () => {
+    try {
+      const data = await customerSv.customers()
+      setPresenter(Object.values(data))
+      console.log(data, '21212')
+
+    } catch (error) {
+      console.error("Erro ao buscar clientes", error)
+      throw error;
+    }
+  }
+  useEffect(() => {
+    getDataPresenter()
+  }, [])
+
 
   return (
     <Box sx={{
@@ -163,30 +183,24 @@ export const CadastroTermosModal = ({ onClose, getData}) => {
         padding: '5px 0'
       }}>
 
-        <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
-          <ReactInputMask
-            mask={cpfCnpjMask}
-            value={data.cpfcnpj}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-            name="customer_cpfcnpj"
-          >
-            {(inputProps) => (
-              <OutlinedInput
-                {...inputProps}
-                id={'id-documento'}
-                color="success"
-                placeholder={'CPF/CNPJ'}
-                sx={{
-                  borderRadius: '12.5px',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderRadius: '4px',
-                  },
-                }}
-              />
-            )}
-          </ReactInputMask>
-        </FormControl>
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={presenter}
+          fullWidth
+          autoHighlight
+          // value={data.customer_cpfcnpj}
+          noOptionsText={<RenderNoOptions onClick={onClickPartes} title={'Cadastrar Cliente'} />}
+          getOptionLabel={(option) => option.name || ""}
+          onChange={(e, newValue) => setData({ ...data, customer_cpfcnpj: newValue.cpfcnpj })}
+          isOptionEqualToValue={(option, value) => option.name === value.name}
+          renderInput={(params) => <TextField color="success" {...params} label="Buscar Por"
+            sx={{
+              color: "#237117", '& input': {
+                color: 'success.main',
+              },
+            }} />}
+        />
         <TextField
           fullWidth
           value={data.box}

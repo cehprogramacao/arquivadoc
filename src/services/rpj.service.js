@@ -12,7 +12,7 @@ class RPJService extends ServiceBase {
     getAllRPJ() {
         return this.get("/rpj");
     }
-
+    
     getAllRPJInTrash() {
         return this.get("/rpj/trash/");
     }

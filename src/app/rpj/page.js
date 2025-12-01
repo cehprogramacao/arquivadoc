@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { CadastroModalRPJ } from '@/Components/Modals/ModalCadastroRPJ';
 import { useDispatch } from 'react-redux'
 import RPJService from '@/services/rpj.service';
-import { showAlert } from '@/store/actions';
+import { SET_ALERT, showAlert } from '@/store/actions';
 import Loading from '@/Components/loading';
 import withAuth from '@/utils/withAuth';
 import CustomContainer from '@/Components/CustomContainer';
@@ -32,6 +32,8 @@ const options = [
 
 const rpjSv = new RPJService()
 const PageRPJ = () => {
+    const [loading, setLoading] = useState(false)
+
     const dispatch = useDispatch()
     const { permissions } = useAuth()
     const [notation, setNotation] = useState("")
@@ -49,14 +51,7 @@ const PageRPJ = () => {
         option: "",
         value: ""
     })
-    const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) return null;
-    const [loading, setLoading] = useState(false)
     const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
     const [openModalCadastroRPJ, setOpenModalCadastroRPJ] = useState(false)
     const [isAdmin, setIsAdmin] = useState("")
@@ -64,7 +59,7 @@ const PageRPJ = () => {
     const handleOpenModalListFilePDF = async () => {
         try {
             setOpenModalListFilePDF(true)
-            const data = await getRPJByNotation(notation)
+            const data = await rpjSv.getRPJByNotation(notation)
             setDataFile(data)
         } catch (error) {
             console.error("Erro ao buscar arquivo", error)
@@ -83,11 +78,11 @@ const PageRPJ = () => {
     const getAllFilesRPJ = async () => {
         try {
             setLoading(true)
-            const data = await rpjSv.getAllRPJ(accessToken)
-            dispatch({type: SET_ALERT, message: `Arquivos carregados com sucesso! Total: ${data.length}`, severity: "success", alertType: "file"})
+            const data = await rpjSv.getAllRPJ()
+            dispatch({ type: SET_ALERT, message: `Arquivos carregados com sucesso! Total: ${data.length}`, severity: "success", alertType: "file" })
             setData(Object.values(data))
         } catch (error) {
-            dispatch({type: SET_ALERT, message: error.msg || "Erro ao buscar arquivos!", severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: error.msg || "Erro ao buscar arquivos!", severity: "error", alertType: "file" })
             console.error("Error ao buscar todos os arquivos", error)
             throw error;
         }
@@ -102,15 +97,24 @@ const PageRPJ = () => {
         try {
             const data = await rpjSv.getRPJByNotation(notation)
             if (Object.values(data).length === 0) {
-                dispatch({type: SET_ALERT, message: "Nenhum arquivo com essa notação", severity: "success", alertType: "file"})
+                dispatch({ type: SET_ALERT, message: "Nenhum arquivo com essa notação", severity: "success", alertType: "file" })
                 setData([])
                 return false
             }
-            setData(Object.values(data));
+            
+             if (Array.isArray(data)) {
+                setData(data);
+            } else if (data && typeof data === "object") {
+                setData([data]);
+            } else {
+                setData([]);
+            }
+
+
             return data
         } catch (error) {
             console.error("Erro ao buscar arquivo!", error)
-            dispatch({type: SET_ALERT, message: error.msg || "Erro ao buscar arquivo!", severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: error.msg || "Erro ao buscar arquivo!", severity: "error", alertType: "file" })
             throw error;
         }
     }
@@ -119,7 +123,7 @@ const PageRPJ = () => {
         try {
             const data = await rpjSv.getRPJByPresenter(presenter)
             if (Object.values(data).length === 0) {
-                dispatch({type: SET_ALERT, message: "Nenhum arquivo com esse Apresentante", severity: "success", alertType: "file"})
+                dispatch({ type: SET_ALERT, message: "Nenhum arquivo com esse Apresentante", severity: "success", alertType: "file" })
                 setData([])
                 return false
             }
@@ -127,7 +131,7 @@ const PageRPJ = () => {
             return data
         } catch (error) {
             console.error("Erro ao buscar arquivo!", error)
-            dispatch({type: SET_ALERT, message: error.msg || "Erro ao buscar arquivo!", severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: error.msg || "Erro ao buscar arquivo!", severity: "error", alertType: "file" })
             throw error;
         }
     }
@@ -147,17 +151,17 @@ const PageRPJ = () => {
             }
         }
         else {
-            dispatch({type: SET_ALERT, message: "Campos vazios!", severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: "Campos vazios!", severity: "error", alertType: "file" })
             console.error("Campos vazios!")
         }
     }
     const handleDeleteFileRpjByNotation = async () => {
         try {
             const data = await deleteRPJByNotation(notation)
-            dispatch({type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file" })
         } catch (error) {
             console.error("Erro ao deletar arquivo!", error)
-            dispatch({type: SET_ALERT, message: error.msg || "Erro ao deletar arquivo!", severity: "error", alertType: "file"})
+            dispatch({ type: SET_ALERT, message: error.msg || "Erro ao deletar arquivo!", severity: "error", alertType: "file" })
             throw error;
         }
         finally {

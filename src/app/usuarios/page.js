@@ -18,6 +18,8 @@ import { SET_ALERT, showAlert } from "@/store/actions"
 
 const userSv = new User();
 const PageUsuarios = () => {
+    const [loading, setLoading] = useState(false)
+
     const dispatch = useDispatch()
     const [dataRows, setDataRows] = useState([])
     const [filter, setFilter] = useState({
@@ -30,8 +32,6 @@ const PageUsuarios = () => {
         setIsClient(true);
     }, []);
 
-    if (!isClient) return null;
-    const [loading, setLoading] = useState(false)
     const getUsers = async () => {
 
         try {

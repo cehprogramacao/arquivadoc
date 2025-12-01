@@ -34,7 +34,9 @@ const theme = createTheme({
         },
         text: {
             primary: '#000', // White text for dark backgrounds
-            secondary: '#C7C7C7', // Black text for light backgrounds
+            secondary: '#C7C7C7', // Black text for light backgrounds,
+            white: '#fff'
+
         },
     },
     typography: {

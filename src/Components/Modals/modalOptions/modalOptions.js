@@ -60,7 +60,9 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
         </Typography>
 
         <Divider />
-        <Link href={"/mudarSenha"}>
+        <Link style={{
+          textDecoration: "none"
+        }} href={"/mudarSenha"}>
           <MenuItem>
             <ListItemIcon>
               <EditIcon fontSize="small" />
@@ -68,7 +70,9 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
           </MenuItem>
         </Link>
         {isAdmin &&
-          <Link href={"/logs"}>
+          <Link style={{
+            textDecoration: "none"
+          }} href={"/logs"} >
             <MenuItem >
               <ListItemIcon>
                 <HistoryIcon fontSize="small" />
@@ -78,7 +82,9 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
           </Link>
         }
         {isAdmin &&
-          <Link href={"/usuarios"}>
+          <Link style={{
+            textDecoration: "none"
+          }} href={"/usuarios"}>
             <MenuItem>
               <ListItemIcon>
                 <GroupIcon fontSize="small" />
