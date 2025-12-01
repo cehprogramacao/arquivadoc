@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
 import { useTheme, useMediaQuery, Typography } from '@mui/material'
+import { useAuth } from '@/context';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -41,9 +42,11 @@ export const UserTable = ({ data, onClick }) => {
   const theme = useTheme()
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
 
+  const { permissions } = useAuth()
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: '100%', height: "350px" }}>
+    <TableContainer component={Paper} sx={{ maxWidth: "100%", width: permissions[5]?.delete_permission === 1 ? "100%" : 400,
+     margin: '0 auto', marginTop: '30px'}}>
       {isSmallScreen ?
         <Table sx={{ maxWidth: '100%' }} >
           <TableBody >
@@ -86,7 +89,7 @@ export const UserTable = ({ data, onClick }) => {
             <TableRow>
               <StyledTableCell>ID</StyledTableCell>
               <StyledTableCell align='center'>Nome</StyledTableCell>
-              <StyledTableCell align='center'>Excluir</StyledTableCell>
+              {permissions[5]?.delete_permission === 1 && <StyledTableCell align='center'>Excluir</StyledTableCell>}
             </TableRow>
           </TableHead>
           <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
@@ -94,7 +97,7 @@ export const UserTable = ({ data, onClick }) => {
               <StyledTableRow key={index}>
                 <StyledTableCell align='left'>{row.id}</StyledTableCell>
                 <StyledTableCell align='center'>{row.name}</StyledTableCell>
-                <StyledTableCell align='center'>
+                {permissions[5]?.delete_permission === 1 && <StyledTableCell align='center'>
                   <Button sx={{
                     fontSize: '15px',
                     textTransform: 'none',
@@ -110,7 +113,7 @@ export const UserTable = ({ data, onClick }) => {
                   }} onClick={() => onClick(row.id)}>
                     Excluir
                   </Button>
-                </StyledTableCell>
+                </StyledTableCell>}
   
               </StyledTableRow>
             ))}

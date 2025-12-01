@@ -34,6 +34,7 @@ const ButtonCadastrar = styled(Button)({
     }
 })
 
+const rgiSv = new RGI()
 const CadastroRGITypes = ({ open, onClose }) => {
     const [data, setData] = useState({
         group: "",
@@ -42,13 +43,10 @@ const CadastroRGITypes = ({ open, onClose }) => {
     const [loading, setLoading] = useState(false)
     const notesType = ['Averbação', 'Registro']
     const handleCreateType = async () => {
-        const { createType } = new RGI()
+
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await createType(data, accessToken)
-            console.log(response.data)
-            return response.data
+            const response = await rgiSv.createType(data)
         } catch (error) {
             console.log("Erro ao adicionar type de rgi!", error)
             throw error;

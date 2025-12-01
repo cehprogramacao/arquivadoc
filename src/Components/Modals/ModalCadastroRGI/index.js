@@ -8,7 +8,8 @@ import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, I
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 
-
+const customerSv = new Customer();
+const rgiSv = new RGI();
 export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
 
     const theme = useTheme();
@@ -16,7 +17,7 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
 
     // States
     const [loading, setLoading] = useState(false)
-    const [grupo, setGrupo] = useState(null); // Estado para armazenar o grupo selecionado
+    const [grupo, setGrupo] = useState(null);
     const [types, setTypes] = useState([]);
     const [userPresenter, setUserPresenter] = useState(null)
     const [presenter, setPresenter] = useState([]);
@@ -73,10 +74,8 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
 
 
     const getCustomersPresenter = async () => {
-        const customer = new Customer();
         try {
-            const accessToken = sessionStorage.getItem("accessToken");
-            const { data } = await customer.customers(accessToken);
+            const data = await customerSv.customers();
             const newData = Object.values(data);
             setPresenter(newData);
             console.log(data);
@@ -89,13 +88,11 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
 
     const handleCreateRGI = async () => {
         console.log(data);
-        const { create } = new RGI()
         try {
             setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const response = await create(data, accessToken)
-            console.log(response.data)
-            return response.data
+            const response = await rgiSv.create(data)
+            console.log(response)
+            return response
         } catch (error) {
             console.error("Error creating record", error)
             throw error;
@@ -119,11 +116,9 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
     const tiposFiltrados = grupo ? types.filter(tipo => tipo.group === grupo) : [];
     // useEffect
     const getTypesRGI = async () => {
-        const { getType } = new RGI()
         try {
 
-            const accessToken = sessionStorage.getItem("accessToken");
-            const { data } = await getType(accessToken);
+            const data = await rgiSv.getType();
             const newData = Object.values(data);
             console.log(data);
             console.log(newData, '7777777777777')
@@ -140,6 +135,56 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
         getTypesRGI()
     }, []);
 
+
+    const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+        setData(prevData => ({
+          ...prevData,
+          [fieldToUpdate]: scannedPdfUrl
+        }));
+      };
+      const handleScanFile = () => {
+        window.scanner.scan((successful, mesg, response) => {
+          if (!successful) {
+            console.error('Failed: ' + mesg);
+            return;
+          }
+          if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+            console.info('User cancelled');
+            return;
+          }
+          const responseJson = JSON.parse(response);
+          const scannedPdfUrl = responseJson.output[0].result[0];
+          updateDataWithUrl('file_url', scannedPdfUrl);
+        }, {
+          "output_settings": [
+            {
+              "type": "return-base64",
+              "format": "pdf",
+              "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+            },
+            {
+              "type": "return-base64-thumbnail",
+              "format": "jpg",
+              "thumbnail_height": 200
+            }
+          ]
+        });
+      };
+    
+      useEffect(() => {
+        if (window.scanner) {
+          window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
+            if (!successful) {
+              console.error('Failed: ' + mesg);
+              return;
+            }
+            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+              console.info('User cancelled');
+              return;
+            }
+          };
+        }
+      }, []);
 
 
     return (
@@ -283,7 +328,9 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
                             }}
 
                         />
-                        <Button sx={{
+                        <Button 
+                        onClick={handleScanFile}
+                        sx={{
                             display: 'flex',
                             width: '169px',
                             background: 'transparent',

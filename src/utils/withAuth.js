@@ -20,7 +20,7 @@
 //         const response = await auth.refreshTokenService(refreshToken);
 //         const { accessToken } = response.data;
 //         console.log('Novo accesstoken', accessToken);
-//         sessionStorage.setItem('accessToken', accessToken);
+//         localStorage.setItem('accessToken', accessToken);
 //       } catch (error) {
 //         console.error('Erro ao renovar o token de acesso:', error);
 //         router.push('/login');
@@ -28,8 +28,8 @@
 //     }, [router]);
 
 //     useEffect(() => {
-//       const accessToken = sessionStorage.getItem('accessToken');
-//       const refreshToken = sessionStorage.getItem('refreshToken');
+//       const accessToken = localStorage.getItem('accessToken');
+//       const refreshToken = localStorage.getItem('refreshToken');
 
 //       if (!accessToken || !refreshToken) {
 //         router.push('/login');
@@ -40,8 +40,8 @@
 //       const isRefreshTokenExpired = !verifyJWTExpiration(refreshToken);
 
 //       if (isAccessTokenExpired && isRefreshTokenExpired) {
-//         sessionStorage.removeItem('accessToken');
-//         sessionStorage.removeItem('refreshToken');
+//         localStorage.removeItem('accessToken');
+//         localStorage.removeItem('refreshToken');
 //         router.push('/login');
 //       } else if (isAccessTokenExpired) {
 //         refreshAccessToken(refreshToken);
@@ -56,6 +56,7 @@
 
 // export default withAuth;
 
+"use client";
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
@@ -71,19 +72,19 @@ const withAuth = (WrappedComponent) => {
     const router = useRouter();
 
     useEffect(() => {
-      const accessToken = sessionStorage.getItem('accessToken');
-      const refreshToken = sessionStorage.getItem('refreshToken');
+      const accessToken = localStorage.getItem('accessToken');
+      const refreshToken = localStorage.getItem('refreshToken');
 
       if (!accessToken || !refreshToken) {
-        router.push('/login');
+        router.push('/');
         return;
       }
       const isAccessTokenExpired = !verifyJWTExpiration(accessToken);
       const isRefreshTokenExpired = !verifyJWTExpiration(refreshToken);
       if (isAccessTokenExpired || isRefreshTokenExpired) {
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
-        router.push('/login');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        router.push('/');
       }
     }, [router]);
 

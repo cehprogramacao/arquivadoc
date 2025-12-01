@@ -1,3 +1,4 @@
+import { useAuth } from '@/context';
 import User from '@/services/user.service';
 import {
     Table,
@@ -41,13 +42,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const TableComponente = ({ data, handleDeleteByID, handleSetAdmin, handleUnsetAdmin,handleEnable, handleDisabled }) => {
+const TableComponente = ({ data, handleDeleteByID, handleSetAdmin, handleUnsetAdmin, handleEnable, handleDisabled }) => {
     const dataArray = Array.isArray(data) ? data : Object.values(data);
-
+    const { permissions } = useAuth()
     // console.log("Transformado em array:", dataArray);
     // dataArray.forEach(item => console.log(item, 'MMMMMMMMMMMMMMMMMMMMMMkkkk'));
+    console.log(dataArray,'12321312312')
 
-    
     return (
         <TableContainer component={Paper} sx={{
             height: 340,
@@ -72,51 +73,54 @@ const TableComponente = ({ data, handleDeleteByID, handleSetAdmin, handleUnsetAd
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {dataArray.length > 0 && dataArray.map((row, index) => (
+                    {dataArray && dataArray.map((row, index) => (
                         <StyledTableRow
                             key={index}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 },
-                            background: row?.active === 0 ? "#e6e5e5" : ""
-                        }}
+                            sx={{
+                                '&:last-child td, &:last-child th': { border: 0 },
+                                background: row?.active === 0 ? "#e6e5e5" : ""
+                            }}
                         >
                             <StyledTableCell align='left'>{row?.id}</StyledTableCell>
                             <StyledTableCell align='center'>{row?.name}</StyledTableCell>
                             <StyledTableCell align='center'>{row?.email}</StyledTableCell>
                             <StyledTableCell align='center'>{row?.is_admin === 1 ? "admin" : "user"}</StyledTableCell>
                             <StyledTableCell align='center'>
-                                <Button sx={{
-                                    fontSize: '15px',
-                                    textTransform: 'none',
-                                    left: '0',
-                                    color: 'black',
-                                    background: 'transparent',
-                                    border: '1px solid #EA1010',
-                                    color: '#EA1010',
-                                    ":hover": {
-                                        background: '#EA1010',
-                                        color: '#fff'
-                                    }
-                                }} onClick={() => handleDeleteByID(row?.id)}>
-                                    Excluir 
-                                </Button>
-                            </StyledTableCell>
-                            <StyledTableCell align='center'>
-                                <Link href={`/usuarios/[id]`} as={`/usuarios/${row.id}`}>
+                                {permissions[5]?.delete_permission === 1 &&
                                     <Button sx={{
                                         fontSize: '15px',
                                         textTransform: 'none',
+                                        left: '0',
                                         color: 'black',
                                         background: 'transparent',
-                                        border: '1px solid #FFD500',
-                                        color: '#FFD500',
+                                        border: '1px solid #EA1010',
+                                        color: '#EA1010',
                                         ":hover": {
-                                            background: '#FFD500',
+                                            background: '#EA1010',
                                             color: '#fff'
                                         }
-                                    }} >
-                                        Editar
-                                    </Button>
-                                </Link>
+                                    }} onClick={() => handleDeleteByID(row?.id)}>
+                                        Excluir
+                                    </Button>}
+                            </StyledTableCell>
+                            <StyledTableCell align='center'>
+                                {permissions[5]?.edit === 1 &&
+                                    <Link href={`/usuarios/[id]`} as={`/usuarios/${row.id}`}>
+                                        <Button sx={{
+                                            fontSize: '15px',
+                                            textTransform: 'none',
+                                            color: 'black',
+                                            background: 'transparent',
+                                            border: '1px solid #FFD500',
+                                            color: '#FFD500',
+                                            ":hover": {
+                                                background: '#FFD500',
+                                                color: '#fff'
+                                            }
+                                        }} >
+                                            Editar
+                                        </Button>
+                                    </Link>}
                             </StyledTableCell>
                             <StyledTableCell align='center'>
                                 {row?.is_admin !== 1 ?

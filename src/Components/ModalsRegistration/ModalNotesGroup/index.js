@@ -7,18 +7,24 @@ import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import NoteService from '@/services/notes.service';
+import { SET_ALERT } from '@/store/actions';
+import { useDispatch } from 'react-redux';
+
+
+const noteSv = new NoteService()
 
 export const ModalNotesGroup = ({ onClose, open, getData }) => {
     const [data, setData] = useState({
         name: ""
     })
 
+    const dispatch = useDispatch()
+
     const registerGroupNamesForNotes = async () => {
-        const { createNoteGroup } = new NoteService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const dataGroup = await createNoteGroup(data, accessToken)
-            console.log(dataGroup.data)
+            const dataGroup = await noteSv.createNoteGroup(data)
+            console.log(dataGroup)
+            dispatch({ type: SET_ALERT, message: "Grupo de notas cadastrado com sucesso!", severity: "success", actionType: "file"})
         } catch (error) {
             console.error("Ocorreu um erro ao registrar os nomes dos grupos de notas:", error)
             throw error;

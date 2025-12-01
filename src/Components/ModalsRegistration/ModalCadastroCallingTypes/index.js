@@ -8,6 +8,9 @@ import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Calling from '@/services/calling.service';
 
+
+
+const callingSv = new Calling()
 const CadastroModalCallingTypes = ({ onClose, open,getTypes }) => {
 
 
@@ -17,13 +20,12 @@ const CadastroModalCallingTypes = ({ onClose, open,getTypes }) => {
   })
 
   const handleCreateTypeCalling = async () => {
-    const { createCallingType } = new Calling()
+    
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const response = await createCallingType(data, accessToken)
+      const response = await callingSv.createCallingType(data)
       getTypes()
-      console.log(response.data)
-      return response.data
+      console.log(response)
+      return response
     } catch (error) {
       console.error('Erro ao adicionar tipo!', error)
       throw error;

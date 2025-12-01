@@ -1,71 +1,63 @@
-const { default: customAxios } = require("./middleware");
+import ServiceBase from "./service.base";
 
+class Customer extends ServiceBase {
+  constructor() {
+    super("user");
+  }
 
-class Customer {
-    createCustomer(data, accessToken) {
-        return customAxios.post("/customer", data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
-    customers(accessToken) {
-        return customAxios.get("/customers", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }   
-        })
-    }
-    getCustomerByCPFCNPJ(cpfcnpj,accessToken) {
-        return customAxios.get(`/customer/${cpfcnpj}`, {
-            headers:{
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
-    editCustomer(cpfcnpj, data, accessToken) {
-        return customAxios.put(`/customer/${cpfcnpj}`, data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
-    deleteCustomer(cpfcnpj, accessToken) {
-        return customAxios.delete(`/customer/${cpfcnpj}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
-    // Termos LGPD
-    createTermLGDP(data, accessToken) {
-        return customAxios.post(`/customer/lgpd-term`, data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
-    getTermLGDP(cpfcnpj,accessToken) {
-        return customAxios.get(`/customer/lgpd-term/${cpfcnpj}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
-    putTermLGDP(cpfcnpj,data, accessToken) {
-        return customAxios.put(`/customer/lgpd-term/${cpfcnpj}`, data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
-    deleteTermLGDP(cpfcnpj,accessToken) {
-        return customAxios.delete(`/customer/lgpd-term/${cpfcnpj}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
+  createCustomer(data) {
+    return this.post("/customer", data);
+  }
+
+  customers() {
+    return this.get("/customers");
+  }
+
+  getCustomerByCPFCNPJ(cpfcnpj) {
+    return this.get(`/customer/${cpfcnpj}`);
+  }
+
+  editCustomer(cpfcnpj, data) {
+    return this.put(`/customer/${cpfcnpj}`, data);
+  }
+
+  deleteCustomer(cpfcnpj) {
+    return this.delete(`/customer/${cpfcnpj}`);
+  }
+
+  // Termos LGPD
+  createTermLGDP(data) {
+    return this.post("/customer/lgpd-term", data);
+  }
+
+  getTermLGDP(cpfcnpj) {
+    return this.get(`/customer/lgpd-term/${cpfcnpj}`);
+  }
+
+  putTermLGDP(cpfcnpj, data) {
+    return this.put(`/customer/lgpd-term/${cpfcnpj}`, data);
+  }
+
+  deleteTermLGDP(cpfcnpj) {
+    return this.delete(`/customer/lgpd-term/${cpfcnpj}`);
+  }
+
+  // Autograph Card
+  createAutographCard(data) {
+    return this.post("/customer/autograph-card", data);
+  }
+
+  getAutographCard(cpfcnpj) {
+    return this.get(`/customer/autograph-card/${cpfcnpj}`);
+  }
+
+  putAutographCard(cpfcnpj, data) {
+    return this.put(`/customer/autograph-card/${cpfcnpj}`, data);
+  }
+
+  deleteAutographCard(cpfcnpj) {
+    return this.delete(`/customer/autograph-card/${cpfcnpj}`);
+  }
 }
 
-export default Customer
+export default Customer;

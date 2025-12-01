@@ -1,7 +1,13 @@
-import { createStore } from 'redux';
-import reducer from './reducer';
+import { configureStore } from '@reduxjs/toolkit';
+import loginReducer from './loginReducer';
+import alertReducer from './alertReducer';
 
-const store = createStore(reducer)
-const persister = 'Free';
 
-export { store, persister };
+const store = configureStore({
+    reducer: {
+        login: loginReducer,
+        alert: alertReducer
+    },
+});
+
+export default store;

@@ -1,98 +1,57 @@
-import customAxios from "./middleware";
+import ServiceBase from "./service.base";
 
-class User {
-    getUsers(accessToken) {
-        return customAxios.get("/users", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
-    getUser(accessToken) {
-        return customAxios.get("/user", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-    }
-    addUserByAdmin(data, accssToken) {
-        return customAxios.post("/user", data, {
-            headers: {
-                Authorization: `Bearer ${accssToken}`
-            }
-        })
-    }
-    updateUser(data, accessToken) {
-        return customAxios.put("/user", data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+class User extends ServiceBase {
+  constructor() {
+    super("user");
+  }
 
-    updateUserByAdmin(userId, data, accessToken) {
-        return customAxios.put(`/user/${userId}/update`, data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getUsers() {
+    return this.get("/users");
+  }
 
-    changeUserPassword(data, accessToken) {
-        return customAxios.put("/user/change-password", data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  getUser() {
+    return this.get("/user");
+  }
 
-    disableUser(userId, accessToken) {
-        return customAxios.get(`/user/${userId}/disable`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  addUserByAdmin(payload) {
+    return this.post("/user", payload);
+  }
 
-    enableUser(userId, accessToken) {
-        return customAxios.get(`/user/${userId}/enable`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  updateUser(payload) {
+    return this.put("/user", payload);
+  }
 
-    setAdmin(userId, accessToken) {
-        return customAxios.get(`/user/${userId}/set-admin`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  updateUserByAdmin(userId, payload) {
+    return this.put(`/user/${userId}/update`, payload);
+  }
 
-    unsetAdmin(userId, accessToken) {
-        return customAxios.get(`/user/${userId}/unset-admin`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  changeUserPassword(payload) {
+    return this.put("/user/change-password", payload);
+  }
 
-    getUserById(userId, accessToken) {  
-        return customAxios.get(`/user/${userId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  disableUser(userId) {
+    return this.get(`/user/${userId}/disable`);
+  }
 
-    deleteUser(userId, accessToken) {
-        return customAxios.delete(`/user/${userId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-    }
+  enableUser(userId) {
+    return this.get(`/user/${userId}/enable`);
+  }
+
+  setAdmin(userId) {
+    return this.get(`/user/${userId}/set-admin`);
+  }
+
+  unsetAdmin(userId) {
+    return this.get(`/user/${userId}/unset-admin`);
+  }
+
+  getUserById(userId) {
+    return this.get(`/user/${userId}`);
+  }
+
+  deleteUser(userId) {
+    return this.delete(`/user/${userId}`);
+  }
 }
 
-export default User
+export default User;

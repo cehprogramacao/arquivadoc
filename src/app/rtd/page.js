@@ -1,186 +1,296 @@
 "use client"
 import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { Buttons } from '../../Components/Button/Button';
-import { ButtonLixeira } from '../../Components/ButtonLixeira';
-import { AutoComplete } from '@/Components/AutoComplete';
-import { DocList } from '../../Components/List/DocList';
-import { ButtonOpenModals } from '../../Components/ButtonOpenModals';
-import { Stack } from "@mui/material"
+import { Buttons } from '@/Components/Button/Button';
+import { ButtonLixeira } from '@/Components/ButtonLixeira';
+import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
+import { Grid } from "@mui/material"
 import Autocomplete from '@mui/material/Autocomplete';
-import ModalList from '../../Components/Modals/ModalList';
 import { useEffect, useState } from 'react';
-import { CadastroModalRTD } from '../../Components/Modals/ModalCadastroRTD';
-import { CadastroPartes } from '../../Components/ModalsRegistration/ModalCadastroPartes';
-import axios from 'axios'
-
-const top100Films = [
-    'Prenotação',
-    'Nome',
-    'Registro',
-    'CPF/CNPJ',
-    'Livro',
-    'Folha'
-];
-
-const docs = [
+import { useDispatch } from 'react-redux'
+import { SET_ALERT, showAlert } from '@/store/actions';
+import Loading from '@/Components/loading';
+import withAuth from '@/utils/withAuth';
+import CustomContainer from '@/Components/CustomContainer';
+import { AuthProvider, useAuth } from '@/context';
+import PrivateRoute from '@/utils/LayoutPerm';
+import SnackBar from '@/Components/SnackBar';
+import MenuOptionsFile from '@/Components/MenuPopUp';
+import RTDService from '@/services/rtd.service';
+import ModalList from './components/ModalPDF';
+import { DocList } from './components/TableRTD';
+import { CadastroModalRTD } from '@/Components/Modals/ModalCadastroRTD';
+import { useRouter } from 'next/navigation';
+import { isLoggedIn } from '@/utils/auth';
+const options = [
     {
-        id: 1,
-        name: 'Ronaldo',
-        text: 'Procuração',
-        link: '/teste.pdf'
+        label: 'Apresentante'
     },
     {
-        id: 2,
-        name: 'Kauan BrTech',
-        text: 'Compra e Venda',
-        link: '/'
+        label: 'Notação'
     },
 
 ];
+
+
+const rtdSv = new RTDService();
 
 const PageRTD = () => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const dispatch = useDispatch()
+    const { permissions } = useAuth()
+    const [notation, setNotation] = useState("")
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [dataFile, setDataFile] = useState([])
+    const open = Boolean(anchorEl)
+    const handleOpenMenuOptions = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+    const handleCloseMenuOptions = () => {
+        setAnchorEl(null)
+    }
+    const [data, setData] = useState([])
+    const [option, setOption] = useState({
+        option: "",
+        value: ""
+    })
+
+    const router = useRouter()
+
+    const [loading, setLoading] = useState(false)
     const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
     const [openModalCadastroRTD, setOpenModalCadastroRTD] = useState(false)
-    const [openModalCadastroPartes, setOpenModalCadastroPartes] = useState(false)
-
-    const [list, setList] = useState([]);
-    const [selectOption, setSelectOption] = useState(null)
-    const [selectValue, setSelectValue] = useState('')
 
 
-    const [temp, setTemp] = useState(null)
-    const handleOpenModalListFilePDF = (index) => {
-        setTemp(index)
-        setOpenModalListFilePDF(true)
-
-    }
-    const fetchData = async () => {
+    const handleOpenModalListFilePDF = async () => {
         try {
-            const response = await fetch(`http://localhost:3004/data/${selectValue}`);
-            if (response.ok) {
-                const data = await response.json();
-                setList(data.data || []);
-            }
+            setOpenModalListFilePDF(true)
+            const data = await rtdSv.getRTDByNotation(notation)
+            setDataFile(data)
         } catch (error) {
-            console.error(error);
+            console.error("Erro ao buscar arquivo", error)
+            throw error;
         }
-    };
-    // useEffect(() => {
-    //     fetchData();
+    }
+    useEffect(() => {
+        if (!isLoggedIn()) {
+            router.push("/")
+        }
+    }, [])
 
-    // }, []);
     const handleCloseModalListFilePDF = () => {
         setOpenModalListFilePDF(false)
     }
     const handleOpenModalCadastroRTD = () => setOpenModalCadastroRTD(true)
     const handleCloseModalCadastroRTD = () => setOpenModalCadastroRTD(false)
+    const [isAdmin, setIsAdmin] = useState("")
 
-    const handleOpenModalPartes = () => setOpenModalCadastroPartes(true)
-    const handleCloseModalPartes = () => setOpenModalCadastroPartes(false)
 
-    const handleOnChangeOptions = (_, value) => {
-        setSelectOption(value)
-        console.log(value)
-    }
-    const handleBuscar = () => {
-        if (selectValue.trim() !== '' || selectOption !== '') {
-            fetchData()
+    const getAllFilesRTD = async () => {
+        try {
+            setLoading(true)
+            const data = await rtdSv.getAllRTD()
+            dispatch({ type: SET_ALERT, message: "Arquivos carregados com sucesso!", severity: "success", alertType: "file" })
+            setData(Object.values(data))
+        } catch (error) {
+            dispatch({ type: SET_ALERT, message: "Erro ao buscar todos os arquivos!", severity: "error", alertType: "file" })
+            console.error("Error ao buscar todos os arquivos", error)
+            throw error;
         }
-        return false
+        finally {
+            setLoading(false)
+        }
     }
 
-    return (
-        <Box
-            sx={{
-                width: '100%',
-                height: '100vh',
-                marginTop: 11,
-                position: 'relative',
-                padding: '30px 0',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '10px',
-            }}
-        >
-            <Typography fontSize={40} fontWeight={'bold'} color="black">
-                RTD
-            </Typography>
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: isSmallScreen ? 'column' : 'row',
-                    alignItems: isSmallScreen ? 'center' : 'flex-start',
-                    gap: '30px',
-                    margin: '0 auto',
-                    flexWrap: isSmallScreen ? 'nowrap' : 'wrap',
-                    placeContent: 'center',
-                    marginTop: 4
-                }}
-            >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', placeContent: "center" }}>
-                    <TextField
-                        label="Buscar"
-                        value={selectValue}
-                        onChange={(e) => setSelectValue(e.target.value)}
-                        sx={{ width: isSmallScreen ? '100%' : 400, '& input': { color: 'success.main' } }}
-                        color="success"
+
+    const fetchAllFilesByNotation = async (notation) => {
+        let newData = []
+        try {
+            const data = await rtdSv.getRTDByNotation(notation)
+            if (Object.values(data).length === 0) {
+                dispatch({ type: SET_ALERT, message: "Nenhum arquivo encontrado com a notação informada!", severity: "success", alertType: "file" })
+                setData([])
+                return false
+            }
+            setData(Object.values(data));
+            return data
+        } catch (error) {
+            console.error("Erro ao buscar arquivo!", error)
+            dispatch({ type: SET_ALERT, message: error.msg, severity: "error", alertType: "file" })
+            throw error;
+        }
+    }
+    const fetchAllFilesByPresenter = async (presenter) => {
+        let newData = []
+        try {
+            const data = await rtdSv.getRTDByPresenter(presenter)
+            if (Object.values(data).length === 0) {
+                dispatch({ type: SET_ALERT, message: "Nenhum arquivo encontrado com o apresentante informado!", severity: "success", alertType: "file" })
+                setData([])
+                return false
+            }
+            setData(Object.values(data));
+            return data
+        } catch (error) {
+            console.error("Erro ao buscar arquivo!", error)
+            dispatch({ type: SET_ALERT, message: error.msg, severity: "error", alertType: "file" })
+            throw error;
+        }
+    }
+
+    const handleFetchFileByNotationOrPresenter = async () => {
+        if (option.option && option.value) {
+            try {
+                if (option.option === 'Notação') {
+                    await fetchAllFilesByNotation(option.value)
+                }
+                if (option.option === 'Apresentante') {
+                    await fetchAllFilesByPresenter(option.value)
+                }
+            } catch (error) {
+                console.log("Erro ao buscar arquivo!", error)
+                throw error;
+            }
+        }
+        else {
+            dispatch({ type: SET_ALERT, message: "Campos vazios!", severity: "error", alertType: "file" })
+            console.error("Campos vazios!")
+        }
+    }
+    const handleDeleteFileRtdByNotation = async () => {
+        try {
+            const data = await rtdSv.deleteRTDByNotation(notation)
+            dispatch({ type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file" })
+        } catch (error) {
+            console.error("Erro ao deletar arquivo!", error)
+            dispatch({ type: SET_ALERT, message: "Erro ao deletar arquivo!", severity: "error", alertType: "file" })
+            throw error;
+        }
+        finally {
+            getAllFilesRTD()
+        }
+    }
+    useEffect(() => {
+        getAllFilesRTD()
+        const isAdminUser = sessionStorage.getItem("isAdmin")
+        setIsAdmin(isAdminUser)
+    }, [])
+
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
+
+    return loading ? <Loading /> : (
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['RPJ']} >
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '100vh',
+                        py: 15,
+                        px: 2
+                    }}
+                >
+                    <CustomContainer >
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Box sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}>
+                                    <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
+                                        RTD
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} >
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} lg={5} md={6} sm={6}>
+                                        <TextField
+                                            label="Buscar"
+                                            value={option.value}
+                                            fullWidth
+                                            onChange={(e) => setOption({ ...option, value: e.target.value })}
+                                            sx={{ '& input': { color: 'success.main' } }}
+                                            color="success"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={4} md={6} sm={6}>
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={options}
+                                            getOptionLabel={(option) => option.label}
+                                            onChange={(e, value) => setOption({ ...option, option: value.label || null })}
+                                            fullWidth
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    color="success"
+                                                    {...params}
+                                                    label="Buscar Por"
+                                                    sx={{
+                                                        color: "#237117",
+                                                        '& input': {
+                                                            color: 'success.main',
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} lg={3} md={12} sm={12}>
+                                        <Box sx={{
+                                            width: "100%",
+                                            display: "flex",
+                                            gap: 2,
+                                            justifyContent: "center"
+                                        }}>
+                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFetchFileByNotationOrPresenter} />
+                                            {permissions[2]?.create_permission === 1 && (
+                                                <ButtonOpenModals onClick={handleOpenModalCadastroRTD} />
+                                            )}
+                                            {isAdmin === "1" && <ButtonLixeira href={"/rpj/lixeira_rpj"} />}
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12} >
+                                <DocList data={data} handleClick={handleOpenMenuOptions} setNotation={(e) => setNotation(e)} />
+                            </Grid>
+                        </Grid>
+                    </CustomContainer>
+
+                    <ModalList
+                        data={dataFile}
+                        notation={notation}
+                        open={openModalListFilePDF}
+                        onClose={handleCloseModalListFilePDF}
+                        deletePerm={permissions[2]?.delete_permission}
+                        editPerm={permissions[2]?.edit}
+                        handleDeleteByNotation={handleDeleteFileRtdByNotation}
                     />
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={top100Films}
-                        value={selectOption}
-                        onChange={handleOnChangeOptions}
-                        sx={{ width: isSmallScreen ? '100%' : 400 }}
-                        renderInput={(params) => (
-                            <TextField
-                                color="success"
-                                {...params}
-                                label="Buscar Por"
-                                sx={{
-                                    color: "#237117",
-                                    '& input': {
-                                        color: 'success.main',
-                                    },
-                                }}
-                            />
-                        )}
-                    />
+                    <Drawer anchor='left' open={openModalCadastroRTD} onClose={handleCloseModalCadastroRTD}>
+                        <CadastroModalRTD onClose={handleCloseModalCadastroRTD} getData={getAllFilesRTD} />
+                    </Drawer>
                 </Box>
-                <Buttons color={'green'} title={'Buscar'} onClick={handleBuscar} />
-                <Box sx={{ display: 'flex', width: 'auto', gap: '30px' }}>
-                    <ButtonOpenModals onClick={handleOpenModalCadastroRTD} />
-                    <ButtonLixeira href={"/rtd/lixeira_rtd"} />
-                </Box>
-            </Box>
-            {list.length > 0 && (
-                <DocList
-                    data={list}
-                    sx={{ marginTop: isSmallScreen ? 2 : 0 }}
-                    onClick={handleOpenModalListFilePDF}
+
+                <MenuOptionsFile
+                    deletePerm={permissions[2]?.delete_permission}
+                    editPerm={permissions[2]?.edit}
+                    open={open}
+                    anchorEl={anchorEl}
+                    type={notation}
+                    handleClose={handleCloseMenuOptions}
+                    handleOpenModalPDF={handleOpenModalListFilePDF}
+                    handleDelete={handleDeleteFileRtdByNotation}
                 />
-            )}
-
-            {list.length === 0 && (
-                <Typography fontSize={40} marginTop={12} color={'black'}>
-                    Nenhum Arquivo Existente
-                </Typography>
-            )}
-            <ModalList data={list} link={list[temp]?.data} onClose={handleCloseModalListFilePDF} open={openModalListFilePDF} />
-
-
-
-            <Drawer anchor='left' open={openModalCadastroRTD} onClose={handleCloseModalCadastroRTD}>
-                <CadastroModalRTD onClose={handleCloseModalCadastroRTD} onClickPartes={handleOpenModalPartes} />
-            </Drawer>
-            <Drawer anchor='right' open={openModalCadastroPartes} onClose={handleCloseModalPartes} >
-                <CadastroPartes onClose={handleCloseModalPartes} />
-            </Drawer>
-        </Box>
+            </PrivateRoute>
+        </AuthProvider>
     );
 };
 
-export default PageRTD;
+export default PageRTD

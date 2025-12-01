@@ -1,14 +1,31 @@
-
-
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
 import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes";
-import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete,IconButton } from "@mui/material";
+import Customer from "@/services/customer.service";
+import ProtestService from "@/services/protest.service";
+import { showAlert } from "@/store/actions";
+import { CloseOutlined } from "@mui/icons-material";
+import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { v4 as randomUUID } from "uuid";
 
 
-export const CadastroProtesto = ({ onClose, onClickPartes }) => {
 
+const customerSv = new Customer()
+const protestSv = new ProtestService()
+export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
+  const dispatch = useDispatch()
+  const [data, setData] = useState({
+    notation: 0,
+    box: 0,
+    presenter: null,
+    drawee: null,
+    debtor: null,
+    situation: "",
+    file_url: ""
+  })
+  const [presenter, setPresenter] = useState([])
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -24,29 +41,98 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
     },
   ]
 
-  const opt = [
-    {
-      label: 'Por falta ou recusa de aceite'
-    },
-    {
-      label: 'Por falta ou recusa de pagamento'
-    },
-    {
-      label: 'Por falta de devolução'
-    },
-    {
-      label: 'Por simples indicação do portador'
-    },
-  ]
-
-  const optapresentante = [
-    {
-      numero: '3333', label: 'Guaiuba Construtora'
+  const handleChangeValues = (e) => {
+    const { name, value } = e.target
+    setData((prev) => ({ ...prev, [name]: value }))
+  }
+  const getDataPresenter = async () => {
+    try {
+      const data = await customerSv.customers()
+      setPresenter(Object.values(data))
+    } catch (error) {
+      console.error("Erro ao buscar clientes", error)
+      throw new Error('Erro ao buscar clientes')
     }
-  ]
-  const [openPartsModal, setOpenPartsModal] = useState(false)
-  const handleOpenPartsModal = () => setOpenPartsModal(!openPartsModal)
-  const handleClosePartsModal = () => setOpenPartsModal(!openPartsModal)
+  }
+  const handleChangeFiles = (e) => {
+    const files = e.target.files[0]
+    if (files) {
+      const fileReader = new FileReader()
+      fileReader.onloadend = () => {
+        const fileResult = fileReader.result.split(',')[1]
+        setData((prev) => ({ ...prev, file_url: fileResult }))
+      }
+      fileReader.readAsDataURL(files)
+    }
+  }
+  const handleCreateProtest = async () => {
+    try {
+      const response = await protestSv.createProtest(data)
+      console.log(response)
+      dispatch(showAlert(response.message, "success", "file"))
+    } catch (error) {
+      dispatch(showAlert(error.msg, "error", "file"))
+      console.error("Erro ao criar protesto!", error)
+      throw new Error("Erro ao criar protesto!")
+    }
+    finally {
+      onClose()
+    }
+  }
+  useEffect(() => {
+    getDataPresenter()
+  }, [])
+
+  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+    setData(prevData => ({
+      ...prevData,
+      [fieldToUpdate]: scannedPdfUrl
+    }));
+  };
+  const handleScanFile = () => {
+    window.scanner.scan((successful, mesg, response) => {
+      if (!successful) {
+        console.error('Failed: ' + mesg);
+        return;
+      }
+      if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+        console.info('User cancelled');
+        return;
+      }
+      const responseJson = JSON.parse(response);
+      const scannedPdfUrl = responseJson.output[0].result[0];
+      updateDataWithUrl('file_url', scannedPdfUrl);
+    }, {
+      "output_settings": [
+        {
+          "type": "return-base64",
+          "format": "pdf",
+          "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+        },
+        {
+          "type": "return-base64-thumbnail",
+          "format": "jpg",
+          "thumbnail_height": 200
+        }
+      ]
+    });
+  };
+
+  useEffect(() => {
+    if (window.scanner) {
+      window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
+        if (!successful) {
+          console.error('Failed: ' + mesg);
+          return;
+        }
+        if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+          console.info('User cancelled');
+          return;
+        }
+      };
+    }
+  }, []);
+
 
   return (
     <Box sx={{
@@ -69,83 +155,74 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         }}>
           Cadastro - Protestos
         </Typography>
-        <IconButton style={{
-          boxSizing: 'content-box',
-          width: '1em',
-          height: '1em',
-          padding: '0.25em 0.25em',
-          color: '#000',
-          border: 0,
-          background: 'transparent url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23000\'%3e%3cpath d=\'M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z\'/%3e%3c/svg%3e")',
-          borderRadius: '0.375rem',
-          opacity: '.5',
-          cursor: 'pointer',
-          '&:hover': {
-            opacity: '1',
-          },
-        }} onClick={onClose} >
-
+        <IconButton onClick={onClose} >
+          <CloseOutlined />
         </IconButton>
       </Box>
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        gap: isSmallScreen ? '20px' : '30px',
+        gap: '30px',
         height: "100vh",
         overflowY: 'auto',
-        padding:'5px 0'
+        padding: '5px 0'
       }}>
-        
-        <TextField 
-        fullWidth
-        sx={{
-          '& input': { color: 'success.main' },
 
-
-        }}
+        <TextField
+          fullWidth
+          sx={{
+            '& input': { color: 'success.main' },
+          }}
+          value={data.notation}
+          name="notation"
+          onChange={handleChangeValues}
           label="Apontamento"
           type="number"
           color='success'
         />
-        <TextField 
-        fullWidth
-        sx={{
-          '& input': { color: 'success.main' }
-        }}
+        <TextField
+          fullWidth
+          sx={{
+            '& input': { color: 'success.main' }
+          }}
+          value={data.box}
+          name="box"
+          onChange={handleChangeValues}
           label="N° da Caixa"
           type="number"
           color='success'
         />
-        
-        <Autocomplete
 
+        <Autocomplete
           disablePortal
+          key="presenter-autocomplete"
           id="combo-box-demo"
-          options={optapresentante}
+          options={presenter}
           autoHighlight
-          getOptionLabel={(option) => option.numero}
-          noOptionsText={<RenderNoOptions title={'Cadastrar Apresentante'} onClick={handleOpenPartsModal} />}
+          getOptionLabel={(option) => option.name}
+          noOptionsText={<RenderNoOptions title={'Cadastrar Apresentante'} onClick={onClickPartes} />}
+          onChange={(e, value) => {
+            setData((prev) => ({ ...prev, presenter: value.cpfcnpj }))
+          }}
           renderOption={(props, option) => (
             <Box component="li" sx={{
               width: '100%',
               display: 'flex', flexDirection: 'column', gap: '6px'
-            }} {...props}>
+            }} {...props} key={`${randomUUID()}-presenter`}>
               <Typography sx={{ fontSize: "12px", display: 'flex', alignSelf: 'start' }}>
-                {option.numero}
+                {option.name}
               </Typography>
               <Typography sx={{
                 fontSize: "11px", display: 'flex', alignSelf: 'start',
                 textTransform: 'uppercase'
               }}>
-                {option.label}
+                {option.cpfcnpj}
               </Typography>
             </Box>
           )}
           fullWidth
           renderInput={(params) => <TextField color="success" {...params}
-
-
             inputProps={{
               ...params.inputProps,
               autoComplete: 'new-password',
@@ -158,26 +235,29 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
             }} />}
         />
         <Autocomplete
-
+          key="drawee-autocomplete"
           disablePortal
           id="combo-box-demo"
-          options={optapresentante}
+          options={presenter}
           autoHighlight
-          noOptionsText={<RenderNoOptions title={'Cadastrar Sacado'} onClick={handleOpenPartsModal} />}
-          getOptionLabel={(option) => option.numero}
+          noOptionsText={<RenderNoOptions title={'Cadastrar Sacado'} onClick={onClickPartes} />}
+          getOptionLabel={(option) => option.name}
+          onChange={(e, value) => {
+            setData((prev) => ({ ...prev, drawee: value.cpfcnpj }))
+          }}
           renderOption={(props, option) => (
             <Box component="li" sx={{
               width: '100%',
               display: 'flex', flexDirection: 'column', gap: '6px'
-            }} {...props}>
+            }} {...props} key={`${randomUUID()}-drawee`}>
               <Typography sx={{ fontSize: "12px", display: 'flex', alignSelf: 'start' }}>
-                {option.numero}
+                {option.name}
               </Typography>
               <Typography sx={{
                 fontSize: "11px", display: 'flex', alignSelf: 'start',
                 textTransform: 'uppercase'
               }}>
-                {option.label}
+                {option.cpfcnpj}
               </Typography>
             </Box>
           )}
@@ -197,26 +277,29 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
             }} />}
         />
         <Autocomplete
-
+          key="debtor-autocomplete"
           disablePortal
           id="combo-box-demo"
-          options={optapresentante}
+          options={presenter}
           autoHighlight
-          getOptionLabel={(option) => option.numero}
-          noOptionsText={<RenderNoOptions title={'Cadastrar Devedor'} onClick={handleOpenPartsModal} />}
+          getOptionLabel={(option) => option.name}
+          noOptionsText={<RenderNoOptions title={'Cadastrar Devedor'} onClick={onClickPartes} />}
+          onChange={(e, value) => {
+            setData((prev) => ({ ...prev, debtor: value.cpfcnpj }))
+          }}
           renderOption={(props, option) => (
             <Box component="li" sx={{
               width: '100%',
               display: 'flex', flexDirection: 'column', gap: '6px'
-            }} {...props}>
+            }} {...props} key={`${randomUUID()}-debtor`}>
               <Typography sx={{ fontSize: "12px", display: 'flex', alignSelf: 'start' }}>
-                {option.numero}
+                {option.name}
               </Typography>
               <Typography sx={{
                 fontSize: "11px", display: 'flex', alignSelf: 'start',
                 textTransform: 'uppercase'
               }}>
-                {option.label}
+                {option.cpfcnpj}
               </Typography>
             </Box>
           )}
@@ -237,9 +320,15 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
         />
         <Autocomplete
           disablePortal
+          key="situation-autocomplete"
           id="combo-box-demo"
           options={optipos}
           fullWidth
+          isOptionEqualToValue={(option, value) => option.label === value.label}
+          getOptionLabel={option => option.label}
+          onChange={(e, value) => {
+            setData((prev) => ({ ...prev, situation: value.label }))
+          }}
           renderInput={(params) => (
             <TextField
               color="success"
@@ -259,6 +348,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
           fullWidth
           type="file"
           color='success'
+          onChange={handleChangeFiles}
           InputLabelProps={{
             shrink: true,
           }}
@@ -279,7 +369,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
             color: '#FFF',
 
           }
-        }}>
+        }} onClick={handleScanFile}>
           Scannear Arquivos
         </Button>
         <Button sx={{
@@ -296,12 +386,11 @@ export const CadastroProtesto = ({ onClose, onClickPartes }) => {
             color: '#237117',
 
           }
-        }}>
+        }} onClick={handleCreateProtest}>
           Realizar Cadastro
         </Button>
 
       </Box>
-      <CadastroPartes open={openPartsModal} onClose={handleClosePartsModal} />
     </Box >
   );
 };

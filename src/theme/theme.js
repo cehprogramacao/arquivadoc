@@ -1,3 +1,4 @@
+"use client"
 import { Roboto } from 'next/font/google';
 import { createTheme } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
@@ -33,14 +34,16 @@ const theme = createTheme({
         },
         text: {
             primary: '#000', // White text for dark backgrounds
-            secondary: '#C7C7C7', // Black text for light backgrounds
+            secondary: '#C7C7C7', // Black text for light backgrounds,
+            white: '#fff'
+
         },
     },
     typography: {
         allVariants: {
             color: '#000', // Set default text color for all variants
         },
-        fontFamily: roboto.style.fontFamily,
+        fontFamily: 'Roboto, sans-serif',
         h2: {
             color: 'rgba(18, 25, 38, 1)',
             lineHeight: 1.2,
@@ -93,7 +96,7 @@ const theme = createTheme({
             textDecorationLine: 'inherit',
         },
         color: '#000',
-        fontFamily: roboto.style.fontFamily,
+        fontFamily: 'Roboto, sans-serif',
     },
 });
 // theme.components = componentStyleOverrides();

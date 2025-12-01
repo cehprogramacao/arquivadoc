@@ -1,131 +1,64 @@
-
-
-
 import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemText from '@mui/material/ListItemText';
+import Grid from '@mui/material/Grid';
+import Image from 'next/image';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#E9E9E9",
-    color: theme.palette.common.black,
-    fontWeight: 'bold',
-    position: 'sticky',
-    top: 0,
-    zIndex: 1,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-  padding: '10px 22px' 
-}));
+export const DocList = ({ data, handleClick, setNotation }) => {
+    return (
+        <>
+            <Grid
+                container
+                spacing={0}
+                sx={{
+                    width: "100%",
+                    flexGrow: 1,
+                    height: '450px',
+                    margin: '0 auto',
+                    position: 'relative',
+                    overflowY: 'auto',
+                }}
+            >
+                {data && data.map((item, index) => (
+                    <Grid
+                        item
+                        key={index}
+                        xs={6}
+                        sm={6}
+                        md={3}
+                        lg={3}
+                        sx={{
+                            display: 'flex',
+                            padding: '0px',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <List sx={{ width: '100%'}}>
+                            <ListItem sx={{ cursor: 'pointer' }}>
+                                <ListItemAvatar>
+                                    <Image width={50} height={50} src="/image/pdf-icon.svg" alt="" />
+                                </ListItemAvatar>
+                                <ListItemText
+                                onClick={(event) => {
+                                    handleClick(event)
+                                    setNotation(item.notation)
+                                }}
+                                    primaryTypographyProps={{
+                                        color: 'black',
+                                        fontWeight: 'bold',
+                                    }}
+                                    primary={item.notation}
+                                    secondary={`por ${item.presenterName}`}
+                                />
+                            </ListItem>
+                        </List>
+                    </Grid>
+                ))}
+            </Grid>
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
+        </>
 
-export const LixeiraTable = ({ data, onClick }) => {
- 
-    const handleOpen = (link) => {
-        window.open(link)
-    }
-  
-  
-
-  return (
-    <TableContainer component={Paper} sx={{ maxWidth: '1200px',marginTop: '30px' }}>
-      <Table sx={{ maxWidth: '100%' }} >
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Registro</StyledTableCell>
-            <StyledTableCell align='center'>Protocolo</StyledTableCell>
-            <StyledTableCell align='center'>Caixa</StyledTableCell>
-            <StyledTableCell align='center'>Apresentante</StyledTableCell>
-            <StyledTableCell align='center'>Livro</StyledTableCell>
-            <StyledTableCell align='center'>Folhas</StyledTableCell>
-            <StyledTableCell align='center'>Arquivo</StyledTableCell>
-            <StyledTableCell align='right'>Excluir</StyledTableCell>
-            <StyledTableCell align='right'>Restaurar</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
-          {data.map((row, index) => (
-            <StyledTableRow key={index}>
-              <StyledTableCell align='left'>{row.registro}</StyledTableCell>
-              <StyledTableCell align='center'>{row.protocolo}</StyledTableCell>
-              <StyledTableCell align='center' >{row.caixa}</StyledTableCell>
-              <StyledTableCell align='center'>{row.apresentante}</StyledTableCell>
-              <StyledTableCell align='center'>{row.livro}</StyledTableCell>
-              <StyledTableCell align='center'>{row.folhas}</StyledTableCell>
-              <StyledTableCell align='center'>
-                <Button sx={{
-                  fontSize: '12px',
-                  textTransform: 'none',
-                  left: 1,
-                  color: 'black',
-                  background: '#237117',
-                  padding:'10px 9px ',
-                  border: '1px solid #237117',
-                  color: '#fff',
-                  ":hover": {
-                    background: 'transparent',
-                    color: '#237117'
-                  }
-                }} onClick={() => handleOpen(row.arquivo)}>
-                  Ver Arquivo
-                </Button>
-              </StyledTableCell>
-              <StyledTableCell align='right'>
-                <Button sx={{
-                  fontSize: '15px',
-                  textTransform: 'none',
-                  left: '12px',
-                  color: 'black',
-                  background: 'transparent',
-                  border: '1px solid #ea1010',
-                  color: '#ea1010',
-                  ":hover": {
-                    background: '#ea1010',
-                    color: '#fff'
-                  }
-                }} onClick={() => onClick(row.id)}>
-                  Excluir
-                </Button>
-              </StyledTableCell>
-              <StyledTableCell align='right'>
-                <Button sx={{
-                  fontSize: '15px',
-                  textTransform: 'none',
-                  left: '14px',
-                  color: 'black',
-                  background: 'transparent',
-                  border: '1px solid #0dcaf0',
-                  color: '#0dcaf0',
-                  ":hover": {
-                    background: '#0dcaf0',
-                    color: '#fff'
-                  }
-                }}>
-                  Restaurar
-                </Button>
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
+    );
+};

@@ -6,9 +6,9 @@ const withIsAdmin = (ComponentAdmin) => {
         const router = useRouter()
 
         useEffect(() => {
-            // const accessToken = sessionStorage.getItem("accessToken")
-            // const refreshToken = sessionStorage.getItem("refreshToken")
-            const isAdmin = sessionStorage.getItem("isAdmin")
+            // const accessToken = localStorage.getItem("accessToken")
+            // const refreshToken = localStorage.getItem("refreshToken")
+            const isAdmin = localStorage.getItem("isAdmin")
             if (isAdmin !== "1") {
                 router.push("/")
                 console.log("Não é um administrador!")

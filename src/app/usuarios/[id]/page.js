@@ -23,6 +23,7 @@ import User from '@/services/user.service';
 import Loading from '@/Components/loading';
 import ReactInputMask from 'react-input-mask';
 import { isLoggedIn } from '@/utils/auth';
+import withAuth from '@/utils/withAuth';
 
 const StyledFormContainer = styled(Box)({
     width: '70%',
@@ -357,4 +358,4 @@ const AddUser = ({ params }) => {
     );
 };
 
-export default withIsAdmin(AddUser);
+export default withAuth(withIsAdmin(AddUser));

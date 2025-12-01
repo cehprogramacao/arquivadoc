@@ -6,6 +6,8 @@ import Customer from "@/services/customer.service";
 
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
+
+const customerSv = new Customer();
 export const CadastroPartes = ({ open, onClose }) => {
   const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
   const [errors, setErrors] = useState({});
@@ -19,7 +21,7 @@ export const CadastroPartes = ({ open, onClose }) => {
     e.target.value?.replace(/\D/g, '').length < 11
       ? setCpfCnpjMask(cpfMask)
       : setCpfCnpjMask(cnpjMask);
-    setData({ ...data, cpfcnpj: e.target.value });
+    setData({ ...data, cpfcnpj: e.target.value.replace(/[^\d]+/g, '') });
   };
 
   const handleInputBlur = () => {
@@ -41,13 +43,8 @@ export const CadastroPartes = ({ open, onClose }) => {
     try {
       setLoading(true)
       onClose()
-      const accessToken = sessionStorage.getItem("accessToken");
-      if (!accessToken) {
-        console.error("Access token is missing.");
-        throw new Error("Access token is missing.");
-      }
-      const customer = new Customer();
-      const response = await customer.createCustomer(data, accessToken);
+      
+      const response = await customerSv.createCustomer(data);
       console.log(response)
       return response;
     } catch (error) {

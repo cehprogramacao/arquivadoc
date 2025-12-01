@@ -13,8 +13,7 @@ import { Box } from '@mui/material';
 import { Delete, FileOpen, Print } from '@mui/icons-material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import ModalList from '../Modals/ModalList';
-import RGI from '@/services/rgi.service';
+import { textTransform } from '@mui/system';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -59,7 +58,7 @@ const StyledMenu = styled((props) => (
 
 const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenModalPDF, type, handleDelete, deletePerm, editPerm }) => {
   const path = usePathname().split("/")[1]
-  console.log(deletePerm, editPerm, '9999kauan')
+  // console.log(deletePerm, editPerm, '9999kauan')
 
   return (
     <>
@@ -74,7 +73,10 @@ const MenuOptionsFile = ({ open, anchorEl, handleClose, handleOpenModalPDF, type
           onClose={handleClose}
         >
           {editPerm === 1 &&
-            <Link href={`/${path}/${[type]}`} as={`/${path}/${type}`}>
+            <Link href={`/${path}/${[type]}`} as={`/${path}/${type}`} style={{
+              textDecoration: 'none',
+              textTransform: "none"
+            }}>
               <MenuItem sx={{ color: "#FFD500" }} onClick={handleClose} disableRipple >
                 <EditIcon sx={{ fill: '#FFD500' }} />
                 Editar

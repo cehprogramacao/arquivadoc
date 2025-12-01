@@ -4,20 +4,19 @@ import { useMediaQuery, useTheme, Box, TextField, Typography, Button, Autocomple
 import { useState } from "react";
 
 
-
+const noteSv = new NoteService()
 export const CadastroSolicitantes = ({ onClose, getTag }) => {
     const [data, setData] = useState({
         name: ""
     })
 
     const handleCreateNotesTag = async () => {
-        const { createNoteTag } = new NoteService()
+        
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
-            const tag = await createNoteTag(data, accessToken)
+            const tag = await noteSv.createNoteTag(data)
             getTag()
             onClose()
-            return tag.data
+            return tag
         } catch (error) {
             console.error("Erro ao criar tag!", error)
             throw error;

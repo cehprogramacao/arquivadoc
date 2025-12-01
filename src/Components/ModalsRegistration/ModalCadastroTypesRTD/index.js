@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -7,16 +6,40 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
+import { useDispatch } from 'react-redux'
+import { showAlert } from '@/store/actions';
+import RTDService from '@/services/rtd.service';
 
-const ModalTypesRTD = ({ onClose, open }) => {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+const rtdSv = new RTDService()
+
+const ModalTypesRTD = ({ onClose, open, getData }) => {
+  const dispatch = useDispatch()
+  const [data, setData] = useState({
+    name: ""
+  })
+
+
+  const handleCreateTypeRtd = async () => {
+    try {
+      const response = await rtdSv.createRTDType(accessToken, data)
+      dispatch({type: SET_ALERT, message: "Tipo de RPJ cadastrado com sucesso!", alertType: "type", severity: "success"})
+    } catch (error) {
+      dispatch({type: SET_ALERT, message: "Erro ao cadastrar tipo de RPJ!", alertType: "type", severity: "error"})
+      console.error("Erro ao criar tipo de rpj", error)
+      throw error;
+    }
+    finally {
+      onClose()
+      getData()
+    }
+  }
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box
         sx={{
           position: 'absolute',
-          width: isSmallScreen ? '100%' : "440px",
+          width: { md: 420, xs: "100%" },
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
@@ -44,7 +67,7 @@ const ModalTypesRTD = ({ onClose, open }) => {
               fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
             }}
           >
-            Cadastro - Tipo de RTD
+            Cadastro - Tipo de RPJ
           </Typography>
           <IconButton
             aria-label="close"
@@ -59,6 +82,8 @@ const ModalTypesRTD = ({ onClose, open }) => {
 
         <TextField
           fullWidth
+          value={data.name}
+          onChange={(e) => setData((state) => ({ ...state, name: e.target.value }))}
           sx={{
             '& input': { color: 'success.main' },
             mb: 7
@@ -83,7 +108,7 @@ const ModalTypesRTD = ({ onClose, open }) => {
               color: '#237117',
             },
           }}
-          onClick={onClose}
+          onClick={handleCreateTypeRtd}
         >
           Realizar Cadastro
         </Button>

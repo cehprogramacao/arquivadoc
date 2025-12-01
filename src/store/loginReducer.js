@@ -1,5 +1,5 @@
 import { extractDataFromSession, isLoggedIn } from '@/utils/auth';
-import * as actionTypes from './actions';
+import { SET_LOGIN_DATA, SET_LOGOUT } from './actions';
 
 export const initialState = {
   opened: false,
@@ -10,18 +10,19 @@ export const initialState = {
 };
 
 const loginReducer = (state = initialState, action) => {
+
   switch (action.type) {
-    case actionTypes.SET_LOGOUT:
+    case SET_LOGOUT:
       return {
         opened: false,
         func: null,
-        data: {},
-        auth: false,
+        data: null,
+        auth: false
       };
-    case actionTypes.SET_LOGIN_DATA:
+    case SET_LOGIN_DATA:
       const data = extractDataFromSession();
-      const newState = { ...state, data, auth: isLoggedIn() };
-      console.log(3039, newState);
+      const newState = { ...state, data, auth: true };
+      process.env.NODE_ENV !== 'production' && console.log(3039, newState);
       return newState;
     default:
       return state;

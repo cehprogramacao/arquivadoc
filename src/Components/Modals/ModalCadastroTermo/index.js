@@ -1,13 +1,20 @@
-import { useMediaQuery, useTheme, TextField, Button, Typography, IconButton, FormControl, OutlinedInput } from "@mui/material";
+import { useMediaQuery, useTheme, TextField, Button, Typography, IconButton, FormControl, OutlinedInput, Autocomplete } from "@mui/material";
 import { Box } from "@mui/system";
 import FilledInput from '@mui/material/FilledInput';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactInputMask from "react-input-mask";
 import Customer from "@/services/customer.service";
+import { useDispatch } from "react-redux";
+import { SET_ALERT, showAlert } from "@/store/actions";
+import RenderNoOptions from "@/Components/ButtonOpenModalCadastro";
 
 const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
+
+const customerSv = new Customer();
+
 export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
+  const dispatch = useDispatch()
   const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
   const [errors, setErrors] = useState({});
   const [data, setData] = useState({
@@ -19,7 +26,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
     e.target.value?.replace(/\D/g, '').length < 11
       ? setCpfCnpjMask(cpfMask)
       : setCpfCnpjMask(cnpjMask);
-    setData({ ...data, customer_cpfcnpj: e.target.value });
+    setData({ ...data, customer_cpfcnpj: e.target.value.replace(/[^\d]+/g, '') });
   };
 
   const handleInputBlur = () => {
@@ -43,27 +50,95 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         setData((prev) => ({ ...prev, file_url: resultURL }))
       }
       fileReader.readAsDataURL(files)
-      console.log(fileReader, 999)
     }
   }
   const handleCreateTerm = async () => {
-    const { createTermLGDP } = new Customer();
     try {
-      onClose()
-      const accessToken = sessionStorage.getItem("accessToken");
-      if (!accessToken) {
-        console.error("Access token is missing.");
-        throw new Error("Access token is missing.");
-      }
-      const response = await createTermLGDP(data, accessToken);
-      console.log(response.data)
-      return response.data;
+
+      const response = await customerSv.createTermLGDP(data);
+      dispatch({ type: SET_ALERT, message: "Termo cadastrado com sucesso!", severity: "success", actionType: "file" })
+      return response;
     } catch (error) {
+      dispatch({ type: SET_ALERT, message: "Erro ao cadastrar termo!", severity: "error", actionType: "file" })
       console.error("Error creating customer:", error);
       throw error;
     }
-    
+    finally {
+      onClose()
+      window.location.reload()
+    }
+
   }
+
+  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+    setData(prevData => ({
+      ...prevData,
+      [fieldToUpdate]: scannedPdfUrl
+    }));
+  };
+  const handleScanFile = () => {
+    window.scanner.scan((successful, mesg, response) => {
+      if (!successful) {
+        console.error('Failed: ' + mesg);
+        return;
+      }
+      if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+        console.info('User cancelled');
+        return;
+      }
+      const responseJson = JSON.parse(response);
+      const scannedPdfUrl = responseJson.output[0].result[0];
+      updateDataWithUrl('file_url', scannedPdfUrl);
+    }, {
+      "output_settings": [
+        {
+          "type": "return-base64",
+          "format": "pdf",
+          "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+        },
+        {
+          "type": "return-base64-thumbnail",
+          "format": "jpg",
+          "thumbnail_height": 200
+        }
+      ]
+    });
+  };
+
+  useEffect(() => {
+    if (window.scanner) {
+      window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
+        if (!successful) {
+          console.error('Failed: ' + mesg);
+          return;
+        }
+        if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+          console.info('User cancelled');
+          return;
+        }
+      };
+    }
+  }, []);
+
+  const [presenter, setPresenter] = useState([])
+
+
+  const getDataPresenter = async () => {
+    try {
+      const data = await customerSv.customers()
+      setPresenter(Object.values(data))
+      console.log(data, '21212')
+
+    } catch (error) {
+      console.error("Erro ao buscar clientes", error)
+      throw error;
+    }
+  }
+  useEffect(() => {
+    getDataPresenter()
+  }, [])
+
+
   return (
     <Box sx={{
       width: { lg: 350, md: 350, sm: 350, xs: 250 },
@@ -108,30 +183,24 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         padding: '5px 0'
       }}>
 
-        <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
-          <ReactInputMask
-            mask={cpfCnpjMask}
-            value={data.cpfcnpj}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-            name="customer_cpfcnpj"
-          >
-            {(inputProps) => (
-              <OutlinedInput
-                {...inputProps}
-                id={'id-documento'}
-                color="success"
-                placeholder={'CPF/CNPJ'}
-                sx={{
-                  borderRadius: '12.5px',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderRadius: '4px',
-                  },
-                }}
-              />
-            )}
-          </ReactInputMask>
-        </FormControl>
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={presenter}
+          fullWidth
+          autoHighlight
+          // value={data.customer_cpfcnpj}
+          noOptionsText={<RenderNoOptions onClick={onClickPartes} title={'Cadastrar Cliente'} />}
+          getOptionLabel={(option) => option.name || ""}
+          onChange={(e, newValue) => setData({ ...data, customer_cpfcnpj: newValue.cpfcnpj })}
+          isOptionEqualToValue={(option, value) => option.name === value.name}
+          renderInput={(params) => <TextField color="success" {...params} label="Buscar Por"
+            sx={{
+              color: "#237117", '& input': {
+                color: 'success.main',
+              },
+            }} />}
+        />
         <TextField
           fullWidth
           value={data.box}
@@ -202,7 +271,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
             color: '#FFF',
 
           }
-        }}>
+        }} onClick={handleScanFile}>
           Scannear Arquivos
         </Button>
         <Button sx={{

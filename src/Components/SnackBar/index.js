@@ -7,12 +7,25 @@ import PersonIcon from '@mui/icons-material/Person';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import KeyIcon from '@mui/icons-material/Key'
+import { useDispatch, useSelector } from 'react-redux';
+import { hideAlert } from '@/store/actions';
 
-const SnackBar = ({ data, handleClose, }) => {
+
+const SnackBar = ({ open, message, alertType, severity, onClose}) => {
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    onClose()
+  };
   const getIcon = () => {
-    switch (data.type) {
+    switch (alertType) {
       case 'user':
         return <PersonIcon />;
+      case 'key':
+        return <KeyIcon />;
       case 'file':
         return <InsertDriveFileIcon />;
       case 'error':
@@ -24,10 +37,11 @@ const SnackBar = ({ data, handleClose, }) => {
     }
   };
   return (
-    <Snackbar open={data.open} autoHideDuration={6000} onClose={handleClose} >
+    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} >
       <Alert
+        variant='filled'
         onClose={handleClose}
-        severity={data.severity === "success" ? "success" : "error"}
+        severity={severity === "success" ? "success" : "error"}
         icon={getIcon()}
         action={
           <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
@@ -35,7 +49,7 @@ const SnackBar = ({ data, handleClose, }) => {
           </IconButton>
         }
       >
-        {data.text}
+        {message}
       </Alert>
     </Snackbar>
   );

@@ -67,6 +67,8 @@ const ButtonCadastrar = styled("button")({
   }
 });
 
+const customerSv = new Customer()
+const noteSv = new NoteService()
 export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   const [outorgantes, setOutorgantes] = useState([""]);
   const [outorgados, setOutorgados] = useState([""]);
@@ -110,14 +112,13 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
 
 
   const getCustumers = async () => {
-    const { customers } = new Customer()
+    
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const allData = await customers(accessToken)
-      setOutorganteArray(Object.values(allData.data))
-      setOutorgadoArray(Object.values(allData.data))
-      console.log(allData.data)
-      return allData.data
+      const allData = await customerSv.customers()
+      setOutorganteArray(Object.values(allData))
+      setOutorgadoArray(Object.values(allData))
+      console.log(allData)
+      return allData
     } catch (error) {
       console.error("Erro ao listar cliente!", error)
       throw error;
@@ -177,13 +178,12 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   const [tag, setTag] = useState([])
   const [presenter, setPresenter] = useState([])
   const getAllNotesTag = async () => {
-    const { getAllNoteTags } = new NoteService()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const allTags = await getAllNoteTags(accessToken)
-      setTag(Object.values(allTags.data))
-      console.log(allTags.data, '99999999999')
-      return allTags.data
+      
+      const allTags = await noteSv.getAllNoteTags()
+      setTag(Object.values(allTags))
+      console.log(allTags, '99999999999')
+      return allTags
     } catch (error) {
       console.error("Error list of tags", error)
       throw error;
@@ -191,14 +191,11 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   }
 
   const getCustomersPresenter = async () => {
-    const customer = new Customer();
     try {
-      const accessToken = sessionStorage.getItem("accessToken");
-      const allPresenter = await customer.customers(accessToken);
-      const newData = Object.values(allPresenter.data);
+      const allPresenter = await customerSv.customers();
+      const newData = Object.values(allPresenter);
       setPresenter(newData);
-      console.log(allPresenter.data);
-      return allPresenter.data;
+      console.log(allPresenter);
     } catch (error) {
       console.error("Error when listing presenters", error);
       throw error;
@@ -210,15 +207,14 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   const [typesGroup, setTypesGroup] = useState([])
   const [option, setOption] = useState(null);
   const getTypeAndGroup = async () => {
-    const { getAllNoteGroups, getAllNoteTypes } = new NoteService();
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const groups = await getAllNoteGroups(accessToken);
-      const types = await getAllNoteTypes(accessToken);
-      setNotesType(Object.values(groups.data))
-      setTypesGroup(Object.values(types.data))
-      console.log(groups.data, types.data, '88888')
-      return groups.data && types.data
+      
+      const groups = await noteSv.getAllNoteGroups();
+      const types = await noteSv.getAllNoteTypes();
+      setNotesType(Object.values(groups))
+      setTypesGroup(Object.values(types))
+      console.log(groups, types, '88888')
+      return groups && types
     } catch (error) {
       console.error(error);
     }
@@ -268,20 +264,54 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
     setOpenModalNotesCustomers(!openModalNotesCustomers)
   }
 
+  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
+        setFormData(prevData => ({
+            ...prevData,
+            file_url: scannedPdfUrl
+        }));
+    };
+
+  const handleDocScan = () => {
+        window.scanner.scan((successful, mesg, response) => {
+            if (!successful) {
+                console.error('Failed: ' + mesg);
+                return;
+            }
+            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+                console.info('User cancelled');
+                return;
+            }
+            const responseJson = JSON.parse(response);
+            const scannedPdfUrl = responseJson.output[0].result[0];
+            updateDataWithUrl('doc_file_url', scannedPdfUrl);
+        }, {
+            "output_settings": [
+                {
+                    "type": "return-base64",
+                    "format": "pdf",
+                    "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+                },
+                {
+                    "type": "return-base64-thumbnail",
+                    "format": "jpg",
+                    "thumbnail_height": 200
+                }
+            ]
+        });
+    };
+
   const handleCreateNotes = async () => {
-    const { createNotes } = new NoteService()
-    console.log(formData)
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const allData = await createNotes(formData, accessToken)
-      console.log(allData.data)
+      
+      const allData = await noteSv.createNotes(formData)
+      console.log(allData)
       dataSnack({
         open: true,
-        text: allData.data.message,
+        text: allData.message,
         severity: "success",
         type: "file"
       })
-      return allData.data
+      return allData
     } catch (error) {
       dataSnack({
         open: true,
@@ -576,7 +606,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         />
         <TextField type="file" onChange={handleSelectedFile} color="success" />
         <Stack sx={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-          <ButtonScanner>
+          <ButtonScanner onClick={handleDocScan}>
             Scannear Arquivo
           </ButtonScanner>
           <ButtonCadastrar onClick={handleCreateNotes}>

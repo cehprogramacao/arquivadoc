@@ -14,20 +14,21 @@ import HistoryIcon from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
 import Link from 'next/link';
 import User from '@/services/user.service';
+import { extractDataFromSession } from '@/utils/auth';
 
+const userSv = new User()
 
 export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
   const [user, setUser] = useState([])
   const [isAdmin, setIsAdmin] = useState(false);
+  const admin = localStorage.getItem("isAdmin");
 
 
 
   const getUser = async () => {
-    const { getUser } = new User()
     try {
-      const accessToken = sessionStorage.getItem("accessToken")
-      const { data } = await getUser(accessToken)
-      console.log(data)
+      const data = await extractDataFromSession()
+      console.log(data, '91239219')
       setUser(data)
     } catch (error) {
       console.error("Erro ao buscar usuário!", error)
@@ -37,8 +38,7 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
 
   useEffect(() => {
     getUser()
-    const admin = sessionStorage.getItem("isAdmin");
-    if (admin === "1") {
+    if (admin === "1" || admin === 1) {
       setIsAdmin(true);
     }
   }, []);
@@ -56,11 +56,13 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
         anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
       >
         <Typography sx={{ padding: '4px', mb: '5px', textAlign: "center" }}>
-          {user.name && `Bem vindo, ${user.name}`}
+          {user?.name && `Bem vindo, ${user?.name}`}
         </Typography>
 
         <Divider />
-        <Link href={"/mudarSenha"}>
+        <Link style={{
+          textDecoration: "none"
+        }} href={"/mudarSenha"}>
           <MenuItem>
             <ListItemIcon>
               <EditIcon fontSize="small" />
@@ -68,7 +70,9 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
           </MenuItem>
         </Link>
         {isAdmin &&
-          <Link href={"/logs"}>
+          <Link style={{
+            textDecoration: "none"
+          }} href={"/logs"} >
             <MenuItem >
               <ListItemIcon>
                 <HistoryIcon fontSize="small" />
@@ -78,7 +82,9 @@ export const ModalOptions = ({ open, logout, onClose, anchorEl }) => {
           </Link>
         }
         {isAdmin &&
-          <Link href={"/usuarios"}>
+          <Link style={{
+            textDecoration: "none"
+          }} href={"/usuarios"}>
             <MenuItem>
               <ListItemIcon>
                 <GroupIcon fontSize="small" />
