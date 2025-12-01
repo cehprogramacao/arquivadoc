@@ -15,8 +15,17 @@ import {
     Checkbox,
     FormControl,
     OutlinedInput,
+    Stepper,
+    Step,
+    StepLabel,
+    Card,
+    CardContent,
+    IconButton,
+    Tooltip,
+    Chip,
+    Alert,
 } from '@mui/material';
-import { styled, width } from '@mui/system';
+import { styled } from '@mui/system';
 import CustomContainer from '@/Components/CustomContainer';
 import withIsAdmin from '@/utils/isAdmin';
 import User from '@/services/user.service';
@@ -24,110 +33,168 @@ import Loading from '@/Components/loading';
 import ReactInputMask from 'react-input-mask';
 import { isLoggedIn } from '@/utils/auth';
 import withAuth from '@/utils/withAuth';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PersonIcon from '@mui/icons-material/Person';
+import SecurityIcon from '@mui/icons-material/Security';
+import SelectAllIcon from '@mui/icons-material/SelectAll';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
 
 const StyledFormContainer = styled(Box)({
-    width: '70%',
-    maxWidth: '700px',
+    width: '90%',
+    maxWidth: '1000px',
     margin: 'auto',
-    padding: '130px 0',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '0px'
+    padding: '40px 20px',
+    minHeight: '100vh',
 });
 
-const StyledContentContainer = styled(Box)({
-    width: '100%',
-    marginTop: '20px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+const StyledCard = styled(Card)({
+    marginTop: '30px',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+    borderRadius: '16px',
+    overflow: 'visible',
 });
 
 const StyledButtonContainer = styled(Box)({
-    marginTop: '20px',
+    marginTop: '30px',
     display: 'flex',
     justifyContent: 'space-between',
-    width: "100%",
+    gap: '16px',
+    flexWrap: 'wrap',
 });
-const numberMaskEstruct = '(99) 99999-9999'
+
+const PermissionButton = styled(Button)({
+    borderRadius: '8px',
+    textTransform: 'none',
+    fontSize: '0.95rem',
+    padding: '8px 16px',
+    fontWeight: 500,
+});
+
+const numberMaskEstruct = '(99) 99999-9999';
+
 const AddUser = ({ params }) => {
-    const [loading, setLoading] = useState(false)
-    const [numberMask, setNumberMask] = useState(numberMaskEstruct)
+    const [loading, setLoading] = useState(false);
+    const [numberMask, setNumberMask] = useState(numberMaskEstruct);
     const [errors, setErrors] = useState({});
+    const [activeStep, setActiveStep] = useState(0);
+    const [showSuccess, setShowSuccess] = useState(false);
+    
     const [userData, setUserData] = useState({
         name: '',
         phone: '',
-        permissions: Array(7).fill().map(() => ({
-            public_name: '',
-            view: 0,
-            create_permission: 0,
-            edit: 0,
-            delete_permission: 0
-        }))
+        permissions: Array(7).fill().map(() => [0, 0, 0, 0])
     });
+
+    const steps = ['Dados do Usuário', 'Configurar Permissões'];
+    const permissionNames = ['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofício', 'Cadastros', 'Notas'];
+    const permissionTypes = ['Visualizar', 'Adicionar', 'Editar', 'Deletar'];
 
     const handleCheckedPermission = (permIndex, checkboxIndex) => {
         const newPermissions = userData.permissions.map((perm, index) => {
             if (index === permIndex) {
-                return perm.map((value, cIndex) =>
-                    cIndex === checkboxIndex ? (value === 0 ? 1 : 0) : value
-                );
+                const updatedPerm = [...perm];
+                updatedPerm[checkboxIndex] = updatedPerm[checkboxIndex] === 0 ? 1 : 0;
+                return updatedPerm;
             }
             return perm;
         });
 
         setUserData({ ...userData, permissions: newPermissions });
-    }
+    };
 
-    const [section, setSection] = useState('Dados');
+    const handleSelectAll = () => {
+        const allSelected = userData.permissions.map(() => [1, 1, 1, 1]);
+        setUserData({ ...userData, permissions: allSelected });
+    };
+
+    const handleClearAll = () => {
+        const allCleared = userData.permissions.map(() => [0, 0, 0, 0]);
+        setUserData({ ...userData, permissions: allCleared });
+    };
+
+    const handleSelectRowAll = (permIndex) => {
+        const newPermissions = [...userData.permissions];
+        newPermissions[permIndex] = [1, 1, 1, 1];
+        setUserData({ ...userData, permissions: newPermissions });
+    };
+
+    const handleClearRow = (permIndex) => {
+        const newPermissions = [...userData.permissions];
+        newPermissions[permIndex] = [0, 0, 0, 0];
+        setUserData({ ...userData, permissions: newPermissions });
+    };
 
     const handleChange = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
+        setErrors({ ...errors, [name]: '' });
         setUserData({
             ...userData,
             [name]: value,
         });
     };
 
-
     const handleInputChange = (e) => {
         e.target.value?.replace(/\D/g, '').length < 11
-            ? setNumberMask(numberMask)
-            : setNumberMask(numberMask);
+            ? setNumberMask(numberMaskEstruct)
+            : setNumberMask(numberMaskEstruct);
         setUserData({ ...userData, phone: e.target.value });
+        setErrors({ ...errors, phone: '' });
     };
 
     const handleInputBlur = () => {
-        userData.phone?.replace(/\D/g, '').length === 11 && setNumberMask(numberMask);
+        if (userData.phone?.replace(/\D/g, '').length < 11 && userData.phone) {
+            setErrors({ ...errors, phone: 'Telefone incompleto' });
+        }
     };
 
+    const validateForm = () => {
+        const newErrors = {};
+        
+        if (!userData.name.trim()) {
+            newErrors.name = 'Nome é obrigatório';
+        }
+        
+        if (!userData.phone.trim()) {
+            newErrors.phone = 'Telefone é obrigatório';
+        } else if (userData.phone.replace(/\D/g, '').length < 11) {
+            newErrors.phone = 'Telefone incompleto';
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleNext = () => {
-        if (section === 'Dados' && (!userData.name.trim() || !userData.phone.trim())) {
+        if (activeStep === 0 && !validateForm()) {
             return;
         }
-        setSection('Permissoes');
+        setActiveStep((prevStep) => prevStep + 1);
     };
-    const handleSend = async () => {
-        console.log(userData)
-        const { updateUserByAdmin } = new User()
-        try {
-            setLoading(true)
-            const accessToken = sessionStorage.getItem("accessToken")
-            const { data } = await updateUserByAdmin(params.id, userData, accessToken)
-            console.log(data)
-            return data
-        } catch (error) {
-            console.log('Erro ao adicionar usuário!', error)
-            throw error
-        }
-        finally {
-            setLoading(false)
-            setSection('Dados');
-        }
 
-    }
+    const handleBack = () => {
+        setActiveStep((prevStep) => prevStep - 1);
+    };
+
+    const handleSend = async () => {
+        const { updateUserByAdmin } = new User();
+        try {
+            setLoading(true);
+            const accessToken = sessionStorage.getItem("accessToken");
+            const { data } = await updateUserByAdmin(params.id, userData, accessToken);
+            setShowSuccess(true);
+            setTimeout(() => {
+                setShowSuccess(false);
+                setActiveStep(0);
+            }, 3000);
+            return data;
+        } catch (error) {
+            console.error('Erro ao atualizar usuário!', error);
+            setErrors({ submit: 'Erro ao salvar. Tente novamente.' });
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const getDataByUser = async (params) => {
         const { getUserById } = new User();
@@ -140,18 +207,9 @@ const AddUser = ({ params }) => {
             const { data } = await getUserById(params.id, accessToken);
 
             const initialPermissions = Array(7).fill().map(() => [0, 0, 0, 0]);
-            // console.log(data.permissions, 'permiisonnnnnnnnnnn')
-            // data.permissions.forEach((permission) => {
-            //     const permIndex = parseInt(permission.public_name.charAt(1)) - 1; // Corrigido para subtrair 1 do índice
-            //     initialPermissions[permIndex] = [
-            //         permission.view,
-            //         permission.create_permission,
-            //         permission.edit,
-            //         permission.delete_permission
-            //     ];
-            // });
+            
             data.permissions.forEach((permission) => {
-                const permIndex = ['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofícios', 'Cadastros', 'Notas'].indexOf(permission.public_name);
+                const permIndex = permissionNames.indexOf(permission.public_name);
                 if (permIndex !== -1) {
                     initialPermissions[permIndex] = [
                         permission.view,
@@ -161,7 +219,7 @@ const AddUser = ({ params }) => {
                     ];
                 }
             });
-            // console.log(initialPermissions, 'initiallllllllllllllll')
+
             setUserData({
                 name: data.user[0].name,
                 phone: data.user[0].phone,
@@ -173,187 +231,349 @@ const AddUser = ({ params }) => {
         }
     };
 
-
-
-
-    const handleBack = () => {
-        setUserData({
-            name: '',
-            email: '',
-            phone: '',
-            password: '',
-        });
-        setSection('Dados');
-    };
     useEffect(() => {
         getDataByUser(params);
-
     }, [params]);
 
-    // console.log(userData, '77777777777777')
+    const getPermissionCount = () => {
+        return userData.permissions.reduce((total, perm) => {
+            return total + perm.filter(p => p === 1).length;
+        }, 0);
+    };
+
     return (
         <>
-            {!loading ?
-                <CustomContainer >
+            {!loading ? (
+                <CustomContainer>
                     <StyledFormContainer>
-                        <Box sx={{
-                            width: '100%',
-                            margin: '0 auto',
-                            height: 'auto',
-                            padding: '20px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            placeContent: 'center',
-                            placeItems: 'center',
-                            border: '1px solid #237117',
-                            borderRadius: '8px',
-                            gap: '30px',
-                            flexWrap: 'wrap'
-                        }}>
-                            <Typography variant="h5" sx={{
-                                display: 'flex',
-                                background: section === 'Dados' ? '#237117' : 'transparent',
-                                border: '1px solid #237117',
-                                padding: '5px 40px',
-                                color: section === 'Dados' ? '#fff' : '#237117',
-                                borderRadius: '8px'
+                        <Box sx={{ textAlign: 'center', mb: 4 }}>
+                            <Typography variant="h4" sx={{ 
+                                fontWeight: 600, 
+                                color: '#237117',
+                                mb: 1 
                             }}>
-                                Dados
-                                {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
+                                Editar Usuário
                             </Typography>
-                            <Typography variant="h5" sx={{
-                                display: 'flex',
-                                border: '1px solid #237117',
-                                padding: '5px 26px',
-                                color: '#237171',
-                                borderRadius: '8px',
-                                background: section === 'Permissoes' ? '#237117' : 'transparent',
-                                color: section === 'Permissoes' ? '#fff' : '#237117',
-                            }}>
-                                {/* {section === 'Dados' ? 'Dados do Usuário' : 'Permissões'} */}
-                                Permissões
+                            <Typography variant="body1" sx={{ color: '#666' }}>
+                                Gerencie dados e permissões do usuário
                             </Typography>
                         </Box>
-                        <StyledContentContainer>
-                            {section === 'Dados' && (
-                                <Box component="form" sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    gap: 5,
-                                    width: "100%"
-                                }}>
-                                    <TextField
-                                        label="Name"
-                                        name="name"
-                                        variant="outlined"
-                                        color="success"
-                                        value={userData.name}
-                                        onChange={handleChange}
-                                        fullWidth
-                                    />
-                                    <FormControl fullWidth error={Boolean(errors['phone'])}>
-                                        <ReactInputMask
-                                            mask={numberMask}
-                                            value={userData.phone}
-                                            onChange={handleInputChange}
-                                            onBlur={handleInputBlur}
-                                            name="phone"
+
+                        <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+                            {steps.map((label, index) => (
+                                <Step key={label}>
+                                    <StepLabel
+                                        StepIconProps={{
+                                            sx: {
+                                                '&.Mui-active': { color: '#237117' },
+                                                '&.Mui-completed': { color: '#237117' },
+                                            }
+                                        }}
+                                    >
+                                        {label}
+                                    </StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+
+                        {showSuccess && (
+                            <Alert 
+                                severity="success" 
+                                sx={{ mb: 3 }}
+                                icon={<CheckCircleIcon />}
+                            >
+                                Usuário atualizado com sucesso!
+                            </Alert>
+                        )}
+
+                        {errors.submit && (
+                            <Alert severity="error" sx={{ mb: 3 }}>
+                                {errors.submit}
+                            </Alert>
+                        )}
+
+                        <StyledCard>
+                            <CardContent sx={{ p: 4 }}>
+                                {activeStep === 0 && (
+                                    <Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                                            <PersonIcon sx={{ color: '#237117', mr: 1, fontSize: 28 }} />
+                                            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                                Informações Pessoais
+                                            </Typography>
+                                        </Box>
+                                        
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                            <TextField
+                                                label="Nome Completo"
+                                                name="name"
+                                                variant="outlined"
+                                                color="success"
+                                                value={userData.name}
+                                                onChange={handleChange}
+                                                error={Boolean(errors.name)}
+                                                helperText={errors.name}
+                                                fullWidth
+                                                required
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        borderRadius: '8px',
+                                                    }
+                                                }}
+                                            />
+                                            
+                                            <FormControl fullWidth error={Boolean(errors.phone)}>
+                                                <ReactInputMask
+                                                    mask={numberMask}
+                                                    value={userData.phone}
+                                                    onChange={handleInputChange}
+                                                    onBlur={handleInputBlur}
+                                                    name="phone"
+                                                >
+                                                    {(inputProps) => (
+                                                        <OutlinedInput
+                                                            {...inputProps}
+                                                            color="success"
+                                                            placeholder="Número de Telefone"
+                                                            required
+                                                            sx={{
+                                                                borderRadius: '8px',
+                                                            }}
+                                                        />
+                                                    )}
+                                                </ReactInputMask>
+                                                {errors.phone && (
+                                                    <Typography variant="caption" sx={{ color: '#d32f2f', mt: 0.5, ml: 1.5 }}>
+                                                        {errors.phone}
+                                                    </Typography>
+                                                )}
+                                            </FormControl>
+                                        </Box>
+                                    </Box>
+                                )}
+
+                                {activeStep === 1 && (
+                                    <Box>
+                                        <Box sx={{ 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            justifyContent: 'space-between',
+                                            mb: 3,
+                                            flexWrap: 'wrap',
+                                            gap: 2
+                                        }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <SecurityIcon sx={{ color: '#237117', mr: 1, fontSize: 28 }} />
+                                                <Box>
+                                                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                                        Permissões do Sistema
+                                                    </Typography>
+                                                    <Chip 
+                                                        label={`${getPermissionCount()} permissões ativas`}
+                                                        size="small"
+                                                        sx={{ mt: 0.5, bgcolor: '#e8f5e9' }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                            
+                                            <Box sx={{ display: 'flex', gap: 1 }}>
+                                                <Tooltip title="Selecionar todas as permissões">
+                                                    <PermissionButton
+                                                        variant="contained"
+                                                        startIcon={<SelectAllIcon />}
+                                                        onClick={handleSelectAll}
+                                                        sx={{
+                                                            bgcolor: '#237117',
+                                                            '&:hover': { bgcolor: '#1a5c11' }
+                                                        }}
+                                                    >
+                                                        Selecionar Tudo
+                                                    </PermissionButton>
+                                                </Tooltip>
+                                                <Tooltip title="Remover todas as permissões">
+                                                    <PermissionButton
+                                                        variant="outlined"
+                                                        startIcon={<ClearAllIcon />}
+                                                        onClick={handleClearAll}
+                                                        sx={{
+                                                            borderColor: '#237117',
+                                                            color: '#237117',
+                                                            '&:hover': { 
+                                                                borderColor: '#1a5c11',
+                                                                bgcolor: 'rgba(35, 113, 23, 0.04)'
+                                                            }
+                                                        }}
+                                                    >
+                                                        Limpar Tudo
+                                                    </PermissionButton>
+                                                </Tooltip>
+                                            </Box>
+                                        </Box>
+
+                                        <TableContainer 
+                                            component={Paper} 
+                                            sx={{ 
+                                                borderRadius: '12px',
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+                                            }}
                                         >
-                                            {(inputProps) => (
-                                                <OutlinedInput
-                                                    {...inputProps}
-                                                    id={'id-documento'}
-                                                    color="success"
-                                                    placeholder={'Número de Telefone'}
-                                                    sx={{
-                                                        borderRadius: '12.5px',
-                                                        '& .MuiOutlinedInput-notchedOutline': {
-                                                            borderRadius: '4px',
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-                                        </ReactInputMask>
-                                    </FormControl>
-
-                                </Box>
-                            )}
-                            {section === 'Permissoes' && (
-                                <Box
-                                    component="form"
-
-                                    sx={{
-                                        width: '100%',
-                                        '& .MuiFormControlLabel-root': { m: .8, },
-                                    }}
-                                >
-                                    <TableContainer component={Paper}>
-                                        <Table>
-                                            <TableHead sx={{ background: '#237117' }}>
-                                                <TableRow>
-                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Permissão</TableCell>
-                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Visualizar</TableCell>
-                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Adicionar</TableCell>
-                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Editar</TableCell>
-                                                    <TableCell sx={{ color: '#fff', fontSize: "1.2rem" }} align="center">Deletar</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofício', 'Cadastros', 'Notas'].map((permission, permIndex) => (
-                                                    <TableRow key={permission}>
-                                                        <TableCell sx={{ fontSize: "1.2rem" }} align="center">{permission}</TableCell>
-                                                        {userData.permissions[permIndex].map((value, checkboxIndex) => {
-                                                            console.log(value, 'valor checkkkkkkkkkkkkkk'); // Coloque o console.log aqui para verificar o valor
-                                                            return (
+                                            <Table>
+                                                <TableHead sx={{ bgcolor: '#237117' }}>
+                                                    <TableRow>
+                                                        <TableCell 
+                                                            sx={{ 
+                                                                color: '#fff', 
+                                                                fontSize: '1rem',
+                                                                fontWeight: 600,
+                                                                minWidth: '150px'
+                                                            }} 
+                                                        >
+                                                            Módulo
+                                                        </TableCell>
+                                                        {permissionTypes.map((type) => (
+                                                            <TableCell 
+                                                                key={type}
+                                                                sx={{ 
+                                                                    color: '#fff', 
+                                                                    fontSize: '1rem',
+                                                                    fontWeight: 600
+                                                                }} 
+                                                                align="center"
+                                                            >
+                                                                {type}
+                                                            </TableCell>
+                                                        ))}
+                                                        <TableCell 
+                                                            sx={{ 
+                                                                color: '#fff', 
+                                                                fontSize: '1rem',
+                                                                fontWeight: 600
+                                                            }} 
+                                                            align="center"
+                                                        >
+                                                            Ações
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {permissionNames.map((permission, permIndex) => (
+                                                        <TableRow 
+                                                            key={permission}
+                                                            sx={{
+                                                                '&:nth-of-type(odd)': { bgcolor: '#f9f9f9' },
+                                                                '&:hover': { bgcolor: '#f0f7ef' }
+                                                            }}
+                                                        >
+                                                            <TableCell 
+                                                                sx={{ 
+                                                                    fontSize: '0.95rem',
+                                                                    fontWeight: 500,
+                                                                    color: '#333'
+                                                                }}
+                                                            >
+                                                                {permission}
+                                                            </TableCell>
+                                                            {userData.permissions[permIndex].map((value, checkboxIndex) => (
                                                                 <TableCell key={checkboxIndex} align="center">
                                                                     <Checkbox
-                                                                        color='success'
+                                                                        color="success"
                                                                         checked={value === 1}
                                                                         onChange={() => handleCheckedPermission(permIndex, checkboxIndex)}
+                                                                        sx={{
+                                                                            '&.Mui-checked': {
+                                                                                color: '#237117',
+                                                                            }
+                                                                        }}
                                                                     />
                                                                 </TableCell>
-                                                            );
-                                                        })}
-                                                    </TableRow>
-                                                ))}
+                                                            ))}
+                                                            <TableCell align="center">
+                                                                <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
+                                                                    <Tooltip title="Marcar todas desta linha">
+                                                                        <IconButton
+                                                                            size="small"
+                                                                            onClick={() => handleSelectRowAll(permIndex)}
+                                                                            sx={{ 
+                                                                                color: '#237117',
+                                                                                '&:hover': { bgcolor: 'rgba(35, 113, 23, 0.08)' }
+                                                                            }}
+                                                                        >
+                                                                            <SelectAllIcon fontSize="small" />
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Limpar esta linha">
+                                                                        <IconButton
+                                                                            size="small"
+                                                                            onClick={() => handleClearRow(permIndex)}
+                                                                            sx={{ 
+                                                                                color: '#666',
+                                                                                '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' }
+                                                                            }}
+                                                                        >
+                                                                            <ClearAllIcon fontSize="small" />
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Box>
+                                )}
+                            </CardContent>
+                        </StyledCard>
 
-                                            </TableBody>
-
-                                        </Table>
-                                    </TableContainer>
-
-                                </Box>
-                            )}
-                            <StyledButtonContainer>
-                                <Button onClick={handleBack} variant="contained" disabled={section === 'Dados'} sx={{
-                                    background: "#237117",
-                                    color: '#fff',
-                                    ":hover": {
-                                        background: "#237117",
-
-                                        color: "#fff"
+                        <StyledButtonContainer>
+                            <Button
+                                onClick={handleBack}
+                                disabled={activeStep === 0}
+                                variant="outlined"
+                                size="large"
+                                sx={{
+                                    borderColor: '#237117',
+                                    color: '#237117',
+                                    borderRadius: '8px',
+                                    textTransform: 'none',
+                                    fontSize: '1rem',
+                                    px: 4,
+                                    '&:hover': {
+                                        borderColor: '#1a5c11',
+                                        bgcolor: 'rgba(35, 113, 23, 0.04)'
+                                    },
+                                    '&:disabled': {
+                                        borderColor: '#ccc',
+                                        color: '#999'
                                     }
-                                }}>
-                                    Voltar
-                                </Button>
-                                <Button onClick={section === "Dados" || section === "Próximo" ? handleNext : handleSend} variant="contained" color="primary" sx={{
-                                    background: "#237117",
-                                    border: '1px solid #237117',
-                                    ":hover": {
-                                        background: "transparent",
-
-                                        color: "#237117"
+                                }}
+                            >
+                                Voltar
+                            </Button>
+                            
+                            <Button
+                                onClick={activeStep === steps.length - 1 ? handleSend : handleNext}
+                                variant="contained"
+                                size="large"
+                                sx={{
+                                    bgcolor: '#237117',
+                                    borderRadius: '8px',
+                                    textTransform: 'none',
+                                    fontSize: '1rem',
+                                    px: 4,
+                                    '&:hover': {
+                                        bgcolor: '#1a5c11'
                                     }
-                                }}>
-                                    {section === 'Dados' ? 'Próximo' : 'Enviar'}
-                                </Button>
-                            </StyledButtonContainer>
-                        </StyledContentContainer>
+                                }}
+                            >
+                                {activeStep === steps.length - 1 ? 'Salvar Alterações' : 'Próximo'}
+                            </Button>
+                        </StyledButtonContainer>
                     </StyledFormContainer>
                 </CustomContainer>
-                :
+            ) : (
                 <Loading />
-            }
+            )}
         </>
     );
 };
