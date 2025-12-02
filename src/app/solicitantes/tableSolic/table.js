@@ -219,7 +219,6 @@ export const UserTable = ({ data = [], onClick, emptyMessage }) => {
                     }
                 },
                 '&::-webkit-scrollbar-track': {
-                    background: '#f1f1f1',
                     borderRadius: '10px',
                 },
             }}

@@ -146,7 +146,7 @@ const PageSolicitantes = () => {
             const dataArray = Object.values(allData)
             setData(dataArray)
             setFilteredData(dataArray)
-            
+
             dispatch({
                 type: SET_ALERT,
                 message: `${dataArray.length} solicitante(s) encontrado(s)`,
@@ -226,7 +226,7 @@ const PageSolicitantes = () => {
     return (
         <>
             {loading && <Loading />}
-            
+
             <Box sx={STYLES.pageContainer}>
                 <Container maxWidth="xl">
                     {/* Header */}
@@ -362,24 +362,23 @@ const PageSolicitantes = () => {
                         }
                     />
                 </Container>
-
-                <Drawer
-                    anchor="right"
-                    open={open}
-                    onClose={handleCloseModal}
-                    PaperProps={{
-                        sx: {
-                            width: { xs: '100%', sm: 400 },
-                            borderRadius: '16px 0 0 16px'
-                        }
-                    }}
-                >
-                    <CadastroSolicitantes
-                        onClose={handleCloseModal}
-                        getTag={getAllNoteTags}
-                    />
-                </Drawer>
             </Box>
+            <Drawer
+                anchor="left"
+                open={open}
+                onClose={handleCloseModal}
+                PaperProps={{
+                    sx: {
+                        width: { xs: '100%', sm: 400 },
+                        borderRadius: '16px 0 0 16px'
+                    }
+                }}
+            >
+                <CadastroSolicitantes
+                    onClose={handleCloseModal}
+                    getTag={getAllNoteTags}
+                />
+            </Drawer>
         </>
     )
 }
