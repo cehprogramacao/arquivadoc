@@ -177,7 +177,7 @@ const PageUsuarios = () => {
     const handleFilterById = async () => {
         try {
             setLoading(true);
-            const data = await getUserById(filter.userId);
+            const data = await userSv.getUserById(filter.userId);
             dispatch({
                 type: SET_ALERT,
                 message: "Usuário encontrado com sucesso!",
