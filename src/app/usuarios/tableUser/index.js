@@ -24,7 +24,7 @@ import {
     LockOpen as LockOpenIcon
 } from '@mui/icons-material';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
