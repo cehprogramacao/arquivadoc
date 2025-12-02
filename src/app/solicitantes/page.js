@@ -41,8 +41,8 @@ const STYLES = {
     pageContainer: {
         width: '100%',
         minHeight: '100vh',
-        px: { xs: 2, sm: 3, md: 4 },
-        py: { xs: 10, sm: 12 },
+        px: { xs: 2, sm: 3, md: 2 },
+        py: { xs: 15, sm: 15 },
         backgroundColor: '#f5f5f5'
     },
 
