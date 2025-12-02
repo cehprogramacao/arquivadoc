@@ -1,6 +1,6 @@
 "use client"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import { Autocomplete, Box, Button, Drawer, TextField, Typography, useTheme, useMediaQuery, Grid } from "@mui/material"
+import { Autocomplete, Box, Button, Drawer, TextField, Typography, useTheme, useMediaQuery, Grid, Container } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Buttons } from "@/Components/Button/Button"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
@@ -206,10 +206,10 @@ const PageUsuarios = () => {
                 width: '100%',
                 height: '100vh',
                 display: 'flex',
-                py: 12,
+                py: 15,
                 px: 3
             }}>
-                <CustomContainer>
+                <Container maxWidth="xl">
                     <Grid container spacing={2}>
                         <Grid item xs={12} >
                             <Box sx={{
@@ -288,7 +288,7 @@ const PageUsuarios = () => {
                             />
                         </Grid>
                     </Grid>
-                </CustomContainer>
+                </Container>
             </Box>
         </AuthProvider>
     )
