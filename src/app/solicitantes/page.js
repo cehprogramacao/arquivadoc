@@ -363,21 +363,8 @@ const PageSolicitantes = () => {
                     />
                 </Container>
             </Box>
-            <Drawer
-                anchor="left"
-                open={open}
-                onClose={handleCloseModal}
-                PaperProps={{
-                    sx: {
-                        width: { xs: '100%', sm: 400 },
-                        borderRadius: '16px 0 0 16px'
-                    }
-                }}
-            >
-                <CadastroSolicitantes
-                    onClose={handleCloseModal}
-                    getTag={getAllNoteTags}
-                />
+            <Drawer anchor="left" open={open} onClose={handleCloseModal}>
+                <CadastroSolicitantes onClose={handleCloseModal} getTag={getAllNoteTags} />
             </Drawer>
         </>
     )
