@@ -384,4 +384,4 @@ const PageSolicitantes = () => {
     )
 }
 
-export default PageSolicitante
+export default PageSolicitantes
