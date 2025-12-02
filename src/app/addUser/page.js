@@ -501,7 +501,7 @@ const AddUser = () => {
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
-                                                            {['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofício', 'Cadastros', 'Notas'].map((permission, permIndex) => (
+                                                            {['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofícios', 'Cadastros', 'Notas'].map((permission, permIndex) => (
                                                                 <TableRow 
                                                                     key={permission}
                                                                     sx={{

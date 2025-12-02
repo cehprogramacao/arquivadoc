@@ -91,7 +91,7 @@ const AddUser = ({ params }) => {
     });
 
     const steps = ['Dados do Usuário', 'Configurar Permissões'];
-    const permissionNames = ['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofício', 'Cadastros', 'Notas'];
+    const permissionNames = ['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofícios', 'Cadastros', 'Notas'];
     const permissionTypes = ['Visualizar', 'Adicionar', 'Editar', 'Deletar'];
 
     const handleCheckedPermission = (permIndex, checkboxIndex) => {
