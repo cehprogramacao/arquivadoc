@@ -110,7 +110,7 @@ const TableComponente = ({
 
 
 
-    const [admin, setAdmin] = useState()
+    const [admin, setAdmin] = useState("")
 
 
     useEffect(() => {
@@ -120,6 +120,8 @@ const TableComponente = ({
 
     const hasDeletePermission = admin === 1 || admin === '1';
     const hasEditPermission = admin === 1 || admin === '1';
+
+    console.log(hasDeletePermission, hasEditPermission)
 
     return (
         <TableContainer
