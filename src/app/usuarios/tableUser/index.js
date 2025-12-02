@@ -114,7 +114,7 @@ const TableComponente = ({
 
 
     useEffect(() => {
-        const isAdminUser = sessionStorage.getItem('isAdmin')
+        const isAdminUser = localStorage.getItem('isAdmin')
         setAdmin(isAdminUser)
     }, [])
 

@@ -165,7 +165,7 @@ const PageProtesto = () => {
     }
     useEffect(() => {
         getAllFilesProtest()
-        const isAdminUser = sessionStorage.getItem('isAdmin')
+        const isAdminUser = localStorage.getItem('isAdmin')
         setIsAdmin(isAdminUser)
     }, [])
 

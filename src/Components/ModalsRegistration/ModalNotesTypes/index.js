@@ -32,13 +32,11 @@ const CadastroNotesType = ({ open, onClose, getData }) => {
     }
 
     const handleRegisteNoteGroup = async () => {
-        const { createNoteType } = new NoteService()
         try {
-            const accessToken = sessionStorage.getItem("accessToken")
             if (dataTypes.group_id === 0 && dataTypes.name === "") {
                 throw new Error("Campos vazios")
             }
-            const { data } = await createNoteType(dataTypes, accessToken)
+            const data = await noteSv.createNoteType(dataTypes, accessToken)
 
             console.log(data)
         } catch (error) {

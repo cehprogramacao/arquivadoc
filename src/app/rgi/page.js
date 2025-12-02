@@ -111,7 +111,7 @@ const PageRGI = () => {
         let newData = [];
         try {
             setLoading(true);
-            const response = await rgi.getByPrenotation(Number(value));
+            const response = await rgiSv.getByPrenotation(Number(value));
             setData(Object.values(response));
             return response
         } catch (error) {
@@ -161,7 +161,7 @@ const PageRGI = () => {
 
     useEffect(() => {
         getDataRGI()
-        const isAdminUser = sessionStorage.getItem('isAdmin')
+        const isAdminUser = localStorage.getItem('isAdmin')
         setIsAdmin(isAdminUser)
     }, [])
 

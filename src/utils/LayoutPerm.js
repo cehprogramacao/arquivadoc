@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import User from '@/services/user.service';
 import { useAuth } from '@/context';
 
+
+const userSv = new User();
 const PrivateRoute = ({ children, requiredPermissions }) => {
     const router = useRouter();
     const { permissions, updatePermissions } = useAuth();
@@ -12,9 +14,7 @@ const PrivateRoute = ({ children, requiredPermissions }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const accessToken = sessionStorage.getItem("accessToken");
-                const { getUser } = new User();
-                const { data } = await getUser(accessToken);
+                const data = await userSv.getUser();
                 await updatePermissions(data.permissions);
                 setLoading(false);
             } catch (error) {

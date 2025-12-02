@@ -40,7 +40,7 @@ const PageTermos = () => {
     const openMenu = Boolean(anchorEl);
     const [isAdmin, setIsAdmin] = useState("")
     useEffect(() => {
-        const isAdminUser = sessionStorage.getItem("isAdmin")
+        const isAdminUser = localStorage.getItem("isAdmin")
         setIsAdmin(isAdminUser)
     })
     const [openPDF, setOpenPDF] = useState(false)

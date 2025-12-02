@@ -170,7 +170,7 @@ const PageRTD = () => {
     }
     useEffect(() => {
         getAllFilesRTD()
-        const isAdminUser = sessionStorage.getItem("isAdmin")
+        const isAdminUser = localStorage.getItem("isAdmin")
         setIsAdmin(isAdminUser)
     }, [])
 

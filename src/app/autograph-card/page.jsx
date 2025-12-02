@@ -124,7 +124,7 @@ const PageAutographCards = () => {
     };
 
     useEffect(() => {
-        const isAdminUser = sessionStorage.getItem("isAdmin")
+        const isAdminUser = localStorage.getItem("isAdmin")
         setIsAdmin(isAdminUser)
     })
     const service = ['CPF']
