@@ -24,7 +24,7 @@ import {
     LockOpen as LockOpenIcon
 } from '@mui/icons-material';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -92,29 +92,38 @@ const ActionButton = styled(Button)(({ variant = 'default' }) => {
     };
 });
 
-const TableComponente = ({ 
-    data, 
-    handleDeleteByID, 
-    handleSetAdmin, 
-    handleUnsetAdmin, 
-    handleEnable, 
-    handleDisabled 
+const TableComponente = ({
+    data,
+    handleDeleteByID,
+    handleSetAdmin,
+    handleUnsetAdmin,
+    handleEnable,
+    handleDisabled
 }) => {
     const { permissions } = useAuth();
-    
+
     // Memoiza a conversão do array para evitar recalcular em cada render
-    const dataArray = useMemo(() => 
+    const dataArray = useMemo(() =>
         Array.isArray(data) ? data : Object.values(data),
         [data]
     );
 
-    // Verifica permissões uma vez
-    const hasDeletePermission = permissions[5]?.delete_permission === 1;
-    const hasEditPermission = permissions[5]?.edit === 1;
+
+
+    const [admin, setAdmin] = useState()
+
+
+    useEffect(() => {
+        const isAdminUser = sessionStorage.getItem('isAdmin')
+        setAdmin(isAdminUser)
+    }, [])
+
+    const hasDeletePermission = admin === 1 || admin === '1';
+    const hasEditPermission = admin === 1 || admin === '1';
 
     return (
-        <TableContainer 
-            component={Paper} 
+        <TableContainer
+            component={Paper}
             sx={{
                 height: 400,
                 width: '100%',
@@ -145,55 +154,55 @@ const TableComponente = ({
                                 <StyledTableCell align='left'>
                                     {row?.id}
                                 </StyledTableCell>
-                                
+
                                 <StyledTableCell align='center'>
                                     {row?.name}
                                 </StyledTableCell>
-                                
+
                                 <StyledTableCell align='center'>
                                     {row?.email}
                                 </StyledTableCell>
-                                
+
                                 <StyledTableCell align='center'>
-                                    <Chip 
+                                    <Chip
                                         label={row?.is_admin === 1 ? 'Admin' : 'Usuário'}
                                         color={row?.is_admin === 1 ? 'primary' : 'default'}
                                         size="small"
                                         icon={row?.is_admin === 1 ? <AdminIcon /> : <PersonIcon />}
                                     />
                                 </StyledTableCell>
-                                
+
                                 <StyledTableCell align='center'>
-                                    <Chip 
+                                    <Chip
                                         label={row?.active === 1 ? 'Ativo' : 'Inativo'}
                                         color={row?.active === 1 ? 'success' : 'error'}
                                         size="small"
                                         variant="outlined"
                                     />
                                 </StyledTableCell>
-                                
+
                                 <StyledTableCell align='center'>
-                                    <Box style={{ 
-                                        display: 'flex', 
-                                        gap: '8px', 
+                                    <Box style={{
+                                        display: 'flex',
+                                        gap: '8px',
                                         justifyContent: 'center',
                                         flexWrap: 'wrap'
                                     }}>
                                         {/* Editar */}
                                         {hasEditPermission && (
                                             <Tooltip title="Editar usuário">
-                                                <Link 
-                                                    href={`/usuarios/[id]`} 
+                                                <Link
+                                                    href={`/usuarios/[id]`}
                                                     as={`/usuarios/${row.id}`}
                                                     passHref
                                                     legacyBehavior
                                                 >
-                                                    <IconButton 
+                                                    <IconButton
                                                         size="small"
-                                                        sx={{ 
+                                                        sx={{
                                                             color: '#FFD500',
-                                                            '&:hover': { 
-                                                                backgroundColor: 'rgba(255, 213, 0, 0.1)' 
+                                                            '&:hover': {
+                                                                backgroundColor: 'rgba(255, 213, 0, 0.1)'
                                                             }
                                                         }}
                                                     >
@@ -209,10 +218,10 @@ const TableComponente = ({
                                                 <IconButton
                                                     size="small"
                                                     onClick={() => handleDeleteByID(row?.id)}
-                                                    sx={{ 
+                                                    sx={{
                                                         color: '#EA1010',
-                                                        '&:hover': { 
-                                                            backgroundColor: 'rgba(234, 16, 16, 0.1)' 
+                                                        '&:hover': {
+                                                            backgroundColor: 'rgba(234, 16, 16, 0.1)'
                                                         }
                                                     }}
                                                 >
@@ -225,15 +234,15 @@ const TableComponente = ({
                                         <Tooltip title={row?.is_admin === 1 ? 'Remover privilégios de admin' : 'Tornar admin'}>
                                             <IconButton
                                                 size="small"
-                                                onClick={() => 
-                                                    row?.is_admin === 1 
+                                                onClick={() =>
+                                                    row?.is_admin === 1
                                                         ? handleUnsetAdmin(row?.id)
                                                         : handleSetAdmin(row?.id)
                                                 }
-                                                sx={{ 
+                                                sx={{
                                                     color: '#0dcaf0',
-                                                    '&:hover': { 
-                                                        backgroundColor: 'rgba(13, 202, 240, 0.1)' 
+                                                    '&:hover': {
+                                                        backgroundColor: 'rgba(13, 202, 240, 0.1)'
                                                     }
                                                 }}
                                             >
@@ -249,15 +258,15 @@ const TableComponente = ({
                                         <Tooltip title={row?.active === 1 ? 'Desabilitar usuário' : 'Habilitar usuário'}>
                                             <IconButton
                                                 size="small"
-                                                onClick={() => 
-                                                    row?.active === 1 
+                                                onClick={() =>
+                                                    row?.active === 1
                                                         ? handleDisabled(row?.id)
                                                         : handleEnable(row?.id)
                                                 }
-                                                sx={{ 
+                                                sx={{
                                                     color: row?.active === 1 ? '#EA1010' : '#198754',
-                                                    '&:hover': { 
-                                                        backgroundColor: row?.active === 1 
+                                                    '&:hover': {
+                                                        backgroundColor: row?.active === 1
                                                             ? 'rgba(234, 16, 16, 0.1)'
                                                             : 'rgba(25, 135, 84, 0.1)'
                                                     }
