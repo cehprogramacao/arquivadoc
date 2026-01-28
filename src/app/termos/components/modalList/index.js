@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { 
-    Box, 
-    Button, 
-    Modal, 
-    Typography, 
-    useMediaQuery, 
+import {
+    Box,
+    Button,
+    Modal,
+    Typography,
+    useMediaQuery,
     useTheme,
     Paper,
     Chip,
@@ -24,25 +24,25 @@ import { usePathname } from 'next/navigation';
 import Customer from '@/services/customer.service';
 
 const customerSv = new Customer()
-const ModalList = ({ 
-    open, 
-    data, 
-    onClose, 
-    notation, 
-    deletePerm = 0, 
+const ModalList = ({
+    open,
+    data,
+    onClose,
+    notation,
+    deletePerm = 0,
     editPerm = 0,
-    handleDeleteByNotation 
+    handleDeleteByNotation
 }) => {
     const path = usePathname().split("/")[1];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    
+
     const [loading, setLoading] = useState(false);
     const [pdfError, setPdfError] = useState(false);
 
     const createBlobUrl = (base64Data) => {
         if (!base64Data) return null;
-        
+
         try {
             const byteCharacters = atob(base64Data);
             const byteNumbers = new Array(byteCharacters.length);
@@ -72,15 +72,15 @@ const ModalList = ({
             const base64Data = data.file_url;
             const byteCharacters = atob(base64Data);
             const byteNumbers = new Array(byteCharacters.length);
-            
+
             for (let i = 0; i < byteCharacters.length; i++) {
                 byteNumbers[i] = byteCharacters.charCodeAt(i);
             }
-            
+
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], { type: 'application/pdf' });
             const blobUrl = URL.createObjectURL(blob);
-            
+
             window.open(blobUrl, '_blank');
         } catch (error) {
             console.error('Erro ao imprimir:', error);
@@ -90,7 +90,7 @@ const ModalList = ({
 
     const handleDelete = async () => {
         if (!confirm('Tem certeza que deseja deletar este documento?')) return;
-        
+
         try {
             setLoading(true);
             await handleDeleteByNotation();
@@ -102,72 +102,79 @@ const ModalList = ({
         }
     };
 
-    const renderPDFViewer = () => {
-        if (!data?.file_url) {
-            return (
-                <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '400px'
-                }}>
-                    <Alert severity="warning" sx={{ textAlign: 'center' }}>
-                        <Typography>
-                            Documento não disponível ou arquivo inválido.
-                        </Typography>
-                    </Alert>
-                </Box>
-            );
+    const [pdfUrl, setPdfUrl] = useState(null);
+
+    useEffect(() => {
+        if (!data?.file_url) return;
+
+        try {
+            let base64 = data.file_url;
+
+            // Remove prefixo caso venha do backend
+            if (base64.includes('base64,')) {
+                base64 = base64.split('base64,')[1];
+            }
+
+            const byteCharacters = atob(base64);
+            const byteNumbers = new Array(byteCharacters.length);
+
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+
+            setPdfUrl(url);
+        } catch (err) {
+            console.error('Erro ao carregar PDF:', err);
+            setPdfError(true);
         }
 
+        return () => {
+            if (pdfUrl) {
+                URL.revokeObjectURL(pdfUrl);
+            }
+        };
+    }, [data?.file_url]);
+
+    const renderPDFViewer = () => {
         if (pdfError) {
             return (
-                <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '400px'
-                }}>
-                    <Alert severity="error" sx={{ textAlign: 'center' }}>
-                        <Typography>
-                            Erro ao carregar o documento PDF.
-                        </Typography>
-                    </Alert>
-                </Box>
+                <Alert severity="error">
+                    Erro ao carregar o PDF.
+                </Alert>
             );
         }
 
-        const src = `data:application/pdf;base64,${data.file_url}`;
+        if (!pdfUrl) {
+            return (
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%'
+                }}>
+                    <CircularProgress />
+                </Box>
+            );
+        }
 
         return (
             <iframe
                 title="PDF Viewer"
-                src={src}
+                src={pdfUrl}
                 width="100%"
                 height="100%"
-                style={{ 
+                style={{
                     border: 'none',
                     minHeight: isMobile ? '300px' : '500px'
                 }}
-                onError={() => setPdfError(true)}
             />
         );
     };
 
-    const handleDeleteByPrenotation = async () => {
-        
-        try {
-            
-
-            const response = await customerSv.deleteTermLGDP(cpfcnpj)
-            window.location.reload()
-        } catch (error) {
-            console.error("Error ao deletar arquivo rgi!", error)
-            throw error;
-        }
-    }
 
     return (
         <Modal
@@ -193,8 +200,8 @@ const ModalList = ({
                 flexDirection: 'column'
             }}>
                 {/* Header */}
-                <Box sx={{ 
-                    p: 2, 
+                <Box sx={{
+                    p: 2,
                     borderBottom: '1px solid #e0e0e0',
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -209,10 +216,10 @@ const ModalList = ({
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {notation && (
-                            <Chip 
-                                label={`Notation: ${notation}`} 
-                                size="small" 
-                                color="primary" 
+                            <Chip
+                                label={`Prenotação: ${notation}`}
+                                size="small"
+                                color="primary"
                                 variant="outlined"
                             />
                         )}
@@ -225,14 +232,14 @@ const ModalList = ({
                 {/* Content Area */}
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}>
                     {/* PDF Viewer */}
-                    <Box sx={{ 
-                        flex: 1, 
+                    <Box sx={{
+                        flex: 1,
                         p: 2,
                         minHeight: isMobile ? '300px' : '500px'
                     }}>
-                        <Paper 
-                            elevation={1} 
-                            sx={{ 
+                        <Paper
+                            elevation={1}
+                            sx={{
                                 height: '100%',
                                 border: '1px solid #e0e0e0',
                                 borderRadius: '8px',
@@ -261,7 +268,7 @@ const ModalList = ({
                     </Box>
 
                     {/* Action Panel */}
-                    <Box sx={{ 
+                    <Box sx={{
                         width: isMobile ? '100%' : '200px',
                         p: 2,
                         display: 'flex',
@@ -273,17 +280,17 @@ const ModalList = ({
                         {/* Edit Button - Only show if permission is granted */}
                         {editPerm === 1 && (
                             <Tooltip title="Editar documento">
-                                <Link href={`/${path}/[notation]`} as={`/${path}/${notation}`}>
-                                    <Button 
-                                        variant="outlined" 
+                                <Link href={`/${path}/[cpfcnpj]`} as={`/${path}/${data.cpf}`}>
+                                    <Button
+                                        variant="outlined"
                                         fullWidth={!isMobile}
                                         sx={{
-                                            color: '#ed6c02',
-                                            borderColor: '#ed6c02',
+                                            color: theme.palette.background.orange,
+                                            borderColor: theme.palette.background.orange,
                                             minWidth: isMobile ? '120px' : 'auto',
                                             ":hover": {
                                                 backgroundColor: '#fff3e0',
-                                                borderColor: '#ed6c02'
+                                                borderColor: theme.palette.background.orange
                                             }
                                         }}
                                         startIcon={<EditIcon />}
@@ -296,8 +303,8 @@ const ModalList = ({
 
                         {/* Print Button */}
                         <Tooltip title="Imprimir documento">
-                            <Button 
-                                variant="outlined" 
+                            <Button
+                                variant="outlined"
                                 fullWidth={!isMobile}
                                 onClick={handlePrintFile}
                                 disabled={!data?.file_url}
@@ -319,8 +326,8 @@ const ModalList = ({
                         {/* Delete Button - Only show if permission is granted */}
                         {deletePerm === 1 && (
                             <Tooltip title="Deletar documento">
-                                <Button 
-                                    variant="outlined" 
+                                <Button
+                                    variant="outlined"
                                     color='error'
                                     fullWidth={!isMobile}
                                     onClick={handleDelete}

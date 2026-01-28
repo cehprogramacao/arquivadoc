@@ -112,7 +112,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
 
 
   const getCustumers = async () => {
-    
+
     try {
       const allData = await customerSv.customers()
       setOutorganteArray(Object.values(allData))
@@ -179,7 +179,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   const [presenter, setPresenter] = useState([])
   const getAllNotesTag = async () => {
     try {
-      
+
       const allTags = await noteSv.getAllNoteTags()
       setTag(Object.values(allTags))
       console.log(allTags, '99999999999')
@@ -208,7 +208,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   const [option, setOption] = useState(null);
   const getTypeAndGroup = async () => {
     try {
-      
+
       const groups = await noteSv.getAllNoteGroups();
       const types = await noteSv.getAllNoteTypes();
       setNotesType(Object.values(groups))
@@ -265,44 +265,44 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
   }
 
   const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
-        setFormData(prevData => ({
-            ...prevData,
-            file_url: scannedPdfUrl
-        }));
-    };
+    setFormData(prevData => ({
+      ...prevData,
+      file_url: scannedPdfUrl
+    }));
+  };
 
   const handleDocScan = () => {
-        window.scanner.scan((successful, mesg, response) => {
-            if (!successful) {
-                console.error('Failed: ' + mesg);
-                return;
-            }
-            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
-                console.info('User cancelled');
-                return;
-            }
-            const responseJson = JSON.parse(response);
-            const scannedPdfUrl = responseJson.output[0].result[0];
-            updateDataWithUrl('doc_file_url', scannedPdfUrl);
-        }, {
-            "output_settings": [
-                {
-                    "type": "return-base64",
-                    "format": "pdf",
-                    "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
-                },
-                {
-                    "type": "return-base64-thumbnail",
-                    "format": "jpg",
-                    "thumbnail_height": 200
-                }
-            ]
-        });
-    };
+    window.scanner.scan((successful, mesg, response) => {
+      if (!successful) {
+        console.error('Failed: ' + mesg);
+        return;
+      }
+      if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+        console.info('User cancelled');
+        return;
+      }
+      const responseJson = JSON.parse(response);
+      const scannedPdfUrl = responseJson.output[0].result[0];
+      updateDataWithUrl('doc_file_url', scannedPdfUrl);
+    }, {
+      "output_settings": [
+        {
+          "type": "return-base64",
+          "format": "pdf",
+          "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+        },
+        {
+          "type": "return-base64-thumbnail",
+          "format": "jpg",
+          "thumbnail_height": 200
+        }
+      ]
+    });
+  };
 
   const handleCreateNotes = async () => {
     try {
-      
+
       const allData = await noteSv.createNotes(formData)
       console.log(allData)
       dataSnack({
@@ -325,6 +325,7 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
     finally {
       getData()
       onClose()
+      window.location.reload()
     }
   }
   return (
@@ -616,8 +617,8 @@ export const CadastroNotas = ({ onClose, getData, dataSnack }) => {
         </Stack>
 
       </Box>
-      <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} />
-      <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} />
+      <ModalNotesTag open={openModalTag} onClose={handleCloseModalTag} getData={getAllNotesTag} />
+      <CadastroPartes onClose={handleCloseModalPresenter} open={openModalPresenter} getAllPartes={getCustomersPresenter} />
       <CadastroNotesType open={openModalNotesType} onClose={handleCloseNotesType} getData={getTypeAndGroup} />
       <CadastroNotesCurtomers getData={getCustumers} open={openModalNotesCustomers} onClose={handleCloseNotesCustomers} />
       <ModalNotesGroup getData={getTypeAndGroup} onClose={handleCloseGroup} open={openModalGroup} />

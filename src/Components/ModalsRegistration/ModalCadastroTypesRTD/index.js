@@ -21,7 +21,7 @@ const ModalTypesRTD = ({ onClose, open, getData }) => {
 
   const handleCreateTypeRtd = async () => {
     try {
-      const response = await rtdSv.createRTDType(accessToken, data)
+      const response = await rtdSv.createRTDType(data)
       dispatch({type: SET_ALERT, message: "Tipo de RPJ cadastrado com sucesso!", alertType: "type", severity: "success"})
     } catch (error) {
       dispatch({type: SET_ALERT, message: "Erro ao cadastrar tipo de RPJ!", alertType: "type", severity: "error"})
@@ -67,7 +67,7 @@ const ModalTypesRTD = ({ onClose, open, getData }) => {
               fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
             }}
           >
-            Cadastro - Tipo de RPJ
+            Cadastro - Tipo de RTD
           </Typography>
           <IconButton
             aria-label="close"

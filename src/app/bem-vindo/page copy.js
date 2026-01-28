@@ -136,8 +136,8 @@ const Welcome = () => {
             <Box sx={{
                 minHeight: "100vh",
                 background: "#fafafa",
-                py: { xs: 10, md: 14 },
-                px: { xs: 2, md: 0 }
+                py: { xs: 10, md: 12 },
+                px: { xs: 2, md: 3 }
             }}>
                 <Container maxWidth="xl">
                     {/* Header */}

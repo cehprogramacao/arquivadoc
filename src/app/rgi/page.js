@@ -1,5 +1,11 @@
 "use client"
-import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import {
+    Box,
+    Container,
+    Drawer,
+    TextField,
+    Typography
+} from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { DocList } from '@/Components/List/DocList';
@@ -9,31 +15,51 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ModalList from '@/Components/Modals/ModalList';
 import { useEffect, useState } from 'react';
 import { CadastroModalRGI } from '@/Components/Modals/ModalCadastroRGI';
-import CustomContainer from '@/Components/CustomContainer';
 import RGI from '@/services/rgi.service';
 import { useDispatch, useSelector } from 'react-redux';
 import Loading from '@/Components/loading';
-import SnackBar from '@/Components/SnackBar';
 import MenuOptionsFile from '@/Components/MenuPopUp';
 import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
 import withAuth from '@/utils/withAuth';
-import { SET_ALERT, showAlert } from '@/store/actions';
+import { SET_ALERT } from '@/store/actions';
 
 const optionsFilter = [
     { label: 'Prenotação' },
     { label: 'Apresentante' },
 ];
 
-
 const rgiSv = new RGI();
+
+/* ======================
+   MÁSCARA CPF / CNPJ
+====================== */
+const maskCpfCnpj = (value) => {
+    const digits = value.replace(/\D/g, '');
+
+    if (digits.length <= 11) {
+        return digits
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    }
+
+    return digits
+        .replace(/^(\d{2})(\d)/, '$1.$2')
+        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/\.(\d{3})(\d)/, '.$1/$2')
+        .replace(/(\d{4})(\d)/, '$1-$2');
+};
+
 const PageRGI = () => {
     const dispatch = useDispatch()
     const payload = useSelector(state => state.login)
+
     const [value, setValue] = useState({
-        option: "",
+        option: null,
         value: ""
     })
+
     const [isAdmin, setIsAdmin] = useState("")
     const [loading, setLoading] = useState(false)
     const [openModalRGI, setOpenModalRGI] = useState(false)
@@ -46,225 +72,187 @@ const PageRGI = () => {
     const [openPDF, setOpenPDF] = useState(false)
     const [dataFile, setDataFile] = useState([])
 
+    /* ======================
+       FUNÇÕES ORIGINAIS
+    ====================== */
 
     const handleOpenModalPDF = async () => {
         try {
             setOpenPDF(true)
             const response = await rgiSv.getByPrenotation(prenotation)
-            console.log(response, 'PDFF')
             setDataFile(response)
             return response
         } catch (error) {
-            console.error("Erro ao listar dados!", error)
-            throw error;
+            console.error(error)
+            throw error
         }
     }
 
-    const handleCloseModalPDF = async () => {
-        setOpenPDF(false)
-    }
+    const handleCloseModalPDF = async () => setOpenPDF(false)
 
-    const handleClickMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
-    };
+    const handleClickMenu = (event) => setAnchorEl(event.currentTarget)
+    const handleCloseMenu = () => setAnchorEl(null)
+
     const handleOpenModalRGI = () => setOpenModalRGI(true)
     const handleCloseModalRGI = () => setOpenModalRGI(false)
 
-
     const handleDeleteByPrenotation = async () => {
         try {
-            const response = await rgiSv.deleteByPrenotation(prenotation)
-            dispatch({type: SET_ALERT, message: "Prenotação deletada com sucesso!", severity: "success", alertType: "file"})
-            return response
+            await rgiSv.deleteByPrenotation(prenotation)
+            dispatch({
+                type: SET_ALERT,
+                message: "Prenotação deletada com sucesso!",
+                severity: "success",
+                alertType: "file"
+            })
         } catch (error) {
-            console.error("Error ao deletar arquivo rgi!", error)
-            dispatch({type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file"})
-            throw error;
-        }
-        finally {
+            dispatch({
+                type: SET_ALERT,
+                message: error.message,
+                severity: "error",
+                alertType: "file"
+            })
+        } finally {
             getDataRGI()
         }
     }
 
-    const handlePresenterFilter = async (value) => {
-        console.log('Filtrando por Apresentante com valor:', value);
-        let newData = [];
+    const handlePresenterFilter = async (val) => {
         try {
-            setLoading(true);
-            const response = await rgiSv.getByPresenter(value.replace(/[^\d]+/g, ''));
-            setData(Object.values(response));
-            dispatch({type: SET_ALERT, message: response ? `Dados filtrados por Apresentante com sucesso! ` : 'Documento inexistente!', severity: "success", alertType: "file"})
-            return response
-        } catch (error) {
-            dispatch({type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file"})
-            console.error("Erro ao filtrar por Apresentante", error);
-            throw error;
+            setLoading(true)
+            const clean = val.replace(/\D/g, '')
+            const response = await rgiSv.getByPresenter(clean)
+            setData(Object.values(response))
         } finally {
-            setLoading(false);
-        }
-    };
-    const handlePrenotationFilter = async (value) => {
-        console.log('Filtrando por Prenotação com valor:', value);
-        let newData = [];
-        try {
-            setLoading(true);
-            const response = await rgiSv.getByPrenotation(Number(value));
-            setData(Object.values(response));
-            return response
-        } catch (error) {
-            console.error("Erro ao filtrar por Prenotação", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    const handleFilter = async () => {
-        console.log('Iniciando filtragem com valor:', value);
-
-        if (value.option && value.value) {
-            console.log('Opção selecionada:', value.option.label);
-
-            try {
-                if (value.option.label === "Prenotação") {
-                    await handlePrenotationFilter(value.value);
-                } else if (value.option.label === "Apresentante") {
-                    await handlePresenterFilter(value.value);
-                }
-
-            } catch (error) {
-                console.error("Erro ao filtrar", error);
-            }
-        } else {
-            console.error("Opção ou valor não definidos.");
+            setLoading(false)
         }
     }
+
+    const handlePrenotationFilter = async (val) => {
+        try {
+            setLoading(true)
+            const response = await rgiSv.getByPrenotation(Number(val))
+            setData(Object.values(response))
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleFilter = async () => {
+        if (!value.option || !value.value) {
+            dispatch({
+                type: SET_ALERT,
+                message: "Selecione o tipo de busca.",
+                severity: "warning",
+                alertType: "file"
+            })
+            return
+        }
+
+        if (value.option.label === "Prenotação") {
+            await handlePrenotationFilter(value.value)
+        }
+
+        if (value.option.label === "Apresentante") {
+            await handlePresenterFilter(value.value)
+        }
+    }
+
     const getDataRGI = async () => {
         try {
             setLoading(true)
             const response = await rgiSv.getData()
             setData(Object.values(response))
-            dispatch({type: SET_ALERT, message: `Dados carregados com sucesso! `, severity: "success", alertType: "file"})
-        } catch (error) {
-            dispatch()
-            console.error("error listing all rgi files", error)
-            dispatch({type: SET_ALERT, message: error.msg || error.message, severity: "error", alertType: "file"})
-            throw error;
-        }
-        finally {
+        } finally {
             setLoading(false)
         }
     }
 
-
-
     useEffect(() => {
         getDataRGI()
-        const isAdminUser = localStorage.getItem('isAdmin')
-        setIsAdmin(isAdminUser)
+        setIsAdmin(localStorage.getItem('isAdmin'))
     }, [])
 
-    const [isClient, setIsClient] = useState(false);
+    if (loading) return <Loading />
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    if (!isClient) return null;
-
-    return loading ? <Loading /> : (
+    return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['RGI']}>
 
-                <Box
-                    sx={{
-                        width: '100%',
-                        height: '100vh',
-                        py: 15,
-                        px: 4,
-                    }}
-                >
-                    <CustomContainer>
+                <Box sx={{ width: '100%', height: '100vh', py: 15 }}>
+                    <Container maxWidth="lg">
                         <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <Box sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}>
-                                    <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                                        RGI
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Grid container spacing={3}>
-                                    <Grid item xs={12} lg={4} md={6} sm={6}>
-                                        <TextField
-                                            label="Buscar"
-                                            fullWidth
-                                            sx={{ '& input': { color: 'success.main' } }}
-                                            color="success"
-                                            value={value.value}
-                                            onChange={(e) => setValue({ ...value, value: e.target.value })}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={4} md={6} sm={6}>
-                                        <Autocomplete
-                                            disablePortal
-                                            getOptionLabel={(option) => option.label || ""}
-                                            onChange={(e, newValue) => setValue({ ...value, option: newValue })}
-                                            isOptionEqualToValue={(option, value) => option.label === value.label}
-                                            id="combo-box-demo"
-                                            options={optionsFilter}
-                                            fullWidth
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    label="Buscar Por"
-                                                    color="success"
-                                                    sx={{
-                                                        '& .MuiInputBase-input': {
-                                                            color: '#237117',
-                                                        },
-                                                        '& label.Mui-focused': {
-                                                            color: '#237117',
-                                                        },
-                                                        '& .MuiOutlinedInput-root': {
-                                                            '&.Mui-focused fieldset': {
-                                                                borderColor: '#237117',
-                                                            },
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-                                        />
 
-                                    </Grid>
-                                    <Grid item xs={12} lg={4} md={12} sm={12}>
-                                        <Box sx={{ display: 'flex', width: '100%', justifyContent: "center", alignItems: "center", gap: '30px' }}>
-                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFilter} />
-                                            {permissions[1]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpenModalRGI} />}
-                                            {isAdmin === "1" && <ButtonLixeira href={"/rgi/lixeira_rgi"} />}
-                                        </Box>
-                                    </Grid>
-                                </Grid>
+                            <Grid item xs={12} textAlign="center">
+                                <Typography fontSize={40} fontWeight="bold">
+                                    RGI
+                                </Typography>
                             </Grid>
-                            <Grid item xs={12} >
-                                <DocList data={data} setPrenotation={(prenotation) => setPrenotation(prenotation)} handleClick={handleClickMenu} />
+
+                            <Grid item xs={12} md={4}>
+                                <TextField
+                                    fullWidth
+                                    label="Buscar"
+                                    color="success"
+                                    value={value.value}
+                                    onChange={(e) => {
+                                        if (value.option?.label === "Prenotação") {
+                                            setValue({
+                                                ...value,
+                                                value: e.target.value.replace(/\D/g, '')
+                                            })
+                                        } else if (value.option?.label === "Apresentante") {
+                                            setValue({
+                                                ...value,
+                                                value: maskCpfCnpj(e.target.value)
+                                            })
+                                        } else {
+                                            setValue({ ...value, value: e.target.value })
+                                        }
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} md={4}>
+                                <Autocomplete
+                                    options={optionsFilter}
+                                    getOptionLabel={(o) => o.label}
+                                    onChange={(e, opt) =>
+                                        setValue({ option: opt, value: "" })
+                                    }
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Buscar Por" color="success" />
+                                    )}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} md={4}>
+                                <Stack direction="row" spacing={3} justifyContent="center">
+                                    <Buttons title="Buscar" color="green" onClick={handleFilter} />
+                                    {permissions[1]?.create_permission === 1 &&
+                                        <ButtonOpenModals onClick={handleOpenModalRGI} />}
+                                    {isAdmin === "1" &&
+                                        <ButtonLixeira href="/rgi/lixeira_rgi" />}
+                                </Stack>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <DocList
+                                    data={data}
+                                    setPrenotation={setPrenotation}
+                                    handleClick={handleClickMenu}
+                                />
                             </Grid>
                         </Grid>
-                    </CustomContainer>
+                    </Container>
 
-                    {/* {openFilterModalPDF && <ModalList onClose={handleClose} data={data} open={open} />} */}
-                    <Drawer anchor='left' open={openModalRGI} onClose={handleCloseModalRGI} >
+                    <Drawer anchor="left" open={openModalRGI} onClose={handleCloseModalRGI}>
                         <CadastroModalRGI onClose={handleCloseModalRGI} />
                     </Drawer>
                 </Box>
+
                 <MenuOptionsFile
                     anchorEl={anchorEl}
-                    data={data}
                     open={open}
                     handleClose={handleCloseMenu}
                     handleOpenModalPDF={handleOpenModalPDF}
@@ -273,18 +261,20 @@ const PageRGI = () => {
                     deletePerm={permissions[1]?.delete_permission}
                     editPerm={permissions[1]?.edit}
                 />
+
                 <ModalList
                     data={dataFile}
-                    onClose={handleCloseModalPDF}
                     open={openPDF}
+                    onClose={handleCloseModalPDF}
                     prenotation={prenotation}
                     deletePerm={permissions[1]?.delete_permission}
                     editPerm={permissions[1]?.edit}
                     handleDeleteByPrenotation={handleDeleteByPrenotation}
                 />
+
             </PrivateRoute>
         </AuthProvider>
-    );
-};
+    )
+}
 
-export default withAuth(PageRGI);
+export default withAuth(PageRGI)

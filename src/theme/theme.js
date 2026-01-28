@@ -14,10 +14,12 @@ export const roboto = Roboto({
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#000',
+            white: "#fff",
+            main: '#247117',
         },
         secondary: {
-            main: '#000',
+            main: '#247117',
+            white: "#fff"
         },
         cian: {
             main: '#59d9f8',
@@ -28,6 +30,10 @@ const theme = createTheme({
         orange: { main: '#ff9b30' },
         background: {
             header: '#247117',
+            primary: '#247117',
+            secondary: "#fff",
+            yellow: "#FFC117",
+            orange: '#ed6c02'
         },
         grey: {
             main: 'rgba( 0, 0, 0, 0.7 )',

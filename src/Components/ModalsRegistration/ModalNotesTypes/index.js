@@ -21,9 +21,7 @@ const CadastroNotesType = ({ open, onClose, getData }) => {
 
     const getAllNoteGroups = async () => {
         try {
-            getData()
             const data = await noteSv.getAllNoteGroups()
-            dispat
             setDataOptions(Object.values(data))
         } catch (error) {
             console.log('Erro ao buscar grupos de notas!', error)
@@ -36,7 +34,7 @@ const CadastroNotesType = ({ open, onClose, getData }) => {
             if (dataTypes.group_id === 0 && dataTypes.name === "") {
                 throw new Error("Campos vazios")
             }
-            const data = await noteSv.createNoteType(dataTypes, accessToken)
+            const data = await noteSv.createNoteType(dataTypes)
 
             console.log(data)
         } catch (error) {

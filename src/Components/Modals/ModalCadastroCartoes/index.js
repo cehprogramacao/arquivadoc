@@ -1,4 +1,5 @@
 import RenderNoOptions from "@/Components/ButtonOpenModalCadastro"
+import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes"
 import Customer from "@/services/customer.service"
 import { SET_ALERT, showAlert } from "@/store/actions"
 import { CloseOutlined } from "@mui/icons-material"
@@ -18,6 +19,14 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
         cpf_file_url: '',
         comp_resid_file_url: ''
     })
+    const [openPartes, setOpenPartes] = useState(false)
+    const handleClosePartes = () => {
+        setOpenPartes(false)
+    }
+
+    const handleOpenPartes = () => {
+        setOpenPartes(true)
+    }
     const dispatch = useDispatch()
 
 
@@ -59,16 +68,17 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
     const handleCreateAutographCard = async () => {
         try {
             const response = await customerSv.createAutographCard(data)
-            dispatch({type: SET_ALERT, message: "Cartão de autógrafo cadastrado com sucesso!", type: "success", severity: "success"})
+            dispatch({ type: SET_ALERT, message: "Cartão de autógrafo cadastrado com sucesso!", type: "success", severity: "success" })
             console.log(response.data)
             return response.data
         } catch (error) {
             console.error('Erro ao criar cartão de autógrafo!', error)
-            dispatch({type: SET_ALERT, message: "Erro ao cadastrar cartão de autógrafo!", type: "error", severity: "error"})
+            dispatch({ type: SET_ALERT, message: "Erro ao cadastrar cartão de autógrafo!", type: "error", severity: "error" })
             throw error;
         }
         finally {
             onClose()
+            window.location.reload()
         }
     }
 
@@ -275,7 +285,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                     fullWidth
                     autoHighlight
                     // value={data.customer_cpfcnpj}
-                    noOptionsText={<RenderNoOptions onClick={onClickPartes} title={'Cadastrar Cliente'} />}
+                    noOptionsText={<RenderNoOptions onClick={handleOpenPartes} title={'Cadastrar Cliente'} />}
                     getOptionLabel={(option) => option.name || ""}
                     onChange={(e, newValue) => setData({ ...data, customer_cpfcnpj: newValue.cpfcnpj })}
                     isOptionEqualToValue={(option, value) => option.name === value.name}
@@ -447,6 +457,7 @@ export const CadastrarCartoesModal = ({ onClose, onClickPartes }) => {
                 </Button>
 
             </Box>
+            <CadastroPartes open={openPartes} onClose={handleClosePartes} getAllPartes={getDataPresenter} />
         </Box>
     )
 }

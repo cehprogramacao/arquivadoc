@@ -194,9 +194,9 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
           getOptionLabel={(option) => option.name || ""}
           onChange={(e, newValue) => setData({ ...data, customer_cpfcnpj: newValue.cpfcnpj })}
           isOptionEqualToValue={(option, value) => option.name === value.name}
-          renderInput={(params) => <TextField color="success" {...params} label="Buscar Por"
+          renderInput={(params) => <TextField color="success" {...params} label="Apresentante"
             sx={{
-              color: "#237117", '& input': {
+              color: theme.palette.primary.main, '& input': {
                 color: 'success.main',
               },
             }} />}
@@ -229,7 +229,7 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
               fontSize: '1rem',
               fontWeight: 400,
               lineHeight: 1.5,
-              backgroundColor: '#fff',
+              backgroundColor: theme.palette.primary.white,
               backgroundClip: 'padding-box',
               border: '1px solid #ced4da',
               WebkitAppearance: 'none',
@@ -260,14 +260,14 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
           display: 'flex',
           width: '169px',
           background: 'transparent',
-          color: '#FFC117',
-          border: '1px solid #FFC117',
+          color: theme.palette.background.yellow,
+          border: `1px solid ${theme.palette.background.yellow}`,
           padding: '6px 12px',
           textTransform: 'capitalize',
           fontSize: ".9rem",
           borderRadius: '8px',
           ":hover": {
-            background: "#FFC117",
+            background: theme.palette.background.yellow,
             color: '#FFF',
 
           }
@@ -277,15 +277,15 @@ export const CadastroTermosModal = ({ onClose, onClickPartes }) => {
         <Button sx={{
           display: 'flex',
           width: '169px',
-          background: "#237117",
+          background: theme.palette.primary.main,
           color: '#fff',
-          border: '1px solid #237117',
+          border: `1px solid ${theme.palette.primary.main}`,
           textTransform: 'capitalize',
           fontSize: ".9rem",
           borderRadius: '8px',
           ":hover": {
             background: 'transparent',
-            color: '#237117',
+            color: theme.palette.primary.main,
 
           }
         }} onClick={handleCreateTerm}>

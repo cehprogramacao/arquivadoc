@@ -308,7 +308,6 @@ const ModalListCards = ({ open, data, onClose, cpfcnpj }) => {
                         </Paper>
                     </Box>
 
-                    {/* Action Panel */}
                     <Box sx={{ 
                         width: isMobile ? '100%' : '200px',
                         p: 2,
@@ -316,7 +315,8 @@ const ModalListCards = ({ open, data, onClose, cpfcnpj }) => {
                         flexDirection: isMobile ? 'row' : 'column',
                         gap: 2,
                         justifyContent: isMobile ? 'center' : 'flex-start',
-                        flexWrap: isMobile ? 'wrap' : 'nowrap'
+                        flexWrap: isMobile ? 'wrap' : 'nowrap',
+                        
                     }}>
                         <Tooltip title="Editar documento">
                             <Link href={`/${path}/[cpfcnpj]`} as={`/${path}/${cpfcnpj}`}>
@@ -330,7 +330,7 @@ const ModalListCards = ({ open, data, onClose, cpfcnpj }) => {
                                         ":hover": {
                                             backgroundColor: '#fff3e0',
                                             borderColor: '#ed6c02'
-                                        }
+                                        },
                                     }}
                                     startIcon={<EditIcon />}
                                 >

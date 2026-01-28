@@ -8,7 +8,7 @@ const cpfMask = '999.999.999-99';
 const cnpjMask = '99.999.999/9999-99';
 
 const customerSv = new Customer();
-export const CadastroPartes = ({ open, onClose }) => {
+export const CadastroPartes = ({ open, onClose, getAllPartes }) => {
   const [cpfCnpjMask, setCpfCnpjMask] = useState(cpfMask);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false)
@@ -53,6 +53,7 @@ export const CadastroPartes = ({ open, onClose }) => {
     }
     finally {
       setLoading(false)
+      getAllPartes()
     }
   };
 
@@ -136,9 +137,6 @@ export const CadastroPartes = ({ open, onClose }) => {
             />
           )}
         />
-
-
-
 
         <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
           <ReactInputMask

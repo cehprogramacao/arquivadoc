@@ -100,6 +100,8 @@ export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
         finally {
             setLoading(false)
             onClose()
+            window.location.reload()
+
         }
     }
 

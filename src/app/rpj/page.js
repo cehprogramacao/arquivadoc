@@ -1,260 +1,253 @@
-"use client"
-import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+"use client";
+
+import { Box, Container, Drawer, TextField, Typography } from '@mui/material';
+import { Grid } from "@mui/material";
+import Autocomplete from '@mui/material/Autocomplete';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
-import { Stack, Grid } from "@mui/material"
-import Autocomplete from '@mui/material/Autocomplete';
-import { useEffect, useState } from 'react';
 import { CadastroModalRPJ } from '@/Components/Modals/ModalCadastroRPJ';
-import { useDispatch } from 'react-redux'
 import RPJService from '@/services/rpj.service';
-import { SET_ALERT, showAlert } from '@/store/actions';
+import { SET_ALERT } from '@/store/actions';
 import Loading from '@/Components/loading';
 import withAuth from '@/utils/withAuth';
 import CustomContainer from '@/Components/CustomContainer';
 import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
 import { DocList } from './components/TableRPJ';
-import SnackBar from '@/Components/SnackBar';
 import MenuOptionsFile from '@/Components/MenuPopUp';
 import ModalList from './components/ModalPDF';
-const options = [
-    {
-        label: 'Apresentante'
-    },
-    {
-        label: 'Notação'
-    },
 
+const options = [
+    { label: 'Apresentante' },
+    { label: 'Prenotação' },
 ];
 
+const rpjSv = new RPJService();
 
-const rpjSv = new RPJService()
+/* ============================
+   UTILITÁRIOS CPF / CNPJ
+============================ */
+const onlyNumbers = (value) => value.replace(/\D/g, "");
+
+const applyCpfCnpjMask = (value) => {
+    const numbers = onlyNumbers(value);
+
+    if (numbers.length <= 11) {
+        return numbers
+            .replace(/^(\d{3})(\d)/, "$1.$2")
+            .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+            .replace(/\.(\d{3})(\d)/, ".$1-$2")
+            .slice(0, 14);
+    }
+
+    return numbers
+        .replace(/^(\d{2})(\d)/, "$1.$2")
+        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1/$2")
+        .replace(/(\d{4})(\d)/, "$1-$2")
+        .slice(0, 18);
+};
+
 const PageRPJ = () => {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
+    const { permissions } = useAuth();
 
-    const dispatch = useDispatch()
-    const { permissions } = useAuth()
-    const [notation, setNotation] = useState("")
-    const [anchorEl, setAnchorEl] = useState(null)
-    const [dataFile, setDataFile] = useState([])
-    const open = Boolean(anchorEl)
-    const handleOpenMenuOptions = (event) => {
-        setAnchorEl(event.currentTarget)
-    }
-    const handleCloseMenuOptions = () => {
-        setAnchorEl(null)
-    }
-    const [data, setData] = useState([])
+    const [notation, setNotation] = useState("");
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    // 🔴 CORREÇÃO PRINCIPAL AQUI
+    const [dataFile, setDataFile] = useState([]);
+    const [data, setData] = useState([]);
+
     const [option, setOption] = useState({
         option: "",
         value: ""
-    })
+    });
 
-    const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false)
-    const [openModalCadastroRPJ, setOpenModalCadastroRPJ] = useState(false)
-    const [isAdmin, setIsAdmin] = useState("")
+    const [openModalListFilePDF, setOpenModalListFilePDF] = useState(false);
+    const [openModalCadastroRPJ, setOpenModalCadastroRPJ] = useState(false);
+    const [isAdmin, setIsAdmin] = useState("");
 
+    const open = Boolean(anchorEl);
+
+    /* ============================
+       MENU
+    ============================ */
+    const handleOpenMenuOptions = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseMenuOptions = () => setAnchorEl(null);
+
+    /* ============================
+       MODAIS
+    ============================ */
     const handleOpenModalListFilePDF = async () => {
         try {
-            setOpenModalListFilePDF(true)
-            const data = await rpjSv.getRPJByNotation(notation)
-            setDataFile(data)
+            setOpenModalListFilePDF(true);
+            const result = await rpjSv.getRPJByNotation(notation);
+            setDataFile(result);
         } catch (error) {
-            console.error("Erro ao buscar arquivo", error)
-            throw error;
+            console.error(error);
         }
-    }
+    };
 
-    const handleCloseModalListFilePDF = () => {
-        setOpenModalListFilePDF(false)
-    }
-    const handleOpenModalCadastroRPJ = () => setOpenModalCadastroRPJ(true)
-    const handleCloseModalCadastroRPJ = () => setOpenModalCadastroRPJ(false)
+    const handleCloseModalListFilePDF = () => setOpenModalListFilePDF(false);
+    const handleOpenModalCadastroRPJ = () => setOpenModalCadastroRPJ(true);
+    const handleCloseModalCadastroRPJ = () => setOpenModalCadastroRPJ(false);
 
-
-
+    /* ============================
+       BUSCAS
+    ============================ */
     const getAllFilesRPJ = async () => {
         try {
-            setLoading(true)
-            const data = await rpjSv.getAllRPJ()
-            dispatch({ type: SET_ALERT, message: `Arquivos carregados com sucesso! Total: ${data.length}`, severity: "success", alertType: "file" })
-            setData(Object.values(data))
+            setLoading(true);
+            const result = await rpjSv.getAllRPJ();
+            setData(Object.values(result));
+            dispatch({
+                type: SET_ALERT,
+                message: `Arquivos carregados com sucesso! Total: ${Object.values(result).length}`,
+                severity: "success",
+                alertType: "file"
+            });
         } catch (error) {
-            dispatch({ type: SET_ALERT, message: error.msg || "Erro ao buscar arquivos!", severity: "error", alertType: "file" })
-            console.error("Error ao buscar todos os arquivos", error)
-            throw error;
+            dispatch({
+                type: SET_ALERT,
+                message: error?.msg || "Erro ao buscar arquivos!",
+                severity: "error",
+                alertType: "file"
+            });
+        } finally {
+            setLoading(false);
         }
-        finally {
-            setLoading(false)
-        }
-    }
+    };
 
+    const fetchAllFilesByNotation = async (value) => {
+        const result = await rpjSv.getRPJByNotation(value);
+        setData(Object.values(result));
+    };
 
-    const fetchAllFilesByNotation = async (notation) => {
-        let newData = []
-        try {
-            const data = await rpjSv.getRPJByNotation(notation)
-            if (Object.values(data).length === 0) {
-                dispatch({ type: SET_ALERT, message: "Nenhum arquivo com essa notação", severity: "success", alertType: "file" })
-                setData([])
-                return false
-            }
-            
-             if (Array.isArray(data)) {
-                setData(data);
-            } else if (data && typeof data === "object") {
-                setData([data]);
-            } else {
-                setData([]);
-            }
-
-
-            return data
-        } catch (error) {
-            console.error("Erro ao buscar arquivo!", error)
-            dispatch({ type: SET_ALERT, message: error.msg || "Erro ao buscar arquivo!", severity: "error", alertType: "file" })
-            throw error;
-        }
-    }
-    const fetchAllFilesByPresenter = async (presenter) => {
-        let newData = []
-        try {
-            const data = await rpjSv.getRPJByPresenter(presenter)
-            if (Object.values(data).length === 0) {
-                dispatch({ type: SET_ALERT, message: "Nenhum arquivo com esse Apresentante", severity: "success", alertType: "file" })
-                setData([])
-                return false
-            }
-            setData(Object.values(data));
-            return data
-        } catch (error) {
-            console.error("Erro ao buscar arquivo!", error)
-            dispatch({ type: SET_ALERT, message: error.msg || "Erro ao buscar arquivo!", severity: "error", alertType: "file" })
-            throw error;
-        }
-    }
+    const fetchAllFilesByPresenter = async (value) => {
+        const result = await rpjSv.getRPJByPresenter(value);
+        setData(Object.values(result));
+    };
 
     const handleFetchFileByNotationOrPresenter = async () => {
-        if (option.option && option.value) {
-            try {
-                if (option.option === 'Notação') {
-                    await fetchAllFilesByNotation(option.value)
-                }
-                if (option.option === 'Apresentante') {
-                    await fetchAllFilesByPresenter(option.value)
-                }
-            } catch (error) {
-                console.log("Erro ao buscar arquivo!", error)
-                throw error;
-            }
+        if (!option.option) {
+            dispatch({
+                type: SET_ALERT,
+                message: "Selecione o tipo de busca!",
+                severity: "error",
+                alertType: "file"
+            });
+            return;
         }
-        else {
-            dispatch({ type: SET_ALERT, message: "Campos vazios!", severity: "error", alertType: "file" })
-            console.error("Campos vazios!")
+
+        if (!option.value) {
+            dispatch({
+                type: SET_ALERT,
+                message: "Informe o valor para busca!",
+                severity: "error",
+                alertType: "file"
+            });
+            return;
         }
-    }
-    const handleDeleteFileRpjByNotation = async () => {
+
         try {
-            const data = await deleteRPJByNotation(notation)
-            dispatch({ type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file" })
+            if (option.option === "Prenotação") {
+                await fetchAllFilesByNotation(option.value);
+            }
+
+            if (option.option === "Apresentante") {
+                await fetchAllFilesByPresenter(onlyNumbers(option.value));
+            }
         } catch (error) {
-            console.error("Erro ao deletar arquivo!", error)
-            dispatch({ type: SET_ALERT, message: error.msg || "Erro ao deletar arquivo!", severity: "error", alertType: "file" })
-            throw error;
+            console.error(error);
         }
-        finally {
-            getAllFilesRPJ()
-        }
-    }
+    };
+
+    /* ============================
+       INIT
+    ============================ */
     useEffect(() => {
-        const isAdminUser = localStorage.getItem("isAdmin")
-        setIsAdmin(isAdminUser)
-        getAllFilesRPJ()
-    }, [])
+        setIsAdmin(localStorage.getItem("isAdmin") || "");
+        getAllFilesRPJ();
+    }, []);
 
+    if (loading) return <Loading />;
 
-    return loading ? <Loading /> : (
+    return (
         <AuthProvider>
-            <PrivateRoute requiredPermissions={['RPJ']} >
-                <Box
-                    sx={{
-                        width: '100%',
-                        height: '100vh',
-                        py: 15,
-                        px: 2
-                    }}
-                >
-                    <CustomContainer >
-                        <Grid container spacing={2}>
+            <PrivateRoute requiredPermissions={['RPJ']}>
+                <Box sx={{ width: '100%', height: '100vh', py: 15, px: 2 }}>
+                    <Container maxWidth="lg">
+                        <Grid container spacing={3}>
                             <Grid item xs={12}>
-                                <Box sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}>
-                                    <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                                        RPJ
-                                    </Typography>
+                                <Typography fontSize={40} fontWeight="bold" textAlign="center">
+                                    RPJ
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={12} lg={5}>
+                                <TextField
+                                    label={
+                                        option.option === "Prenotação"
+                                            ? "Buscar por Prenotação"
+                                            : option.option === "Apresentante"
+                                            ? "Buscar por CPF ou CNPJ"
+                                            : "Selecione o tipo de busca"
+                                    }
+                                    fullWidth
+                                    disabled={!option.option}
+                                    value={option.value}
+                                    onChange={(e) => {
+                                        let value = e.target.value;
+                                        if (option.option === "Apresentante") {
+                                            value = applyCpfCnpjMask(value);
+                                        }
+                                        setOption({ ...option, value });
+                                    }}
+                                    color="success"
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} lg={4}>
+                                <Autocomplete
+                                    options={options}
+                                    getOptionLabel={(opt) => opt.label}
+                                    onChange={(e, value) =>
+                                        setOption({ option: value?.label || "", value: "" })
+                                    }
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Buscar Por" color="success" />
+                                    )}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} lg={3}>
+                                <Box display="flex" gap={2} justifyContent="center">
+                                    <Buttons color="green" title="Buscar" onClick={handleFetchFileByNotationOrPresenter} />
+                                    {permissions[3]?.create_permission === 1 && (
+                                        <ButtonOpenModals onClick={handleOpenModalCadastroRPJ} />
+                                    )}
+                                    {isAdmin === "1" && <ButtonLixeira href="/rpj/lixeira_rpj" />}
                                 </Box>
                             </Grid>
-                            <Grid item xs={12} >
-                                <Grid container spacing={3}>
-                                    <Grid item xs={12} lg={5} md={6} sm={6}>
-                                        <TextField
-                                            label="Buscar"
-                                            value={option.value}
-                                            fullWidth
-                                            onChange={(e) => setOption({ ...option, value: e.target.value })}
-                                            sx={{ '& input': { color: 'success.main' } }}
-                                            color="success"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={4} md={6} sm={6}>
-                                        <Autocomplete
-                                            disablePortal
-                                            id="combo-box-demo"
-                                            options={options}
-                                            getOptionLabel={(option) => option.label}
-                                            onChange={(e, value) => setOption({ ...option, option: value.label || null })}
-                                            fullWidth
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    color="success"
-                                                    {...params}
-                                                    label="Buscar Por"
-                                                    sx={{
-                                                        color: "#237117",
-                                                        '& input': {
-                                                            color: 'success.main',
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={3} md={12} sm={12}>
-                                        <Box sx={{
-                                            width: "100%",
-                                            display: "flex",
-                                            gap: 2,
-                                            justifyContent: "center"
-                                        }}>
-                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFetchFileByNotationOrPresenter} />
-                                            {permissions[3]?.create_permission === 1 && (
-                                                <ButtonOpenModals onClick={handleOpenModalCadastroRPJ} />
-                                            )}
-                                            {isAdmin === "1" && <ButtonLixeira href={"/rpj/lixeira_rpj"} />}
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                            <Grid item xs={12} >
-                                <DocList data={data} handleClick={handleOpenMenuOptions} setNotation={(e) => setNotation(e)} />
+
+                            <Grid item xs={12}>
+                                <DocList
+                                    data={data}
+                                    handleClick={handleOpenMenuOptions}
+                                    setNotation={(e) => setNotation(e)}
+                                />
                             </Grid>
                         </Grid>
-                    </CustomContainer>
+                    </Container>
 
                     <ModalList
                         data={dataFile}
@@ -263,12 +256,13 @@ const PageRPJ = () => {
                         onClose={handleCloseModalListFilePDF}
                         deletePerm={permissions[3]?.delete_permission}
                         editPerm={permissions[3]?.edit}
-                        handleDeleteByNotation={handleDeleteFileRpjByNotation}
                     />
-                    <Drawer anchor='left' open={openModalCadastroRPJ} onClose={handleCloseModalCadastroRPJ}>
+
+                    <Drawer anchor="left" open={openModalCadastroRPJ} onClose={handleCloseModalCadastroRPJ}>
                         <CadastroModalRPJ onClose={handleCloseModalCadastroRPJ} getData={getAllFilesRPJ} />
                     </Drawer>
                 </Box>
+
                 <MenuOptionsFile
                     deletePerm={permissions[3]?.delete_permission}
                     editPerm={permissions[3]?.edit}
@@ -277,7 +271,6 @@ const PageRPJ = () => {
                     type={notation}
                     handleClose={handleCloseMenuOptions}
                     handleOpenModalPDF={handleOpenModalListFilePDF}
-                    handleDelete={handleDeleteFileRpjByNotation}
                 />
             </PrivateRoute>
         </AuthProvider>

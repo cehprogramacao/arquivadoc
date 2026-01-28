@@ -70,24 +70,26 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
     const handleCreateFileRpj = async () => {
         try {
             const response = await rpjSv.createRPJ(data)
-            dispatch({type: SET_ALERT, message: "Arquivo de rpj cadastrado com sucesso!", alertType: "file", severity: "success"})
+            dispatch({ type: SET_ALERT, message: "Arquivo de rpj cadastrado com sucesso!", alertType: "file", severity: "success" })
         } catch (error) {
             console.error("Erro ao arquivar arquivo de rpj", error)
-            dispatch({type: SET_ALERT, message: "Erro ao arquivar arquivo de rpj", alertType: "file", severity: "error"})
+            dispatch({ type: SET_ALERT, message: "Erro ao arquivar arquivo de rpj", alertType: "file", severity: "error" })
             throw error
         }
         finally {
             getData()
             onClose()
+            window.location.reload()
+
         }
     }
     const deletePresenterById = async (typeId) => {
         try {
             const data = await customerSv.deleteCustomer(typeId)
-            dispatch({type: SET_ALERT, message: "Apresentante deletado com sucesso!", alertType: "file", severity: "success"})
+            dispatch({ type: SET_ALERT, message: "Apresentante deletado com sucesso!", alertType: "file", severity: "success" })
             console.log(data)
         } catch (error) {
-             dispatch({type: SET_ALERT, message: "Erro ao deletar apresentante", alertType: "file", severity: "error"})
+            dispatch({ type: SET_ALERT, message: "Erro ao deletar apresentante", alertType: "file", severity: "error" })
             console.error('Erro ao deletar tipo de rgi!', error)
             throw error;
         }
@@ -97,10 +99,10 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
     const handleDeleteTypeRpjById = async (typeId) => {
         try {
             const data = await customerSv.deleteRPJTypeById(typeId)
-             dispatch({type: SET_ALERT, message: "Tipo de rpj deletado com sucesso!", alertType: "file", severity: "success"})
+            dispatch({ type: SET_ALERT, message: "Tipo de rpj deletado com sucesso!", alertType: "file", severity: "success" })
         } catch (error) {
             console.error("Erro ao deletar tipo de rpj!", error)
-            dispatch({type: SET_ALERT, message: "Erro ao deletar tipo de rpj", alertType: "file", severity: "error"})
+            dispatch({ type: SET_ALERT, message: "Erro ao deletar tipo de rpj", alertType: "file", severity: "error" })
             throw error;
         }
         finally {
@@ -165,6 +167,28 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
         }
     }, []);
 
+    const onlyNumbers = (value) => value.replace(/\D/g, "");
+
+    const applyCpfCnpjMask = (value) => {
+        const numbers = onlyNumbers(value);
+
+        if (numbers.length <= 11) {
+            return numbers
+                .replace(/^(\d{3})(\d)/, "$1.$2")
+                .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+                .replace(/\.(\d{3})(\d)/, ".$1-$2")
+                .slice(0, 14);
+        }
+
+        return numbers
+            .replace(/^(\d{2})(\d)/, "$1.$2")
+            .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+            .replace(/\.(\d{3})(\d)/, ".$1/$2")
+            .replace(/(\d{4})(\d)/, "$1-$2")
+            .slice(0, 18);
+    };
+
+
 
     return (
         <Box sx={{
@@ -205,7 +229,7 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
                     '& input': { color: 'success.main' }
                 }}
                     fullWidth
-                    label="Notação"
+                    label="Prenotação"
                     type="text"
                     color='success'
                     name='notation'
@@ -227,24 +251,41 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
                     disablePortal
                     id="combo-box-demo"
                     options={presenter}
-                    noOptionsText={<RenderNoOptions onClick={handleOpenModalPartes} title={'Cadastrar Apresentante'} />}
+                    noOptionsText={
+                        <RenderNoOptions
+                            onClick={handleOpenModalPartes}
+                            title="Cadastrar Apresentante"
+                        />
+                    }
                     autoHighlight
                     value={optionPresenter}
-                    isOptionEqualToValue={(option, label) => option.name === label.name}
-                    getOptionLabel={(option) => option.name}
+                    isOptionEqualToValue={(option, value) =>
+                        option.cpfcnpj === value?.cpfcnpj
+                    }
+                    getOptionLabel={(option) => option.name || ""}
                     onChange={(event, value) => {
                         setOptionPresenter(value);
-                        setData((state) => ({ ...state, presenter: value ? value.cpfcnpj : optionPresenter }));
+                        setData((state) => ({
+                            ...state,
+                            presenter: value ? onlyNumbers(value.cpfcnpj) : ""
+                        }));
                     }}
                     fullWidth
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label="Apresentante"
-                            color="success"
-                            name="presenter"
-                        />
-                    )}
+                    renderInput={(params) => {
+                        const maskedValue = optionPresenter?.cpfcnpj
+                            ? applyCpfCnpjMask(optionPresenter.cpfcnpj)
+                            : "";
+
+                        return (
+                            <TextField
+                                {...params}
+                                label="Apresentante"
+                                color="success"
+                                name="presenter"
+                                value={maskedValue}
+                            />
+                        );
+                    }}
                     renderOption={(props, option) => (
                         <Box
                             {...props}
@@ -255,37 +296,37 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
                                 alignItems: "center"
                             }}
                         >
-                            <Grid container alignItems={"center"} justifyContent="space-between" >
-                                <Grid item xs={10} lg={10} md={10} sm={10}>
-                                    <Typography >
-                                        {option.name}
-                                    </Typography>
-                                    <Typography sx={{
-                                        fontSize: "11px", display: 'flex', alignSelf: 'start',
-                                        textTransform: 'uppercase'
-                                    }}>
-                                        {option.cpfcnpj}
+                            <Grid container alignItems="center" justifyContent="space-between">
+                                <Grid item xs={10}>
+                                    <Typography>{option.name}</Typography>
+                                    <Typography
+                                        sx={{
+                                            fontSize: "11px",
+                                            textTransform: "uppercase"
+                                        }}
+                                    >
+                                        {applyCpfCnpjMask(option.cpfcnpj)}
                                     </Typography>
                                 </Grid>
+
                                 {permissions[5]?.delete_permission === 1 && (
-                                    <Grid item xs={2} lg={2} md={2} sm={2}>
-                                        <Box sx={{
-                                            width: "100%",
-                                            display: 'flex',
-                                            justifyContent: "flex-end"
-                                        }}>
-                                            <IconButton onClick={() => deletePresenterById(option.cpfcnpj)}>
+                                    <Grid item xs={2}>
+                                        <Box display="flex" justifyContent="flex-end">
+                                            <IconButton
+                                                onClick={() =>
+                                                    deletePresenterById(option.cpfcnpj)
+                                                }
+                                            >
                                                 <CloseOutlined sx={{ width: 20, height: 20 }} />
                                             </IconButton>
                                         </Box>
                                     </Grid>
                                 )}
                             </Grid>
-
                         </Box>
                     )}
-
                 />
+
 
                 <Autocomplete
                     disablePortal
@@ -436,7 +477,7 @@ export const CadastroModalRPJ = ({ onClose, getData }) => {
                 </Button>
 
             </Box>
-            <ModalTypesRPJ open={openModalCadastroTypes} onClose={handleCloseModalTypes} />
+            <ModalTypesRPJ open={openModalCadastroTypes} onClose={handleCloseModalTypes} getData={fetchData} />
             <CadastroPartes open={openModalCadastroPartes} onClose={handleCloseModalPartes} getData={fetchData} />
         </Box >
     );

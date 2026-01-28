@@ -23,12 +23,14 @@ const CadastroModalCallingTypes = ({ onClose, open,getTypes }) => {
     
     try {
       const response = await callingSv.createCallingType(data)
-      getTypes()
       console.log(response)
       return response
     } catch (error) {
       console.error('Erro ao adicionar tipo!', error)
       throw error;
+    }
+    finally {
+      getTypes()
     }
   }
 

@@ -4,51 +4,48 @@ import { refreshToken } from '@/services/auth.service';
 
 const verifyJWTExpiration = (decoded) => {
   const timestamp = new Date().getTime();
+
   if (decoded?.exp * 1000 > timestamp) {
     process.env.NODE_ENV !== 'production' &&
-      console.log(
-        'token N expirado, ts = ',
-        timestamp,
-        'jwt ts exp = ',
-        decoded.exp
-      );
+      console.log('token NÃO expirado', timestamp, decoded.exp);
     return true;
   } else {
     process.env.NODE_ENV !== 'production' &&
-      console.log(
-        'token expirado, ts = ',
-        timestamp,
-        'jwt ts exp = ',
-        decoded.exp
-      );
+      console.log('token expirado', timestamp, decoded.exp);
+
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
+      window.location.href = '/';
+    }
+
     return false;
   }
 };
+
 export const isLoggedIn = (tokenType = 'refreshToken') => {
   if (typeof localStorage !== 'undefined') {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
 
     if (!refreshToken || refreshToken === 'undefined') {
-      console.log('kkk23');
+      console.log('Sem refresh token');
+      if (typeof window !== 'undefined') window.location.href = '/';
       return false;
     }
 
     if (accessToken && accessToken !== 'undefined') {
-      console.log('kkk18');
       const decoded =
         tokenType === 'accessToken'
           ? jwtDecode(accessToken)
           : jwtDecode(refreshToken);
+
       return verifyJWTExpiration(decoded);
     }
 
-    console.log('kkk20');
+    if (typeof window !== 'undefined') window.location.href = '/';
     return false;
   } else {
-    console.error(
-      'O objeto localStorage não está disponível neste ambiente.'
-    );
+    console.error('localStorage não está disponível.');
   }
 };
 

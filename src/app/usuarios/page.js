@@ -270,7 +270,7 @@ const PageUsuarios = () => {
                                         justifyContent: "center"
                                     }}>
                                         <Buttons color={'green'} title={'Buscar'} onClick={handleFilterById} />
-                                        <Link href={"/addUser"}>
+                                        <Link href={"/new-user"}>
                                             <ButtonOpenModals />
                                         </Link>
                                     </Box>

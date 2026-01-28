@@ -77,27 +77,29 @@ export const CadastroOficio = ({ onClose, getData }) => {
     console.log(dataCalling)
     try {
       const data = await callingSv.createCalling(dataCalling)
-      dispatch({type: SET_ALERT, message: "Ofício cadastrado com sucesso!", severity: "success", alertType: "file"})
+      dispatch({ type: SET_ALERT, message: "Ofício cadastrado com sucesso!", severity: "success", alertType: "file" })
 
       return data
     } catch (error) {
-      dispatch({type: SET_ALERT, message: "Erro ao cadastrar ofício!", severity: "error", alertType: "file"})
+      dispatch({ type: SET_ALERT, message: "Erro ao cadastrar ofício!", severity: "error", alertType: "file" })
       console.error("Error ao adicionar arquivo!", error)
       throw error;
     }
     finally {
       getData()
       onClose()
+      window.location.reload()
+
     }
   }
   const handleDeleteEntityById = async (entityId) => {
     try {
       const data = await callingSv.deleteCallingEntity(entityId)
       getDataEntity()
-      dispatch({type: SET_ALERT, message: "Editade deletada com sucesso!", severity: "success", alertType: "file"})
+      dispatch({ type: SET_ALERT, message: "Editade deletada com sucesso!", severity: "success", alertType: "file" })
       return data
     } catch (error) {
-      dispatch({type: SET_ALERT, message: "Erro ao deletar entidade", severity: "success", alertType: "file"})
+      dispatch({ type: SET_ALERT, message: "Erro ao deletar entidade", severity: "success", alertType: "file" })
       console.error("Erro ao deletar entidade", error)
       throw error;
     }
@@ -106,7 +108,7 @@ export const CadastroOficio = ({ onClose, getData }) => {
     try {
       getDataTypes()
       const data = await callingSv.deleteCallingType(typeId)
-      dispatch({type: SET_ALERT, message: "Tipo deletado com sucesso!", severity: "success", alertType: "file"})
+      dispatch({ type: SET_ALERT, message: "Tipo deletado com sucesso!", severity: "success", alertType: "file" })
       return data
     } catch (error) {
       console.error("Erro ao deletar tipo da entidade!", error)
@@ -157,18 +159,18 @@ export const CadastroOficio = ({ onClose, getData }) => {
 
   useEffect(() => {
     if (window.scanner) {
-        window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
-            if (!successful) {
-                console.error('Failed: ' + mesg);
-                return;
-            }
-            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
-                console.info('User cancelled');
-                return;
-            }
-        };
+      window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
+        if (!successful) {
+          console.error('Failed: ' + mesg);
+          return;
+        }
+        if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
+          console.info('User cancelled');
+          return;
+        }
+      };
     }
-}, []);
+  }, []);
 
   return (
     <Box sx={{

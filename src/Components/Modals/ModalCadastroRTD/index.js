@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton, Grid } from "@mui/material";
+import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton, Grid, Tooltip } from "@mui/material";
 import { Box } from "@mui/system";
 import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
 import RenderNoOptions from '@/Components/ButtonOpenModalCadastro';
-import { CloseOutlined } from '@mui/icons-material';
+import { CloseOutlined, Delete } from '@mui/icons-material';
 import Customer from '@/services/customer.service';
 import { useDispatch } from 'react-redux'
-import { showAlert } from '@/store/actions';
+import { SET_ALERT, showAlert } from '@/store/actions';
 import { useAuth } from '@/context';
 import RTDService from '@/services/rtd.service';
 import ModalTypesRTD from '@/Components/ModalsRegistration/ModalCadastroTypesRTD';
+import { Trash } from 'lucide-react';
 
 
 
@@ -79,24 +80,26 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
     const handleCreateFileRtd = async () => {
         try {
             const response = await rtdSv.createRTD(data)
-            dispatch({type: SET_ALERT, message: "Arquivo de RTD cadastrado com sucesso!", alertType: "file", severity: "success"})
+            dispatch({ type: SET_ALERT, message: "Arquivo de RTD cadastrado com sucesso!", alertType: "file", severity: "success" })
         } catch (error) {
             console.error("Erro ao arquivar arquivo de rpj", error)
-            dispatch({type: SET_ALERT, message: "Erro ao cadastrar arquivo RTD!", alertType: "file", severity: "error"})
+            dispatch({ type: SET_ALERT, message: "Erro ao cadastrar arquivo RTD!", alertType: "file", severity: "error" })
             throw error
         }
         finally {
             getData()
             onClose()
+            window.location.reload()
+
         }
     }
     const deletePresenterById = async (typeId) => {
         try {
             const data = await customerSv.deleteCustomer(typeId)
             console.log(data)
-            dispatch({type: SET_ALERT, message: "Apresentante deletado com sucesso!", alertType: "file", severity: "success"})
+            dispatch({ type: SET_ALERT, message: "Apresentante deletado com sucesso!", alertType: "file", severity: "success" })
         } catch (error) {
-            dispatch({type: SET_ALERT, message: "Erro ao deletar apresentante", alertType: "file", severity: "error"})
+            dispatch({ type: SET_ALERT, message: "Erro ao deletar apresentante", alertType: "file", severity: "error" })
             console.error('Erro ao deletar tipo de rgi!', error)
             throw error;
         }
@@ -106,9 +109,9 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
     const handleDeleteTypeRpjById = async (typeId) => {
         try {
             const data = await rtdSv.deleteRTDTypeById(typeId)
-            dispatch({type: SET_ALERT, message: "Tipo de RTD deletado com sucesso!", alertType: "file", severity: "success"})
+            dispatch({ type: SET_ALERT, message: "Tipo de RTD deletado com sucesso!", alertType: "file", severity: "success" })
         } catch (error) {
-            dispatch({type: SET_ALERT, message: "Erro ao deletar tipo de RTD", alertType: "file", severity: "error"})
+            dispatch({ type: SET_ALERT, message: "Erro ao deletar tipo de RTD", alertType: "file", severity: "error" })
             console.error("Erro ao deletar tipo de rpj!", error)
             throw error;
         }
@@ -175,6 +178,29 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
         }
     }, []);
 
+    const theme = useTheme()
+
+
+    const onlyNumbers = (value) => value.replace(/\D/g, "");
+
+    const applyCpfCnpjMask = (value) => {
+        const numbers = onlyNumbers(value);
+
+        if (numbers.length <= 11) {
+            return numbers
+                .replace(/^(\d{3})(\d)/, "$1.$2")
+                .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+                .replace(/\.(\d{3})(\d)/, ".$1-$2")
+                .slice(0, 14);
+        }
+
+        return numbers
+            .replace(/^(\d{2})(\d)/, "$1.$2")
+            .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+            .replace(/\.(\d{3})(\d)/, ".$1/$2")
+            .replace(/(\d{4})(\d)/, "$1-$2")
+            .slice(0, 18);
+    };
 
     return (
         <Box sx={{
@@ -215,7 +241,7 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
                     '& input': { color: 'success.main' }
                 }}
                     fullWidth
-                    label="Notação"
+                    label="Prenotação"
                     type="text"
                     color='success'
                     name='notation'
@@ -270,11 +296,13 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
                                     <Typography >
                                         {option.name}
                                     </Typography>
-                                    <Typography sx={{
-                                        fontSize: "11px", display: 'flex', alignSelf: 'start',
-                                        textTransform: 'uppercase'
-                                    }}>
-                                        {option.cpfcnpj}
+                                    <Typography
+                                        sx={{
+                                            fontSize: "11px",
+                                            textTransform: "uppercase"
+                                        }}
+                                    >
+                                        {applyCpfCnpjMask(option.cpfcnpj)}
                                     </Typography>
                                 </Grid>
                                 {permissions[5]?.delete_permission === 1 && (
@@ -341,9 +369,12 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
                                             display: 'flex',
                                             justifyContent: "flex-end"
                                         }}>
-                                            <IconButton onClick={() => handleDeleteTypeRpjById(option.id)}>
-                                                <CloseOutlined sx={{ width: 20, height: 20 }} />
-                                            </IconButton>
+
+                                            <Tooltip title={`Deletar ${option.name}`}>
+                                                <IconButton onClick={() => handleDeleteTypeRpjById(option.id)}>
+                                                    <Delete sx={{ width: 20, height: 20, color: theme.palette.error.main }} />
+                                                </IconButton>
+                                            </Tooltip>
                                         </Box>
                                     </Grid>
                                 )}
@@ -446,7 +477,7 @@ export const CadastroModalRTD = ({ onClose, getData }) => {
                 </Button>
 
             </Box>
-            <ModalTypesRTD open={openModalCadastroTypes} onClose={handleCloseModalTypes} />
+            <ModalTypesRTD open={openModalCadastroTypes} onClose={handleCloseModalTypes} getData={fetchData} />
             <CadastroPartes open={openModalCadastroPartes} onClose={handleCloseModalPartes} getData={fetchData} />
         </Box >
     );

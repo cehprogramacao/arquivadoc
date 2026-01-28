@@ -16,7 +16,8 @@ import {
     Group as GroupIcon,
     Lock as LockIcon,
     Person as PersonIcon,
-    AdminPanelSettings as AdminIcon
+    AdminPanelSettings as AdminIcon,
+    Person
 } from '@mui/icons-material';
 import Link from 'next/link';
 import { extractDataFromSession } from '@/utils/auth';
@@ -53,7 +54,7 @@ const MENU_STYLES = {
 
     userEmail: {
         fontSize: '12px',
-        color: 'text.secondary',
+        color: 'text.main',
         mt: 0.5,
     },
 
@@ -110,6 +111,12 @@ const MENU_ITEMS = [
         href: '/updatePassword',
         icon: LockIcon,
         label: 'Alterar Senha',
+        adminOnly: false,
+    },
+    {
+        href: '/perfil',
+        icon: Person,
+        label: 'Perfil',
         adminOnly: false,
     },
     {

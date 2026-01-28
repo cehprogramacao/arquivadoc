@@ -77,6 +77,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
     }
     finally {
       onClose()
+      window.location.reload()
     }
   }
   useEffect(() => {
@@ -133,6 +134,27 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
     }
   }, []);
 
+
+  const onlyNumbers = (value) => value.replace(/\D/g, "");
+
+    const applyCpfCnpjMask = (value) => {
+        const numbers = onlyNumbers(value);
+
+        if (numbers.length <= 11) {
+            return numbers
+                .replace(/^(\d{3})(\d)/, "$1.$2")
+                .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+                .replace(/\.(\d{3})(\d)/, ".$1-$2")
+                .slice(0, 14);
+        }
+
+        return numbers
+            .replace(/^(\d{2})(\d)/, "$1.$2")
+            .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+            .replace(/\.(\d{3})(\d)/, ".$1/$2")
+            .replace(/(\d{4})(\d)/, "$1-$2")
+            .slice(0, 18);
+    };
 
   return (
     <Box sx={{
@@ -217,7 +239,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
                 fontSize: "11px", display: 'flex', alignSelf: 'start',
                 textTransform: 'uppercase'
               }}>
-                {option.cpfcnpj}
+                {applyCpfCnpjMask(option.cpfcnpj)}
               </Typography>
             </Box>
           )}
@@ -229,7 +251,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
             }}
             label="Apresentante"
             sx={{
-              color: "#237117", '& input': {
+              color: theme.palette.primary.main, '& input': {
                 color: 'success.main',
               },
             }} />}
@@ -257,7 +279,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
                 fontSize: "11px", display: 'flex', alignSelf: 'start',
                 textTransform: 'uppercase'
               }}>
-                {option.cpfcnpj}
+                {applyCpfCnpjMask(option.cpfcnpj)}
               </Typography>
             </Box>
           )}
@@ -271,7 +293,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
             }}
             label="Sacado"
             sx={{
-              color: "#237117", '& input': {
+              color: theme.palette.primary.main, '& input': {
                 color: 'success.main',
               },
             }} />}
@@ -299,7 +321,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
                 fontSize: "11px", display: 'flex', alignSelf: 'start',
                 textTransform: 'uppercase'
               }}>
-                {option.cpfcnpj}
+                {applyCpfCnpjMask(option.cpfcnpj)}
               </Typography>
             </Box>
           )}
@@ -313,7 +335,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
             }}
             label="Devedor"
             sx={{
-              color: "#237117", '& input': {
+              color: theme.palette.primary.main, '& input': {
                 color: 'success.main',
               },
             }} />}
@@ -336,7 +358,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
               label="Situação"
               placeholder="Escolha uma opção"
               sx={{
-                color: "#237117",
+                color: theme.palette.primary.main,
                 '& input': {
                   color: 'success.main',
                 },
@@ -358,15 +380,15 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
           display: 'flex',
           width: '169px',
           background: 'transparent',
-          color: '#FFC117',
-          border: '1px solid #FFC117',
+          color: theme.palette.background.yellow,
+          border: `1px solid ${theme.palette.background.yellow}`,
           padding: '6px 12px',
           textTransform: 'capitalize',
           fontSize: ".9rem",
           borderRadius: '8px',
           ":hover": {
-            background: "#FFC117",
-            color: '#FFF',
+            background: theme.palette.background.yellow,
+            color: theme.palette.primary.white,
 
           }
         }} onClick={handleScanFile}>
@@ -375,15 +397,15 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
         <Button sx={{
           display: 'flex',
           width: '169px',
-          background: "#237117",
-          color: '#fff',
-          border: '1px solid #237117',
+          background: theme.palette.primary.main,
+          color: theme.palette.primary.white,
+          border: `1px solid ${theme.palette.primary.main}`,
           textTransform: 'capitalize',
           fontSize: ".9rem",
           borderRadius: '8px',
           ":hover": {
             background: 'transparent',
-            color: '#237117',
+            color: theme.palette.primary.main,
 
           }
         }} onClick={handleCreateProtest}>

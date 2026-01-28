@@ -202,7 +202,6 @@ const LoginPage = () => {
             }}
           />
 
-          {/* Header */}
           <Box
             sx={{
               display: "flex",

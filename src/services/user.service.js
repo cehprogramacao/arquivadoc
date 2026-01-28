@@ -21,12 +21,24 @@ class User extends ServiceBase {
     return this.put("/user", payload);
   }
 
+  updateUserFoto(payload) {
+    return this.post("/user/upload-foto", payload);
+  }
+
   updateUserByAdmin(userId, payload) {
     return this.put(`/user/${userId}/update`, payload);
   }
 
   changeUserPassword(payload) {
     return this.put("/user/change-password", payload);
+  }
+
+  verifyCurrentPassword(payload) {
+    return this.post("/user/verify-password", payload);
+  }
+
+  updateEmail(payload) {
+    return this.put("/user/update-email", payload);
   }
 
   disableUser(userId) {

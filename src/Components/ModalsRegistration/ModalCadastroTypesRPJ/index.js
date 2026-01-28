@@ -21,7 +21,7 @@ const ModalTypesRPJ = ({ onClose, open, getData }) => {
   const handleCreateTypeRpj = async () => {
     
     try {
-      const response = await rpjSv.createRPJType(accessToken, data)
+      const response = await rpjSv.createRPJType(data)
       dispatch({type: SET_ALERT, message: "Tipo de RPJ cadastrado com sucesso!", alertType: "file", severity: "success"})
     } catch (error) {
       dispatch({type: SET_ALERT, message: "Erro ao criar tipo de rpj", alertType: "file", severity: "error"})

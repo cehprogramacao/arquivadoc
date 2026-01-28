@@ -77,7 +77,7 @@ const numberMaskEstruct = '(99) 99999-9999';
 
 const userSv = new User();
 
-const AddUser = ({ params }) => {
+const UpdateUserById = ({ params }) => {
     const [loading, setLoading] = useState(false);
     const [numberMask, setNumberMask] = useState(numberMaskEstruct);
     const [errors, setErrors] = useState({});
@@ -589,4 +589,4 @@ const AddUser = ({ params }) => {
     );
 };
 
-export default withAuth(withIsAdmin(AddUser));
+export default withAuth(withIsAdmin(UpdateUserById));

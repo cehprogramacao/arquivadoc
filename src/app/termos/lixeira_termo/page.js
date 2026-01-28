@@ -19,7 +19,7 @@ const LixeiraTermos = ({ data }) => {
 
 
     ]
-    const top100Films = [
+    const labels = [
         {
             label: 'Número'
         },
@@ -151,7 +151,7 @@ const LixeiraTermos = ({ data }) => {
                             <Autocomplete
                                 disablePortal
                                 id="combo-box-demo"
-                                options={top100Films}
+                                options={labels}
                                 sx={{ width: isSmallScreen ? '100%' : 400 }}
                                 autoHighlight
                                 getOptionLabel={(option) => option.label}
@@ -161,7 +161,7 @@ const LixeiraTermos = ({ data }) => {
                                         color="success"
                                         label="Buscar Por"
                                         onChange={(e) => {
-                                            const selected = top100Films.find(
+                                            const selected = labels.find(
                                                 (item) => item.label === e.target.value
                                             );
                                             setSelect(selected)

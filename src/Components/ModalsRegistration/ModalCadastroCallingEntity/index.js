@@ -19,12 +19,14 @@ const ModalCadastroCallingEntity = ({ onClose, open, getEntity }) => {
   const handleCreateTypeEntity = async () => {
     try {
       const response = await callingSv.createCallingEntity(data)
-      getEntity()
       console.log(response)
       return response
     } catch (error) {
       console.error('Erro ao adicionar endidade!', error)
       throw error;
+    }
+    finally {
+      getEntity()
     }
   }
 

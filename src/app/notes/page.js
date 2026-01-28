@@ -1,269 +1,311 @@
-"use client"
-import { Autocomplete, Box, Button, Drawer, Stack, TextField, Typography, styled, useMediaQuery, useTheme, Grid } from "@mui/material";
-import '@fontsource/roboto/300.css';
+"use client";
+
+import {
+    Autocomplete,
+    Box,
+    Container,
+    Drawer,
+    Grid,
+    TextField,
+    Typography
+} from "@mui/material";
 import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+
 import { useEffect, useState } from "react";
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
 import { CadastroNotas } from "@/Components/Modals/ModalCadastroNotas";
-import { DocList } from "@/Components/List/DocList";
-import { ButtonLixeira } from "@/Components/ButtonLixeira";
 import CustomContainer from "@/Components/CustomContainer";
 import NoteService from "@/services/notes.service";
 import { TableList } from "./components/TableList";
 import MenuOptionsFile from "@/Components/MenuPopUp";
 import ModalList from "./components/ModalPDF";
 import Loading from "@/Components/loading";
-import SnackBar from "@/Components/SnackBar";
-import User from "@/services/user.service";
-import PrivateRoute from "@/utils/LayoutPerm";
-import { AuthProvider, useAuth } from "@/context";
 import { SET_ALERT } from "@/store/actions";
 import { useDispatch } from "react-redux";
 import { isLoggedIn } from "@/utils/auth";
 import { useRouter } from "next/navigation";
+import PrivateRoute from "@/utils/LayoutPerm";
+import { AuthProvider, useAuth } from "@/context";
+import { ButtonLixeira } from "@/Components/ButtonLixeira";
+import { Buttons } from "@/Components/Button/Button";
 
-const BoxMain = styled('section')({
-    maxWidth: '1300px',
-    width: '85%',
-    display: 'flex',
-    flexDirection: "column",
-    padding: '5px 10px'
-});
+const noteSv = new NoteService();
 
-const noteSv = new NoteService()
+// 🔹 ADICIONADO
+const filterOptions = [
+    { label: "Número do Pedido", value: "number" },
+    { label: "Apresentante (CPF/CNPJ)", value: "presenter" }
+];
+
 const PageNotas = () => {
-    const theme = useTheme()
-    const [loading, setLoading] = useState(false)
-    const { permissions, updatePermissions } = useAuth()
-    const [opt, setOpt] = useState(['Nome', 'CPF', 'Ordem', 'Livro', 'Livro Folha'])
-    const [optService, setOptService] = useState(['Escrituras', 'Procuração', 'Substabelecimento', 'Divórcio',
-        'Ata Notarial', 'Inventário'
-    ])
 
-    const dispatch = useDispatch()
-    const router = useRouter()
-    const [data, setData] = useState([])
-    const [open, setOpen] = useState(false)
+    const dispatch = useDispatch();
+    const router = useRouter();
+    const { permissions } = useAuth();
+
+    const [loading, setLoading] = useState(false);
+    const [searching, setSearching] = useState(false);
+
+    // FILTROS
+    const [presenter, setPresenter] = useState("");
+    const [number, setNumber] = useState("");
+
+    // 🔹 ADICIONADO
+    const [filterType, setFilterType] = useState({
+        value: 'number'
+    });
+
+    // LISTAGEM
+    const [data, setData] = useState([]);
+
+    // MODAL PDF
+    const [openPDF, setOpenPDF] = useState(false);
+    const [dataFileModal, setDataFileModal] = useState([]);
+
+    // MENU
     const [anchorEl, setAnchorEl] = useState(null);
-    const [openPDF, setOpenPDF] = useState(false)
-    const [dataFileModal, setDataFileModal] = useState([])
-    const [number, setNumber] = useState("")
     const openMenu = Boolean(anchorEl);
-    const handleOpen = () => setOpen(!open)
-    const handleClose = () => setOpen(!open)
+    const handleClickMenu = (event) => setAnchorEl(event.currentTarget);
+    const handleCloseMenu = () => setAnchorEl(null);
 
-    const handleClickMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-        console.log(permissions, 'permissões')
-    };
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
-    };
-    const getData = async () => {
+    // CADASTRO
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
-        try {
-            setLoading(true)
-            const dataNote = await noteSv.getAllNotes()
-            
-            dispatch({type: SET_ALERT, message: `Total de arquivos: ${Object.values(dataNote).length}`, severity: "success", alertType: "file"})
-            setData(Object.values(dataNote))
-        } catch (error) {
-            dispatch({type: SET_ALERT, message: 'Erro ao listar arquivos!', severity: 'error', alertType: 'file'})
-            console.error("Erro ao listar notas", error)
-            throw error;
-        }
-        finally {
-            setLoading(false)
-        }
-    }
-
-
-
-    const handleOpenModalPDF = async () => {
-
-        try {
-            setOpenPDF(true)
-            const noteFilter = await noteSv.getNoteByNumber(number)
-            console.log(noteFilter, 'noteeeeeeeeeee 88')
-            setDataFileModal(noteFilter)
-        } catch (error) {
-            console.error("Error ao lista dados por apresentante", error)
-            throw error;
-        }
-    }
-    const handleCloseModalPDF = () => {
-        setOpenPDF(false)
-    }
-    const handleDeleteByNumber = async () => {
-        con
-        try {
-            const response = await noteSv.deleteNoteByNumber(number)
-            dispatch({type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file"})
-            console.log(response)
-            return response
-        } catch (error) {
-            dispatch({type: SET_ALERT, message: error.message, severity: "error", alertType: "file"})
-            console.error("Error ao deletar arquivo rgi!", error)
-            throw error;
-        }
-        finally {
-            getData()
-        }
-    }
-
-
-
+    // REDIRECIONAR DESLOGADO
     useEffect(() => {
-        console.log(permissions, dataFileModal, 'permissões')
-        getData()
-
-    }, [])
-
-    useEffect(() => {
-        if(!isLoggedIn()) {
-            router.push("/")
-        }
-    }, [])
-
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
+        if (!isLoggedIn()) router.push("/");
     }, []);
 
-    if (!isClient) return null;
+    // MÁSCARA CPF/CNPJ
+    const maskCpfCnpj = (value) => {
+        value = value.replace(/\D/g, "");
+
+        if (value.length <= 11) {
+            return value
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        }
+
+        return value
+            .replace(/^(\d{2})(\d)/, "$1.$2")
+            .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+            .replace(/\.(\d{3})(\d)/, ".$1/$2")
+            .replace(/(\d{4})(\d)/, "$1-$2");
+    };
+
+    // LISTAR TODAS
+    const getData = async () => {
+        try {
+            setLoading(true);
+            const res = await noteSv.getAllNotes();
+            setData(Object.values(res));
+        } catch (error) {
+            dispatch({
+                type: SET_ALERT,
+                message: "Erro ao listar notas",
+                severity: "error",
+                alertType: "file"
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // 🔍 FILTRO (AGORA RESPEITA O AUTOCOMPLETE)
+    const handleFilter = async () => {
+        try {
+            setSearching(true);
+
+            if (!filterType) {
+                dispatch({
+                    type: SET_ALERT,
+                    message: "Selecione um tipo de busca",
+                    severity: "warning",
+                    alertType: "file"
+                });
+                return;
+            }
+
+            if (filterType.value === "number") {
+                const res = await noteSv.getNoteByNumber(number);
+                setData(Array.isArray(res) ? res : [res]);
+                return;
+            }
+
+            if (filterType.value === "presenter") {
+                const clean = presenter.replace(/\D/g, "");
+                const res = await noteSv.getNoteByPresenter(clean);
+                setData(Object.values(res));
+                return;
+            }
+
+        } catch (error) {
+            dispatch({
+                type: SET_ALERT,
+                message: "Nenhum registro encontrado",
+                severity: "warning",
+                alertType: "file"
+            });
+            setData([]);
+        } finally {
+            setSearching(false);
+        }
+    };
+
+    // MODAL PDF
+    const handleOpenModalPDF = async () => {
+        try {
+            setOpenPDF(true);
+            const res = await noteSv.getNoteByNumber(number);
+            setDataFileModal(res);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleCloseModalPDF = () => setOpenPDF(false);
+
+    // DELETAR
+    const handleDeleteByNumber = async () => {
+        await noteSv.deleteNoteByNumber(number);
+        getData();
+    };
+
+    // INIT
+    useEffect(() => {
+        getData();
+    }, []);
+
+
 
     return (
-        <AuthProvider >
-            <PrivateRoute requiredPermissions={['Notas']} >
-                {loading ? <Loading />
-                    :
-                    <Box sx={{
-                        width: '100%',
-                        display: "flex",
-                        flexDirection: 'column',
-                        placeItems: 'center',
-                        py: 12,
-                        px: 3
-                    }}>
-                        <CustomContainer >
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} >
-                                    <Box sx={{
-                                        width: "100%",
-                                        display: 'flex',
-                                        justifyContent: "center"
-                                    }}>
-                                        <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                                            Notas
-                                        </Typography>
-                                    </Box>
+        <AuthProvider>
+            <PrivateRoute requiredPermissions={['Notas']}>
+                {loading ? (
+                    <Loading />
+                ) : (
+                    <Box sx={{ width: '100%', py: 14 }}>
+                        <Container maxWidth="lg">
+                            <Grid container spacing={3}>
+
+                                <Grid item xs={12}>
+                                    <Typography fontSize={38} fontWeight="bold" textAlign='center'>
+                                        Notas
+                                    </Typography>
                                 </Grid>
-                                <Grid item xs={12} >
-                                    <Grid container spacing={5}>
-                                        <Grid item xs={12} lg={4} md={4} sm={4}>
+
+                                {/* 🔹 AUTOCOMPLETE */}
+                                <Grid item xs={12} lg={4}>
+                                    <Autocomplete
+                                        options={filterOptions}
+                                        value={filterType}
+                                        isOptionEqualToValue={(option, value) =>
+                                            option?.value === value?.value
+                                        }
+                                        getOptionLabel={(option) => option?.label || ""}
+                                        onChange={(_, value) => {
+                                            setFilterType(value);
+                                            setNumber("");
+                                        }}
+                                        renderInput={(params) => (
                                             <TextField
-                                                fullWidth
-                                                label="Buscar"
-                                                color="success" />
-                                        </Grid>
-                                        <Grid item xs={12} lg={3} md={4} sm={4}>
-                                            <Autocomplete
-                                                disablePortal
-                                                id="combo-box-demo"
-                                                options={opt}
-                                                fullWidth
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        color="success"
-                                                        InputProps={{
-                                                            ...params.InputProps,
-                                                            classes: {
-                                                                root: 'no-options-input',
-                                                            },
-                                                        }}
-                                                        {...params}
-                                                        label="Buscar Por"
-
-                                                        sx={{
-                                                            color: "#237117",
-                                                            '& input': {
-                                                                color: 'success.main',
-                                                            },
-                                                        }}
-                                                    />
-                                                )}
+                                                {...params}
+                                                label="Filtrar por"
+                                                color="success"
                                             />
-                                        </Grid>
-                                        <Grid item xs={12} lg={3} md={4} sm={4}>
-                                            <Autocomplete
-                                                disablePortal
-                                                id="combo-box-demo"
-                                                options={optService}
-                                                fullWidth
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        color="success"
-                                                        InputProps={{
-                                                            ...params.InputProps,
-                                                            classes: {
-                                                                root: 'no-options-input',
-                                                            },
-                                                        }}
-                                                        {...params}
-                                                        label="Buscar Tipo de Serviço"
+                                        )}
+                                    />
 
-                                                        sx={{
-                                                            color: "#237117",
-                                                            '& input': {
-                                                                color: 'success.main',
-                                                            },
-                                                        }}
-                                                    />
-                                                )}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} lg={2} md={12} sm={12} >
-                                            <Box sx={{
-                                                width: "100%",
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                gap: 4
-                                            }}>
-                                                {permissions[6]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                                <ButtonLixeira href={"/notas/lixeira_notas"} />
-                                            </Box>
+                                </Grid>
 
-                                        </Grid>
+                                {/* INPUTS CONDICIONAIS */}
+                                {filterType?.value === "number" && (
+                                    <Grid item xs={12} lg={4}>
+                                        <TextField
+                                            label="Número do Pedido"
+                                            fullWidth
+                                            value={number}
+                                            onChange={(e) => setNumber(e.target.value)}
+                                            color="success"
+                                        />
                                     </Grid>
+                                )}
+
+                                {filterType?.value === "presenter" && (
+                                    <Grid item xs={12} lg={4}>
+                                        <TextField
+                                            label="CPF/CNPJ do Apresentante"
+                                            fullWidth
+                                            value={presenter}
+                                            onChange={(e) => setPresenter(maskCpfCnpj(e.target.value))}
+                                            inputProps={{ maxLength: 18 }}
+                                            color="success"
+                                        />
+                                    </Grid>
+                                )}
+
+                                <Grid item xs={12} lg={4} display="flex" gap={2}>
+                                    <Buttons
+                                        color="green"
+                                        title={searching ? "Buscando..." : "Buscar"}
+                                        onClick={handleFilter}
+                                        disabled={searching}
+                                    />
+
+                                    {permissions[6]?.create_permission === 1 && (
+                                        <ButtonOpenModals onClick={handleOpen} />
+                                    )}
+
+                                    <ButtonLixeira href="/notas/lixeira_notas" />
                                 </Grid>
-                                <Grid item xs={12} >
-                                    <TableList data={data} handleClick={handleClickMenu} setNumber={(e) => setNumber(e)} />
+
+                                {/* LISTA */}
+                                <Grid item xs={12}>
+                                    <TableList
+                                        data={data}
+                                        handleClick={handleClickMenu}
+                                        setNumber={(n) => setNumber(n)}
+                                    />
                                 </Grid>
+
                             </Grid>
-                        </CustomContainer>
+                        </Container >
+
+                        {/* DRAWER */}
                         <Drawer anchor="left" open={open} onClose={handleClose}>
                             <CadastroNotas onClose={handleClose} getData={getData} />
                         </Drawer>
-                        <MenuOptionsFile open={openMenu}
-                            handleClose={handleCloseMenu}
+
+                        {/* MENU */}
+                        <MenuOptionsFile
+                            open={openMenu}
                             anchorEl={anchorEl}
+                            handleClose={handleCloseMenu}
                             handleDelete={handleDeleteByNumber}
                             handleOpenModalPDF={handleOpenModalPDF}
                             type={number}
                             deletePerm={permissions[6]?.delete_permission}
                             editPerm={permissions[6]?.edit}
                         />
-                        <ModalList data={dataFileModal} number={number} onClose={handleCloseModalPDF} open={openPDF} deletePerm={permissions[6]?.delete_permission}
-                            editPerm={permissions[6]?.edit} />
+
+                        {/* MODAL PDF */}
+                        <ModalList
+                            open={openPDF}
+                            onClose={handleCloseModalPDF}
+                            data={dataFileModal}
+                            number={number}
+                            deletePerm={permissions[6]?.delete_permission}
+                            editPerm={permissions[6]?.edit}
+                        />
                     </Box>
-                }
+                )}
             </PrivateRoute>
         </AuthProvider>
-
     );
-}
+};
 
 export default PageNotas;

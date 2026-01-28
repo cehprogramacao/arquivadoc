@@ -1,285 +1,300 @@
 "use client"
-import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme, Grid } from '@mui/material';
-import { Buttons } from '@/Components/Button/Button';
-import { ButtonLixeira } from '@/Components/ButtonLixeira';
-import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
-import Autocomplete from '@mui/material/Autocomplete';
-import { CadastroProtesto } from '@/Components/Modals/ModalCadastroProtesto';
-import { useEffect, useState } from 'react';
-import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes';
-import CustomContainer from '@/Components/CustomContainer';
-import { width } from '@mui/system';
-import withAuth from '@/utils/withAuth';
-import { AuthProvider, useAuth } from '@/context';
-import PrivateRoute from '@/utils/LayoutPerm';
-import { DocList } from './components/TableProtest';
-import SnackBar from '@/Components/SnackBar';
-import ProtestService from '@/services/protest.service';
-import Loading from '@/Components/loading';
-import MenuOptionsFile from '@/Components/MenuPopUp';
-import { useDispatch } from 'react-redux';
-import { SET_ALERT, showAlert } from '@/store/actions';
-import ModalList from './components/ModalPDF';
+import { Box, Drawer, TextField, Typography, Grid, Container } from '@mui/material'
+import { Buttons } from '@/Components/Button/Button'
+import { ButtonLixeira } from '@/Components/ButtonLixeira'
+import { ButtonOpenModals } from '@/Components/ButtonOpenModals'
+import Autocomplete from '@mui/material/Autocomplete'
+import { CadastroProtesto } from '@/Components/Modals/ModalCadastroProtesto'
+import { useEffect, useState } from 'react'
+import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes'
+import CustomContainer from '@/Components/CustomContainer'
+import withAuth from '@/utils/withAuth'
+import { AuthProvider, useAuth } from '@/context'
+import PrivateRoute from '@/utils/LayoutPerm'
+import { DocList } from './components/TableProtest'
+import SnackBar from '@/Components/SnackBar'
+import ProtestService from '@/services/protest.service'
+import Loading from '@/Components/loading'
+import MenuOptionsFile from '@/Components/MenuPopUp'
+import { useDispatch } from 'react-redux'
+import { SET_ALERT } from '@/store/actions'
+import ModalList from './components/ModalPDF'
 
 const options = [
     { label: 'Apontamento' },
     { label: 'Apresentante' }
 ]
 
-const protestSv = new ProtestService();
+const protestSv = new ProtestService()
+
 const PageProtesto = () => {
     const dispatch = useDispatch()
-    const [data, setData] = useState([])
     const { permissions } = useAuth()
+
+    const [data, setData] = useState([])
     const [dataFile, setDataFile] = useState([])
     const [notation, setNotation] = useState("")
+
     const [option, setOption] = useState({
-        option: "",
+        option: null,
         value: ""
     })
+
     const [isAdmin, setIsAdmin] = useState("")
     const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
-    const handleOpenPopUp = (event) => {
-        setAnchorEl(event.currentTarget)
-    }
-    const handleClosePopUp = () => {
-        setAnchorEl(null)
-    }
-    const [loading, setLoading] = useState()
+
+    const [loading, setLoading] = useState(false)
     const [openModalCadastro, setOpenModalCadastro] = useState(false)
     const [openModalPartes, setOpenModalPartes] = useState(false)
     const [openModalListFile, setOpenModalListFile] = useState(false)
 
+    const [isClient, setIsClient] = useState(false)
 
-    const handleOpenModalPartes = () => {
-        setOpenModalPartes(true)
-    }
-    const handleCloseModalPartes = () => {
-        setOpenModalPartes(false)
-    }
-    const handleOpenModalCadastro = () => {
-        setOpenModalCadastro(true)
-    }
-    const handleCloseModalCadastro = () => {
-        setOpenModalCadastro(false)
-    }
+    /* -------------------- PopUp -------------------- */
+    const handleOpenPopUp = (event) => setAnchorEl(event.currentTarget)
+    const handleClosePopUp = () => setAnchorEl(null)
+
+    /* -------------------- Modals -------------------- */
+    const handleOpenModalPartes = () => setOpenModalPartes(true)
+    const handleCloseModalPartes = () => setOpenModalPartes(false)
+
+    const handleOpenModalCadastro = () => setOpenModalCadastro(true)
+    const handleCloseModalCadastro = () => setOpenModalCadastro(false)
+
     const handleOpenModalFile = async () => {
         try {
             setOpenModalListFile(true)
             const data = await protestSv.getProtestByNotation(notation)
-            console.log(data)
             setDataFile(data)
         } catch (error) {
             console.error("Erro ao buscar arquivo", error)
-            throw error;
         }
     }
-    const handleCloseModalFile = () => {
-        setOpenModalListFile(false)
-    }
 
+    const handleCloseModalFile = () => setOpenModalListFile(false)
+
+    /* -------------------- Fetch -------------------- */
     const getAllFilesProtest = async () => {
         try {
             setLoading(true)
             const data = await protestSv.getAllProtests()
-
-            dispatch({type: SET_ALERT, message: `Total de arquivos: ${Object.values(data).length}`, severity: "success", alertType: "file" })
-            console.log(data)
             setData(Object.values(data))
-        } catch (error) {
-            dispatch({type: SET_ALERT, message: error.message, severity: "error", alertType: "file" })
-            console.error("Erro ao listar todos os arquivos!", error)
-            throw error;
-        }
-        finally {
-            setLoading(false)
-        }
-    }
 
-    const handleDeleteByNotation = async () => {
-        try {
-            const response = await protestSv.deleteProtestByNotation(notation)
-            dispatch({type: SET_ALERT, message: response.message, severity: "success", alertType: "file" })
-            
+            dispatch({
+                type: SET_ALERT,
+                message: `Total de arquivos: ${Object.values(data).length}`,
+                severity: "success",
+                alertType: "file"
+            })
         } catch (error) {
-            dispatch({type: SET_ALERT, message: error.message, severity: "error", alertType: "file" })
-            console.error("Error ao deletar arquivo rgi!", error)
-            throw error;
-        }
-        finally {
-            getAllFilesProtest()
+            dispatch({
+                type: SET_ALERT,
+                message: error.message,
+                severity: "error",
+                alertType: "file"
+            })
+        } finally {
+            setLoading(false)
         }
     }
 
     const getProtestByNotation = async (value) => {
-        let newData = []
         try {
             setLoading(true)
             const data = await protestSv.getProtestByNotation(value.replace(/\D/g, ''))
             setData(Object.values(data))
-            return data;
-        } catch (error) {
-            console.error("Erro ao buscar arquivo", error)
-            throw error;
-        }
-        finally {
+        } finally {
             setLoading(false)
         }
     }
+
     const getProtestByPresenter = async (value) => {
-        let newData = []
         try {
             setLoading(true)
             const data = await protestSv.getProtestByPresenter(value.replace(/\D/g, ''))
             setData(Object.values(data))
-            return data;
-        } catch (error) {
-            console.error("Erro ao buscar arquivo", error)
-            throw error;
-        }
-        finally {
+        } finally {
             setLoading(false)
         }
     }
 
+    /* -------------------- Search -------------------- */
     const handleSearchProtest = async () => {
-        if (option.value && option.value) {
-            try {
-                if (option.option === 'Apontamento') {
-                    await getProtestByNotation(option.value)
-                }
-                else if (option.option === 'Apresentante') {
-                    await getProtestByPresenter(option.value)
-                }
-
-            } catch (error) {
-                console.error("Erro ao buscar arquivo!", error)
-                throw new Error("Erro ao buscar arquivo!")
-            }
+        if (!option.option || !option.value) {
+            dispatch({
+                type: SET_ALERT,
+                message: "Selecione o tipo de busca e informe um valor",
+                severity: "warning",
+                alertType: "file"
+            })
+            return
         }
-        else {
-            console.error("Campos vazios!")
-            throw new Error('Campos Vazios!')
+
+        try {
+            if (option.option === "Apontamento") {
+                await getProtestByNotation(option.value)
+            }
+
+            if (option.option === "Apresentante") {
+                await getProtestByPresenter(option.value)
+            }
+        } catch {
+            dispatch({
+                type: SET_ALERT,
+                message: "Erro ao buscar protestos",
+                severity: "error",
+                alertType: "file"
+            })
         }
     }
+
+    /* -------------------- Delete -------------------- */
+    const handleDeleteByNotation = async () => {
+        try {
+            const response = await protestSv.deleteProtestByNotation(notation)
+            dispatch({
+                type: SET_ALERT,
+                message: response.message,
+                severity: "success",
+                alertType: "file"
+            })
+        } catch (error) {
+            dispatch({
+                type: SET_ALERT,
+                message: error.message,
+                severity: "error",
+                alertType: "file"
+            })
+        } finally {
+            getAllFilesProtest()
+        }
+    }
+
+    /* -------------------- Effects -------------------- */
     useEffect(() => {
+        setIsClient(true)
         getAllFilesProtest()
-        const isAdminUser = localStorage.getItem('isAdmin')
-        setIsAdmin(isAdminUser)
+        setIsAdmin(localStorage.getItem('isAdmin'))
     }, [])
 
-    const [isClient, setIsClient] = useState(false);
+    if (!isClient) return null
+    if (loading) return <Loading />
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    if (!isClient) return null;
-
-    return loading ? <Loading /> : (
+    return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Protesto']}>
-                <Box
-                    sx={{
-                        width: '100%',
-                        height: '100vh',
-                        py: 15,
-                        px: 3
-                    }}
-                >
-                    <CustomContainer>
-                        <Grid container spacing={0}>
-                            <Grid item xs={12}>
-                                <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                    <Typography fontSize={40} fontWeight={'bold'} color={"black"}>
-                                        Protestos
-                                    </Typography>
+                <Box sx={{ width: '100%', height: '100vh', py: 15, px: 3, mb: 10 }}>
+                    <Container maxWidth="xl" >
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} textAlign="center">
+                                <Typography fontSize={40} fontWeight="bold">
+                                    Protestos
+                                </Typography>
+                            </Grid>
+
+                            {/* FILTROS */}
+                            <Grid item xs={12} lg={5}>
+                                <TextField
+                                    label="Buscar"
+                                    value={option.value}
+                                    fullWidth
+                                    disabled={!option.option}
+                                    onChange={(e) =>
+                                        setOption((prev) => ({
+                                            ...prev,
+                                            value: e.target.value
+                                        }))
+                                    }
+                                    color="success"
+                                    helperText={
+                                        !option.option
+                                            ? "Selecione primeiro o tipo de busca"
+                                            : ""
+                                    }
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} lg={4}>
+                                <Autocomplete
+                                    options={options}
+                                    getOptionLabel={(opt) => opt.label}
+                                    onChange={(e, value) =>
+                                        setOption({
+                                            option: value?.label || null,
+                                            value: ""
+                                        })
+                                    }
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Buscar por" color="success" />
+                                    )}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} lg={3}>
+                                <Box display="flex" gap={2} justifyContent="center">
+                                    <Buttons
+                                        color="green"
+                                        title="Buscar"
+                                        onClick={handleSearchProtest}
+                                        disabled={!option.option || !option.value}
+                                    />
+
+                                    {permissions[0]?.create_permission === 1 && (
+                                        <ButtonOpenModals onClick={handleOpenModalCadastro} />
+                                    )}
+
+                                    {isAdmin === "1" && (
+                                        <ButtonLixeira href="/protest/lixeira_protesto" />
+                                    )}
                                 </Box>
                             </Grid>
-                            <Grid item xs={12} >
-                                <Grid container spacing={3}>
-                                    <Grid item xs={12} lg={5} md={6} sm={6}>
-                                        <TextField
-                                            label="Buscar"
-                                            value={option.value}
-                                            fullWidth
-                                            onChange={(e) => setOption({ ...option, value: e.target.value })}
-                                            sx={{ '& input': { color: 'success.main' } }}
-                                            color="success"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={4} md={6} sm={6}>
-                                        <Autocomplete
-                                            disablePortal
-                                            id="combo-box-demo"
-                                            options={options}
-                                            getOptionLabel={(option) => option.label}
-                                            onChange={(e, value) => setOption({ ...option, option: value.label })}
-                                            fullWidth
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    color="success"
-                                                    {...params}
-                                                    label="Buscar Por"
-                                                    sx={{
-                                                        color: "#237117",
-                                                        '& input': {
-                                                            color: 'success.main',
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={3} md={12} sm={12}>
-                                        <Box sx={{
-                                            width: "100%",
-                                            display: "flex",
-                                            gap: 2,
-                                            justifyContent: "center"
-                                        }}>
-                                            <Buttons color={'green'} title={'Buscar'} onClick={handleSearchProtest} />
-                                            {permissions[0]?.create_permission === 1 && (
-                                                <ButtonOpenModals onClick={handleOpenModalCadastro} />
-                                            )}
-                                            {isAdmin === "1" && <ButtonLixeira href={"/protest/lixeira_protesto"} />}
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                            <Grid item xs={12} >
-                                <DocList data={data} handleClick={handleOpenPopUp} setNotation={(e) => setNotation(e)} />
+
+                            {/* LISTA */}
+                            <Grid item xs={12}>
+                                <DocList
+                                    data={data}
+                                    handleClick={handleOpenPopUp}
+                                    setNotation={(e) => setNotation(e)}
+                                />
                             </Grid>
                         </Grid>
-                    </CustomContainer>
-                    <Drawer anchor='left' open={openModalCadastro} onClose={handleCloseModalCadastro} >
-                        <CadastroProtesto onClickPartes={handleOpenModalPartes} onClose={handleCloseModalCadastro} />
+                    </Container>
+
+                    {/* MODAIS */}
+                    <Drawer anchor="left" open={openModalCadastro} onClose={handleCloseModalCadastro}>
+                        <CadastroProtesto
+                            onClickPartes={handleOpenModalPartes}
+                            onClose={handleCloseModalCadastro}
+                        />
                     </Drawer>
 
                     <CadastroPartes open={openModalPartes} onClose={handleCloseModalPartes} />
+
                     <ModalList
                         open={openModalListFile}
                         onClose={handleCloseModalFile}
                         data={dataFile}
                         handleDeleteByNotation={handleDeleteByNotation}
                         notation={notation}
+                        deletePerm={permissions[0]?.delete_permission}
+                        editPerm={permissions[0]?.edit}
+                    />
 
-                        deletePerm={permissions[0]?.delete_permission} editPerm={permissions[0]?.edit}
+                    <MenuOptionsFile
+                        handleDelete={handleDeleteByNotation}
+                        handleOpenModalPDF={handleOpenModalFile}
+                        anchorEl={anchorEl}
+                        handleClose={handleClosePopUp}
+                        type={notation}
+                        deletePerm={permissions[0]?.delete_permission}
+                        editPerm={permissions[0]?.edit}
+                        open={open}
                     />
                 </Box>
-                <MenuOptionsFile
-                    handleDelete={handleDeleteByNotation}
-                    handleOpenModalPDF={handleOpenModalFile}
-                    anchorEl={anchorEl}
-                    handleClose={handleClosePopUp}
-                    type={notation}
-                    deletePerm={permissions[0]?.delete_permission}
-                    editPerm={permissions[0]?.edit}
-                    open={open} />
             </PrivateRoute>
         </AuthProvider>
-    );
-};
+    )
+}
 
-export default withAuth(PageProtesto);
+export default withAuth(PageProtesto)

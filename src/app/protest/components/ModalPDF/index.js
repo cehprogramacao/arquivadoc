@@ -196,7 +196,7 @@ const ModalList = ({
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {notation && (
                             <Chip 
-                                label={`Notation: ${notation}`} 
+                                label={`Prenotação: ${notation}`} 
                                 size="small" 
                                 color="primary" 
                                 variant="outlined"

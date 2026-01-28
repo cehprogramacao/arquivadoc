@@ -64,6 +64,7 @@ export const CadastroPessoas = ({ onClose }) => {
       console.error("Erro ao criar cliente:", error.message);
     } finally {
       setLoading(false);
+      window.location.reload()
     }
   };
 

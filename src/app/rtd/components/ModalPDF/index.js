@@ -33,6 +33,7 @@ const ModalList = ({
 }) => {
     const path = usePathname().split("/")[1];
     const theme = useTheme();
+    console.log(data, 99909)
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     
     const [loading, setLoading] = useState(false);
@@ -100,6 +101,43 @@ const ModalList = ({
         }
     };
 
+    const [pdfUrl, setPdfUrl] = useState(null);
+    
+        useEffect(() => {
+            if (!data?.file) return;
+    
+            try {
+                let base64 = data.file;
+    
+                // Remove prefixo caso venha do backend
+                if (base64.includes('base64,')) {
+                    base64 = base64.split('base64,')[1];
+                }
+    
+                const byteCharacters = atob(base64);
+                const byteNumbers = new Array(byteCharacters.length);
+    
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+    
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+    
+                setPdfUrl(url);
+            } catch (err) {
+                console.error('Erro ao carregar PDF:', err);
+                setPdfError(true);
+            }
+    
+            return () => {
+                if (pdfUrl) {
+                    URL.revokeObjectURL(pdfUrl);
+                }
+            };
+        }, [data?.file]);
+
     const renderPDFViewer = () => {
         if (!data?.file) {
             return (
@@ -137,12 +175,11 @@ const ModalList = ({
             );
         }
 
-        const src = `data:application/pdf;base64,${data.file}`;
 
         return (
             <iframe
                 title="PDF Viewer"
-                src={src}
+                src={pdfUrl}
                 width="100%"
                 height="100%"
                 style={{ 
@@ -195,7 +232,7 @@ const ModalList = ({
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {notation && (
                             <Chip 
-                                label={`Notation: ${notation}`} 
+                                label={`Prenotação: ${notation}`} 
                                 size="small" 
                                 color="primary" 
                                 variant="outlined"

@@ -1,5 +1,5 @@
 "use client"
-import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme, Grid, FormControl, OutlinedInput } from '@mui/material';
+import { Box, Drawer, TextField, Typography, useMediaQuery, useTheme, Grid, FormControl, OutlinedInput, Container } from '@mui/material';
 import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -36,7 +36,7 @@ const PageAutographCards = () => {
         cpfcnpj: null,
         option: null
     })
-    
+
     const [cpfcnpj, setCpfcnpj] = useState("")
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
@@ -60,20 +60,35 @@ const PageAutographCards = () => {
     const handleDeleteByCPFCNPJ = async () => {
         try {
             const response = await custumerSv.deleteAutographCard(cpfcnpj)
-            dispatch({type: SET_ALERT, massage: "Termo deletado com sucesso!", severity: "success", alertType: "file"})
+            dispatch({type: SET_ALERT, message: "Termo deletado com sucesso!", severity: "success", alertType: "file"})
             return response
         } catch (error) {
-            dispatch({type: SET_ALERT, massage: "Erro ao deletar cartão de autografo!", severity: "error", alertType: "file"})
+            dispatch({type: SET_ALERT, message: "Erro ao deletar cartão de autografo!", severity: "error", alertType: "file"})
             console.error("Error ao deletar termo !", error)
             throw error;
         }
+        finally {
+            window.location.reload()
+        }
     }
+
     const handleFilterAutographCard = async () => {
-        let newData = []
+        // Validacao: usuario deve selecionar o tipo de busca
+        if (!dataOptions.option) {
+            dispatch({type: SET_ALERT, message: "Selecione o tipo de busca!", severity: "warning", alertType: "file"})
+            return
+        }
+
+        // Validacao: usuario deve preencher o CPF/CNPJ
+        if (!dataOptions.cpfcnpj || dataOptions.cpfcnpj.trim() === "") {
+            dispatch({type: SET_ALERT, message: "Preencha o CPF/CNPJ!", severity: "warning", alertType: "file"})
+            return
+        }
+
         try {
             setLoading(true)
             const response = await custumerSv.getAutographCard(dataOptions.cpfcnpj)
-            setData(response)
+            setData([response])
             return response
         } catch (error) {
             console.error("Erro ao filtrar Termos", error);
@@ -83,7 +98,7 @@ const PageAutographCards = () => {
         }
     }
 
-    
+
     const handleCloseModalPDF = async () => {
         setOpenPDF(false)
     }
@@ -96,20 +111,13 @@ const PageAutographCards = () => {
     };
 
     const [open, setOpen] = useState(false);
-    const [openPartes, setOpenPartes] = useState(false)
     const handleOpen = () => {
         setOpen(true)
     }
     const handleClose = () => {
         setOpen(false);
     }
-    const handleClosePartes = () => {
-        setOpenPartes(false)
-    }
 
-    const handleOpenPartes = () => {
-        setOpenPartes(true)
-    }
 
     const handleInputChange = (e) => {
         e.target.value?.replace(/\D/g, '').length < 11
@@ -145,7 +153,7 @@ const PageAutographCards = () => {
                     py: 14,
                     px: 4,
                 }}>
-                    <CustomContainer>
+                    <Container maxWidth="xl">
                         <Grid container spacing={3}>
                             <Grid item xs={12} >
                                 <Box sx={{
@@ -218,11 +226,10 @@ const PageAutographCards = () => {
                                 <DocList data={data} setCPF={(cpf) => setCpfcnpj(cpf)} handleClick={handleClickMenu} />
                             </Grid>
                         </Grid>
-                    </CustomContainer>
+                    </Container >
                     <Drawer anchor='left' open={open} onClose={handleClose}>
-                        <CadastrarCartoesModal onClose={handleClose} onClickPartes={handleOpenPartes} />
+                        <CadastrarCartoesModal onClose={handleClose} />
                     </Drawer>
-                    <CadastroPartes open={openPartes} onClose={handleClosePartes} />
 
                 </Box>
                 <MenuOptionsFile

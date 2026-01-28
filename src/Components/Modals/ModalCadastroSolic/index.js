@@ -21,6 +21,9 @@ export const CadastroSolicitantes = ({ onClose, getTag }) => {
             console.error("Erro ao criar tag!", error)
             throw error;
         }
+        finally {
+            window.location.reload()
+        }
     }
     return (
         <Box sx={{
