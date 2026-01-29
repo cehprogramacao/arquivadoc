@@ -296,7 +296,7 @@ export const DocList = ({ data = [], handleClick, setNotation }) => {
                                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.5 }}>
                                     <CreditCard size={12} color="#666" />
                                     <Typography variant="caption" color="text.secondary">
-                                        {applyCpfCnpjMask(item.cpfcnpj) || "-"}
+                                        {applyCpfCnpjMask(item.presenterDocument) || "-"}
                                     </Typography>
                                 </Box>
                             </Box>

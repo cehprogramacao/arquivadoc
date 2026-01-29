@@ -45,7 +45,10 @@ const rtdSv = new RTDService();
 /* ============================
    UTIL CPF / CNPJ
 ============================ */
-const onlyNumbers = (value = "") => value.replace(/\D/g, "");
+const onlyNumbers = (value) => {
+    return String(value || "").replace(/\D/g, "");
+};
+
 
 const applyCpfCnpjMask = (value = "") => {
     const numbers = onlyNumbers(value);
