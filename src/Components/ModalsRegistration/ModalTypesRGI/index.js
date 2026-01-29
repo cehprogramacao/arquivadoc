@@ -35,7 +35,7 @@ const ButtonCadastrar = styled(Button)({
 })
 
 const rgiSv = new RGI()
-const CadastroRGITypes = ({ open, onClose }) => {
+const CadastroRGITypes = ({ open, onClose, getData }) => {
     const [data, setData] = useState({
         group: "",
         name: ""
@@ -54,6 +54,7 @@ const CadastroRGITypes = ({ open, onClose }) => {
         finally {
             setLoading(false)
             onClose()
+            getData()
         }
     }
 

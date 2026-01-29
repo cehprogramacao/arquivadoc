@@ -132,7 +132,7 @@ const PageRGI = () => {
         try {
             setLoading(true)
             const response = await rgiSv.getByPrenotation(Number(val))
-            setData(Object.values(response))
+            setData(response)
         } finally {
             setLoading(false)
         }

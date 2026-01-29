@@ -14,7 +14,7 @@ class RGI extends ServiceBase {
   }
 
   getTrash() {
-    return this.get("/rgi/trash/rgi");
+    return this.get("/rgi/trash");
   }
 
   getByPresenter(presenter) {

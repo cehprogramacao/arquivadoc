@@ -4,375 +4,361 @@ import CadastroRGITypes from "@/Components/ModalsRegistration/ModalTypesRGI";
 import Loading from "@/Components/loading";
 import Customer from "@/services/customer.service";
 import RGI from "@/services/rgi.service";
-import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton } from "@mui/material";
+
+import {
+    useMediaQuery,
+    useTheme,
+    alpha,
+    TextField,
+    Button,
+    Typography,
+    Autocomplete,
+    IconButton,
+    Paper,
+    Tooltip
+} from "@mui/material";
+
 import { Box } from "@mui/system";
+import { DocumentScanner } from "@mui/icons-material";
+import { CheckCircle, ScanLine, Trash2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const customerSv = new Customer();
 const rgiSv = new RGI();
-export const CadastroModalRGI = ({ onClose, onClickPartes }) => {
 
+export const CadastroModalRGI = ({ onClose }) => {
     const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-    // States
-    const [loading, setLoading] = useState(false)
-    const [grupo, setGrupo] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const [presenterList, setPresenterList] = useState([]);
+    const [userPresenter, setUserPresenter] = useState(null);
+
     const [types, setTypes] = useState([]);
-    const [userPresenter, setUserPresenter] = useState(null)
-    const [presenter, setPresenter] = useState([]);
-    const [data, setData] = useState({
-        prenotation: 0,
-        presenter: userPresenter,
-        service_type: "",
-        box: 0,
-        registration: "",
-        file_url: ""
-    });
+    const [grupo, setGrupo] = useState(null);
 
     const [openModalRGITypes, setOpenModalRGITypes] = useState(false);
     const [openModalPresenter, setOpenModalPresenter] = useState(false);
 
+    const [data, setData] = useState({
+        prenotation: "",
+        presenter: "",
+        service_type: "",
+        box: "",
+        registration: "",
+        file_url: ""
+    });
 
-    // Functions
-    const handleOpenModalPresenter = () => {
-        setOpenModalPresenter(!openModalPresenter);
-    }
-    const handleCloseModalPresenter = () => {
-        setOpenModalPresenter(!openModalPresenter);
-    }
-    const handleOpenModalRGITypes = () => {
-        setOpenModalRGITypes(!openModalRGITypes);
-    }
-    const handleCloseModalRGITypes = () => {
-        setOpenModalRGITypes(!openModalRGITypes);
-    }
-    // const handleChangeFile = (e) => {
-    //     const files = e.target.files[0];
-    //     if (files) {
-    //         const fileReader = new FileReader();
-    //         fileReader.onloadend = () => {
-    //             setData((prevFormData) => ({ ...prevFormData, file_url: fileReader.result }));
-    //         };
-    //         fileReader.readAsDataURL(files);    
-    //         console.log(fileReader,'888');
-    //     }
-    // };
-    const handleChangeFile = (e) => {
-        const files = e.target.files[0];
-        if (files) {
-            const fileReader = new FileReader();
-            fileReader.onloadend = () => {
-                let base64String = fileReader.result.split(',')[1];
-                setData((prevFormData) => ({ ...prevFormData, file_url: base64String }));
-            };
-            fileReader.readAsDataURL(files);
-            console.log(fileReader, '888');
-        }
-    };
+    const [fileNames, setFileNames] = useState({
+        file_url: ""
+    });
 
+    const grupos = ["Registro", "Averbação"];
 
+    const tiposFiltrados = grupo
+        ? types.filter((tipo) => tipo.group === grupo)
+        : [];
 
+    /* =========================
+       BUSCAS INICIAIS
+    ==========================*/
     const getCustomersPresenter = async () => {
-        try {
-            const data = await customerSv.customers();
-            const newData = Object.values(data);
-            setPresenter(newData);
-            console.log(data);
-            return data;
-        } catch (error) {
-            console.error("Error when listing presenters", error);
-            throw error;
-        }
+        const res = await customerSv.customers();
+        setPresenterList(Object.values(res));
     };
 
-    const handleCreateRGI = async () => {
-        console.log(data);
-        try {
-            setLoading(true)
-            const response = await rgiSv.create(data)
-            console.log(response)
-            return response
-        } catch (error) {
-            console.error("Error creating record", error)
-            throw error;
-        }
-        finally {
-            setLoading(false)
-            onClose()
-            window.location.reload()
-
-        }
-    }
-
-    const group = [
-        {
-            id: 1,
-            label: "Registro"
-        },
-        {
-            id: 2,
-            label: "Averbação"
-        }
-    ]
-    const tiposFiltrados = grupo ? types.filter(tipo => tipo.group === grupo) : [];
-    // useEffect
     const getTypesRGI = async () => {
-        try {
-
-            const data = await rgiSv.getType();
-            const newData = Object.values(data);
-            console.log(data);
-            console.log(newData, '7777777777777')
-            setTypes(newData)
-            return data;
-        } catch (error) {
-            console.error("Error when listing types rgi", error);
-            throw error;
-        }
-
+        const res = await rgiSv.getType();
+        setTypes(Object.values(res));
     };
+
     useEffect(() => {
         getCustomersPresenter();
-        getTypesRGI()
+        getTypesRGI();
     }, []);
 
+    /* =========================
+       UPLOAD / SCAN
+    ==========================*/
+    const handleChangeFile = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-    const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
-        setData(prevData => ({
-          ...prevData,
-          [fieldToUpdate]: scannedPdfUrl
-        }));
-      };
-      const handleScanFile = () => {
-        window.scanner.scan((successful, mesg, response) => {
-          if (!successful) {
-            console.error('Failed: ' + mesg);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64 = reader.result.split(",")[1];
+            setData((prev) => ({ ...prev, file_url: base64 }));
+            setFileNames({ file_url: file.name });
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleScanFile = () => {
+        if (!window.scanner) {
+            console.error("Scanner não disponível");
             return;
-          }
-          if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
-            console.info('User cancelled');
-            return;
-          }
-          const responseJson = JSON.parse(response);
-          const scannedPdfUrl = responseJson.output[0].result[0];
-          updateDataWithUrl('file_url', scannedPdfUrl);
-        }, {
-          "output_settings": [
-            {
-              "type": "return-base64",
-              "format": "pdf",
-              "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
+        }
+
+        window.scanner.scan(
+            (successful, message, response) => {
+                if (!successful) {
+                    console.error("Falha no scan:", message);
+                    return;
+                }
+
+                if (
+                    message &&
+                    message.toLowerCase().includes("user cancel")
+                ) {
+                    console.info("Usuário cancelou o scan");
+                    return;
+                }
+
+                if (!response) {
+                    console.error("Scanner retornou resposta vazia");
+                    return;
+                }
+
+                let responseJson;
+
+                try {
+                    responseJson = JSON.parse(response);
+                } catch (err) {
+                    console.error("Erro ao converter resposta do scanner:", err);
+                    return;
+                }
+
+                // 🔥 VALIDAÇÃO FORTE
+                if (
+                    !responseJson.output ||
+                    !Array.isArray(responseJson.output) ||
+                    !responseJson.output[0]?.result ||
+                    !responseJson.output[0]?.result[0]
+                ) {
+                    console.error("Estrutura inesperada do scanner:", responseJson);
+                    return;
+                }
+
+                const base64Pdf = responseJson.output[0].result[0];
+
+                setData(prev => ({
+                    ...prev,
+                    file_url: base64Pdf
+                }));
+
+                setFileNames({
+                    file_url: "Documento escaneado"
+                });
             },
             {
-              "type": "return-base64-thumbnail",
-              "format": "jpg",
-              "thumbnail_height": 200
+                output_settings: [
+                    {
+                        type: "return-base64",
+                        format: "pdf"
+                    }
+                ]
             }
-          ]
-        });
-      };
-    
-      useEffect(() => {
-        if (window.scanner) {
-          window.scanner.scanDisplayImagesOnPage = (successful, mesg, response) => {
-            if (!successful) {
-              console.error('Failed: ' + mesg);
-              return;
-            }
-            if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
-              console.info('User cancelled');
-              return;
-            }
-          };
-        }
-      }, []);
+        );
+    };
 
+
+    const clearFile = () => {
+        setData((prev) => ({ ...prev, file_url: "" }));
+        setFileNames({ file_url: "" });
+    };
+
+    /* =========================
+       CRIAÇÃO
+    ==========================*/
+    const handleCreateRGI = async () => {
+        try {
+            setLoading(true);
+            await rgiSv.create(data);
+            onClose();
+            window.location.reload();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    /* =========================
+       COMPONENTE DE UPLOAD
+    ==========================*/
+    const FileUploadCard = () => {
+        const hasFile = !!data.file_url;
+
+        return (
+            <Paper
+                sx={{
+                    p: 2,
+                    border: "1px solid",
+                    borderColor: hasFile ? alpha("#237117", 0.4) : "divider",
+                    borderRadius: 2
+                }}
+            >
+                <Box display="flex" alignItems="center" gap={2} mb={2}>
+                    <DocumentScanner color={hasFile ? "success" : "disabled"} />
+                    <Box flex={1}>
+                        <Typography fontWeight={600}>Documento</Typography>
+                        <Typography variant="caption">
+                            {hasFile ? fileNames.file_url : "Nenhum arquivo"}
+                        </Typography>
+                    </Box>
+
+                    {hasFile && (
+                        <Tooltip title="Remover">
+                            <IconButton onClick={clearFile}>
+                                <Trash2 size={16} />
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                </Box>
+
+                <Box display="flex" gap={1}>
+                    <Button
+                        variant="outlined"
+                        startIcon={<ScanLine size={16} />}
+                        fullWidth
+                        onClick={handleScanFile}
+                    >
+                        Escanear
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        component="label"
+                        startIcon={<Upload size={16} />}
+                        fullWidth
+                        sx={{ backgroundColor: "#237117" }}
+                    >
+                        Upload
+                        <input hidden type="file" accept=".pdf" onChange={handleChangeFile} />
+                    </Button>
+                </Box>
+            </Paper>
+        );
+    };
+
+    if (loading) return <Loading />;
 
     return (
-        <>
-            {loading ? <Loading />
-                :
-                <Box sx={{
-                    width: { lg: 409, md: 409, sm: 380, xs: 300 },
-                    height: '100vh',
-                    padding: '8px 10px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '30px',
-                    overflow: 'hidden'
-                }}>
-                    <Box sx={{
-                        maxWidth: '100%',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                    }}>
-                        <Typography sx={{
-                            fontSize: 'clamp(1.3rem, 1rem, 1.7rem)',
-                        }}>
-                            Cadastro - RGI
-                        </Typography>
-                        <IconButton style={{
-                            boxSizing: 'content-box',
-                            color: '#000',
-                            border: 0,
-                            background: 'transparent url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23000\'%3e%3cpath d=\'M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z\'/%3e%3c/svg%3e")',
-                            borderRadius: '0.375rem',
-                            opacity: '.5',
-                            cursor: 'pointer',
-                            '&:hover': {
-                                opacity: '1',
-                            },
-                        }} onClick={onClose} >
+        <Box
+            sx={{
+                width: 420,
+                height: "100vh",
+                p: 2,
+                display: "flex",
+                flexDirection: "column"
+            }}
+        >
+            {/* HEADER */}
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography fontSize="1.4rem">Cadastro - RGI</Typography>
+                <IconButton onClick={onClose}>✕</IconButton>
+            </Box>
 
-                        </IconButton>
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: '100%',
-                        gap: isSmallScreen ? '20px' : '30px',
-                        height: "100vh",
-                        overflowY: 'auto',
-                        padding: '5px 0'
+            {/* FORM */}
+            <Box mt={3} display="flex" flexDirection="column" gap={3} overflow="auto">
+                <TextField
+                    label="Prenotação"
+                    value={data.prenotation}
+                    onChange={(e) => setData({ ...data, prenotation: e.target.value })}
+                    color="success"
+                    sx={{
+                        mt: 2
+                    }}
+                />
 
-                    }}>
-                        <TextField sx={{
-                            '& input': { color: 'success.main' },
-                        }}
-                            label="Prenotação"
-                            value={data.prenotation}
-                            fullWidth
-                            onChange={(e) => setData({ ...data, prenotation: e.target.value })}
-                            color='success'
+                <TextField
+                    label="Nº da Caixa"
+                    value={data.box}
+                    onChange={(e) => setData({ ...data, box: e.target.value })}
+                    color="success"
+                />
+
+                <Autocomplete
+                    value={userPresenter}
+                    options={presenterList}
+                    getOptionLabel={(opt) => opt?.name || ""}
+                    onChange={(_, val) => {
+                        setUserPresenter(val);
+                        setData({ ...data, presenter: val?.cpfcnpj || "" });
+                    }}
+                    noOptionsText={
+                        <RenderNoOptions
+                            title="Cadastrar Apresentante"
+                            onClick={() => setOpenModalPresenter(true)}
                         />
-                        <TextField sx={{
-                            '& input': { color: 'success.main' }
-                        }}
-                            fullWidth
-                            value={data.box}
-                            onChange={(e) => setData({ ...data, box: e.target.value })}
-                            label="N° da Caixa"
-                            color='success'
-                        />
-                        <Autocomplete
-                            value={userPresenter}
-                            options={presenter}
-                            fullWidth
-                            getOptionLabel={(option) => (option && option.cpfcnpj) ? option.cpfcnpj : ''}
-                            onChange={(event, newValue) => {
-                                setUserPresenter(newValue);
-                                setData({ ...data, presenter: (newValue && newValue.cpfcnpj) ? newValue.cpfcnpj : '' });
-                            }}
-                            noOptionsText={<RenderNoOptions onClick={handleOpenModalPresenter} title="Cadastrar Apresentante" />}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Apresentante"
-                                    color="success"
-                                />
-                            )}
-                            renderOption={(props, option) => (
-                                <li {...props} key={option.cpfcnpj}>
-                                    {option.name}
-                                </li>
-                            )}
-                        />
+                    }
+                    renderInput={(params) => (
+                        <TextField {...params} label="Apresentante" color="success" />
+                    )}
+                />
 
+                <Autocomplete
+                    options={grupos}
+                    value={grupo}
+                    onChange={(_, val) => setGrupo(val)}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Tipo de Serviço" color="success" />
+                    )}
+                />
 
-
-
-
-
-                        <Autocomplete
-                            value={grupo}
-                            onChange={(event, newValue) => setGrupo(newValue)}
-                            options={group.map(option => option.label)}
-                            getOptionLabel={(option) => option}
-                            fullWidth
-                            renderInput={(params) => (
-                                <TextField {...params} label="Tipo de Serviço" variant="outlined" color="success" />
-                            )}
-                        />
-
-                        {grupo && (
-                            <Autocomplete
-                                fullWidth
-                                value={data.service_type}
-                                onChange={(event, newValue) => setData({ ...data, service_type: newValue })}
-                                options={tiposFiltrados.map(tipo => tipo.id)}
-                                getOptionLabel={(id) => {
-                                    const tipoSelecionado = tiposFiltrados.find(t => t.id === id);
-                                    return tipoSelecionado ? tipoSelecionado.name : '';
-                                }}
-                                noOptionsText={<RenderNoOptions onClick={handleOpenModalRGITypes} title={'Cadastrar Tipo'} />}
-                                renderInput={(params) => (
-                                    <TextField {...params} label={`Selecione a opção de ${grupo}`} color="success" variant="outlined" />
-                                )}
+                {grupo && (
+                    <Autocomplete
+                        options={tiposFiltrados}
+                        value={tiposFiltrados.find(t => t.id === data.service_type) || null}
+                        getOptionLabel={(opt) => opt?.name || ""}
+                        onChange={(_, val) =>
+                            setData({ ...data, service_type: val?.id || "" })
+                        }
+                        noOptionsText={
+                            <RenderNoOptions
+                                title="Cadastrar Tipo"
+                                onClick={() => setOpenModalRGITypes(true)}
                             />
+                        }
+                        renderInput={(params) => (
+                            <TextField {...params} label="Tipo" color="success" />
                         )}
-                        <TextField
-                            fullWidth
-                            type="text"
-                            label="Número da matrícula"
-                            color='success'
-                            value={data.registration}
-                            onChange={(e) => setData({ ...data, registration: e.target.value })}
-                        />
-                        <TextField
-                            fullWidth
-                            onChange={handleChangeFile}
-                            type="file"
-                            color='success'
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
+                    />
+                )}
 
-                        />
-                        <Button 
-                        onClick={handleScanFile}
-                        sx={{
-                            display: 'flex',
-                            width: '169px',
-                            background: 'transparent',
-                            color: '#FFC117',
-                            border: '1px solid #FFC117',
-                            padding: '6px 12px',
-                            textTransform: 'capitalize',
-                            fontSize: ".9rem",
-                            borderRadius: '8px',
-                            ":hover": {
-                                background: "#FFC117",
-                                color: '#FFF',
+                <TextField
+                    label="Número da Matrícula"
+                    value={data.registration}
+                    onChange={(e) => setData({ ...data, registration: e.target.value })}
+                    color="success"
+                />
 
-                            }
-                        }}>
-                            Scannear Arquivos
-                        </Button>
-                        <Button sx={{
-                            display: 'flex',
-                            width: '169px',
-                            background: "#237117",
-                            color: '#fff',
-                            border: '1px solid #237117',
-                            textTransform: 'capitalize',
-                            fontSize: ".9rem",
-                            borderRadius: '8px',
-                            ":hover": {
-                                background: 'transparent',
-                                color: '#237117',
+                <FileUploadCard />
 
-                            }
-                        }} onClick={handleCreateRGI}>
-                            Realizar Cadastro
-                        </Button>
+                <Button
+                    sx={{
+                        backgroundColor: "#237117",
+                        color: "#fff",
+                        "&:hover": { backgroundColor: "#1b5a12" }
+                    }}
+                    onClick={handleCreateRGI}
+                >
+                    Realizar Cadastro
+                </Button>
+            </Box>
 
-                    </Box>
-                    <CadastroRGITypes open={openModalRGITypes} onClose={handleCloseModalRGITypes} />
-                    <CadastroPartes open={openModalPresenter} onClose={handleCloseModalPresenter} />
-                </Box >
-            }
-        </>
+            {/* MODAIS */}
+            <CadastroRGITypes
+                open={openModalRGITypes}
+                onClose={() => setOpenModalRGITypes(false)}
+                getData={getTypesRGI}
+            />
+            <CadastroPartes
+                open={openModalPresenter}
+                onClose={() => setOpenModalPresenter(false)}
+                getAllPartes={getCustomersPresenter}
+            />
+        </Box>
     );
 };
