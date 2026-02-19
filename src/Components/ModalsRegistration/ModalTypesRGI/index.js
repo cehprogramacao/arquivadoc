@@ -43,18 +43,18 @@ const CadastroRGITypes = ({ open, onClose, getData }) => {
     const [loading, setLoading] = useState(false)
     const notesType = ['Averbação', 'Registro']
     const handleCreateType = async () => {
-
         try {
             setLoading(true)
             const response = await rgiSv.createType(data)
+            getData()
         } catch (error) {
             console.log("Erro ao adicionar type de rgi!", error)
             throw error;
         }
         finally {
+            getData()
             setLoading(false)
             onClose()
-            getData()
         }
     }
 

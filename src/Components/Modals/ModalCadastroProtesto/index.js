@@ -4,120 +4,189 @@ import Customer from "@/services/customer.service";
 import ProtestService from "@/services/protest.service";
 import { showAlert } from "@/store/actions";
 import { CloseOutlined } from "@mui/icons-material";
-import { useMediaQuery, useTheme, TextField, Button, Typography, Autocomplete, IconButton } from "@mui/material";
+import { DocumentScanner } from "@mui/icons-material";
+import { 
+  useMediaQuery, 
+  useTheme, 
+  TextField, 
+  Button, 
+  Typography, 
+  Autocomplete, 
+  IconButton,
+  Paper,
+  Tooltip,
+  alpha
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { v4 as randomUUID } from "uuid";
+import { ScanLine, Upload, Trash2 } from "lucide-react";
 
+const customerSv = new Customer();
+const protestSv = new ProtestService();
 
-
-const customerSv = new Customer()
-const protestSv = new ProtestService()
 export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [data, setData] = useState({
     notation: 0,
     box: 0,
     presenter: null,
     drawee: null,
     debtor: null,
-    situation: "",
-    file_url: ""
-  })
-  const [presenter, setPresenter] = useState([])
+    file_url: "",
+    carta_anuencia_file_url: "",
+    ar_file_url: ""
+  });
+  const [fileNames, setFileNames] = useState({
+    file_url: "",
+    carta_anuencia_file_url: "",
+    ar_file_url: ""
+  });
+  const [presenter, setPresenter] = useState([]);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const optipos = [
-    {
-      label: 'Protestado'
-    },
-    {
-      label: 'Cancelado'
-    },
-    {
-      label: 'Sustado'
-    },
-  ]
-
   const handleChangeValues = (e) => {
-    const { name, value } = e.target
-    setData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const getDataPresenter = async () => {
     try {
-      const data = await customerSv.customers()
-      setPresenter(Object.values(data))
+      const data = await customerSv.customers();
+      setPresenter(Object.values(data));
     } catch (error) {
-      console.error("Erro ao buscar clientes", error)
-      throw new Error('Erro ao buscar clientes')
+      console.error("Erro ao buscar clientes", error);
+      throw new Error('Erro ao buscar clientes');
     }
-  }
-  const handleChangeFiles = (e) => {
-    const files = e.target.files[0]
-    if (files) {
-      const fileReader = new FileReader()
-      fileReader.onloadend = () => {
-        const fileResult = fileReader.result.split(',')[1]
-        setData((prev) => ({ ...prev, file_url: fileResult }))
+  };
+
+  const handleFileBase64 = (file, field) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result.split(",")[1];
+      setData(prev => ({ ...prev, [field]: base64 }));
+      setFileNames(prev => ({ ...prev, [field]: file.name }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleChangeFile = (e, field) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    handleFileBase64(file, field);
+  };
+
+  const handleScanFile = (field) => {
+    if (!window.scanner) {
+      console.error("Scanner não disponível");
+      return;
+    }
+
+    window.scanner.scan(
+      (successful, message, response) => {
+        if (!successful || !response) return;
+
+        const responseJson = JSON.parse(response);
+        const base64Pdf = responseJson.output[0].result[0];
+
+        setData(prev => ({ ...prev, [field]: base64Pdf }));
+        setFileNames(prev => ({
+          ...prev,
+          [field]: "Documento escaneado"
+        }));
+      },
+      {
+        output_settings: [{ type: "return-base64", format: "pdf" }]
       }
-      fileReader.readAsDataURL(files)
-    }
-  }
+    );
+  };
+
+  const clearFile = (field) => {
+    setData(prev => ({ ...prev, [field]: "" }));
+    setFileNames(prev => ({ ...prev, [field]: "" }));
+  };
+
+  const FileUploadCard = ({ label, field }) => {
+    const hasFile = !!data[field];
+
+    return (
+      <Paper
+        sx={{
+          p: 2,
+          border: "1px solid",
+          borderColor: hasFile ? alpha("#237117", 0.4) : "divider",
+          borderRadius: 2
+        }}
+      >
+        <Box display="flex" alignItems="center" gap={2} mb={2}>
+          <DocumentScanner color={hasFile ? "success" : "disabled"} />
+          <Box flex={1}>
+            <Typography fontWeight={600}>{label}</Typography>
+            <Typography variant="caption">
+              {hasFile ? fileNames[field] : "Nenhum arquivo"}
+            </Typography>
+          </Box>
+
+          {hasFile && (
+            <Tooltip title="Remover">
+              <IconButton onClick={() => clearFile(field)}>
+                <Trash2 size={16} />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
+
+        <Box display="flex" gap={1}>
+          <Button
+            variant="outlined"
+            startIcon={<ScanLine size={16} />}
+            fullWidth
+            onClick={() => handleScanFile(field)}
+          >
+            Escanear
+          </Button>
+
+          <Button
+            variant="contained"
+            component="label"
+            startIcon={<Upload size={16} />}
+            fullWidth
+            sx={{ backgroundColor: "#237117" }}
+          >
+            Upload
+            <input
+              hidden
+              type="file"
+              accept=".pdf"
+              onChange={(e) => handleChangeFile(e, field)}
+            />
+          </Button>
+        </Box>
+      </Paper>
+    );
+  };
+
   const handleCreateProtest = async () => {
     try {
-      const response = await protestSv.createProtest(data)
-      console.log(response)
-      dispatch(showAlert(response.message, "success", "file"))
+      const response = await protestSv.createProtest(data);
+      console.log(response);
+      dispatch(showAlert(response.message, "success", "file"));
     } catch (error) {
-      dispatch(showAlert(error.msg, "error", "file"))
-      console.error("Erro ao criar protesto!", error)
-      throw new Error("Erro ao criar protesto!")
+      dispatch(showAlert(error.msg, "error", "file"));
+      console.error("Erro ao criar protesto!", error);
+      throw new Error("Erro ao criar protesto!");
     }
     finally {
-      onClose()
-      window.location.reload()
+      onClose();
+      window.location.reload();
     }
-  }
-  useEffect(() => {
-    getDataPresenter()
-  }, [])
+  };
 
-  const updateDataWithUrl = (fieldToUpdate, scannedPdfUrl) => {
-    setData(prevData => ({
-      ...prevData,
-      [fieldToUpdate]: scannedPdfUrl
-    }));
-  };
-  const handleScanFile = () => {
-    window.scanner.scan((successful, mesg, response) => {
-      if (!successful) {
-        console.error('Failed: ' + mesg);
-        return;
-      }
-      if (successful && mesg != null && mesg.toLowerCase().indexOf('user cancel') >= 0) {
-        console.info('User cancelled');
-        return;
-      }
-      const responseJson = JSON.parse(response);
-      const scannedPdfUrl = responseJson.output[0].result[0];
-      updateDataWithUrl('file_url', scannedPdfUrl);
-    }, {
-      "output_settings": [
-        {
-          "type": "return-base64",
-          "format": "pdf",
-          "pdf_text_line": "By ${USERNAME} on ${DATETIME}"
-        },
-        {
-          "type": "return-base64-thumbnail",
-          "format": "jpg",
-          "thumbnail_height": 200
-        }
-      ]
-    });
-  };
+  useEffect(() => {
+    getDataPresenter();
+  }, []);
 
   useEffect(() => {
     if (window.scanner) {
@@ -134,27 +203,26 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
     }
   }, []);
 
-
   const onlyNumbers = (value) => value.replace(/\D/g, "");
 
-    const applyCpfCnpjMask = (value) => {
-        const numbers = onlyNumbers(value);
+  const applyCpfCnpjMask = (value) => {
+    const numbers = onlyNumbers(value);
 
-        if (numbers.length <= 11) {
-            return numbers
-                .replace(/^(\d{3})(\d)/, "$1.$2")
-                .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
-                .replace(/\.(\d{3})(\d)/, ".$1-$2")
-                .slice(0, 14);
-        }
+    if (numbers.length <= 11) {
+      return numbers
+        .replace(/^(\d{3})(\d)/, "$1.$2")
+        .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1-$2")
+        .slice(0, 14);
+    }
 
-        return numbers
-            .replace(/^(\d{2})(\d)/, "$1.$2")
-            .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-            .replace(/\.(\d{3})(\d)/, ".$1/$2")
-            .replace(/(\d{4})(\d)/, "$1-$2")
-            .slice(0, 18);
-    };
+    return numbers
+      .replace(/^(\d{2})(\d)/, "$1.$2")
+      .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/\.(\d{3})(\d)/, ".$1/$2")
+      .replace(/(\d{4})(\d)/, "$1-$2")
+      .slice(0, 18);
+  };
 
   return (
     <Box sx={{
@@ -177,10 +245,11 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
         }}>
           Cadastro - Protestos
         </Typography>
-        <IconButton onClick={onClose} >
+        <IconButton onClick={onClose}>
           <CloseOutlined />
         </IconButton>
       </Box>
+
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -190,7 +259,6 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
         overflowY: 'auto',
         padding: '5px 0'
       }}>
-
         <TextField
           fullWidth
           sx={{
@@ -203,6 +271,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
           type="number"
           color='success'
         />
+
         <TextField
           fullWidth
           sx={{
@@ -225,7 +294,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
           getOptionLabel={(option) => option.name}
           noOptionsText={<RenderNoOptions title={'Cadastrar Apresentante'} onClick={onClickPartes} />}
           onChange={(e, value) => {
-            setData((prev) => ({ ...prev, presenter: value.cpfcnpj }))
+            setData((prev) => ({ ...prev, presenter: value?.cpfcnpj || ""}))
           }}
           renderOption={(props, option) => (
             <Box component="li" sx={{
@@ -256,6 +325,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
               },
             }} />}
         />
+
         <Autocomplete
           key="drawee-autocomplete"
           disablePortal
@@ -265,7 +335,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
           noOptionsText={<RenderNoOptions title={'Cadastrar Sacado'} onClick={onClickPartes} />}
           getOptionLabel={(option) => option.name}
           onChange={(e, value) => {
-            setData((prev) => ({ ...prev, drawee: value.cpfcnpj }))
+            setData((prev) => ({ ...prev, drawee: value?.cpfcnpj || "" }))
           }}
           renderOption={(props, option) => (
             <Box component="li" sx={{
@@ -285,8 +355,6 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
           )}
           fullWidth
           renderInput={(params) => <TextField color="success" {...params}
-
-
             inputProps={{
               ...params.inputProps,
               autoComplete: 'new-password',
@@ -298,6 +366,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
               },
             }} />}
         />
+
         <Autocomplete
           key="debtor-autocomplete"
           disablePortal
@@ -307,7 +376,7 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
           getOptionLabel={(option) => option.name}
           noOptionsText={<RenderNoOptions title={'Cadastrar Devedor'} onClick={onClickPartes} />}
           onChange={(e, value) => {
-            setData((prev) => ({ ...prev, debtor: value.cpfcnpj }))
+            setData((prev) => ({ ...prev, debtor: value?.cpfcnpj || "" }))
           }}
           renderOption={(props, option) => (
             <Box component="li" sx={{
@@ -327,8 +396,6 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
           )}
           fullWidth
           renderInput={(params) => <TextField color="success" {...params}
-
-
             inputProps={{
               ...params.inputProps,
               autoComplete: 'new-password',
@@ -340,79 +407,30 @@ export const CadastroProtesto = ({ onClose, onClickPartes, getData }) => {
               },
             }} />}
         />
-        <Autocomplete
-          disablePortal
-          key="situation-autocomplete"
-          id="combo-box-demo"
-          options={optipos}
-          fullWidth
-          isOptionEqualToValue={(option, value) => option.label === value.label}
-          getOptionLabel={option => option.label}
-          onChange={(e, value) => {
-            setData((prev) => ({ ...prev, situation: value.label }))
-          }}
-          renderInput={(params) => (
-            <TextField
-              color="success"
-              {...params}
-              label="Situação"
-              placeholder="Escolha uma opção"
-              sx={{
-                color: theme.palette.primary.main,
-                '& input': {
-                  color: 'success.main',
-                },
-              }}
-            />
-          )}
-        />
-        <TextField
-          fullWidth
-          type="file"
-          color='success'
-          onChange={handleChangeFiles}
-          InputLabelProps={{
-            shrink: true,
-          }}
 
-        />
+        {/* File Upload Cards */}
+        <FileUploadCard label="Documento Principal" field="file_url" />
+        <FileUploadCard label="Carta de Anuência" field="carta_anuencia_file_url" />
+        <FileUploadCard label="AR (Aviso de Recebimento)" field="ar_file_url" />
+
         <Button sx={{
           display: 'flex',
-          width: '169px',
-          background: 'transparent',
-          color: theme.palette.background.yellow,
-          border: `1px solid ${theme.palette.background.yellow}`,
-          padding: '6px 12px',
-          textTransform: 'capitalize',
-          fontSize: ".9rem",
-          borderRadius: '8px',
-          ":hover": {
-            background: theme.palette.background.yellow,
-            color: theme.palette.primary.white,
-
-          }
-        }} onClick={handleScanFile}>
-          Scannear Arquivos
-        </Button>
-        <Button sx={{
-          display: 'flex',
-          width: '169px',
+          width: '100%',
           background: theme.palette.primary.main,
           color: theme.palette.primary.white,
           border: `1px solid ${theme.palette.primary.main}`,
           textTransform: 'capitalize',
           fontSize: ".9rem",
           borderRadius: '8px',
+          padding: '12px',
           ":hover": {
             background: 'transparent',
             color: theme.palette.primary.main,
-
           }
         }} onClick={handleCreateProtest}>
           Realizar Cadastro
         </Button>
-
       </Box>
-    </Box >
+    </Box>
   );
 };

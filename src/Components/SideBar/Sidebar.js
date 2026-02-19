@@ -20,7 +20,8 @@ import {
     Article,
     People,
     PersonAdd,
-    Person
+    Person,
+    Inventory2
 } from '@mui/icons-material';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { ModalOptions } from '../Modals/modalOptions/modalOptions';
@@ -106,6 +107,13 @@ const MENU_ITEMS = [
         permissionIndex: 6,
     },
     {
+        href: '/inventario',
+        icon: Inventory2,
+        label: 'Inventario',
+        color: '#247117',
+        permissionKey: 'Inventario',
+    },
+    {
         href: '/customers',
         icon: People,
         label: 'Cadastros',
@@ -118,13 +126,14 @@ const MENU_ITEMS = [
 // COMPONENTE: MENU ITEM
 // ============================================================================
 const MenuItem = ({ item, isActive, permissions, isAdmin }) => {
-    const { href, icon: IconComponent, label, color, permissionIndex, alwaysShow } = item;
+    const { href, icon: IconComponent, label, color, permissionIndex, permissionKey, alwaysShow } = item;
 
     const shouldShow = useMemo(() => {
         if (alwaysShow) return true;
+        if (permissionKey) return permissions?.some(p => p?.public_name === permissionKey && p?.view === 1);
         if (permissionIndex !== undefined) return permissions[permissionIndex]?.view === 1;
         return isAdmin;
-    }, [alwaysShow, permissionIndex, permissions, isAdmin]);
+    }, [alwaysShow, permissionIndex, permissionKey, permissions, isAdmin]);
 
     if (!shouldShow) return null;
 

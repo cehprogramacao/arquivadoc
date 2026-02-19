@@ -27,7 +27,9 @@ import {
     CreditCard,
     CheckCircle,
     AlertCircle,
-    User
+    User,
+    Scan,
+    Calendar
 } from "lucide-react"
 import Loading from "@/Components/loading"
 import RGI from "@/services/rgi.service"
@@ -63,8 +65,10 @@ const UpdateRGI = ({ params }) => {
     const [saving, setSaving] = useState(false)
     const [types, setTypes] = useState([])
     const [optionType, setOptionType] = useState(null)
-    const [fileName, setFileName] = useState("")
-    const [hasFile, setHasFile] = useState(false)
+    const [fileNames, setFileNames] = useState({
+        file_url: "",
+        matricula_acervo_file_url: ""
+    })
 
     const [data, setData] = useState({
         prenotation: "",
@@ -73,7 +77,10 @@ const UpdateRGI = ({ params }) => {
         presenterName: "",
         service_type: "",
         registration: "",
-        file_url: ""
+        data_prenotation: "",
+        matricula: "",
+        file_url: "",
+        matricula_acervo_file_url: ""
     })
 
     /* ---------- Utils ---------- */
@@ -97,7 +104,6 @@ const UpdateRGI = ({ params }) => {
 
             setTypes(typesArray)
 
-            // Encontrar o tipo correspondente pelo typeName
             const currentType = typesArray.find(t => t.name === rgi.typeName)
             setOptionType(currentType || null)
 
@@ -108,10 +114,18 @@ const UpdateRGI = ({ params }) => {
                 presenterName: rgi.presenterName || "",
                 service_type: currentType?.id || "",
                 registration: rgi.registration || "",
-                file_url: ""
+                data_prenotation: rgi.data_prenotation || "",
+                matricula: rgi.matricula || "",
+                file_url: "",
+                matricula_acervo_file_url: ""
             })
 
-            setHasFile(!!rgi.file)
+            if (rgi.file_url) {
+                setFileNames(prev => ({ ...prev, file_url: "PDF existente" }))
+            }
+            if (rgi.matricula_acervo_file_url) {
+                setFileNames(prev => ({ ...prev, matricula_acervo_file_url: "PDF existente" }))
+            }
         } catch (error) {
             console.error("Erro ao carregar RGI", error)
         } finally {
@@ -125,7 +139,7 @@ const UpdateRGI = ({ params }) => {
         setData((state) => ({ ...state, [name]: value }))
     }
 
-    const handleChangeFileUrl = (e) => {
+    const handleChangeFileUrl = (field) => (e) => {
         const file = e.target.files[0]
         if (!file) return
 
@@ -134,13 +148,52 @@ const UpdateRGI = ({ params }) => {
             return
         }
 
-        setFileName(file.name)
+        setFileNames(prev => ({ ...prev, [field]: file.name }))
         const reader = new FileReader()
         reader.onloadend = () => {
             const base64 = reader.result.split(",")[1]
-            setData((state) => ({ ...state, file_url: base64 }))
+            setData((state) => ({ ...state, [field]: base64 }))
         }
         reader.readAsDataURL(file)
+    }
+
+    const handleScanFile = (field) => {
+        if (!window.scanner) {
+            console.error("Scanner não disponível")
+            alert("Scanner não disponível neste dispositivo")
+            return
+        }
+
+        window.scanner.scan(
+            (successful, message, response) => {
+                if (!successful) {
+                    console.error("Falha no scanner: " + message)
+                    return
+                }
+                if (message && message.toLowerCase().indexOf("user cancel") >= 0) {
+                    console.info("Usuário cancelou")
+                    return
+                }
+                if (!response) return
+
+                const responseJson = JSON.parse(response)
+                const base64Pdf = responseJson.output[0].result[0]
+
+                setData(prev => ({ ...prev, [field]: base64Pdf }))
+                setFileNames(prev => ({
+                    ...prev,
+                    [field]: "Documento escaneado"
+                }))
+            },
+            {
+                output_settings: [
+                    {
+                        type: "return-base64",
+                        format: "pdf"
+                    }
+                ]
+            }
+        )
     }
 
     const handleUpdateRGI = async () => {
@@ -201,8 +254,12 @@ const UpdateRGI = ({ params }) => {
                         </Box>
 
                         <Chip
-                            icon={hasFile ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
-                            label={hasFile ? "PDF Anexado" : "Sem PDF"}
+                            icon={
+                                fileNames.file_url ?
+                                    <CheckCircle size={14} /> :
+                                    <AlertCircle size={14} />
+                            }
+                            label={fileNames.file_url ? "PDF Anexado" : "Sem PDF"}
                             size="small"
                             sx={{ color: "#fff", backgroundColor: "rgba(255,255,255,0.2)" }}
                         />
@@ -224,9 +281,47 @@ const UpdateRGI = ({ params }) => {
 
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    label="Matrícula"
+                                    label="Data Prenotação"
+                                    name="data_prenotation"
+                                    type="date"
+                                    value={data.data_prenotation}
+                                    onChange={handleChangeFieldValues}
+                                    fullWidth
+                                    color="success"
+                                    InputLabelProps={{ shrink: true }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Calendar size={18} />
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="Registro"
                                     name="registration"
                                     value={data.registration}
+                                    onChange={handleChangeFieldValues}
+                                    fullWidth
+                                    color="success"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Hash size={18} />
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="Matrícula"
+                                    name="matricula"
+                                    value={data.matricula}
                                     onChange={handleChangeFieldValues}
                                     fullWidth
                                     color="success"
@@ -274,7 +369,7 @@ const UpdateRGI = ({ params }) => {
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
-                                            label="Tipo de Servico"
+                                            label="Tipo de Serviço"
                                             color="success"
                                             InputProps={{
                                                 ...params.InputProps,
@@ -286,12 +381,6 @@ const UpdateRGI = ({ params }) => {
                                                         {params.InputProps.startAdornment}
                                                     </>
                                                 )
-                                            }}
-                                            sx={{
-                                                '& .MuiOutlinedInput-root': {
-                                                    borderRadius: 2,
-                                                    '&:hover fieldset': { borderColor: '#237117' }
-                                                }
                                             }}
                                         />
                                     )}
@@ -326,14 +415,14 @@ const UpdateRGI = ({ params }) => {
 
                         <Divider sx={{ my: 3 }} />
 
-                        <SectionTitle icon={Upload} title="Arquivo PDF" />
+                        <SectionTitle icon={Upload} title="Arquivo PDF Principal" />
 
                         <Box
                             component="label"
                             sx={{
                                 minHeight: 160,
                                 border: "2px dashed",
-                                borderColor: fileName ? "#237117" : "divider",
+                                borderColor: fileNames.file_url ? "#237117" : "divider",
                                 borderRadius: 2,
                                 p: 3,
                                 display: "flex",
@@ -341,12 +430,107 @@ const UpdateRGI = ({ params }) => {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 gap: 1,
-                                cursor: "pointer"
+                                cursor: "pointer",
+                                transition: "all 0.2s",
+                                "&:hover": {
+                                    borderColor: "#237117",
+                                    backgroundColor: alpha("#237117", 0.02)
+                                }
                             }}
                         >
-                            <input type="file" hidden accept=".pdf" onChange={handleChangeFileUrl} />
+                            <input
+                                type="file"
+                                hidden
+                                accept=".pdf"
+                                onChange={handleChangeFileUrl("file_url")}
+                            />
                             <Upload size={42} color="#237117" />
-                            <Typography>{fileName || "Clique para selecionar um PDF"}</Typography>
+                            <Typography>
+                                {fileNames.file_url || "Clique para selecionar um PDF"}
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-start" }}>
+                            <Button
+                                variant="outlined"
+                                sx={{
+                                    background: 'transparent',
+                                    padding: '5px 20px',
+                                    color: '#FED70B',
+                                    borderRadius: "7px",
+                                    border: '1px solid #FED70B',
+                                    cursor: 'pointer',
+                                    ":hover": {
+                                        background: '#FED70B',
+                                        border: '1px solid #FED70B',
+                                        color: '#fff'
+                                    }
+                                }}
+                                startIcon={<Scan size={18} />}
+                                onClick={() => handleScanFile("file_url")}
+                            >
+                                Escanear Documento
+                            </Button>
+                        </Box>
+
+                        <Divider sx={{ my: 3 }} />
+
+                        <SectionTitle icon={Upload} title="Matrícula Acervo - PDF" />
+
+                        <Box
+                            component="label"
+                            sx={{
+                                minHeight: 160,
+                                border: "2px dashed",
+                                borderColor: fileNames.matricula_acervo_file_url ? "#237117" : "divider",
+                                borderRadius: 2,
+                                p: 3,
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: 1,
+                                cursor: "pointer",
+                                transition: "all 0.2s",
+                                "&:hover": {
+                                    borderColor: "#237117",
+                                    backgroundColor: alpha("#237117", 0.02)
+                                }
+                            }}
+                        >
+                            <input
+                                type="file"
+                                hidden
+                                accept=".pdf"
+                                onChange={handleChangeFileUrl("matricula_acervo_file_url")}
+                            />
+                            <Upload size={42} color="#237117" />
+                            <Typography>
+                                {fileNames.matricula_acervo_file_url || "Clique para selecionar um PDF"}
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-start" }}>
+                            <Button
+                                variant="outlined"
+                                sx={{
+                                    background: 'transparent',
+                                    padding: '5px 20px',
+                                    color: '#FED70B',
+                                    borderRadius: "7px",
+                                    border: '1px solid #FED70B',
+                                    cursor: 'pointer',
+                                    ":hover": {
+                                        background: '#FED70B',
+                                        border: '1px solid #FED70B',
+                                        color: '#fff'
+                                    }
+                                }}
+                                startIcon={<Scan size={18} />}
+                                onClick={() => handleScanFile("matricula_acervo_file_url")}
+                            >
+                                Escanear Matrícula
+                            </Button>
                         </Box>
 
                         <Divider sx={{ my: 3 }} />
@@ -361,7 +545,7 @@ const UpdateRGI = ({ params }) => {
                                 disabled={saving}
                                 startIcon={<Save size={18} />}
                             >
-                                Salvar Alterações
+                                {saving ? "Salvando..." : "Salvar Alterações"}
                             </Button>
                         </Box>
                     </Box>

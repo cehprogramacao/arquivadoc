@@ -27,10 +27,10 @@ import {
     Upload,
     User,
     Users,
-    CreditCard,
     File,
     AlertCircle,
-    CheckCircle
+    CheckCircle,
+    Scan
 } from "lucide-react"
 import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
@@ -98,23 +98,22 @@ const UpdateProtest = ({ params }) => {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [customers, setCustomers] = useState([])
-    const [fileName, setFileName] = useState("")
-    const [hasFile, setHasFile] = useState(false)
+
+    const [fileNames, setFileNames] = useState({
+        file_url: "",
+        carta_anuencia_file_url: "",
+        ar_file_url: ""
+    })
 
     const [data, setData] = useState({
         box: 0,
         presenter: null,
         drawee: null,
         debtor: null,
-        situation: "",
-        file_url: ""
+        file_url: "",
+        carta_anuencia_file_url: "",
+        ar_file_url: ""
     })
-
-    const situationOptions = [
-        { label: "Protestado" },
-        { label: "Cancelado" },
-        { label: "Sustado" }
-    ]
 
     /* ---------- Fetch ---------- */
     const fetchData = async () => {
@@ -132,11 +131,16 @@ const UpdateProtest = ({ params }) => {
                 presenter: list.find(c => c.cpfcnpj === protest.presenterDocument) || null,
                 drawee: list.find(c => c.cpfcnpj === protest.draweeDocument) || null,
                 debtor: list.find(c => c.cpfcnpj === protest.debtorDocument) || null,
-                situation: protest.situation || "",
-                file_url: ""
+                file_url: "",
+                carta_anuencia_file_url: "",
+                ar_file_url: ""
             })
 
-            setHasFile(!!protest.file_url)
+            setFileNames({
+                file_url: protest.file_url ? "Documento já anexado" : "",
+                carta_anuencia_file_url: protest.carta_anuencia_file_url ? "Documento já anexado" : "",
+                ar_file_url: protest.ar_file_url ? "Documento já anexado" : ""
+            })
         } catch {
             dispatch({
                 type: SET_ALERT,
@@ -153,16 +157,44 @@ const UpdateProtest = ({ params }) => {
         fetchData()
     }, [])
 
-    /* ---------- File ---------- */
-    const handleFileChange = (e) => {
+    /* ---------- Upload ---------- */
+    const handleFileChange = (field) => (e) => {
         const file = e.target.files[0]
         if (!file || file.type !== "application/pdf") return
 
-        setFileName(file.name)
         const reader = new FileReader()
-        reader.onloadend = () =>
-            setData(s => ({ ...s, file_url: reader.result.split(",")[1] }))
+        reader.onloadend = () => {
+            setData(prev => ({ ...prev, [field]: reader.result.split(",")[1] }))
+            setFileNames(prev => ({ ...prev, [field]: file.name }))
+        }
         reader.readAsDataURL(file)
+    }
+
+    /* ---------- Scan ---------- */
+    const handleScanFile = (field) => {
+        if (!window.scanner) {
+            alert("Scanner não disponível neste dispositivo")
+            return
+        }
+
+        window.scanner.scan(
+            (successful, message, response) => {
+                if (!successful) return
+                if (message?.toLowerCase().includes("user cancel")) return
+                if (!response) return
+
+                const responseJson = JSON.parse(response)
+                const base64Pdf = responseJson.output[0].result[0]
+
+                setData(prev => ({ ...prev, [field]: base64Pdf }))
+                setFileNames(prev => ({ ...prev, [field]: "Documento escaneado" }))
+            },
+            {
+                output_settings: [
+                    { type: "return-base64", format: "pdf" }
+                ]
+            }
+        )
     }
 
     /* ---------- Save ---------- */
@@ -175,8 +207,9 @@ const UpdateProtest = ({ params }) => {
                 presenter: data.presenter,
                 drawee: data.drawee,
                 debtor: data.debtor,
-                situation: data.situation,
-                file_url: data.file_url
+                file_url: data.file_url,
+                carta_anuencia_file_url: data.carta_anuencia_file_url,
+                ar_file_url: data.ar_file_url
             })
 
             dispatch({
@@ -230,29 +263,21 @@ const UpdateProtest = ({ params }) => {
                                         </Typography>
                                     </Box>
                                 </Box>
-
-                                <Chip
-                                    icon={hasFile ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
-                                    label={hasFile ? "PDF Anexado" : "Sem PDF"}
-                                    sx={{ color: "#fff", backgroundColor: "rgba(255,255,255,.2)" }}
-                                />
                             </Box>
 
                             <Box sx={{ p: 3 }}>
-                                {/* APRESENTANTE */}
                                 <SectionTitle theme={theme} icon={User} title="Apresentante" />
+
                                 <Autocomplete
                                     options={customers}
                                     value={data.presenter}
                                     getOptionLabel={getCustomerLabel}
-                                    isOptionEqualToValue={(o, v) => o?.id === v?.id}
                                     onChange={(e, v) => setData(s => ({ ...s, presenter: v }))}
                                     renderInput={(p) => <TextField {...p} label="Apresentante" />}
                                 />
 
                                 <Divider sx={{ my: 3 }} />
 
-                                {/* SACADO / DEVEDOR */}
                                 <SectionTitle theme={theme} icon={Users} title="Partes" />
 
                                 <Grid container spacing={2}>
@@ -279,104 +304,92 @@ const UpdateProtest = ({ params }) => {
 
                                 <Divider sx={{ my: 3 }} />
 
-                                {/* DADOS */}
                                 <SectionTitle theme={theme} icon={FileText} title="Dados do Protesto" />
 
-                                <Grid container spacing={2}>
-                                    <Grid item xs={6}>
-                                        <TextField
-                                            type="number"
-                                            label="Caixa"
-                                            value={data.box}
-                                            onChange={(e) =>
-                                                setData(s => ({ ...s, box: Number(e.target.value) }))
-                                            }
-                                            fullWidth
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <InputAdornment position="start">
-                                                        <Archive size={18} />
-                                                    </InputAdornment>
-                                                )
-                                            }}
-                                        />
-                                    </Grid>
-
-                                    <Grid item xs={6}>
-                                        <Autocomplete
-                                            options={situationOptions}
-                                            value={situationOptions.find(o => o.label === data.situation) || null}
-                                            getOptionLabel={(o) => o.label}
-                                            onChange={(e, v) =>
-                                                setData(s => ({ ...s, situation: v?.label || "" }))
-                                            }
-                                            renderInput={(p) => <TextField {...p} label="Situação" />}
-                                        />
-                                    </Grid>
-                                </Grid>
+                                <TextField
+                                    type="number"
+                                    label="Caixa"
+                                    value={data.box}
+                                    onChange={(e) =>
+                                        setData(s => ({ ...s, box: Number(e.target.value) }))
+                                    }
+                                    fullWidth
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Archive size={18} />
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
 
                                 <Divider sx={{ my: 3 }} />
 
-                                {/* PDF */}
-                                <SectionTitle icon={File} theme={theme} title="Arquivo PDF" />
+                                {/* SCANS */}
+                                {[
+                                    { label: "Scan do Protesto", field: "file_url" },
+                                    { label: "Scan Carta de Anuência", field: "carta_anuencia_file_url" },
+                                    { label: "Scan AR", field: "ar_file_url" }
+                                ].map(({ label, field }) => (
+                                    <Box key={field} sx={{ mb: 4 }}>
+                                        <Typography fontWeight={600}>{label}</Typography>
 
-                                <Box
-                                    component="label"
-                                    sx={{
-                                        minHeight: 160,
-                                        border: "2px dashed",
-                                        borderColor: fileName ? "#237117" : "divider",
-                                        borderRadius: 2,
-                                        p: 3,
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        gap: 1,
-                                        cursor: "pointer",
-                                        backgroundColor: fileName
-                                            ? alpha("#237117", 0.04)
-                                            : "transparent",
-                                        "&:hover": {
-                                            borderColor: "#237117",
-                                            backgroundColor: alpha("#237117", 0.04)
-                                        }
-                                    }}
-                                >
-                                    <input
-                                        type="file"
-                                        hidden
-                                        accept=".pdf"
-                                        onChange={handleFileChange}
-                                    />
+                                        <Box
+                                            component="label"
+                                            sx={{
+                                                minHeight: 160,
+                                                border: "2px dashed",
+                                                borderColor: fileNames.file_url ? "#237117" : "divider",
+                                                borderRadius: 2,
+                                                p: 3,
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: 1,
+                                                cursor: "pointer",
+                                                transition: "all 0.2s",
+                                                "&:hover": {
+                                                    borderColor: "#237117",
+                                                    backgroundColor: alpha("#237117", 0.02)
+                                                }
+                                            }}
+                                        >
+                                            <input
+                                                hidden
+                                                type="file"
+                                                accept=".pdf"
+                                                onChange={handleFileChange(field)}
+                                            />
+                                            <Upload size={32} color="#237117" />
+                                            <Typography variant="body2">
+                                                {fileNames[field] || "Clique para anexar PDF"}
+                                            </Typography>
+                                        </Box>
 
-                                    <Upload
-                                        size={42}
-                                        color={fileName ? "#237117" : "#999"}
-                                    />
-
-                                    {fileName ? (
-                                        <>
-                                            <Typography fontWeight={600} color="#237117">
-                                                {fileName}
-                                            </Typography>
-                                            <Typography variant="caption">
-                                                Clique para trocar o arquivo
-                                            </Typography>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Typography color="text.secondary">
-                                                Clique para selecionar um PDF
-                                            </Typography>
-                                            <Typography variant="caption" color="text.secondary">
-                                                {hasFile
-                                                    ? "Já existe um PDF anexado"
-                                                    : "Nenhum arquivo selecionado"}
-                                            </Typography>
-                                        </>
-                                    )}
-                                </Box>
+                                        <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-start" }}>
+                                            <Button
+                                                variant="outlined"
+                                                sx={{
+                                                    background: 'transparent',
+                                                    padding: '5px 20px',
+                                                    color: '#FED70B',
+                                                    borderRadius: "7px",
+                                                    border: '1px solid #FED70B',
+                                                    ":hover": {
+                                                        background: '#FED70B',
+                                                        border: '1px solid #FED70B',
+                                                        color: '#fff'
+                                                    }
+                                                }}
+                                                startIcon={<Scan size={18} />}
+                                                onClick={() => handleScanFile(field)}
+                                            >
+                                                Escanear Documento
+                                            </Button>
+                                        </Box>
+                                    </Box>
+                                ))}
 
                                 <Divider sx={{ my: 3 }} />
 

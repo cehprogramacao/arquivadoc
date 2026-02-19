@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from 'react';
 import { 
     Box, 
@@ -6,6 +7,8 @@ import {
     Typography, 
     useMediaQuery, 
     useTheme,
+    Tabs,
+    Tab,
     Paper,
     Chip,
     IconButton,
@@ -19,6 +22,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import DescriptionIcon from '@mui/icons-material/Description';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import ArticleIcon from '@mui/icons-material/Article';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import MailIcon from '@mui/icons-material/Mail';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -38,6 +44,62 @@ const ModalList = ({
     
     const [loading, setLoading] = useState(false);
     const [pdfError, setPdfError] = useState(false);
+    const [selectedDocument, setSelectedDocument] = useState('file');
+
+    // Mapeamento dos documentos disponíveis
+    const documentTypes = [
+        {
+            id: 'file',
+            label: 'Documento Principal',
+            icon: <ArticleIcon />,
+            fileKey: 'file',
+            color: '#1976d2'
+        },
+        {
+            id: 'carta_anuencia',
+            label: 'Carta de Anuência',
+            icon: <AssignmentIcon />,
+            fileKey: 'carta_anuencia',
+            color: '#ed6c02'
+        },
+        {
+            id: 'ar',
+            label: 'AR',
+            icon: <MailIcon />,
+            fileKey: 'ar',
+            color: '#2e7d32'
+        }
+    ];
+
+    // Filtra apenas documentos disponíveis
+    const availableDocuments = documentTypes.filter(doc => 
+        data && typeof data === 'object' && !Array.isArray(data) && data[doc.fileKey]
+    );
+
+    // Define o primeiro documento disponível como padrão
+    useEffect(() => {
+        if (open && data && typeof data === 'object' && !Array.isArray(data)) {
+            console.log('Modal opened with data:', data);
+            console.log('Available documents:', {
+                file: !!data.file,
+                carta_anuencia: !!data.carta_anuencia,
+                ar: !!data.ar
+            });
+            
+            // Verifica qual documento está disponível e define como padrão
+            if (data.file) {
+                console.log('Setting selectedDocument to: file');
+                setSelectedDocument('file');
+            } else if (data.carta_anuencia) {
+                console.log('Setting selectedDocument to: carta_anuencia');
+                setSelectedDocument('carta_anuencia');
+            } else if (data.ar) {
+                console.log('Setting selectedDocument to: ar');
+                setSelectedDocument('ar');
+            }
+            setPdfError(false);
+        }
+    }, [open, data]);
 
     const createBlobUrl = (base64Data) => {
         if (!base64Data) return null;
@@ -61,14 +123,40 @@ const ModalList = ({
         }
     };
 
+    const getCurrentDocument = () => {
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            return null;
+        }
+        
+        const docType = documentTypes.find(doc => doc.id === selectedDocument);
+        if (!docType) return null;
+        
+        return {
+            ...docType,
+            file: data[docType.fileKey]
+        };
+    };
+
+    const getCurrentDocumentData = () => {
+        const currentDoc = getCurrentDocument();
+        return currentDoc?.file || null;
+    };
+
+    const getDocumentTitle = () => {
+        const currentDoc = getCurrentDocument();
+        return currentDoc?.label || 'Documento';
+    };
+
     const handlePrintFile = () => {
-        if (!data?.file) {
+        const currentDoc = getCurrentDocumentData();
+        
+        if (!currentDoc) {
             alert("Arquivo não disponível para impressão.");
             return;
         }
 
         try {
-            const base64Data = data.file;
+            const base64Data = currentDoc;
             const byteCharacters = atob(base64Data);
             const byteNumbers = new Array(byteCharacters.length);
             
@@ -102,7 +190,13 @@ const ModalList = ({
     };
 
     const renderPDFViewer = () => {
-        if (!data?.file) {
+        const currentDoc = getCurrentDocumentData();
+        
+        console.log('Current Document:', selectedDocument);
+        console.log('Current Doc Data:', currentDoc ? 'Exists' : 'Not found');
+        console.log('Data object:', data);
+        
+        if (!currentDoc) {
             return (
                 <Box sx={{ 
                     display: 'flex', 
@@ -113,7 +207,7 @@ const ModalList = ({
                 }}>
                     <Alert severity="warning" sx={{ textAlign: 'center' }}>
                         <Typography>
-                            Documento não disponível ou arquivo inválido.
+                            {getDocumentTitle()} não disponível.
                         </Typography>
                     </Alert>
                 </Box>
@@ -138,7 +232,9 @@ const ModalList = ({
             );
         }
 
-        const src = `data:application/pdf;base64,${data.file}`;
+        // Limpar o base64 se necessário
+        const cleanBase64 = currentDoc.replace(/^data:application\/pdf;base64,/, '');
+        const src = `data:application/pdf;base64,${cleanBase64}`;
 
         return (
             <iframe
@@ -150,7 +246,10 @@ const ModalList = ({
                     border: 'none',
                     minHeight: isMobile ? '300px' : '500px'
                 }}
-                onError={() => setPdfError(true)}
+                onError={(e) => {
+                    console.error('Error loading PDF:', e);
+                    setPdfError(true);
+                }}
             />
         );
     };
@@ -187,12 +286,9 @@ const ModalList = ({
                     alignItems: 'center',
                     bgcolor: '#f5f5f5'
                 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <DescriptionIcon color="primary" />
-                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                            Visualização de Documento
-                        </Typography>
-                    </Box>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        Visualização de Documentos
+                    </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {notation && (
                             <Chip 
@@ -207,6 +303,38 @@ const ModalList = ({
                         </IconButton>
                     </Box>
                 </Box>
+
+                {/* Document Tabs */}
+                {availableDocuments.length > 1 && (
+                    <Box sx={{ borderBottom: '1px solid #e0e0e0', px: 2 }}>
+                        <Tabs
+                            value={selectedDocument}
+                            onChange={(e, newValue) => setSelectedDocument(newValue)}
+                            variant={isMobile ? "scrollable" : "standard"}
+                            scrollButtons="auto"
+                        >
+                            {availableDocuments.map((doc) => (
+                                <Tab
+                                    key={doc.id}
+                                    value={doc.id}
+                                    label={
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            {doc.icon}
+                                            <Typography variant="body2">
+                                                {isMobile ? doc.label.split(' ')[0] : doc.label}
+                                            </Typography>
+                                        </Box>
+                                    }
+                                    sx={{
+                                        minHeight: '48px',
+                                        textTransform: 'none',
+                                        fontSize: '0.875rem'
+                                    }}
+                                />
+                            ))}
+                        </Tabs>
+                    </Box>
+                )}
 
                 {/* Content Area */}
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}>
@@ -237,7 +365,7 @@ const ModalList = ({
                             }}>
                                 <VisibilityIcon sx={{ fontSize: '1rem', color: 'text.secondary' }} />
                                 <Typography variant="body2" color="text.secondary">
-                                    Documento PDF
+                                    {getDocumentTitle()}
                                 </Typography>
                             </Box>
                             <Box sx={{ flex: 1 }}>
@@ -286,7 +414,7 @@ const ModalList = ({
                                 variant="outlined" 
                                 fullWidth={!isMobile}
                                 onClick={handlePrintFile}
-                                disabled={!data?.file}
+                                disabled={!getCurrentDocumentData()}
                                 sx={{
                                     color: "#0dcaf0",
                                     borderColor: "#0dcaf0",

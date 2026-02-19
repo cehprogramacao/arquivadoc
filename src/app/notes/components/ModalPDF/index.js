@@ -64,6 +64,30 @@ const ModalList = ({
         }
     };
 
+    const createBlobUrlIframe = (base64Data) => {
+        if (!base64Data) return null;
+        
+        try {
+            // Remove data URL prefix if present
+            const cleanBase64 = base64Data.replace(/^data:application\/pdf;base64,/, '');
+            const byteCharacters = atob(cleanBase64);
+            const byteNumbers = new Array(byteCharacters.length);
+
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+            return URL.createObjectURL(blob);
+        } catch (error) {
+            console.error('Erro ao criar blob URL:', error);
+            setPdfError(true);
+            return null;
+        }
+    };
+
     const handlePrintFile = () => {
         if (!data?.file) {
             alert("Arquivo não disponível para impressão.");
@@ -130,7 +154,7 @@ const ModalList = ({
             );
         }
 
-        const src = `data:application/pdf;base64,${data.file}`;
+        const src = createBlobUrlIframe(data.file);
 
         return (
             <iframe

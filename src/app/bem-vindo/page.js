@@ -32,6 +32,7 @@ import {
     Description as TermosIcon,
     CreditCard as AutografoIcon,
     PersonSearch as SolicitantesIcon,
+    Inventory2 as InventarioIcon,
     ArrowForward,
     Refresh
 } from "@mui/icons-material"
@@ -46,49 +47,20 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
-const routes = ['protest', 'rgi', 'rtd', 'rpj', 'calling', 'customers', 'notes', 'recentes', 'termos', 'autograph-card', 'solicitantes']
-
-const categoryIcons = [
-    ProtestIcon,
-    RGIIcon,
-    RTDIcon,
-    RPJIcon,
-    CallingIcon,
-    CustomersIcon,
-    NotesIcon,
-    RecentesIcon,
-    TermosIcon,
-    AutografoIcon,
-    SolicitantesIcon
-]
-
-const categoryColors = [
-    '#dc2626',
-    '#2563eb',
-    '#7c3aed',
-    '#059669',
-    '#d97706',
-    '#0891b2',
-    '#ea580c',
-    '#374151',
-    '#4b5563',
-    '#1d4ed8',
-    '#f97316'
-]
-
-const categoryDescriptions = [
-    'Gestao de protestos e documentos',
-    'Registro Geral de Imoveis',
-    'Registro de Titulos e Documentos',
-    'Registro de Pessoas Juridicas',
-    'Controle de oficios e comunicacoes',
-    'Cadastro e gestao de clientes',
-    'Anotacoes e observacoes',
-    'Acesso rapido aos documentos recentes',
-    'Termos e documentacao',
-    'Gestao de cartoes de autografo',
-    'Cadastro de solicitantes'
-]
+const moduleConfig = {
+    "Protesto": { route: "protest", icon: ProtestIcon, color: "#dc2626", description: "Gestao de protestos e documentos" },
+    "RGI": { route: "rgi", icon: RGIIcon, color: "#2563eb", description: "Registro Geral de Imoveis" },
+    "RTD": { route: "rtd", icon: RTDIcon, color: "#7c3aed", description: "Registro de Titulos e Documentos" },
+    "RPJ": { route: "rpj", icon: RPJIcon, color: "#059669", description: "Registro de Pessoas Juridicas" },
+    "Oficio": { route: "calling", icon: CallingIcon, color: "#d97706", description: "Controle de oficios e comunicacoes" },
+    "Clientes": { route: "customers", icon: CustomersIcon, color: "#0891b2", description: "Cadastro e gestao de clientes" },
+    "Notas": { route: "notes", icon: NotesIcon, color: "#ea580c", description: "Anotacoes e observacoes" },
+    "Recentes": { route: "recentes", icon: RecentesIcon, color: "#374151", description: "Acesso rapido aos documentos recentes" },
+    "Termos": { route: "termos", icon: TermosIcon, color: "#4b5563", description: "Termos e documentacao" },
+    "Cartoes de Autografo": { route: "autograph-card", icon: AutografoIcon, color: "#1d4ed8", description: "Gestao de cartoes de autografo" },
+    "Solicitantes": { route: "solicitantes", icon: SolicitantesIcon, color: "#f97316", description: "Cadastro de solicitantes" },
+    "Inventario": { route: "inventario", icon: InventarioIcon, color: "#247117", description: "Inventario patrimonial da empresa" },
+}
 
 const userSv = new User()
 
@@ -108,7 +80,7 @@ const Welcome = () => {
                 { public_name: "Recentes", view: 1, create_permission: 1, delete_permission: 1, edit: 1 },
                 { public_name: "Termos", view: 1, create_permission: 1, delete_permission: 1, edit: 1 },
                 { public_name: "Cartoes de Autografo", view: 1, create_permission: 1, delete_permission: 1, edit: 1 },
-                { public_name: "Solicitantes", view: 1, create_permission: 1, delete_permission: 1, edit: 1 }
+                { public_name: "Solicitantes", view: 1, create_permission: 1, delete_permission: 1, edit: 1 },
             ]
             setPermissions([...permissionsArray, ...additionalPermissions])
         } catch (error) {
@@ -373,15 +345,16 @@ const Welcome = () => {
 
                         <Grid container spacing={2.5}>
                             {permissions.map((item, index) => {
-                                const IconComponent = categoryIcons[index]
-                                const color = categoryColors[index]
-                                const isHovered = hoveredCard === index
+                                const config = moduleConfig[item.public_name]
+                                if (!config) return null
+                                const { route, icon: IconComponent, color, description } = config
+                                const isHovered = hoveredCard === item.public_name
 
                                 return item.view === 1 && (
-                                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                                    <Grid item xs={12} sm={6} md={4} lg={3} key={item.public_name}>
                                         <Card
                                             elevation={0}
-                                            onMouseEnter={() => setHoveredCard(index)}
+                                            onMouseEnter={() => setHoveredCard(item.public_name)}
                                             onMouseLeave={() => setHoveredCard(null)}
                                             sx={{
                                                 height: '100%',
@@ -398,7 +371,7 @@ const Welcome = () => {
                                         >
                                             <CardActionArea
                                                 component={Link}
-                                                href={`/${routes[index]}`}
+                                                href={`/${route}`}
                                                 sx={{ height: '100%' }}
                                             >
                                                 <CardContent sx={{ p: 3 }}>
@@ -457,7 +430,7 @@ const Welcome = () => {
                                                             mb: 2
                                                         }}
                                                     >
-                                                        {categoryDescriptions[index]}
+                                                        {description}
                                                     </Typography>
 
                                                     <Box sx={{

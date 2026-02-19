@@ -98,6 +98,15 @@ const PageNotas = () => {
     };
 
     // LISTAR TODAS
+    const dataSnack = (open,
+        text,
+        severity,
+        type
+    ) => {
+
+        dispatch({ type: SET_ALERT, message: text, severity, alertType: type })
+    }
+
     const getData = async () => {
         try {
             setLoading(true);
@@ -277,7 +286,7 @@ const PageNotas = () => {
 
                         {/* DRAWER */}
                         <Drawer anchor="left" open={open} onClose={handleClose}>
-                            <CadastroNotas onClose={handleClose} getData={getData} />
+                            <CadastroNotas onClose={handleClose} getData={getData} dataSnack={dataSnack}/>
                         </Drawer>
 
                         {/* MENU */}

@@ -1,50 +1,52 @@
-import React, { useState } from 'react';
-import { 
-    Box, 
-    Button, 
-    Grid, 
-    Modal, 
-    Typography, 
-    useMediaQuery, 
+import React, { useEffect, useState } from 'react';
+import {
+    Box,
+    Button,
+    Grid,
+    Modal,
+    Typography,
+    useMediaQuery,
     useTheme,
     Paper,
     Chip,
     IconButton,
     Tooltip,
     Alert,
-    CircularProgress
+    CircularProgress,
+    Tabs,
+    Tab
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import PrintIcon from '@mui/icons-material/Print';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
-import DescriptionIcon from '@mui/icons-material/Description';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { DocumentScannerOutlined } from '@mui/icons-material';
+import { File } from 'lucide-react';
 
-const ModalList = ({ 
-    open, 
-    data, 
-    onClose, 
-    prenotation, 
-    deletePerm = 0, 
-    editPerm = 0, 
-    handleDeleteByPrenotation 
+const ModalList = ({
+    open,
+    data,
+    onClose,
+    prenotation,
+    deletePerm = 0,
+    editPerm = 0,
+    handleDeleteByPrenotation
 }) => {
     const path = usePathname().split("/")[1];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    
+
     const [loading, setLoading] = useState(false);
-    const [pdfError, setPdfError] = useState(false);
+    const [selectedDocument, setSelectedDocument] = useState('doc');
 
     const createBlobUrl = (base64Data) => {
         if (!base64Data) return null;
-        
+
         try {
-            // Remove data URL prefix if present
             const cleanBase64 = base64Data.replace(/^data:application\/pdf;base64,/, '');
             const byteCharacters = atob(cleanBase64);
             const byteNumbers = new Array(byteCharacters.length);
@@ -59,21 +61,56 @@ const ModalList = ({
             return URL.createObjectURL(blob);
         } catch (error) {
             console.error('Erro ao criar blob URL:', error);
-            setPdfError(true);
             return null;
         }
     };
 
+    const documentTypes = [
+        {
+            id: 'doc',
+            label: 'Documento Principal',
+            icon: <DocumentScannerOutlined />,
+            fileKey: 'file'
+        },
+        {
+            id: 'matricula',
+            label: 'Matrícula',
+            icon: <File />,
+            fileKey: 'matricula_acervo_file'
+        }
+    ];
+
+    const availableDocuments = documentTypes.filter(
+        doc => data?.[doc.fileKey]
+    );
+
+    const getCurrentDocument = () => {
+        const docType = documentTypes.find(d => d.id === selectedDocument);
+        if (!docType) return null;
+
+        return {
+            ...docType,
+            file: data?.[docType.fileKey]
+        };
+    };
+
+    useEffect(() => {
+        if (availableDocuments.length > 0) {
+            setSelectedDocument(availableDocuments[0].id);
+        }
+    }, [data]);
+
     const handlePrintFile = () => {
-        if (!data?.file) {
+        const currentDoc = getCurrentDocument();
+
+        if (!currentDoc?.file) {
             alert("Arquivo não disponível para impressão.");
             return;
         }
 
-        const blobUrl = createBlobUrl(data.file);
+        const blobUrl = createBlobUrl(currentDoc.file);
         if (blobUrl) {
             window.open(blobUrl, '_blank');
-            // Clean up the blob URL after opening
             setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
         } else {
             alert("Não foi possível abrir o arquivo PDF.");
@@ -82,7 +119,7 @@ const ModalList = ({
 
     const handleDelete = async () => {
         if (!confirm('Tem certeza que deseja deletar este documento?')) return;
-        
+
         try {
             setLoading(true);
             await handleDeleteByPrenotation();
@@ -95,16 +132,20 @@ const ModalList = ({
     };
 
     const renderPDFViewer = () => {
-        if (!data?.file) {
+        const currentDoc = getCurrentDocument();
+
+        if (!currentDoc?.file) {
             return (
-                <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '400px'
-                }}>
-                    <Alert severity="warning" sx={{ textAlign: 'center' }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '100%',
+                        minHeight: '400px'
+                    }}
+                >
+                    <Alert severity="warning">
                         <Typography>
                             Documento não disponível ou arquivo inválido.
                         </Typography>
@@ -113,56 +154,24 @@ const ModalList = ({
             );
         }
 
-        if (pdfError) {
-            return (
-                <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '400px'
-                }}>
-                    <Alert severity="error" sx={{ textAlign: 'center' }}>
-                        <Typography>
-                            Erro ao carregar o documento PDF.
-                        </Typography>
-                        <Button 
-                            size="small" 
-                            onClick={() => setPdfError(false)}
-                            sx={{ mt: 1 }}
-                        >
-                            Tentar novamente
-                        </Button>
-                    </Alert>
-                </Box>
-            );
-        }
-
-        const src = `data:application/pdf;base64,${data.file}`;
-
         return (
             <iframe
-                title="PDF Viewer"
-                src={src}
+                title={`${currentDoc.label} Viewer`}
+                src={`data:application/pdf;base64,${currentDoc.file}`}
                 width="100%"
                 height="100%"
-                style={{ 
+                style={{
                     border: 'none',
                     minHeight: isMobile ? '300px' : '500px'
                 }}
-                onError={() => setPdfError(true)}
-                onLoad={() => setPdfError(false)}
             />
         );
     };
 
+    const currentDoc = getCurrentDocument();
+
     return (
-        <Modal
-            open={open}
-            onClose={onClose}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-        >
+        <Modal open={open} onClose={onClose}>
             <Box sx={{
                 position: 'absolute',
                 width: isMobile ? '95%' : '90%',
@@ -180,8 +189,8 @@ const ModalList = ({
                 flexDirection: 'column'
             }}>
                 {/* Header */}
-                <Box sx={{ 
-                    p: 2, 
+                <Box sx={{
+                    p: 2,
                     borderBottom: '1px solid #e0e0e0',
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -196,10 +205,10 @@ const ModalList = ({
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {prenotation && (
-                            <Chip 
-                                label={`Prenotação: ${prenotation}`} 
-                                size="small" 
-                                color="primary" 
+                            <Chip
+                                label={`Prenotação: ${prenotation}`}
+                                size="small"
+                                color="primary"
                                 variant="outlined"
                                 icon={<BookmarkIcon />}
                             />
@@ -210,45 +219,42 @@ const ModalList = ({
                     </Box>
                 </Box>
 
-                {/* Content Area */}
-                <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}>
-                    {/* PDF Viewer */}
-                    <Box sx={{ 
-                        flex: 1, 
-                        p: 2,
-                        minHeight: isMobile ? '300px' : '500px'
-                    }}>
-                        <Paper 
-                            elevation={1} 
-                            sx={{ 
-                                height: '100%',
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '8px',
-                                overflow: 'hidden',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}
+                {availableDocuments.length > 1 && (
+                    <Box sx={{ borderBottom: '1px solid #e0e0e0', px: 2 }}>
+                        <Tabs
+                            value={selectedDocument}
+                            onChange={(e, newValue) => setSelectedDocument(newValue)}
+                            variant={isMobile ? "scrollable" : "standard"}
+                            scrollButtons="auto"
                         >
-                            <Box sx={{
-                                p: 1,
-                                borderBottom: '1px solid #e0e0e0',
-                                bgcolor: '#fafafa',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1
-                            }}>
-                                <VisibilityIcon sx={{ fontSize: '1rem', color: 'text.secondary' }} />
-                                <Typography variant="body2" color="text.secondary">
-                                    Documento PDF
+                            {availableDocuments.map(doc => (
+                                <Tab
+                                    key={doc.id}
+                                    value={doc.id}
+                                    label={
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            {doc.icon}
+                                            <Typography variant="body2">
+                                                {isMobile ? doc.label.split(' ')[0] : doc.label}
+                                            </Typography>
+                                        </Box>
+                                    }
+                                />
+                            ))}
+                        </Tabs>
+                    </Box>
+                )}
+
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}>
+                    <Box sx={{ flex: 1, p: 2 }}>
+                        <Paper sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <Box sx={{ p: 1, borderBottom: '1px solid #e0e0e0', display: 'flex', gap: 1 }}>
+                                <VisibilityIcon fontSize="small" />
+                                <Typography variant="body2">
+                                    {currentDoc?.label || 'Documento'}
                                 </Typography>
-                                {data?.file && (
-                                    <Chip 
-                                        label="Disponível" 
-                                        size="small" 
-                                        color="success" 
-                                        variant="outlined"
-                                        sx={{ ml: 'auto', fontSize: '0.75rem', height: '20px' }}
-                                    />
+                                {currentDoc?.file && (
+                                    <Chip label="Disponível" size="small" color="success" sx={{ ml: 'auto' }} />
                                 )}
                             </Box>
                             <Box sx={{ flex: 1 }}>
@@ -257,36 +263,20 @@ const ModalList = ({
                         </Paper>
                     </Box>
 
-                    {/* Action Panel */}
-                    <Box sx={{ 
+                    <Box sx={{
                         width: isMobile ? '100%' : '200px',
                         p: 2,
                         display: 'flex',
                         flexDirection: isMobile ? 'row' : 'column',
-                        gap: 2,
-                        justifyContent: isMobile ? 'center' : 'flex-start',
-                        flexWrap: isMobile ? 'wrap' : 'nowrap'
+                        gap: 2
                     }}>
-                        {/* Edit Button - Only show if permission is granted */}
                         {editPerm === 1 && prenotation && (
                             <Tooltip title="Editar documento">
-                                <Link href={`/${path}/${prenotation}`} passHref>
-                                    <Button 
-                                        variant="outlined" 
-                                        fullWidth={!isMobile}
-                                        component="a"
-                                        sx={{
-                                            color: '#ed6c02',
-                                            borderColor: '#ed6c02',
-                                            minWidth: isMobile ? '120px' : 'auto',
-                                            textDecoration: 'none',
-                                            ":hover": {
-                                                backgroundColor: '#fff3e0',
-                                                borderColor: '#ed6c02',
-                                                textDecoration: 'none'
-                                            }
-                                        }}
+                                <Link href={`/${path}/${prenotation}`}>
+                                    <Button
+                                        variant="outlined"
                                         startIcon={<EditIcon />}
+                                        fullWidth={!isMobile}
                                     >
                                         Editar
                                     </Button>
@@ -294,80 +284,32 @@ const ModalList = ({
                             </Tooltip>
                         )}
 
-                        {/* Print Button */}
                         <Tooltip title="Imprimir documento">
-                            <Button 
-                                variant="outlined" 
-                                fullWidth={!isMobile}
-                                onClick={handlePrintFile}
-                                disabled={!data?.file}
-                                sx={{
-                                    color: "#0dcaf0",
-                                    borderColor: "#0dcaf0",
-                                    minWidth: isMobile ? '120px' : 'auto',
-                                    ":hover": {
-                                        backgroundColor: '#e3f2fd',
-                                        borderColor: "#0dcaf0"
-                                    },
-                                    ":disabled": {
-                                        color: 'grey.400',
-                                        borderColor: 'grey.400'
-                                    }
-                                }}
+                            <Button
+                                variant="outlined"
                                 startIcon={<PrintIcon />}
+                                onClick={handlePrintFile}
+                                disabled={!currentDoc?.file}
+                                fullWidth={!isMobile}
                             >
                                 Imprimir
                             </Button>
                         </Tooltip>
 
-                        {/* Delete Button - Only show if permission is granted */}
-                        {deletePerm === 1 && handleDeleteByPrenotation && (
+                        {deletePerm === 1 && (
                             <Tooltip title="Deletar documento">
-                                <Button 
-                                    variant="outlined" 
-                                    color='error'
-                                    fullWidth={!isMobile}
+                                <Button
+                                    variant="outlined"
+                                    color="error"
+                                    startIcon={loading ? <CircularProgress size={16} /> : <DeleteIcon />}
                                     onClick={handleDelete}
                                     disabled={loading}
-                                    sx={{
-                                        minWidth: isMobile ? '120px' : 'auto',
-                                        ":hover": {
-                                            backgroundColor: '#ffebee'
-                                        }
-                                    }}
-                                    startIcon={loading ? <CircularProgress size={16} /> : <DeleteIcon />}
+                                    fullWidth={!isMobile}
                                 >
                                     {loading ? 'Deletando...' : 'Deletar'}
                                 </Button>
                             </Tooltip>
                         )}
-                    </Box>
-                </Box>
-
-                {/* Info Footer - Show permissions and document status */}
-                <Box sx={{ 
-                    p: 1.5, 
-                    borderTop: '1px solid #e0e0e0',
-                    bgcolor: '#f9f9f9',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: 1
-                }}>
-                    <Box>
-                        {(editPerm === 0 || deletePerm === 0) && (
-                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                                {editPerm === 0 && deletePerm === 0 && "⚠️ Modo somente leitura"}
-                                {editPerm === 0 && deletePerm === 1 && "⚠️ Edição não permitida"}
-                                {editPerm === 1 && deletePerm === 0 && "⚠️ Exclusão não permitida"}
-                            </Typography>
-                        )}
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                            {data?.file ? '✓ Arquivo carregado' : '⚠️ Arquivo não disponível'}
-                        </Typography>
                     </Box>
                 </Box>
             </Box>

@@ -59,7 +59,8 @@ const sectionColors = {
     'RTD': '#7c3aed',
     'RPJ': '#059669',
     'Oficios': '#d97706',
-    'Notas': '#ea580c'
+    'Notas': '#ea580c',
+    'Inventario': '#247117'
 }
 
 const Recentes = () => {
@@ -123,6 +124,21 @@ const Recentes = () => {
                 }
             }
         })
+
+        // Inventario (dynamic permission index)
+        const invPerm = permissions.find(p => p?.public_name === 'Inventario')
+        if (invPerm?.view === 1 && data['Inventario']) {
+            const count = Array.isArray(data['Inventario'])
+                ? data['Inventario'].length
+                : Object.keys(data['Inventario']).length
+            if (count > 0) {
+                chartData.push({
+                    name: 'Inventario',
+                    value: count,
+                    color: sectionColors['Inventario']
+                })
+            }
+        }
 
         return chartData
     }
@@ -601,6 +617,11 @@ const Recentes = () => {
                         {renderDocumentSection("RGI", 1, "/rgi")}
                         {renderDocumentSection("RTD", 2, "/rtd")}
                         {renderDocumentSection("RPJ", 3, "/rpj")}
+                        {(() => {
+                            const invIdx = permissions.findIndex(p => p?.public_name === 'Inventario')
+                            if (invIdx >= 0) return renderDocumentSection("Inventario", invIdx, "/inventario")
+                            return null
+                        })()}
 
                         {countRecentsFile === 0 && (
                             <Paper

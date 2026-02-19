@@ -14,11 +14,11 @@ import {
 import {
     FileText,
     User,
-    Hash,
     Archive,
     MoreVertical,
     CreditCard
 } from "lucide-react";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import Image from "next/image";
 
 /* ---------- Utils ---------- */
@@ -41,6 +41,15 @@ const applyCpfCnpjMask = (value = "") => {
         .replace(/\.(\d{3})(\d)/, ".$1/$2")
         .replace(/(\d{4})(\d)/, "$1-$2")
         .slice(0, 18);
+};
+
+const formatDate = (date) => {
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    });
 };
 
 /* ---------- Components ---------- */
@@ -211,11 +220,7 @@ export const DocList = ({ data = [], handleClick, setPrenotation }) => {
                                         APRESENTANTE
                                     </Typography>
                                 </Box>
-                                <Typography
-                                    variant="body2"
-                                    fontWeight={600}
-                                    noWrap
-                                >
+                                <Typography variant="body2" fontWeight={600} noWrap>
                                     {item.presenterName}
                                 </Typography>
                                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -240,9 +245,21 @@ export const DocList = ({ data = [], handleClick, setPrenotation }) => {
                                 sx={{
                                     display: "flex",
                                     justifyContent: "space-between",
-                                    alignItems: "center"
+                                    alignItems: "center",
+                                    gap: 1,
+                                    flexWrap: "wrap"
                                 }}
                             >
+                                {item.data_prenotation && (
+                                    <Chip
+                                        icon={<BookmarkIcon />}
+                                        label={`Data: ${formatDate(item.data_prenotation)}`}
+                                        size="small"
+                                        color="primary"
+                                        variant="outlined"
+                                    />
+                                )}
+
                                 <Chip
                                     icon={<Archive size={14} />}
                                     label={`Caixa ${item.box}`}
@@ -252,6 +269,7 @@ export const DocList = ({ data = [], handleClick, setPrenotation }) => {
                                         color: "#237117"
                                     }}
                                 />
+
                                 <Chip
                                     label="PDF"
                                     size="small"

@@ -255,14 +255,7 @@ export const DocList = ({ data = [], handleClick, setNotation }) => {
                                     }}
                                 />
 
-                                <Chip
-                                    label={item.situation || "Ativo"}
-                                    size="small"
-                                    sx={{
-                                        backgroundColor: "#237117",
-                                        color: "#fff"
-                                    }}
-                                />
+                        
                             </Box>
                         </CardContent>
                     </Card>
