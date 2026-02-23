@@ -60,16 +60,37 @@ const sectionColors = {
     'RPJ': '#059669',
     'Oficios': '#d97706',
     'Notas': '#ea580c',
-    'Inventario': '#247117'
+    'Inventario': '#247117',
+    'Registro Civil': '#8E24AA'
+}
+
+const sectionModules = {
+    'Protesto': 'notas',
+    'RGI': 'notas',
+    'RTD': 'notas',
+    'RPJ': 'notas',
+    'Oficios': 'notas',
+    'Notas': 'notas',
+    'Inventario': 'shared',
+    'Registro Civil': 'registro_civil'
 }
 
 const Recentes = () => {
-    const { permissions } = useAuth()
+    const { permissions, cargoServentia } = useAuth()
     const [data, setData] = useState({})
     const [countRecentsFile, setCountRecentsFile] = useState(0)
     const [loading, setLoading] = useState(false)
     const dispatch = useDispatch()
     const [isClient, setIsClient] = useState(false)
+
+    const isSectionVisible = (sectionKey) => {
+        const cargo = cargoServentia || localStorage.getItem('cargoServentia') || 'geral'
+        const mod = sectionModules[sectionKey]
+        if (!mod || mod === 'shared' || cargo === 'geral') return true
+        if (mod === 'notas' && cargo === 'registro_imoveis') return true
+        if (mod === 'registro_civil' && cargo === 'registro_civil') return true
+        return false
+    }
 
     const getAllRecents = async () => {
         try {
@@ -110,7 +131,7 @@ const Recentes = () => {
 
         permissions.forEach((permission, index) => {
             const sectionKey = sectionMap[index]
-            if (permission.view === 1 && sectionKey && data[sectionKey]) {
+            if (permission.view === 1 && sectionKey && data[sectionKey] && isSectionVisible(sectionKey)) {
                 const count = Array.isArray(data[sectionKey])
                     ? data[sectionKey].length
                     : Object.keys(data[sectionKey]).length
@@ -127,7 +148,7 @@ const Recentes = () => {
 
         // Inventario (dynamic permission index)
         const invPerm = permissions.find(p => p?.public_name === 'Inventario')
-        if (invPerm?.view === 1 && data['Inventario']) {
+        if (invPerm?.view === 1 && data['Inventario'] && isSectionVisible('Inventario')) {
             const count = Array.isArray(data['Inventario'])
                 ? data['Inventario'].length
                 : Object.keys(data['Inventario']).length
@@ -136,6 +157,21 @@ const Recentes = () => {
                     name: 'Inventario',
                     value: count,
                     color: sectionColors['Inventario']
+                })
+            }
+        }
+
+        // Registro Civil (dynamic permission index)
+        const rcPerm = permissions.find(p => p?.public_name === 'Registro Civil')
+        if (rcPerm?.view === 1 && data['Registro Civil'] && isSectionVisible('Registro Civil')) {
+            const count = Array.isArray(data['Registro Civil'])
+                ? data['Registro Civil'].length
+                : Object.keys(data['Registro Civil']).length
+            if (count > 0) {
+                chartData.push({
+                    name: 'Registro Civil',
+                    value: count,
+                    color: sectionColors['Registro Civil']
                 })
             }
         }
@@ -169,7 +205,8 @@ const Recentes = () => {
             permissions[permissionIndex]?.view !== 1 ||
             !(sectionKey in data) ||
             typeof data[sectionKey] !== 'object' ||
-            Object.keys(data[sectionKey]).length === 0
+            Object.keys(data[sectionKey]).length === 0 ||
+            !isSectionVisible(sectionKey)
         ) {
             return null
         }
@@ -278,12 +315,12 @@ const Recentes = () => {
                                                         whiteSpace: 'nowrap'
                                                     }}
                                                 >
-                                                    {item.presenterName || item.entityName || "Documento"}
+                                                    {item.presenterName || item.entityName || item.nome_principal || "Documento"}
                                                 </Typography>
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                                     <CreditCard size={12} color="#666" />
                                                     <Typography variant="caption" color="text.secondary">
-                                                        {applyCpfCnpjMask(item.presenterDocument) || item.box || "-"}
+                                                        {applyCpfCnpjMask(item.presenterDocument) || item.box || item.tipo_descricao || "-"}
                                                     </Typography>
                                                 </Box>
                                             </Box>
@@ -620,6 +657,11 @@ const Recentes = () => {
                         {(() => {
                             const invIdx = permissions.findIndex(p => p?.public_name === 'Inventario')
                             if (invIdx >= 0) return renderDocumentSection("Inventario", invIdx, "/inventario")
+                            return null
+                        })()}
+                        {(() => {
+                            const rcIdx = permissions.findIndex(p => p?.public_name === 'Registro Civil')
+                            if (rcIdx >= 0) return renderDocumentSection("Registro Civil", rcIdx, "/registro-civil")
                             return null
                         })()}
 

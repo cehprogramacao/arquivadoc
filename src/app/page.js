@@ -546,7 +546,7 @@ const LoginPage = () => {
             )}
           </Formik>
 
-          {/* <Box
+          <Box
             sx={{
               mt: 4,
               display: "flex",
@@ -557,6 +557,7 @@ const LoginPage = () => {
           >
             <Typography
               variant="body2"
+              onClick={() => router.push("/esqueci-senha")}
               sx={{
                 color: "rgba(255, 255, 255, 0.6)",
                 cursor: "pointer",
@@ -575,14 +576,11 @@ const LoginPage = () => {
                   transform: "translateY(-2px)",
                   boxShadow: "0 5px 15px rgba(0, 0, 0, 0.2)",
                 },
-                "&:before": {
-                  marginRight: "8px",
-                },
               }}
             >
               Esqueceu sua senha?
             </Typography>
-            
+
             <Box
               sx={{
                 display: "flex",
@@ -618,9 +616,9 @@ const LoginPage = () => {
                   },
                 }}
               />
-              Conexão Segura SSL
+              Conexao Segura SSL
             </Box>
-          </Box> */}
+          </Box>
         </CardContent>
       </Card>
 

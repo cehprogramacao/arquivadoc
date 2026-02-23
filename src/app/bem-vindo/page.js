@@ -33,6 +33,7 @@ import {
     CreditCard as AutografoIcon,
     PersonSearch as SolicitantesIcon,
     Inventory2 as InventarioIcon,
+    FamilyRestroom as RegistroCivilIcon,
     ArrowForward,
     Refresh
 } from "@mui/icons-material"
@@ -48,24 +49,26 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 const moduleConfig = {
-    "Protesto": { route: "protest", icon: ProtestIcon, color: "#dc2626", description: "Gestao de protestos e documentos" },
-    "RGI": { route: "rgi", icon: RGIIcon, color: "#2563eb", description: "Registro Geral de Imoveis" },
-    "RTD": { route: "rtd", icon: RTDIcon, color: "#7c3aed", description: "Registro de Titulos e Documentos" },
-    "RPJ": { route: "rpj", icon: RPJIcon, color: "#059669", description: "Registro de Pessoas Juridicas" },
-    "Oficio": { route: "calling", icon: CallingIcon, color: "#d97706", description: "Controle de oficios e comunicacoes" },
-    "Clientes": { route: "customers", icon: CustomersIcon, color: "#0891b2", description: "Cadastro e gestao de clientes" },
-    "Notas": { route: "notes", icon: NotesIcon, color: "#ea580c", description: "Anotacoes e observacoes" },
-    "Recentes": { route: "recentes", icon: RecentesIcon, color: "#374151", description: "Acesso rapido aos documentos recentes" },
-    "Termos": { route: "termos", icon: TermosIcon, color: "#4b5563", description: "Termos e documentacao" },
-    "Cartoes de Autografo": { route: "autograph-card", icon: AutografoIcon, color: "#1d4ed8", description: "Gestao de cartoes de autografo" },
-    "Solicitantes": { route: "solicitantes", icon: SolicitantesIcon, color: "#f97316", description: "Cadastro de solicitantes" },
-    "Inventario": { route: "inventario", icon: InventarioIcon, color: "#247117", description: "Inventario patrimonial da empresa" },
+    "Protesto": { route: "protest", icon: ProtestIcon, color: "#dc2626", description: "Gestao de protestos e documentos", module: "notas" },
+    "RGI": { route: "rgi", icon: RGIIcon, color: "#2563eb", description: "Registro Geral de Imoveis", module: "notas" },
+    "RTD": { route: "rtd", icon: RTDIcon, color: "#7c3aed", description: "Registro de Titulos e Documentos", module: "notas" },
+    "RPJ": { route: "rpj", icon: RPJIcon, color: "#059669", description: "Registro de Pessoas Juridicas", module: "notas" },
+    "Oficio": { route: "calling", icon: CallingIcon, color: "#d97706", description: "Controle de oficios e comunicacoes", module: "notas" },
+    "Clientes": { route: "customers", icon: CustomersIcon, color: "#0891b2", description: "Cadastro e gestao de clientes", module: "shared" },
+    "Notas": { route: "notes", icon: NotesIcon, color: "#ea580c", description: "Anotacoes e observacoes", module: "notas" },
+    "Recentes": { route: "recentes", icon: RecentesIcon, color: "#374151", description: "Acesso rapido aos documentos recentes", module: "shared" },
+    "Termos": { route: "termos", icon: TermosIcon, color: "#4b5563", description: "Termos e documentacao", module: "notas" },
+    "Cartoes de Autografo": { route: "autograph-card", icon: AutografoIcon, color: "#1d4ed8", description: "Gestao de cartoes de autografo", module: "notas" },
+    "Solicitantes": { route: "solicitantes", icon: SolicitantesIcon, color: "#f97316", description: "Cadastro de solicitantes", module: "notas" },
+    "Inventario": { route: "inventario", icon: InventarioIcon, color: "#247117", description: "Inventario patrimonial da empresa", module: "shared" },
+    "Registro Civil": { route: "registro-civil", icon: RegistroCivilIcon, color: "#8E24AA", description: "Registro de nascimentos, casamentos e obitos", module: "registro_civil" },
 }
 
 const userSv = new User()
 
 const Welcome = () => {
     const [permissions, setPermissions] = useState([])
+    const [cargoServentia, setCargoServentia] = useState('geral')
     const [loading, setLoading] = useState(false)
     const [hoveredCard, setHoveredCard] = useState(null)
     const dispatch = useDispatch()
@@ -76,6 +79,8 @@ const Welcome = () => {
             setLoading(true)
             const data = await userSv.getUser()
             const permissionsArray = Array.isArray(data?.permissions) ? data.permissions : []
+            const cargo = data.user?.[0]?.cargo_serventia || localStorage.getItem('cargoServentia') || 'geral'
+            setCargoServentia(cargo)
             const additionalPermissions = [
                 { public_name: "Recentes", view: 1, create_permission: 1, delete_permission: 1, edit: 1 },
                 { public_name: "Termos", view: 1, create_permission: 1, delete_permission: 1, edit: 1 },
@@ -101,7 +106,17 @@ const Welcome = () => {
         return "Boa noite"
     }
 
-    const visiblePermissions = permissions.filter(item => item.view === 1)
+    const isModuleVisible = (moduleName) => {
+        const config = moduleConfig[moduleName]
+        if (!config) return true
+        const mod = config.module
+        if (!mod || mod === 'shared' || cargoServentia === 'geral') return true
+        if (mod === 'notas' && cargoServentia === 'registro_imoveis') return true
+        if (mod === 'registro_civil' && cargoServentia === 'registro_civil') return true
+        return false
+    }
+
+    const visiblePermissions = permissions.filter(item => item.view === 1 && isModuleVisible(item.public_name))
 
     return loading ? <Loading /> : (
         <AuthProvider>
@@ -347,6 +362,7 @@ const Welcome = () => {
                             {permissions.map((item, index) => {
                                 const config = moduleConfig[item.public_name]
                                 if (!config) return null
+                                if (!isModuleVisible(item.public_name)) return null
                                 const { route, icon: IconComponent, color, description } = config
                                 const isHovered = hoveredCard === item.public_name
 

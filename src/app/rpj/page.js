@@ -1,12 +1,21 @@
 "use client";
 
-import { Box, Container, Drawer, TextField, Typography } from '@mui/material';
-import { Grid } from "@mui/material";
+import {
+    Box,
+    Button,
+    Container,
+    Drawer,
+    Grid,
+    Paper,
+    Stack,
+    TextField,
+    Typography
+} from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
+import { Gavel, Search } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Buttons } from '@/Components/Button/Button';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
 import { CadastroModalRPJ } from '@/Components/Modals/ModalCadastroRPJ';
@@ -14,7 +23,6 @@ import RPJService from '@/services/rpj.service';
 import { SET_ALERT } from '@/store/actions';
 import Loading from '@/Components/loading';
 import withAuth from '@/utils/withAuth';
-import CustomContainer from '@/Components/CustomContainer';
 import { AuthProvider, useAuth } from '@/context';
 import PrivateRoute from '@/utils/LayoutPerm';
 import { DocList } from './components/TableRPJ';
@@ -60,7 +68,6 @@ const PageRPJ = () => {
     const [notation, setNotation] = useState("");
     const [anchorEl, setAnchorEl] = useState(null);
 
-    // 🔴 CORREÇÃO PRINCIPAL AQUI
     const [dataFile, setDataFile] = useState([]);
     const [data, setData] = useState([]);
 
@@ -184,69 +191,102 @@ const PageRPJ = () => {
     return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['RPJ']}>
-                <Box sx={{ width: '100%', height: '100vh', py: 15, px: 2 }}>
+                <Box sx={{ width: '100%', minHeight: '100vh', bgcolor: '#f5f7fa', pt: 12, pb: 6, px: 2 }}>
                     <Container maxWidth="lg">
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <Typography fontSize={40} fontWeight="bold" textAlign="center">
-                                    RPJ
-                                </Typography>
-                            </Grid>
-
-                            <Grid item xs={12} lg={5}>
-                                <TextField
-                                    label={
-                                        option.option === "Prenotação"
-                                            ? "Buscar por Prenotação"
-                                            : option.option === "Apresentante"
-                                            ? "Buscar por CPF ou CNPJ"
-                                            : "Selecione o tipo de busca"
-                                    }
-                                    fullWidth
-                                    disabled={!option.option}
-                                    value={option.value}
-                                    onChange={(e) => {
-                                        let value = e.target.value;
-                                        if (option.option === "Apresentante") {
-                                            value = applyCpfCnpjMask(value);
-                                        }
-                                        setOption({ ...option, value });
-                                    }}
-                                    color="success"
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} lg={4}>
-                                <Autocomplete
-                                    options={options}
-                                    getOptionLabel={(opt) => opt.label}
-                                    onChange={(e, value) =>
-                                        setOption({ option: value?.label || "", value: "" })
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField {...params} label="Buscar Por" color="success" />
-                                    )}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} lg={3}>
-                                <Box display="flex" gap={2} justifyContent="center">
-                                    <Buttons color="green" title="Buscar" onClick={handleFetchFileByNotationOrPresenter} />
-                                    {permissions[3]?.create_permission === 1 && (
-                                        <ButtonOpenModals onClick={handleOpenModalCadastroRPJ} />
-                                    )}
-                                    {isAdmin === "1" && <ButtonLixeira href="/rpj/lixeira_rpj" />}
+                        {/* Header */}
+                        <Box sx={{ mb: 4 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                                <Box sx={{
+                                    width: 56, height: 56, borderRadius: 3,
+                                    background: 'linear-gradient(135deg, #237117 0%, #1a5511 100%)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    boxShadow: '0 4px 14px rgba(35,113,23,0.3)'
+                                }}>
+                                    <Gavel sx={{ color: '#fff', fontSize: 28 }} />
                                 </Box>
-                            </Grid>
+                                <Box>
+                                    <Typography variant="h4" fontWeight={700} color="#1a1a1a">
+                                        RPJ
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {data?.length || 0} {data?.length === 1 ? 'registro encontrado' : 'registros encontrados'}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Box>
 
-                            <Grid item xs={12}>
-                                <DocList
-                                    data={data}
-                                    handleClick={handleOpenMenuOptions}
-                                    setNotation={(e) => setNotation(e)}
-                                />
+                        {/* Search Section */}
+                        <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e5e7eb', mb: 3, bgcolor: '#fff' }}>
+                            <Grid container spacing={2} alignItems="center">
+                                <Grid item xs={12} md={4}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label={
+                                            option.option === "Prenotação"
+                                                ? "Buscar por Prenotação"
+                                                : option.option === "Apresentante"
+                                                ? "Buscar por CPF ou CNPJ"
+                                                : "Selecione o tipo de busca"
+                                        }
+                                        disabled={!option.option}
+                                        value={option.value}
+                                        onChange={(e) => {
+                                            let value = e.target.value;
+                                            if (option.option === "Apresentante") {
+                                                value = applyCpfCnpjMask(value);
+                                            }
+                                            setOption({ ...option, value });
+                                        }}
+                                        color="success"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <Autocomplete
+                                        size="small"
+                                        options={options}
+                                        getOptionLabel={(opt) => opt.label}
+                                        onChange={(e, value) =>
+                                            setOption({ option: value?.label || "", value: "" })
+                                        }
+                                        renderInput={(params) => (
+                                            <TextField {...params} label="Buscar Por" color="success" />
+                                        )}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <Stack direction="row" spacing={1.5} justifyContent="flex-end">
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<Search />}
+                                            onClick={handleFetchFileByNotationOrPresenter}
+                                            sx={{
+                                                bgcolor: '#237117',
+                                                textTransform: 'none',
+                                                fontWeight: 600,
+                                                borderRadius: 2,
+                                                '&:hover': { bgcolor: '#1a5511' }
+                                            }}
+                                        >
+                                            Buscar
+                                        </Button>
+                                        {permissions[3]?.create_permission === 1 && (
+                                            <ButtonOpenModals onClick={handleOpenModalCadastroRPJ} />
+                                        )}
+                                        {isAdmin === "1" && <ButtonLixeira href="/rpj/lixeira_rpj" />}
+                                    </Stack>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        </Paper>
+
+                        {/* Table */}
+                        <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid #e5e7eb', overflow: 'hidden', bgcolor: '#fff' }}>
+                            <DocList
+                                data={data}
+                                handleClick={handleOpenMenuOptions}
+                                setNotation={(e) => setNotation(e)}
+                            />
+                        </Paper>
                     </Container>
 
                     <ModalList

@@ -25,6 +25,9 @@ import {
     Chip,
     Alert,
     Container,
+    Select,
+    MenuItem,
+    InputLabel,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import CustomContainer from '@/Components/CustomContainer';
@@ -87,6 +90,7 @@ const UpdateUserById = ({ params }) => {
     const [userData, setUserData] = useState({
         name: '',
         phone: '',
+        cargo_serventia: 'geral',
         permissions: Array(7).fill().map(() => [0, 0, 0, 0])
     });
 
@@ -225,6 +229,7 @@ const UpdateUserById = ({ params }) => {
             setUserData({
                 name: data.user[0].name,
                 phone: data.user[0].phone,
+                cargo_serventia: data.user[0].cargo_serventia || 'geral',
                 permissions: initialPermissions
             });
         } catch (error) {
@@ -356,6 +361,22 @@ const UpdateUserById = ({ params }) => {
                                                             {errors.phone}
                                                         </Typography>
                                                     )}
+                                                </FormControl>
+
+                                                <FormControl fullWidth>
+                                                    <InputLabel color="success">Cargo / Serventia</InputLabel>
+                                                    <Select
+                                                        name="cargo_serventia"
+                                                        value={userData.cargo_serventia}
+                                                        label="Cargo / Serventia"
+                                                        color="success"
+                                                        onChange={handleChange}
+                                                        sx={{ borderRadius: '8px' }}
+                                                    >
+                                                        <MenuItem value="geral">Geral (Todos os módulos)</MenuItem>
+                                                        <MenuItem value="registro_imoveis">Registro de Imóveis (Notas)</MenuItem>
+                                                        <MenuItem value="registro_civil">Registro Civil</MenuItem>
+                                                    </Select>
                                                 </FormControl>
                                             </Box>
                                         </Box>

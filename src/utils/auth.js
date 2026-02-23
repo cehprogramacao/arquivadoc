@@ -68,6 +68,7 @@ export const extractDataFromSession = () => {
     const decoded = jwtDecode(accessToken);
     const { data } = decoded;
     localStorage.setItem("isAdmin", data.is_admin)
+    localStorage.setItem("cargoServentia", data.cargo_serventia || 'geral')
     console.log(decoded, 7373731);
     return data;
   } catch (error) {

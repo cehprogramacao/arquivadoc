@@ -31,8 +31,11 @@ const Session = () => {
   );
 };
 
+const publicPages = ["/", "/esqueci-senha"];
+
 const AppTemplate = ({ children }) => {
   const path = usePathname();
+  const isPublic = publicPages.includes(path) || path.startsWith("/reset/");
 
   useEffect(() => {
     console.log("Current path:", path);
@@ -41,7 +44,7 @@ const AppTemplate = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {path !== "/" && <Header />}
+      {!isPublic && <Header />}
       <Session />
       <Box>{children}</Box>
     </ThemeProvider>
@@ -50,12 +53,13 @@ const AppTemplate = ({ children }) => {
 
 export default function Template({ children }) {
   const path = usePathname();
+  const isPublic = publicPages.includes(path) || path.startsWith("/reset/");
 
   const content = <AppTemplate>{children}</AppTemplate>;
 
   return (
     <Provider store={store}>
-      {path !== "/" ? <AuthProvider>{content}</AuthProvider> : content}
+      {!isPublic ? <AuthProvider>{content}</AuthProvider> : content}
     </Provider>
   );
 }

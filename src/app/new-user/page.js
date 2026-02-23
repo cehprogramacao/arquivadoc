@@ -30,6 +30,9 @@ import {
     Fade,
     LinearProgress,
     useTheme,
+    Select,
+    MenuItem,
+    InputLabel,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import PersonIcon from '@mui/icons-material/Person';
@@ -96,6 +99,7 @@ const AddUser = () => {
         email: '',
         phone: '',
         password: '',
+        cargo_serventia: 'geral',
         permissions: Array(7).fill().map(() => Array(4).fill(0)),
     });
 
@@ -402,6 +406,22 @@ const AddUser = () => {
                                                     </Box>
                                                 )}
                                             </Box>
+
+                                            <FormControl fullWidth>
+                                                <InputLabel color="success">Cargo / Serventia</InputLabel>
+                                                <Select
+                                                    name="cargo_serventia"
+                                                    value={userData.cargo_serventia}
+                                                    label="Cargo / Serventia"
+                                                    color="success"
+                                                    onChange={handleChange}
+                                                    sx={{ borderRadius: '12px' }}
+                                                >
+                                                    <MenuItem value="geral">Geral (Todos os módulos)</MenuItem>
+                                                    <MenuItem value="registro_imoveis">Registro de Imóveis (Notas)</MenuItem>
+                                                    <MenuItem value="registro_civil">Registro Civil</MenuItem>
+                                                </Select>
+                                            </FormControl>
                                         </Box>
                                     </Fade>
                                 )}

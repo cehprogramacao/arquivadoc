@@ -6,16 +6,15 @@ import {
     Drawer,
     TextField,
     Typography,
-    useMediaQuery,
-    useTheme,
-    Grid
+    Paper,
+    Button,
+    Stack
 } from "@mui/material";
 
 import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { Buttons } from "@/Components/Button/Button";
 import { ButtonLixeira } from "@/Components/ButtonLixeira";
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
 import Loading from "@/Components/loading";
@@ -31,6 +30,7 @@ import PrivateRoute from "@/utils/LayoutPerm";
 import RTDService from "@/services/rtd.service";
 import { useRouter } from "next/navigation";
 import { isLoggedIn } from "@/utils/auth";
+import { Assignment, Search } from "@mui/icons-material";
 
 /* ============================
    OPTIONS
@@ -198,17 +198,60 @@ const PageRTD = () => {
     return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={["RPJ"]}>
-                <Box sx={{ width: "100%", height: "100vh", py: 15, px: 0 }}>
+                <Box sx={{ width: "100%", minHeight: "100vh", backgroundColor: "#f5f7fa", pt: 12, pb: 6, px: 2 }}>
                     <Container maxWidth="lg">
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <Typography fontSize={40} fontWeight="bold" textAlign="center">
+                        {/* Header */}
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
+                            <Box
+                                sx={{
+                                    width: 56,
+                                    height: 56,
+                                    borderRadius: 2,
+                                    background: "linear-gradient(135deg, #237117 0%, #2e8b20 100%)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                            >
+                                <Assignment sx={{ color: "#fff", fontSize: 30 }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="h4" fontWeight="bold">
                                     RTD
                                 </Typography>
-                            </Grid>
+                                <Typography variant="body2" color="text.secondary">
+                                    {data.length} {data.length === 1 ? "registro encontrado" : "registros encontrados"}
+                                </Typography>
+                            </Box>
+                        </Box>
 
-                            {/* INPUT */}
-                            <Grid item xs={12} lg={5}>
+                        {/* Search Section */}
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                border: "1px solid #e5e7eb",
+                                borderRadius: 3,
+                                p: 3,
+                                mb: 3
+                            }}
+                        >
+                            <Stack direction={{ xs: "column", lg: "row" }} spacing={2} alignItems={{ lg: "center" }}>
+                                <Autocomplete
+                                    options={options}
+                                    getOptionLabel={(option) => option.label}
+                                    onChange={(e, value) =>
+                                        setOption({
+                                            option: value?.label || "",
+                                            value: ""
+                                        })
+                                    }
+                                    size="small"
+                                    sx={{ minWidth: 220 }}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Buscar Por" color="success" />
+                                    )}
+                                />
+
                                 <TextField
                                     label={
                                         option.option === "Prenotação"
@@ -218,6 +261,7 @@ const PageRTD = () => {
                                             : "Selecione o tipo de busca"
                                     }
                                     fullWidth
+                                    size="small"
                                     disabled={!option.option}
                                     value={option.value}
                                     onChange={(e) => {
@@ -229,49 +273,45 @@ const PageRTD = () => {
                                     }}
                                     color="success"
                                 />
-                            </Grid>
 
-                            {/* AUTOCOMPLETE */}
-                            <Grid item xs={12} lg={4}>
-                                <Autocomplete
-                                    options={options}
-                                    getOptionLabel={(option) => option.label}
-                                    onChange={(e, value) =>
-                                        setOption({
-                                            option: value?.label || "",
-                                            value: ""
-                                        })
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField {...params} label="Buscar Por" color="success" />
-                                    )}
-                                />
-                            </Grid>
-
-                            {/* BUTTONS */}
-                            <Grid item xs={12} lg={3}>
-                                <Box display="flex" gap={2} justifyContent="center">
-                                    <Buttons
-                                        color="green"
-                                        title="Buscar"
+                                <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<Search />}
                                         onClick={handleFetchFileByNotationOrPresenter}
-                                    />
+                                        sx={{
+                                            backgroundColor: "#237117",
+                                            textTransform: "none",
+                                            fontWeight: 600,
+                                            borderRadius: 2,
+                                            "&:hover": { backgroundColor: "#1b5c12" }
+                                        }}
+                                    >
+                                        Buscar
+                                    </Button>
                                     {permissions[2]?.create_permission === 1 && (
                                         <ButtonOpenModals onClick={() => setOpenModalCadastroRTD(true)} />
                                     )}
                                     {isAdmin === "1" && <ButtonLixeira href="/rpj/lixeira_rpj" />}
-                                </Box>
-                            </Grid>
+                                </Stack>
+                            </Stack>
+                        </Paper>
 
-                            {/* TABLE */}
-                            <Grid item xs={12}>
-                                <DocList
-                                    data={data}
-                                    handleClick={(e) => setAnchorEl(e.currentTarget)}
-                                    setNotation={(e) => setNotation(e)}
-                                />
-                            </Grid>
-                        </Grid>
+                        {/* Table Section */}
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                border: "1px solid #e5e7eb",
+                                borderRadius: 3,
+                                overflow: "hidden"
+                            }}
+                        >
+                            <DocList
+                                data={data}
+                                handleClick={(e) => setAnchorEl(e.currentTarget)}
+                                setNotation={(e) => setNotation(e)}
+                            />
+                        </Paper>
                     </Container>
 
                     <ModalList

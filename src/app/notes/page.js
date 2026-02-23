@@ -5,9 +5,11 @@ import {
     Box,
     Container,
     Drawer,
-    Grid,
     TextField,
-    Typography
+    Typography,
+    Paper,
+    Button,
+    Stack
 } from "@mui/material";
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/700.css';
@@ -15,7 +17,6 @@ import '@fontsource/roboto/700.css';
 import { useEffect, useState } from "react";
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals";
 import { CadastroNotas } from "@/Components/Modals/ModalCadastroNotas";
-import CustomContainer from "@/Components/CustomContainer";
 import NoteService from "@/services/notes.service";
 import { TableList } from "./components/TableList";
 import MenuOptionsFile from "@/Components/MenuPopUp";
@@ -28,11 +29,10 @@ import { useRouter } from "next/navigation";
 import PrivateRoute from "@/utils/LayoutPerm";
 import { AuthProvider, useAuth } from "@/context";
 import { ButtonLixeira } from "@/Components/ButtonLixeira";
-import { Buttons } from "@/Components/Button/Button";
+import { NoteAlt, Search } from "@mui/icons-material";
 
 const noteSv = new NoteService();
 
-// 🔹 ADICIONADO
 const filterOptions = [
     { label: "Número do Pedido", value: "number" },
     { label: "Apresentante (CPF/CNPJ)", value: "presenter" }
@@ -51,7 +51,6 @@ const PageNotas = () => {
     const [presenter, setPresenter] = useState("");
     const [number, setNumber] = useState("");
 
-    // 🔹 ADICIONADO
     const [filterType, setFilterType] = useState({
         value: 'number'
     });
@@ -79,7 +78,7 @@ const PageNotas = () => {
         if (!isLoggedIn()) router.push("/");
     }, []);
 
-    // MÁSCARA CPF/CNPJ
+    // MASCARA CPF/CNPJ
     const maskCpfCnpj = (value) => {
         value = value.replace(/\D/g, "");
 
@@ -124,7 +123,7 @@ const PageNotas = () => {
         }
     };
 
-    // 🔍 FILTRO (AGORA RESPEITA O AUTOCOMPLETE)
+    // FILTRO
     const handleFilter = async () => {
         try {
             setSearching(true);
@@ -189,26 +188,50 @@ const PageNotas = () => {
         getData();
     }, []);
 
-
-
     return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Notas']}>
                 {loading ? (
                     <Loading />
                 ) : (
-                    <Box sx={{ width: '100%', py: 14 }}>
+                    <Box sx={{ width: "100%", minHeight: "100vh", backgroundColor: "#f5f7fa", pt: 12, pb: 6, px: 2 }}>
                         <Container maxWidth="lg">
-                            <Grid container spacing={3}>
-
-                                <Grid item xs={12}>
-                                    <Typography fontSize={38} fontWeight="bold" textAlign='center'>
+                            {/* Header */}
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
+                                <Box
+                                    sx={{
+                                        width: 56,
+                                        height: 56,
+                                        borderRadius: 2,
+                                        background: "linear-gradient(135deg, #237117 0%, #2e8b20 100%)",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center"
+                                    }}
+                                >
+                                    <NoteAlt sx={{ color: "#fff", fontSize: 30 }} />
+                                </Box>
+                                <Box>
+                                    <Typography variant="h4" fontWeight="bold">
                                         Notas
                                     </Typography>
-                                </Grid>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {data.length} {data.length === 1 ? "registro encontrado" : "registros encontrados"}
+                                    </Typography>
+                                </Box>
+                            </Box>
 
-                                {/* 🔹 AUTOCOMPLETE */}
-                                <Grid item xs={12} lg={4}>
+                            {/* Search Section */}
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    border: "1px solid #e5e7eb",
+                                    borderRadius: 3,
+                                    p: 3,
+                                    mb: 3
+                                }}
+                            >
+                                <Stack direction={{ xs: "column", lg: "row" }} spacing={2} alignItems={{ lg: "center" }}>
                                     <Autocomplete
                                         options={filterOptions}
                                         value={filterType}
@@ -220,6 +243,8 @@ const PageNotas = () => {
                                             setFilterType(value);
                                             setNumber("");
                                         }}
+                                        size="small"
+                                        sx={{ minWidth: 250 }}
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -229,60 +254,71 @@ const PageNotas = () => {
                                         )}
                                     />
 
-                                </Grid>
-
-                                {/* INPUTS CONDICIONAIS */}
-                                {filterType?.value === "number" && (
-                                    <Grid item xs={12} lg={4}>
+                                    {filterType?.value === "number" && (
                                         <TextField
                                             label="Número do Pedido"
                                             fullWidth
+                                            size="small"
                                             value={number}
                                             onChange={(e) => setNumber(e.target.value)}
                                             color="success"
                                         />
-                                    </Grid>
-                                )}
+                                    )}
 
-                                {filterType?.value === "presenter" && (
-                                    <Grid item xs={12} lg={4}>
+                                    {filterType?.value === "presenter" && (
                                         <TextField
                                             label="CPF/CNPJ do Apresentante"
                                             fullWidth
+                                            size="small"
                                             value={presenter}
                                             onChange={(e) => setPresenter(maskCpfCnpj(e.target.value))}
                                             inputProps={{ maxLength: 18 }}
                                             color="success"
                                         />
-                                    </Grid>
-                                )}
-
-                                <Grid item xs={12} lg={4} display="flex" gap={2}>
-                                    <Buttons
-                                        color="green"
-                                        title={searching ? "Buscando..." : "Buscar"}
-                                        onClick={handleFilter}
-                                        disabled={searching}
-                                    />
-
-                                    {permissions[6]?.create_permission === 1 && (
-                                        <ButtonOpenModals onClick={handleOpen} />
                                     )}
 
-                                    <ButtonLixeira href="/notas/lixeira_notas" />
-                                </Grid>
+                                    <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<Search />}
+                                            onClick={handleFilter}
+                                            disabled={searching}
+                                            sx={{
+                                                backgroundColor: "#237117",
+                                                textTransform: "none",
+                                                fontWeight: 600,
+                                                borderRadius: 2,
+                                                "&:hover": { backgroundColor: "#1b5c12" }
+                                            }}
+                                        >
+                                            {searching ? "Buscando..." : "Buscar"}
+                                        </Button>
 
-                                {/* LISTA */}
-                                <Grid item xs={12}>
-                                    <TableList
-                                        data={data}
-                                        handleClick={handleClickMenu}
-                                        setNumber={(n) => setNumber(n)}
-                                    />
-                                </Grid>
+                                        {permissions[6]?.create_permission === 1 && (
+                                            <ButtonOpenModals onClick={handleOpen} />
+                                        )}
 
-                            </Grid>
-                        </Container >
+                                        <ButtonLixeira href="/notas/lixeira_notas" />
+                                    </Stack>
+                                </Stack>
+                            </Paper>
+
+                            {/* Table Section */}
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    border: "1px solid #e5e7eb",
+                                    borderRadius: 3,
+                                    overflow: "hidden"
+                                }}
+                            >
+                                <TableList
+                                    data={data}
+                                    handleClick={handleClickMenu}
+                                    setNumber={(n) => setNumber(n)}
+                                />
+                            </Paper>
+                        </Container>
 
                         {/* DRAWER */}
                         <Drawer anchor="left" open={open} onClose={handleClose}>

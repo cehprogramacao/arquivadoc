@@ -1,12 +1,11 @@
 "use client"
 import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery, Drawer, Grid, FormControl, OutlinedInput } from "@mui/material"
+import { Autocomplete, Box, Button, TextField, Typography, useTheme, useMediaQuery, Drawer, Grid, FormControl, OutlinedInput, Container, Paper, Stack } from "@mui/material"
 import { use, useEffect, useState } from "react"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import { Buttons } from "@/Components/Button/Button"
 import { CadastroTermosModal } from "@/Components/Modals/ModalCadastroTermo"
 import { CadastroPartes } from "@/Components/ModalsRegistration/ModalCadastroPartes"
-import CustomContainer from "@/Components/CustomContainer"
 import { DocList } from "./components/tableTermos/table"
 import Customer from "@/services/customer.service"
 import ReactInputMask from "react-input-mask"
@@ -17,6 +16,7 @@ import Loading from "@/Components/loading"
 import { AuthProvider, useAuth } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
 import withAuth from "@/utils/withAuth"
+import { ArticleOutlined, Search } from "@mui/icons-material"
 
 
 const cpfMask = '999.999.999-99';
@@ -166,100 +166,126 @@ const PageTermos = () => {
             <PrivateRoute requiredPermissions={['Cadastros']}>
                 <Box sx={{
                     width: '100%',
-                    height: '100vh',
-                    py: 12,
-                    px: 3
+                    minHeight: '100vh',
+                    bgcolor: '#f5f7fa',
+                    pt: 12,
+                    pb: 6,
+                    px: 2
                 }}>
-                    <CustomContainer>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <Box sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}>
-                                    <Typography fontSize={30} fontWeight={'bold'} sx={{ margin: '0 auto' }} color={"black"}>
-                                        TERMOS
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} lg={4} md={6} sm={12}>
-                                        <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
-                                            <ReactInputMask
-                                                mask={cpfCnpjMask}
-                                                value={dataOptions.cpfcnpj}
-                                                onChange={handleInputChange}
-                                                onBlur={handleInputBlur}
-                                                name="cpfcnpj"
-                                            >
-                                                {(inputProps) => (
-                                                    <OutlinedInput
-                                                        {...inputProps}
-                                                        id={'id-documento'}
-                                                        color="success"
-                                                        placeholder={'CPF/CNPJ'}
-                                                        error={Boolean(errors['cpfcnpj'])}
-                                                        sx={{
-                                                            borderRadius: '12.5px',
-                                                            '& .MuiOutlinedInput-notchedOutline': {
-                                                                borderRadius: '4px',
-                                                            },
-                                                        }}
-                                                    />
-                                                )}
-                                            </ReactInputMask>
-                                            {errors['cpfcnpj'] && (
-                                                <Typography color="error" variant="caption" sx={{ mt: 0.5 }}>
-                                                    {errors['cpfcnpj']}
-                                                </Typography>
-                                            )}
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs={12} lg={4} md={6} sm={12}>
-                                        <Autocomplete
-                                            disablePortal
-                                            id="combo-box-demo"
-                                            options={labels}
-                                            fullWidth
-                                            autoHighlight
-                                            value={dataOptions.option}
-                                            getOptionLabel={(option) => option.label || ""}
-                                            onChange={(e, newValue) => setDataOptions(prev => ({
-                                                ...prev,
-                                                option: newValue
-                                            }))}
-                                            isOptionEqualToValue={(option, value) => option.label === value.label}
-                                            renderInput={(params) => (
+                    <Container maxWidth="lg">
+                        {/* Header */}
+                        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+                            <Box sx={{
+                                width: 56,
+                                height: 56,
+                                borderRadius: 3,
+                                background: 'linear-gradient(135deg, #237117 0%, #2e8b1e 100%)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: '0 4px 14px rgba(35,113,23,0.3)'
+                            }}>
+                                <ArticleOutlined sx={{ color: '#fff', fontSize: 30 }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="h4" sx={{ fontWeight: 700, color: '#1a1a2e' }}>
+                                    Termos
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#64748b' }}>
+                                    {data.length} {data.length === 1 ? 'termo encontrado' : 'termos encontrados'}
+                                </Typography>
+                            </Box>
+                        </Stack>
+
+                        {/* Search */}
+                        <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e5e7eb', mb: 3, bgcolor: '#fff' }}>
+                            <Grid container spacing={2} alignItems="center">
+                                <Grid item xs={12} lg={4} md={6} sm={12}>
+                                    <FormControl fullWidth error={Boolean(errors['cpfcnpj'])}>
+                                        <ReactInputMask
+                                            mask={cpfCnpjMask}
+                                            value={dataOptions.cpfcnpj}
+                                            onChange={handleInputChange}
+                                            onBlur={handleInputBlur}
+                                            name="cpfcnpj"
+                                        >
+                                            {(inputProps) => (
                                                 <TextField
-                                                    {...params}
+                                                    {...inputProps}
+                                                    id={'id-documento'}
+                                                    size="small"
                                                     color="success"
-                                                    label="Buscar Por"
-                                                    sx={{
-                                                        color: "#237117",
-                                                        "& input": {
-                                                            color: "success.main",
-                                                        },
-                                                    }}
+                                                    placeholder={'CPF/CNPJ'}
+                                                    label="CPF/CNPJ"
+                                                    error={Boolean(errors['cpfcnpj'])}
                                                 />
                                             )}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} lg={4} md={12} sm={12}>
-                                        <Box sx={{ display: 'flex', justifyContent: "center", width: '100%', gap: '30px' }}>
-                                            <Buttons color={'green'} title={'Buscar'} onClick={handleFilterTermLGPD} />
-                                            {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
-                                            {isAdmin === 1 || isAdmin === "1" && <ButtonLixeira href={"/termos/lixeira_termo"} /> }
-                                        </Box>
-                                    </Grid>
+                                        </ReactInputMask>
+                                        {errors['cpfcnpj'] && (
+                                            <Typography color="error" variant="caption" sx={{ mt: 0.5 }}>
+                                                {errors['cpfcnpj']}
+                                            </Typography>
+                                        )}
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12} lg={4} md={6} sm={12}>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={labels}
+                                        fullWidth
+                                        size="small"
+                                        autoHighlight
+                                        value={dataOptions.option}
+                                        getOptionLabel={(option) => option.label || ""}
+                                        onChange={(e, newValue) => setDataOptions(prev => ({
+                                            ...prev,
+                                            option: newValue
+                                        }))}
+                                        isOptionEqualToValue={(option, value) => option.label === value.label}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                color="success"
+                                                label="Buscar Por"
+                                                sx={{
+                                                    color: "#237117",
+                                                    "& input": {
+                                                        color: "success.main",
+                                                    },
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} lg={4} md={12} sm={12}>
+                                    <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<Search />}
+                                            onClick={handleFilterTermLGPD}
+                                            sx={{
+                                                bgcolor: '#237117',
+                                                textTransform: 'none',
+                                                fontWeight: 600,
+                                                borderRadius: 2,
+                                                '&:hover': { bgcolor: '#1a5511' }
+                                            }}
+                                        >
+                                            Buscar
+                                        </Button>
+                                        {permissions[5]?.create_permission === 1 && <ButtonOpenModals onClick={handleOpen} />}
+                                        {isAdmin === 1 || isAdmin === "1" && <ButtonLixeira href={"/termos/lixeira_termo"} />}
+                                    </Stack>
                                 </Grid>
                             </Grid>
-                            <Grid item xs={12}>
-                                <DocList data={data} setCPF={(cpf) => setCpfcnpj(cpf)} handleClick={handleClickMenu} />
-                            </Grid>
-                        </Grid>
-                    </CustomContainer>
+                        </Paper>
+
+                        {/* Table */}
+                        <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid #e5e7eb', overflow: 'hidden', bgcolor: '#fff' }}>
+                            <DocList data={data} setCPF={(cpf) => setCpfcnpj(cpf)} handleClick={handleClickMenu} />
+                        </Paper>
+                    </Container>
                     <Drawer anchor="left" open={open} onClose={handleClose}>
                         <CadastroTermosModal onClose={handleClose} />
                     </Drawer>

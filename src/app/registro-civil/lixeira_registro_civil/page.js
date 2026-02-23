@@ -3,92 +3,78 @@ import { Box, Button, Typography, Container, Paper } from "@mui/material"
 import { ArrowBack, DeleteOutline } from "@mui/icons-material"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { DocList } from "./tableLixeira"
+import { DocListCivil } from "../components/DocListCivil"
+import RegistroCivil from "@/services/registroCivil.service"
+import Loading from "@/Components/loading"
 import withAuth from "@/utils/withAuth"
 import { AuthProvider } from "@/context"
 import PrivateRoute from "@/utils/LayoutPerm"
-import Loading from "@/Components/loading"
-import ProtestService from "@/services/protest.service"
+import MenuOptionsFile from "@/Components/ModalOptionsTrash"
 import { useDispatch } from "react-redux"
 import { SET_ALERT } from "@/store/actions"
-import MenuOptionsFile from "@/Components/ModalOptionsTrash"
 
+const registroCivilSv = new RegistroCivil()
 
-const protestSv = new ProtestService()
-const LixeiraProtestos = () => {
-    const router = useRouter()
-    const [data, setData] = useState([])
-    const dispatch = useDispatch()
+const LixeiraRegistroCivil = () => {
     const [loading, setLoading] = useState(false)
+    const [rows, setRows] = useState([])
+    const [selectedId, setSelectedId] = useState(null)
     const [anchorEl, setAnchorEl] = useState(null)
+    const dispatch = useDispatch()
     const open = Boolean(anchorEl)
-    const [notation, setNotation] = useState("")
-    const handleClick = (event) => {
+    const router = useRouter()
+
+    const handleOpenMenuTrash = (event) => {
         setAnchorEl(event.currentTarget)
     }
-    const handleClose = () => {
+
+    const handleCloseMenuTrash = () => {
         setAnchorEl(null)
     }
 
-
-    const getFetchingFilesFromTrash = async () => {
+    const getData = async () => {
         try {
             setLoading(true)
-            const data = await protestSv.getProtestFromTrash()
-
-            setData(Object.values(data))
+            const data = await registroCivilSv.getTrash()
+            dispatch({ type: SET_ALERT, message: "Dados carregados com sucesso!", severity: "success", context: "file" })
+            setRows(Object.values(data))
         } catch (error) {
-            console.error("Erro ao buscar arquivos da lixeira!", error)
-            throw error;
-        }
-        finally {
+            dispatch({ type: SET_ALERT, message: "Erro ao carregar dados!", severity: "error", context: "file" })
+            console.error("Erro ao pegar arquivos!", error)
+        } finally {
             setLoading(false)
         }
     }
-    const handleRestoreFileTrash = async () => {
+
+    const handleRestoreFromTrash = async () => {
         try {
-            const data = await protestSv.restoreProtestFromTrash(notation)
-            dispatch({ type: SET_ALERT, message: "Arquivo restaurado com sucesso!", severity: "success", alertType: "file" })
+            await registroCivilSv.restoreById(selectedId)
+            dispatch({ type: SET_ALERT, message: "Arquivo restaurado com sucesso!", severity: "success", context: "file" })
+            getData()
         } catch (error) {
-            dispatch({type: SET_ALERT, message: error.msg, severity: "error", alertType: "file" })
-            console.error("Erro ao buscar arquivo", error)
-            throw error;
+            dispatch({ type: SET_ALERT, message: "Erro ao restaurar arquivo!", severity: "error", context: "file" })
+            console.error("Erro ao restaurar arquivo", error)
         }
     }
 
+    const handleDeleteFromTrash = async () => {
+        try {
+            await registroCivilSv.dropReal(selectedId)
+            dispatch({ type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", context: "file" })
+            getData()
+        } catch (error) {
+            console.error("Erro ao deletar arquivo!", error)
+            dispatch({ type: SET_ALERT, message: "Erro ao deletar arquivo!", severity: "error", context: "file" })
+        }
+    }
 
     useEffect(() => {
-        getFetchingFilesFromTrash()
+        getData()
     }, [])
-
-    const handleDeleteByNotation = async () => {
-        try {
-            setLoading(true)
-            const response = await protestSv.deleteProtestByNotation(notation,)
-            dispatch({type: SET_ALERT, message: "Arquivo deletado com sucesso!", severity: "success", alertType: "file" })
-        } catch (error) {
-            dispatch({type: SET_ALERT, message: error.msg, severity: "error", alertType: "file" })
-            console.error("Error ao deletar arquivo rgi!", error)
-            throw error;
-        }
-        finally {
-            setLoading(false)
-            getFetchingFilesFromTrash()
-        }
-    }
-
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    if (!isClient) return null;
-
 
     return loading ? <Loading /> : (
         <AuthProvider>
-            <PrivateRoute requiredPermissions={['Protesto']}>
+            <PrivateRoute requiredPermissions={['Registro Civil']}>
                 <Box sx={{ width: '100%', minHeight: '100vh', bgcolor: '#f5f7fa', pt: 12, pb: 6, px: 2 }}>
                     <Container maxWidth="lg">
                         {/* Header */}
@@ -111,10 +97,10 @@ const LixeiraProtestos = () => {
                                 </Box>
                                 <Box>
                                     <Typography variant="h4" fontWeight={700} color="#1a1a1a">
-                                        Lixeira - Protesto
+                                        Lixeira - Registro Civil
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        {data?.length || 0} {data?.length === 1 ? 'item encontrado' : 'itens encontrados'}
+                                        {rows?.length || 0} {rows?.length === 1 ? 'item encontrado' : 'itens encontrados'}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -125,8 +111,12 @@ const LixeiraProtestos = () => {
                             borderRadius: 3, border: '1px solid #e5e7eb',
                             overflow: 'hidden', bgcolor: '#fff'
                         }}>
-                            {data && data.length > 0 ? (
-                                <DocList data={data} handleClick={handleClick} setNotation={(e) => setNotation(e)} />
+                            {rows && rows.length > 0 ? (
+                                <DocListCivil
+                                    setSelectedId={(e) => setSelectedId(e)}
+                                    data={rows}
+                                    handleClick={handleOpenMenuTrash}
+                                />
                             ) : (
                                 <Box sx={{
                                     py: 10, display: 'flex', flexDirection: 'column',
@@ -146,14 +136,15 @@ const LixeiraProtestos = () => {
                 </Box>
 
                 <MenuOptionsFile
-                    handleDeleteFromTrash={handleDeleteByNotation}
-                    handleRestoreFromTrash={handleRestoreFileTrash}
+                    handleRestoreFromTrash={handleRestoreFromTrash}
+                    handleDeleteFromTrash={handleDeleteFromTrash}
                     anchorEl={anchorEl}
+                    handleClose={handleCloseMenuTrash}
                     open={open}
-                    handleClose={handleClose} />
+                />
             </PrivateRoute>
         </AuthProvider>
     )
 }
 
-export default withAuth(LixeiraProtestos)
+export default withAuth(LixeiraRegistroCivil)

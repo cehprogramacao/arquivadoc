@@ -1,17 +1,20 @@
 "use client"
 import {
     Box,
+    Button,
     Container,
     Drawer,
+    Grid,
+    Paper,
+    Stack,
     TextField,
     Typography
 } from '@mui/material';
-import { Buttons } from '@/Components/Button/Button';
+import Autocomplete from '@mui/material/Autocomplete';
+import { Description, Search } from '@mui/icons-material';
 import { ButtonLixeira } from '@/Components/ButtonLixeira';
 import { DocList } from '@/Components/List/DocList';
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals';
-import { Stack, Grid } from "@mui/material"
-import Autocomplete from '@mui/material/Autocomplete';
 import ModalList from '@/Components/Modals/ModalList';
 import { useEffect, useState } from 'react';
 import { CadastroModalRGI } from '@/Components/Modals/ModalCadastroRGI';
@@ -178,72 +181,103 @@ const PageRGI = () => {
     return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['RGI']}>
-
-                <Box sx={{ width: '100%', height: '100vh', py: 15 }}>
+                <Box sx={{ width: '100%', minHeight: '100vh', bgcolor: '#f5f7fa', pt: 12, pb: 6, px: 2 }}>
                     <Container maxWidth="lg">
-                        <Grid container spacing={3}>
+                        {/* Header */}
+                        <Box sx={{ mb: 4 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                                <Box sx={{
+                                    width: 56, height: 56, borderRadius: 3,
+                                    background: 'linear-gradient(135deg, #237117 0%, #1a5511 100%)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    boxShadow: '0 4px 14px rgba(35,113,23,0.3)'
+                                }}>
+                                    <Description sx={{ color: '#fff', fontSize: 28 }} />
+                                </Box>
+                                <Box>
+                                    <Typography variant="h4" fontWeight={700} color="#1a1a1a">
+                                        RGI
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {data?.length || 0} {data?.length === 1 ? 'registro encontrado' : 'registros encontrados'}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Box>
 
-                            <Grid item xs={12} textAlign="center">
-                                <Typography fontSize={40} fontWeight="bold">
-                                    RGI
-                                </Typography>
-                            </Grid>
-
-                            <Grid item xs={12} md={4}>
-                                <TextField
-                                    fullWidth
-                                    label="Buscar"
-                                    color="success"
-                                    value={value.value}
-                                    onChange={(e) => {
-                                        if (value.option?.label === "Prenotação") {
-                                            setValue({
-                                                ...value,
-                                                value: e.target.value.replace(/\D/g, '')
-                                            })
-                                        } else if (value.option?.label === "Apresentante") {
-                                            setValue({
-                                                ...value,
-                                                value: maskCpfCnpj(e.target.value)
-                                            })
-                                        } else {
-                                            setValue({ ...value, value: e.target.value })
+                        {/* Search Section */}
+                        <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e5e7eb', mb: 3, bgcolor: '#fff' }}>
+                            <Grid container spacing={2} alignItems="center">
+                                <Grid item xs={12} md={4}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Buscar"
+                                        color="success"
+                                        value={value.value}
+                                        onChange={(e) => {
+                                            if (value.option?.label === "Prenotação") {
+                                                setValue({
+                                                    ...value,
+                                                    value: e.target.value.replace(/\D/g, '')
+                                                })
+                                            } else if (value.option?.label === "Apresentante") {
+                                                setValue({
+                                                    ...value,
+                                                    value: maskCpfCnpj(e.target.value)
+                                                })
+                                            } else {
+                                                setValue({ ...value, value: e.target.value })
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <Autocomplete
+                                        size="small"
+                                        options={optionsFilter}
+                                        getOptionLabel={(o) => o.label}
+                                        onChange={(e, opt) =>
+                                            setValue({ option: opt, value: "" })
                                         }
-                                    }}
-                                />
+                                        renderInput={(params) => (
+                                            <TextField {...params} label="Buscar Por" color="success" />
+                                        )}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <Stack direction="row" spacing={1.5} justifyContent="flex-end">
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<Search />}
+                                            onClick={handleFilter}
+                                            sx={{
+                                                bgcolor: '#237117',
+                                                textTransform: 'none',
+                                                fontWeight: 600,
+                                                borderRadius: 2,
+                                                '&:hover': { bgcolor: '#1a5511' }
+                                            }}
+                                        >
+                                            Buscar
+                                        </Button>
+                                        {permissions[1]?.create_permission === 1 &&
+                                            <ButtonOpenModals onClick={handleOpenModalRGI} />}
+                                        {isAdmin === "1" &&
+                                            <ButtonLixeira href="/rgi/lixeira_rgi" />}
+                                    </Stack>
+                                </Grid>
                             </Grid>
+                        </Paper>
 
-                            <Grid item xs={12} md={4}>
-                                <Autocomplete
-                                    options={optionsFilter}
-                                    getOptionLabel={(o) => o.label}
-                                    onChange={(e, opt) =>
-                                        setValue({ option: opt, value: "" })
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField {...params} label="Buscar Por" color="success" />
-                                    )}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} md={4}>
-                                <Stack direction="row" spacing={3} justifyContent="center">
-                                    <Buttons title="Buscar" color="green" onClick={handleFilter} />
-                                    {permissions[1]?.create_permission === 1 &&
-                                        <ButtonOpenModals onClick={handleOpenModalRGI} />}
-                                    {isAdmin === "1" &&
-                                        <ButtonLixeira href="/rgi/lixeira_rgi" />}
-                                </Stack>
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <DocList
-                                    data={data}
-                                    setPrenotation={setPrenotation}
-                                    handleClick={handleClickMenu}
-                                />
-                            </Grid>
-                        </Grid>
+                        {/* Table */}
+                        <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid #e5e7eb', overflow: 'hidden', bgcolor: '#fff' }}>
+                            <DocList
+                                data={data}
+                                setPrenotation={setPrenotation}
+                                handleClick={handleClickMenu}
+                            />
+                        </Paper>
                     </Container>
 
                     <Drawer anchor="left" open={openModalRGI} onClose={handleCloseModalRGI}>

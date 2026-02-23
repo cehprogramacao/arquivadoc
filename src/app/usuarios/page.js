@@ -1,16 +1,14 @@
 "use client"
-import { ButtonLixeira } from "@/Components/ButtonLixeira"
-import { Autocomplete, Box, Button, Drawer, TextField, Typography, useTheme, useMediaQuery, Grid, Container } from "@mui/material"
+import { Box, Container, TextField, Typography, Grid, Paper, Stack, Button } from "@mui/material"
+import { PeopleOutline, Search } from "@mui/icons-material"
+import Autocomplete from "@mui/material/Autocomplete"
 import { useEffect, useState } from "react"
-import { Buttons } from "@/Components/Button/Button"
 import { ButtonOpenModals } from "@/Components/ButtonOpenModals"
 import Link from "next/link"
 import withIsAdmin from "@/utils/isAdmin"
-import CustomContainer from "@/Components/CustomContainer"
 import User from "@/services/user.service"
 import TableComponente, { UserTable } from "./tableUser"
 import Loading from "@/Components/loading"
-import SnackBar from "@/Components/SnackBar"
 import { AuthProvider } from "@/context"
 import withAuth from "@/utils/withAuth"
 import { useDispatch } from "react-redux"
@@ -204,90 +202,106 @@ const PageUsuarios = () => {
         <AuthProvider>
             <Box sx={{
                 width: '100%',
-                height: '100vh',
-                display: 'flex',
-                py: 15,
-                px: 3
+                minHeight: '100vh',
+                bgcolor: '#f5f7fa',
+                pt: 12,
+                pb: 6,
+                px: 2
             }}>
-                <Container maxWidth="xl">
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} >
+                <Container maxWidth="lg">
+                    {/* Header */}
+                    <Box sx={{ mb: 4 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
                             <Box sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center"
+                                width: 56, height: 56, borderRadius: 3,
+                                background: 'linear-gradient(135deg, #237117 0%, #1a5511 100%)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                boxShadow: '0 4px 14px rgba(35,113,23,0.3)'
                             }}>
-                                <Typography fontSize={30} fontWeight={'bold'} color={"black"}>
+                                <PeopleOutline sx={{ color: '#fff', fontSize: 28 }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="h4" fontWeight={700} color="#1a1a1a">
                                     Usuários
                                 </Typography>
-
+                                <Typography variant="body2" color="text.secondary">
+                                    {dataRows?.length || 0} {dataRows?.length === 1 ? 'usuário encontrado' : 'usuários encontrados'}
+                                </Typography>
                             </Box>
-                        </Grid>
-                        <Grid item xs={12} >
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} lg={5} md={5} sm={6}>
-                                    <TextField label="Buscar"
-                                        fullWidth
-                                        value={filter.userId}
-                                        onChange={(e) => setFilter({ ...filter, userId: e.target.value })}
+                        </Box>
+                    </Box>
+
+                    {/* Search Section */}
+                    <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e5e7eb', mb: 3, bgcolor: '#fff' }}>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={12} md={5}>
+                                <TextField
+                                    label="Buscar"
+                                    fullWidth
+                                    size="small"
+                                    value={filter.userId}
+                                    onChange={(e) => setFilter({ ...filter, userId: e.target.value })}
+                                    color="success"
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <Autocomplete
+                                    disablePortal
+                                    options={labels}
+                                    fullWidth
+                                    size="small"
+                                    autoHighlight
+                                    getOptionLabel={(option) => option.label}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            color="success"
+                                            label="Buscar Por"
+                                            onChange={(e, newValue) => setFilter({ ...filter, option: newValue.label })}
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <Stack direction="row" spacing={1.5} justifyContent="flex-end">
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<Search />}
+                                        onClick={handleFilterById}
                                         sx={{
-                                            '& input': {
-                                                color: 'success.main',
-                                            },
-                                        }} color="success" />
-                                </Grid>
-                                <Grid item xs={12} lg={5} md={5} sm={6}>
-                                    <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        options={labels}
-                                        fullWidth
-                                        // value={filter.option}
-                                        autoHighlight
-                                        getOptionLabel={(option) => option.label}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                color="success"
-                                                label="Buscar Por"
-                                                onChange={(e, newValue) => setFilter({ ...filter, option: newValue.label })}
-                                                sx={{
-                                                    color: "#237117",
-                                                    "& input": {
-                                                        color: "success.main",
-                                                    },
-                                                }}
-                                            />
-                                        )}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} lg={2} md={2} sm={12} >
-                                    <Box sx={{
-                                        display: 'flex',
-                                        width: '100%',
-                                        gap: "10px",
-                                        justifyContent: "center"
-                                    }}>
-                                        <Buttons color={'green'} title={'Buscar'} onClick={handleFilterById} />
-                                        <Link href={"/new-user"}>
-                                            <ButtonOpenModals />
-                                        </Link>
-                                    </Box>
-                                </Grid>
+                                            bgcolor: '#237117',
+                                            textTransform: 'none',
+                                            fontWeight: 600,
+                                            borderRadius: 2,
+                                            '&:hover': { bgcolor: '#1a5511' }
+                                        }}
+                                    >
+                                        Buscar
+                                    </Button>
+                                    <Link href={"/new-user"}>
+                                        <ButtonOpenModals />
+                                    </Link>
+                                </Stack>
                             </Grid>
                         </Grid>
-                        <Grid item xs={12} >
-                            <TableComponente
-                                data={dataRows}
-                                handleDeleteByID={handleDeleteByID}
-                                handleSetAdmin={handleSetAdmin}
-                                handleUnsetAdmin={handleUnsetAdmin}
-                                handleEnable={handleEnable}
-                                handleDisabled={handleDisabled}
-                            />
-                        </Grid>
-                    </Grid>
+                    </Paper>
+
+                    {/* Table */}
+                    <Paper elevation={0} sx={{
+                        borderRadius: 3,
+                        border: '1px solid #e5e7eb',
+                        overflow: 'hidden',
+                        bgcolor: '#fff'
+                    }}>
+                        <TableComponente
+                            data={dataRows}
+                            handleDeleteByID={handleDeleteByID}
+                            handleSetAdmin={handleSetAdmin}
+                            handleUnsetAdmin={handleUnsetAdmin}
+                            handleEnable={handleEnable}
+                            handleDisabled={handleDisabled}
+                        />
+                    </Paper>
                 </Container>
             </Box>
         </AuthProvider>

@@ -1,24 +1,37 @@
 "use client"
-import { Box, Drawer, TextField, Typography, Grid, Container } from '@mui/material'
-import { Buttons } from '@/Components/Button/Button'
+
+import {
+    Box,
+    Container,
+    Drawer,
+    TextField,
+    Typography,
+    Grid,
+    Autocomplete,
+    Paper,
+    Stack,
+    Button
+} from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+
+import { Gavel, Search } from '@mui/icons-material'
+
 import { ButtonLixeira } from '@/Components/ButtonLixeira'
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals'
-import Autocomplete from '@mui/material/Autocomplete'
 import { CadastroProtesto } from '@/Components/Modals/ModalCadastroProtesto'
-import { useEffect, useState } from 'react'
 import { CadastroPartes } from '@/Components/ModalsRegistration/ModalCadastroPartes'
-import CustomContainer from '@/Components/CustomContainer'
-import withAuth from '@/utils/withAuth'
+import { DocList } from './components/TableProtest'
+import ModalList from './components/ModalPDF'
+import MenuOptionsFile from '@/Components/MenuPopUp'
+import Loading from '@/Components/loading'
+
+import ProtestService from '@/services/protest.service'
 import { AuthProvider, useAuth } from '@/context'
 import PrivateRoute from '@/utils/LayoutPerm'
-import { DocList } from './components/TableProtest'
-import SnackBar from '@/Components/SnackBar'
-import ProtestService from '@/services/protest.service'
-import Loading from '@/Components/loading'
-import MenuOptionsFile from '@/Components/MenuPopUp'
-import { useDispatch } from 'react-redux'
+import withAuth from '@/utils/withAuth'
+
 import { SET_ALERT } from '@/store/actions'
-import ModalList from './components/ModalPDF'
 
 const options = [
     { label: 'Apontamento' },
@@ -184,114 +197,151 @@ const PageProtesto = () => {
     return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Protesto']}>
-                <Box sx={{ width: '100%', height: '100vh', py: 15, px: 3, mb: 10 }}>
-                    <Container maxWidth="xl" >
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} textAlign="center">
-                                <Typography fontSize={40} fontWeight="bold">
+                <Box sx={{ width: '100%', minHeight: '100vh', bgcolor: '#f5f7fa', pt: 12, pb: 6, px: 2 }}>
+                    <Container maxWidth="lg">
+                        {/* Header */}
+                        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
+                            <Box
+                                sx={{
+                                    width: 56,
+                                    height: 56,
+                                    borderRadius: 3,
+                                    background: 'linear-gradient(135deg, #237117 0%, #2e9e1f 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    boxShadow: '0 4px 14px rgba(35,113,23,0.3)'
+                                }}
+                            >
+                                <Gavel sx={{ color: '#fff', fontSize: 30 }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="h4" fontWeight={700}>
                                     Protestos
                                 </Typography>
-                            </Grid>
+                                <Typography variant="body2" color="text.secondary">
+                                    {data.length} registros encontrados
+                                </Typography>
+                            </Box>
+                        </Stack>
 
-                            {/* FILTROS */}
-                            <Grid item xs={12} lg={5}>
-                                <TextField
-                                    label="Buscar"
-                                    value={option.value}
-                                    fullWidth
-                                    disabled={!option.option}
-                                    onChange={(e) =>
-                                        setOption((prev) => ({
-                                            ...prev,
-                                            value: e.target.value
-                                        }))
-                                    }
-                                    color="success"
-                                    helperText={
-                                        !option.option
-                                            ? "Selecione primeiro o tipo de busca"
-                                            : ""
-                                    }
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} lg={4}>
-                                <Autocomplete
-                                    options={options}
-                                    getOptionLabel={(opt) => opt.label}
-                                    onChange={(e, value) =>
-                                        setOption({
-                                            option: value?.label || null,
-                                            value: ""
-                                        })
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField {...params} label="Buscar por" color="success" />
-                                    )}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} lg={3}>
-                                <Box display="flex" gap={2} justifyContent="center">
-                                    <Buttons
-                                        color="green"
-                                        title="Buscar"
-                                        onClick={handleSearchProtest}
-                                        disabled={!option.option || !option.value}
+                        {/* Search */}
+                        <Paper
+                            elevation={0}
+                            sx={{ p: 3, borderRadius: 3, border: '1px solid #e5e7eb', mb: 3, bgcolor: '#fff' }}
+                        >
+                            <Grid container spacing={2} alignItems="flex-start">
+                                <Grid item xs={12} md={5}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Buscar"
+                                        value={option.value}
+                                        disabled={!option.option}
+                                        onChange={(e) =>
+                                            setOption((prev) => ({
+                                                ...prev,
+                                                value: e.target.value
+                                            }))
+                                        }
+                                        color="success"
+                                        helperText={
+                                            !option.option
+                                                ? "Selecione primeiro o tipo de busca"
+                                                : ""
+                                        }
                                     />
+                                </Grid>
 
-                                    {permissions[0]?.create_permission === 1 && (
-                                        <ButtonOpenModals onClick={handleOpenModalCadastro} />
-                                    )}
+                                <Grid item xs={12} md={4}>
+                                    <Autocomplete
+                                        size="small"
+                                        options={options}
+                                        getOptionLabel={(opt) => opt.label}
+                                        onChange={(e, value) =>
+                                            setOption({
+                                                option: value?.label || null,
+                                                value: ""
+                                            })
+                                        }
+                                        renderInput={(params) => (
+                                            <TextField {...params} label="Buscar por" color="success" />
+                                        )}
+                                    />
+                                </Grid>
 
-                                    {isAdmin === "1" && (
-                                        <ButtonLixeira href="/protest/lixeira_protesto" />
-                                    )}
-                                </Box>
+                                <Grid item xs={12} md={3}>
+                                    <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<Search />}
+                                            onClick={handleSearchProtest}
+                                            disabled={!option.option || !option.value}
+                                            sx={{
+                                                bgcolor: '#237117',
+                                                textTransform: 'none',
+                                                fontWeight: 600,
+                                                borderRadius: 2,
+                                                '&:hover': { bgcolor: '#1a5511' }
+                                            }}
+                                        >
+                                            Buscar
+                                        </Button>
+                                        {permissions[0]?.create_permission === 1 && (
+                                            <ButtonOpenModals onClick={handleOpenModalCadastro} />
+                                        )}
+                                        {isAdmin === "1" && (
+                                            <ButtonLixeira href="/protest/lixeira_protesto" />
+                                        )}
+                                    </Stack>
+                                </Grid>
                             </Grid>
+                        </Paper>
 
-                            {/* LISTA */}
-                            <Grid item xs={12}>
-                                <DocList
-                                    data={data}
-                                    handleClick={handleOpenPopUp}
-                                    setNotation={(e) => setNotation(e)}
-                                />
-                            </Grid>
-                        </Grid>
+                        {/* Table */}
+                        <Paper
+                            elevation={0}
+                            sx={{ borderRadius: 3, border: '1px solid #e5e7eb', overflow: 'hidden', bgcolor: '#fff' }}
+                        >
+                            <DocList
+                                data={data}
+                                handleClick={handleOpenPopUp}
+                                setNotation={(e) => setNotation(e)}
+                            />
+                        </Paper>
                     </Container>
-
-                    {/* MODAIS */}
-                    <Drawer anchor="left" open={openModalCadastro} onClose={handleCloseModalCadastro}>
-                        <CadastroProtesto
-                            onClickPartes={handleOpenModalPartes}
-                            onClose={handleCloseModalCadastro}
-                        />
-                    </Drawer>
-
-                    <CadastroPartes open={openModalPartes} onClose={handleCloseModalPartes} />
-
-                    <ModalList
-                        open={openModalListFile}
-                        onClose={handleCloseModalFile}
-                        data={dataFile}
-                        handleDeleteByNotation={handleDeleteByNotation}
-                        notation={notation}
-                        deletePerm={permissions[0]?.delete_permission}
-                        editPerm={permissions[0]?.edit}
-                    />
-
-                    <MenuOptionsFile
-                        handleDelete={handleDeleteByNotation}
-                        handleOpenModalPDF={handleOpenModalFile}
-                        anchorEl={anchorEl}
-                        handleClose={handleClosePopUp}
-                        type={notation}
-                        deletePerm={permissions[0]?.delete_permission}
-                        editPerm={permissions[0]?.edit}
-                        open={open}
-                    />
                 </Box>
+
+                {/* MODAIS */}
+                <Drawer anchor="left" open={openModalCadastro} onClose={handleCloseModalCadastro}>
+                    <CadastroProtesto
+                        onClickPartes={handleOpenModalPartes}
+                        onClose={handleCloseModalCadastro}
+                    />
+                </Drawer>
+
+                <CadastroPartes open={openModalPartes} onClose={handleCloseModalPartes} />
+
+                <ModalList
+                    open={openModalListFile}
+                    onClose={handleCloseModalFile}
+                    data={dataFile}
+                    handleDeleteByNotation={handleDeleteByNotation}
+                    notation={notation}
+                    deletePerm={permissions[0]?.delete_permission}
+                    editPerm={permissions[0]?.edit}
+                />
+
+                <MenuOptionsFile
+                    handleDelete={handleDeleteByNotation}
+                    handleOpenModalPDF={handleOpenModalFile}
+                    anchorEl={anchorEl}
+                    handleClose={handleClosePopUp}
+                    type={notation}
+                    deletePerm={permissions[0]?.delete_permission}
+                    editPerm={permissions[0]?.edit}
+                    open={open}
+                />
             </PrivateRoute>
         </AuthProvider>
     )

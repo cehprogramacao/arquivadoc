@@ -21,7 +21,8 @@ import {
     People,
     PersonAdd,
     Person,
-    Inventory2
+    Inventory2,
+    FamilyRestroom
 } from '@mui/icons-material';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { ModalOptions } from '../Modals/modalOptions/modalOptions';
@@ -42,6 +43,7 @@ const MENU_ITEMS = [
         label: 'Recentes',
         color: '#4CAF50',
         alwaysShow: true,
+        module: 'shared',
     },
     {
         href: '/notes',
@@ -49,6 +51,7 @@ const MENU_ITEMS = [
         label: 'Notas',
         color: '#FF9800',
         permissionIndex: 6,
+        module: 'notas',
     },
     {
         href: '/rgi',
@@ -56,6 +59,7 @@ const MENU_ITEMS = [
         label: 'RGI',
         color: '#2196F3',
         permissionIndex: 1,
+        module: 'notas',
     },
     {
         href: '/protest',
@@ -63,6 +67,7 @@ const MENU_ITEMS = [
         label: 'Protestos',
         color: '#F44336',
         permissionIndex: 0,
+        module: 'notas',
     },
     {
         href: '/calling',
@@ -70,6 +75,7 @@ const MENU_ITEMS = [
         label: 'Ofícios',
         color: '#9C27B0',
         permissionIndex: 4,
+        module: 'notas',
     },
     {
         href: '/rtd',
@@ -77,6 +83,7 @@ const MENU_ITEMS = [
         label: 'RTD',
         color: '#00BCD4',
         permissionIndex: 2,
+        module: 'notas',
     },
     {
         href: '/rpj',
@@ -84,6 +91,7 @@ const MENU_ITEMS = [
         label: 'RPJ',
         color: '#3F51B5',
         permissionIndex: 3,
+        module: 'notas',
     },
     {
         href: '/autograph-card',
@@ -91,6 +99,7 @@ const MENU_ITEMS = [
         label: 'Cartões',
         color: '#E91E63',
         permissionIndex: 5,
+        module: 'notas',
     },
     {
         href: '/termos',
@@ -98,6 +107,7 @@ const MENU_ITEMS = [
         label: 'Termos',
         color: '#795548',
         permissionIndex: 5,
+        module: 'notas',
     },
     {
         href: '/solicitantes',
@@ -105,6 +115,15 @@ const MENU_ITEMS = [
         label: 'Solicitantes',
         color: '#607D8B',
         permissionIndex: 6,
+        module: 'notas',
+    },
+    {
+        href: '/registro-civil',
+        icon: FamilyRestroom,
+        label: 'Registro Civil',
+        color: '#8E24AA',
+        permissionKey: 'Registro Civil',
+        module: 'registro_civil',
     },
     {
         href: '/inventario',
@@ -112,6 +131,7 @@ const MENU_ITEMS = [
         label: 'Inventario',
         color: '#247117',
         permissionKey: 'Inventario',
+        module: 'shared',
     },
     {
         href: '/customers',
@@ -119,21 +139,28 @@ const MENU_ITEMS = [
         label: 'Cadastros',
         color: '#009688',
         alwaysShow: true,
+        module: 'shared',
     }
 ];
 
 // ============================================================================
 // COMPONENTE: MENU ITEM
 // ============================================================================
-const MenuItem = ({ item, isActive, permissions, isAdmin }) => {
-    const { href, icon: IconComponent, label, color, permissionIndex, permissionKey, alwaysShow } = item;
+const MenuItem = ({ item, isActive, permissions, isAdmin, cargoServentia }) => {
+    const { href, icon: IconComponent, label, color, permissionIndex, permissionKey, alwaysShow, module } = item;
 
     const shouldShow = useMemo(() => {
+        // Filtro por módulo (cargo_serventia)
+        if (module && module !== 'shared' && cargoServentia !== 'geral') {
+            if (module === 'notas' && cargoServentia !== 'registro_imoveis') return false;
+            if (module === 'registro_civil' && cargoServentia !== 'registro_civil') return false;
+        }
+
         if (alwaysShow) return true;
         if (permissionKey) return permissions?.some(p => p?.public_name === permissionKey && p?.view === 1);
         if (permissionIndex !== undefined) return permissions[permissionIndex]?.view === 1;
         return isAdmin;
-    }, [alwaysShow, permissionIndex, permissionKey, permissions, isAdmin]);
+    }, [alwaysShow, permissionIndex, permissionKey, permissions, isAdmin, cargoServentia, module]);
 
     if (!shouldShow) return null;
 
@@ -231,7 +258,7 @@ export const Sidebar = () => {
     const router = useRouter();
     const pathname = usePathname();
     const dispatch = useDispatch();
-    const { permissions } = useAuth();
+    const { permissions, cargoServentia } = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -249,6 +276,7 @@ export const Sidebar = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("isAdmin");
+        localStorage.removeItem("cargoServentia");
         dispatch({ type: SET_LOGOUT });
         router.push("/");
     }, [dispatch, router]);
@@ -335,6 +363,7 @@ export const Sidebar = () => {
                         isActive={pathname === item.href}
                         permissions={permissions}
                         isAdmin={isAdmin}
+                        cargoServentia={cargoServentia}
                     />
                 ))}
             </Box>

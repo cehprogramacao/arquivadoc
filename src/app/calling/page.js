@@ -2,18 +2,22 @@
 
 import {
     Box,
+    Container,
     Drawer,
     TextField,
     Typography,
     Grid,
-    Autocomplete
+    Autocomplete,
+    Paper,
+    Stack,
+    Button
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
-import CustomContainer from '@/Components/CustomContainer'
+import { MailOutline, Search } from '@mui/icons-material'
+
 import Loading from '@/Components/loading'
-import { Buttons } from '@/Components/Button/Button'
 import { ButtonLixeira } from '@/Components/ButtonLixeira'
 import { ButtonOpenModals } from '@/Components/ButtonOpenModals'
 import { CadastroOficio } from '@/Components/Modals/ModalCadastroOficio'
@@ -162,77 +166,116 @@ const PageOficio = () => {
     return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Ofícios']}>
-                <Box sx={{ width: "100%", height: "100vh", py: 13, px: 2 }}>
-                    <CustomContainer>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Typography align="center" fontSize={40} fontWeight="bold">
+                <Box sx={{ width: '100%', minHeight: '100vh', bgcolor: '#f5f7fa', pt: 12, pb: 6, px: 2 }}>
+                    <Container maxWidth="lg">
+                        {/* Header */}
+                        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
+                            <Box
+                                sx={{
+                                    width: 56,
+                                    height: 56,
+                                    borderRadius: 3,
+                                    background: 'linear-gradient(135deg, #237117 0%, #2e9e1f 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    boxShadow: '0 4px 14px rgba(35,113,23,0.3)'
+                                }}
+                            >
+                                <MailOutline sx={{ color: '#fff', fontSize: 30 }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="h4" fontWeight={700}>
                                     Ofício
                                 </Typography>
-                            </Grid>
+                                <Typography variant="body2" color="text.secondary">
+                                    {callingData.length} registros encontrados
+                                </Typography>
+                            </Box>
+                        </Stack>
 
-                            {/* FILTROS */}
-                            <Grid item xs={12}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} md={5}>
-                                        <TextField
-                                            fullWidth
-                                            label={
-                                                selectOption.option
-                                                    ? `Buscar por ${selectOption.option.label}`
-                                                    : "Selecione o tipo de busca"
-                                            }
-                                            disabled={!selectOption.option}
-                                            type={selectOption.option?.label === "Número" ? "number" : "text"}
-                                            value={selectOption.value}
-                                            onChange={(e) =>
-                                                setSelectOption((state) => ({
-                                                    ...state,
-                                                    value: e.target.value
-                                                }))
-                                            }
-                                            color="success"
-                                        />
-                                    </Grid>
+                        {/* Search */}
+                        <Paper
+                            elevation={0}
+                            sx={{ p: 3, borderRadius: 3, border: '1px solid #e5e7eb', mb: 3, bgcolor: '#fff' }}
+                        >
+                            <Grid container spacing={2} alignItems="center">
+                                <Grid item xs={12} md={5}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label={
+                                            selectOption.option
+                                                ? `Buscar por ${selectOption.option.label}`
+                                                : "Selecione o tipo de busca"
+                                        }
+                                        disabled={!selectOption.option}
+                                        type={selectOption.option?.label === "Número" ? "number" : "text"}
+                                        value={selectOption.value}
+                                        onChange={(e) =>
+                                            setSelectOption((state) => ({
+                                                ...state,
+                                                value: e.target.value
+                                            }))
+                                        }
+                                        color="success"
+                                    />
+                                </Grid>
 
-                                    <Grid item xs={12} md={4}>
-                                        <Autocomplete
-                                            options={labels}
-                                            getOptionLabel={(option) => option.label}
-                                            value={selectOption.option}
-                                            onChange={(e, value) =>
-                                                setSelectOption({ option: value, value: "" })
-                                            }
-                                            renderInput={(params) => (
-                                                <TextField {...params} label="Buscar Por" color="success" />
-                                            )}
-                                        />
-                                    </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <Autocomplete
+                                        size="small"
+                                        options={labels}
+                                        getOptionLabel={(option) => option.label}
+                                        value={selectOption.option}
+                                        onChange={(e, value) =>
+                                            setSelectOption({ option: value, value: "" })
+                                        }
+                                        renderInput={(params) => (
+                                            <TextField {...params} label="Buscar Por" color="success" />
+                                        )}
+                                    />
+                                </Grid>
 
-                                    <Grid item xs={12} md={3}>
-                                        <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
-                                            <Buttons title="Buscar" color="green" onClick={handleFilterByNumberOrEntity} />
-                                            {permissions[4]?.create_permission === 1 && (
-                                                <ButtonOpenModals onClick={() => setOpen(true)} />
-                                            )}
-                                            {isAdmin === "1" && (
-                                                <ButtonLixeira href="/calling/lixeira_oficios" />
-                                            )}
-                                        </Box>
-                                    </Grid>
+                                <Grid item xs={12} md={3}>
+                                    <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<Search />}
+                                            onClick={handleFilterByNumberOrEntity}
+                                            sx={{
+                                                bgcolor: '#237117',
+                                                textTransform: 'none',
+                                                fontWeight: 600,
+                                                borderRadius: 2,
+                                                '&:hover': { bgcolor: '#1a5511' }
+                                            }}
+                                        >
+                                            Buscar
+                                        </Button>
+                                        {permissions[4]?.create_permission === 1 && (
+                                            <ButtonOpenModals onClick={() => setOpen(true)} />
+                                        )}
+                                        {isAdmin === "1" && (
+                                            <ButtonLixeira href="/calling/lixeira_oficios" />
+                                        )}
+                                    </Stack>
                                 </Grid>
                             </Grid>
+                        </Paper>
 
-                            {/* LISTA */}
-                            <Grid item xs={12}>
-                                <DocCalling
-                                    data={callingData}
-                                    setNumber={setNumber}
-                                    handleClick={handleClickMenu}
-                                />
-                            </Grid>
-                        </Grid>
-                    </CustomContainer>
+                        {/* Table */}
+                        <Paper
+                            elevation={0}
+                            sx={{ borderRadius: 3, border: '1px solid #e5e7eb', overflow: 'hidden', bgcolor: '#fff' }}
+                        >
+                            <DocCalling
+                                data={callingData}
+                                setNumber={setNumber}
+                                handleClick={handleClickMenu}
+                            />
+                        </Paper>
+                    </Container>
                 </Box>
 
                 {/* MODAIS */}

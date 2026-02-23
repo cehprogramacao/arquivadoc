@@ -8,6 +8,7 @@ const user = new User();
 
 export const AuthProvider = ({ children }) => {
     const [permissions, setPermissions] = useState([]);
+    const [cargoServentia, setCargoServentia] = useState('geral');
 
 
 
@@ -17,6 +18,8 @@ export const AuthProvider = ({ children }) => {
                 const data = await user.getUser();
                 console.log(data)
                 await updatePermissions(data.permissions)
+                const cargo = data.user?.[0]?.cargo_serventia || localStorage.getItem('cargoServentia') || 'geral';
+                setCargoServentia(cargo);
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário!", error);
                 throw error;
@@ -28,7 +31,7 @@ export const AuthProvider = ({ children }) => {
         setPermissions(newPermissions);
     };
     return (
-        <AuthContext.Provider value={{ permissions, updatePermissions }}>
+        <AuthContext.Provider value={{ permissions, updatePermissions, cargoServentia }}>
             {children}
         </AuthContext.Provider>
     );
