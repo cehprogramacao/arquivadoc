@@ -178,6 +178,29 @@ const PageRPJ = () => {
         }
     };
 
+    const handleDeleteByNotation = async () => {
+        try {
+            const result = await rpjSv.deleteRPJByNotation(notation)
+            dispatch({
+                type: SET_ALERT,
+                message: "Documento deletado com sucesso!",
+                severity: "success",
+                alertType: "file"
+            })
+        } catch (error) {
+            dispatch({
+                type: SET_ALERT,
+                message: "Error ao deletar documento!",
+                severity: "success",
+                alertType: "file"
+            })
+            console.error(error)
+        }
+        finally {
+            window.location.reload()
+        }
+    }
+
     /* ============================
        INIT
     ============================ */
@@ -226,8 +249,8 @@ const PageRPJ = () => {
                                             option.option === "Prenotação"
                                                 ? "Buscar por Prenotação"
                                                 : option.option === "Apresentante"
-                                                ? "Buscar por CPF ou CNPJ"
-                                                : "Selecione o tipo de busca"
+                                                    ? "Buscar por CPF ou CNPJ"
+                                                    : "Selecione o tipo de busca"
                                         }
                                         disabled={!option.option}
                                         value={option.value}
@@ -296,6 +319,7 @@ const PageRPJ = () => {
                         onClose={handleCloseModalListFilePDF}
                         deletePerm={permissions[3]?.delete_permission}
                         editPerm={permissions[3]?.edit}
+                        handleDeleteByNotation={handleDeleteByNotation}
                     />
 
                     <Drawer anchor="left" open={openModalCadastroRPJ} onClose={handleCloseModalCadastroRPJ}>
@@ -311,6 +335,7 @@ const PageRPJ = () => {
                     type={notation}
                     handleClose={handleCloseMenuOptions}
                     handleOpenModalPDF={handleOpenModalListFilePDF}
+                    handleDelete={handleDeleteByNotation}
                 />
             </PrivateRoute>
         </AuthProvider>

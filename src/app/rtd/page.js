@@ -178,7 +178,7 @@ const PageRTD = () => {
         }
     };
 
-     const handleOpenModalListFilePDF = async () => {
+    const handleOpenModalListFilePDF = async () => {
         try {
             setOpenModalListFilePDF(true);
             const result = await rtdSv.getRTDByNotation(notation);
@@ -187,6 +187,30 @@ const PageRTD = () => {
             console.error(error);
         }
     };
+
+    const handleDeleteByNotation = async (notation) => {
+        try {
+            const result = await rtdSv.deleteRTDByNotation(notation)
+            dispatch({
+                type: SET_ALERT,
+                message: "Documento deletado com sucesso!",
+                severity: "success",
+                alertType: "file"
+            })
+        } catch (error) {
+            dispatch({
+                type: SET_ALERT,
+                message: "error ao deletar documento!",
+                severity: "error",
+                alertType: "file"
+            })
+            console.error(error);
+
+        }
+        finally {
+            window.location.reload()
+        }
+    }
 
     useEffect(() => {
         getAllFilesRTD();
@@ -257,8 +281,8 @@ const PageRTD = () => {
                                         option.option === "Prenotação"
                                             ? "Buscar por Prenotação"
                                             : option.option === "Apresentante"
-                                            ? "Buscar por CPF ou CNPJ"
-                                            : "Selecione o tipo de busca"
+                                                ? "Buscar por CPF ou CNPJ"
+                                                : "Selecione o tipo de busca"
                                     }
                                     fullWidth
                                     size="small"
@@ -321,6 +345,7 @@ const PageRTD = () => {
                         onClose={() => setOpenModalListFilePDF(false)}
                         deletePerm={permissions[2]?.delete_permission}
                         editPerm={permissions[2]?.edit}
+                        handleDeleteByNotation={handleDeleteByNotation}
                     />
 
                     <Drawer
@@ -342,6 +367,8 @@ const PageRTD = () => {
                         type={notation}
                         handleClose={() => setAnchorEl(null)}
                         handleOpenModalPDF={handleOpenModalListFilePDF}
+                        handleDelete={handleDeleteByNotation}
+
                     />
                 </Box>
             </PrivateRoute>

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -89,23 +89,45 @@ const user = new User();
 const numberMaskEstruct = '(99) 99999-9999';
 const steps = ['Dados do Usuário', 'Permissões'];
 
+const CARGO_GROUP_FILTER = {
+    registro_imoveis: ['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofícios', 'Notas'],
+    registro_civil: ['Registro Civil'],
+};
+
 const AddUser = () => {
     const [numberMask, setNumberMask] = useState(numberMaskEstruct);
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [serviceGroups, setServiceGroups] = useState([]);
     const [userData, setUserData] = useState({
         name: '',
         email: '',
         phone: '',
         password: '',
         cargo_serventia: 'geral',
-        permissions: Array(7).fill().map(() => Array(4).fill(0)),
+        permissions: [],
     });
 
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
+
+    useEffect(() => {
+        const fetchGroups = async () => {
+            try {
+                const groups = await user.getServiceGroups();
+                setServiceGroups(groups);
+                setUserData(prev => ({
+                    ...prev,
+                    permissions: Array(groups.length).fill().map(() => Array(4).fill(0)),
+                }));
+            } catch (error) {
+                console.error('Erro ao buscar grupos de serviço:', error);
+            }
+        };
+        fetchGroups();
+    }, []);
 
     const validateEmail = (email) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -149,6 +171,16 @@ const AddUser = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    const getFilteredGroups = () => {
+        const allowedNames = CARGO_GROUP_FILTER[userData.cargo_serventia];
+        if (!allowedNames) {
+            return serviceGroups.map((g, i) => ({ ...g, originalIndex: i }));
+        }
+        return serviceGroups
+            .map((g, i) => ({ ...g, originalIndex: i }))
+            .filter(g => allowedNames.includes(g.public_name));
+    };
+
     const handleCheckedPermission = (permIndex, checkboxIndex) => {
         const newPermissions = userData.permissions.map((perm, index) =>
             index === permIndex ? perm.map((value, cIndex) =>
@@ -161,10 +193,24 @@ const AddUser = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setUserData({
-            ...userData,
-            [name]: value,
-        });
+
+        if (name === 'cargo_serventia') {
+            const allowedNames = CARGO_GROUP_FILTER[value];
+            if (allowedNames) {
+                const newPermissions = userData.permissions.map((perm, i) => {
+                    const group = serviceGroups[i];
+                    if (group && !allowedNames.includes(group.public_name)) {
+                        return [0, 0, 0, 0];
+                    }
+                    return perm;
+                });
+                setUserData({ ...userData, cargo_serventia: value, permissions: newPermissions });
+            } else {
+                setUserData({ ...userData, cargo_serventia: value });
+            }
+        } else {
+            setUserData({ ...userData, [name]: value });
+        }
 
         if (errors[name]) {
             setErrors({ ...errors, [name]: '' });
@@ -449,8 +495,11 @@ const AddUser = () => {
                                                             size="small"
                                                             variant="contained"
                                                             onClick={() => {
-                                                                const allPermissions = Array(7).fill().map(() => Array(4).fill(1));
-                                                                setUserData({ ...userData, permissions: allPermissions });
+                                                                const newPermissions = [...userData.permissions.map(p => [...p])];
+                                                                getFilteredGroups().forEach(g => {
+                                                                    newPermissions[g.originalIndex] = [1, 1, 1, 1];
+                                                                });
+                                                                setUserData({ ...userData, permissions: newPermissions });
                                                             }}
                                                             sx={{
                                                                 background: "linear-gradient(135deg, #237117 0%, #2d8b1f 100%)",
@@ -472,8 +521,11 @@ const AddUser = () => {
                                                             size="small"
                                                             variant="outlined"
                                                             onClick={() => {
-                                                                const noPermissions = Array(7).fill().map(() => Array(4).fill(0));
-                                                                setUserData({ ...userData, permissions: noPermissions });
+                                                                const newPermissions = [...userData.permissions.map(p => [...p])];
+                                                                getFilteredGroups().forEach(g => {
+                                                                    newPermissions[g.originalIndex] = [0, 0, 0, 0];
+                                                                });
+                                                                setUserData({ ...userData, permissions: newPermissions });
                                                             }}
                                                             sx={{
                                                                 borderColor: "#237117",
@@ -522,9 +574,9 @@ const AddUser = () => {
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
-                                                        {['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofícios', 'Cadastros', 'Notas'].map((permission, permIndex) => (
+                                                        {getFilteredGroups().map((group) => (
                                                             <TableRow
-                                                                key={permission}
+                                                                key={group.id}
                                                                 sx={{
                                                                     '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' },
                                                                     '&:hover': { backgroundColor: '#e8f5e9' },
@@ -539,9 +591,9 @@ const AddUser = () => {
                                                                     }}
                                                                     align="center"
                                                                 >
-                                                                    {permission}
+                                                                    {group.public_name}
                                                                 </TableCell>
-                                                                {userData.permissions[permIndex].map((value, checkboxIndex) => (
+                                                                {(userData.permissions[group.originalIndex] || [0,0,0,0]).map((value, checkboxIndex) => (
                                                                     <TableCell key={checkboxIndex} align="center">
                                                                         <Tooltip
                                                                             title={value === 1 ? "Clique para remover" : "Clique para conceder"}
@@ -550,7 +602,7 @@ const AddUser = () => {
                                                                             <Checkbox
                                                                                 color='success'
                                                                                 checked={value === 1}
-                                                                                onChange={() => handleCheckedPermission(permIndex, checkboxIndex)}
+                                                                                onChange={() => handleCheckedPermission(group.originalIndex, checkboxIndex)}
                                                                                 icon={<Box sx={{
                                                                                     width: 24,
                                                                                     height: 24,

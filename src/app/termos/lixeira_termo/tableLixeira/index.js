@@ -1,103 +1,144 @@
-import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
+import React from "react";
+import {
+    Grid,
+    Card,
+    CardContent,
+    Typography,
+    Box,
+    Chip,
+    Button,
+    alpha,
+    Divider
+} from "@mui/material";
+import { FileText, User, Hash, Archive, CreditCard } from "lucide-react";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#E9E9E9",
-    color: theme.palette.common.black,
-    fontWeight: 'bold',
-    position: 'sticky',
-    top: 0,
-    zIndex: 1,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-  padding: '10px 30px' 
-}));
+const EmptyState = () => (
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 8, px: 2 }}>
+        <Box sx={{
+            width: 80, height: 80, borderRadius: "50%",
+            backgroundColor: alpha("#ef5350", 0.1),
+            display: "flex", alignItems: "center", justifyContent: "center", mb: 2
+        }}>
+            <FileText size={40} color="#ef5350" />
+        </Box>
+        <Typography variant="h6" color="text.secondary" gutterBottom>
+            Nenhum documento na lixeira
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+            Itens excluidos aparecerao aqui
+        </Typography>
+    </Box>
+);
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
+const InfoRow = ({ icon: Icon, label, value }) => (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1, py: 0.3 }}>
+        <Box sx={{
+            width: 24, height: 24, borderRadius: 0.75,
+            backgroundColor: alpha("#ef5350", 0.08),
+            display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+            <Icon size={12} color="#ef5350" />
+        </Box>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography variant="caption" color="text.secondary" sx={{ display: "block", lineHeight: 1.1, fontSize: "0.65rem" }}>
+                {label}
+            </Typography>
+            <Typography variant="body2" fontWeight={500} sx={{
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.8rem"
+            }}>
+                {value || "-"}
+            </Typography>
+        </Box>
+    </Box>
+);
 
-export const LixeiraTable = ({ data, onClick }) => {
- 
-  
-  
-  
+export const LixeiraTable = ({ data = [], onClick }) => {
+    if (!data || data.length === 0) return <EmptyState />;
 
-  return (
-    <TableContainer component={Paper} sx={{ maxWidth: '1200px',marginTop: '30px' }}>
-      <Table sx={{ maxWidth: '100%' }} >
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Número</StyledTableCell>
-            <StyledTableCell align='center'>Caixa</StyledTableCell>
-            <StyledTableCell align='center'>Parte</StyledTableCell>
-            <StyledTableCell align='center'>Cartão</StyledTableCell>
-            <StyledTableCell align='right'>Excluir</StyledTableCell>
-            <StyledTableCell align='right'>Restaurar</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody sx={{ maxHeight: '400px', overflowY: 'auto', }}>
-          {data.map((row, index) => (
-            <StyledTableRow key={index}>
-              <StyledTableCell align='left'>{row.numero}</StyledTableCell>
-              <StyledTableCell align='center'>{row.caixa}</StyledTableCell>
-              <StyledTableCell align='center' >{row.parte}</StyledTableCell>
-              <StyledTableCell align='center'>{row.cartao}</StyledTableCell>
-              <StyledTableCell align='right'>
-                <Button sx={{
-                  fontSize: '15px',
-                  textTransform: 'none',
-                  left: '12px',
-                  color: 'black',
-                  background: 'transparent',
-                  border: '1px solid #EA1010',
-                  color: '#EA1010',
-                  ":hover": {
-                    background: '#EA1010',
-                    color: '#fff'
-                  }
-                }} onClick={() => onClick(row.id)}>
-                  Excluir
-                </Button>
-              </StyledTableCell>
-              <StyledTableCell align='right'>
-                <Button sx={{
-                  fontSize: '15px',
-                  textTransform: 'none',
-                  left: '14px',
-                  color: 'black',
-                  background: 'transparent',
-                  border: '1px solid #0DCAF0',
-                  color: '#0DCAF0',
-                  ":hover": {
-                    background: '#0DCAF0',
-                    color: '#fff'
-                  }
-                }}>
-                  Restaurar
-                </Button>
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
+    return (
+        <Box sx={{ p: 2 }}>
+            <Grid container spacing={2} sx={{
+                maxHeight: "550px", overflowY: "auto",
+                "&::-webkit-scrollbar": { width: "6px" },
+                "&::-webkit-scrollbar-thumb": { backgroundColor: "#ccc", borderRadius: "3px" }
+            }}>
+                {data.map((row, index) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={row.id || index}>
+                        <Card sx={{
+                            height: "100%",
+                            transition: "all 0.25s ease",
+                            border: "1px solid", borderColor: alpha("#ef5350", 0.2),
+                            borderRadius: 2.5, overflow: "hidden",
+                            "&:hover": {
+                                transform: "translateY(-3px)",
+                                boxShadow: "0 8px 25px rgba(239,83,80,0.15)",
+                                borderColor: "#ef5350",
+                                "& .card-stripe": { opacity: 1 }
+                            }
+                        }}>
+                            {/* Red stripe header */}
+                            <Box className="card-stripe" sx={{
+                                background: "linear-gradient(135deg, #ef5350 0%, #c62828 100%)",
+                                px: 2, py: 1.5,
+                                display: "flex", alignItems: "center", justifyContent: "space-between",
+                                opacity: 0.9, transition: "opacity 0.25s"
+                            }}>
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                    <Hash size={14} color="rgba(255,255,255,0.8)" />
+                                    <Typography variant="subtitle2" sx={{ color: "#fff", fontWeight: 700 }}>
+                                        Termo: {row.numero}
+                                    </Typography>
+                                </Box>
+                                <Chip label={`Caixa ${row.caixa}`} size="small" sx={{
+                                    bgcolor: "rgba(255,255,255,0.2)", color: "#fff",
+                                    fontWeight: 600, fontSize: "0.65rem", height: 22
+                                }} />
+                            </Box>
+
+                            <CardContent sx={{ p: 2 }}>
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mb: 1.5 }}>
+                                    <InfoRow icon={User} label="Parte" value={row.parte} />
+                                    <InfoRow icon={CreditCard} label="Cartao" value={row.cartao} />
+                                    <InfoRow icon={Archive} label="Caixa" value={row.caixa} />
+                                </Box>
+
+                                <Divider sx={{ my: 1 }} />
+
+                                {/* Action buttons */}
+                                <Box sx={{ display: "flex", gap: 1 }}>
+                                    <Button
+                                        fullWidth
+                                        size="small"
+                                        variant="outlined"
+                                        onClick={() => onClick(row.id)}
+                                        sx={{
+                                            textTransform: "none", fontWeight: 600, fontSize: "0.75rem",
+                                            color: "#ef5350", borderColor: alpha("#ef5350", 0.4),
+                                            borderRadius: 1.5,
+                                            "&:hover": { bgcolor: "#ef5350", color: "#fff", borderColor: "#ef5350" }
+                                        }}
+                                    >
+                                        Excluir
+                                    </Button>
+                                    <Button
+                                        fullWidth
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{
+                                            textTransform: "none", fontWeight: 600, fontSize: "0.75rem",
+                                            color: "#0dcaf0", borderColor: alpha("#0dcaf0", 0.4),
+                                            borderRadius: 1.5,
+                                            "&:hover": { bgcolor: "#0dcaf0", color: "#fff", borderColor: "#0dcaf0" }
+                                        }}
+                                    >
+                                        Restaurar
+                                    </Button>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
+        </Box>
+    );
+};

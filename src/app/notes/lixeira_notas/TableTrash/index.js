@@ -1,67 +1,105 @@
-import React, { useState } from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import Grid from '@mui/material/Grid';
-import Image from 'next/image';
+import React from "react";
+import {
+    Grid, Card, CardContent, Typography, Box, Chip,
+    alpha, Tooltip, IconButton
+} from "@mui/material";
+import { FileText, User, MoreVertical, Hash, CreditCard } from "lucide-react";
 
-export const DocList = ({ data, handleClick, setNumber }) => {
+const EmptyState = () => (
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 8, px: 2 }}>
+        <Box sx={{
+            width: 80, height: 80, borderRadius: "50%",
+            backgroundColor: alpha("#ef5350", 0.1),
+            display: "flex", alignItems: "center", justifyContent: "center", mb: 2
+        }}>
+            <FileText size={40} color="#ef5350" />
+        </Box>
+        <Typography variant="h6" color="text.secondary" gutterBottom>
+            Nenhum documento na lixeira
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+            Itens excluidos aparecerao aqui
+        </Typography>
+    </Box>
+);
 
+export const DocList = ({ data = [], handleClick, setNumber }) => {
+    if (!data || data.length === 0) return <EmptyState />;
 
     return (
-        <>
-            <Grid
-                container
-                spacing={0}
-                sx={{
-                    width: "100%",
-                    flexGrow: 1,
-                    height: '450px',
-                    margin: '0 auto',
-                    position: 'relative',
-                    overflowY: 'auto',
-                }}
-            >
-                {data && data.map((item, index) => (
-                    <Grid
-                        item
-                        key={index}
-                        xs={6}
-                        sm={6}
-                        md={3}
-                        lg={3}
-                        sx={{
-                            display: 'flex',
-                            padding: '0px',
-                            justifyContent: 'center',
+        <Box sx={{ p: 2 }}>
+            <Grid container spacing={2} sx={{
+                maxHeight: "550px", overflowY: "auto",
+                "&::-webkit-scrollbar": { width: "6px" },
+                "&::-webkit-scrollbar-thumb": { backgroundColor: "#ccc", borderRadius: "3px" }
+            }}>
+                {data.map((item, index) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={item.order_num || index}>
+                        <Card sx={{
+                            height: "100%", cursor: "pointer",
+                            transition: "all 0.25s ease",
+                            border: "1px solid", borderColor: alpha("#ef5350", 0.2),
+                            borderRadius: 2.5, overflow: "hidden",
+                            "&:hover": {
+                                transform: "translateY(-3px)",
+                                boxShadow: "0 8px 25px rgba(239,83,80,0.15)",
+                                borderColor: "#ef5350",
+                                "& .card-stripe": { opacity: 1 }
+                            }
                         }}
-                    >
-                        <List sx={{ width: '100%' }}>
-                            <ListItem sx={{ cursor: 'pointer' }}>
-                                <ListItemAvatar>
-                                    <Image width={50} height={50} src="/image/pdf-icon.svg" alt="" />
-                                </ListItemAvatar>
-                                <ListItemText
-                                    onClick={(event) => {
-                                        handleClick(event)
-                                        console.log(item)
-                                        setNumber(item.order_num)
-                                    }}
-                                    primaryTypographyProps={{
-                                        color: 'black',
-                                        fontWeight: 'bold',
-                                    }}
-                                    primary={item.presenterDocument}
-                                    secondary={`por ${item.presenterName}`}
-                                />
-                            </ListItem>
-                        </List>
+                        onClick={(e) => { handleClick(e); setNumber(item.order_num); }}
+                        >
+                            <Box className="card-stripe" sx={{
+                                background: "linear-gradient(135deg, #ef5350 0%, #c62828 100%)",
+                                px: 2, py: 1.5,
+                                display: "flex", alignItems: "center", justifyContent: "space-between",
+                                opacity: 0.9, transition: "opacity 0.25s"
+                            }}>
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                    <Hash size={14} color="rgba(255,255,255,0.8)" />
+                                    <Typography variant="subtitle2" sx={{ color: "#fff", fontWeight: 700 }}>
+                                        Pedido: {item.order_num}
+                                    </Typography>
+                                </Box>
+                                <Tooltip title="Opcoes">
+                                    <IconButton size="small" sx={{ color: "rgba(255,255,255,0.8)", "&:hover": { bgcolor: "rgba(255,255,255,0.15)" } }}
+                                        onClick={(e) => { e.stopPropagation(); handleClick(e); setNumber(item.order_num); }}>
+                                        <MoreVertical size={16} />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+
+                            <CardContent sx={{ p: 2 }}>
+                                <Box sx={{ backgroundColor: alpha("#ef5350", 0.04), borderRadius: 1.5, p: 1.5 }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
+                                        <User size={13} color="#ef5350" />
+                                        <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                                            APRESENTANTE
+                                        </Typography>
+                                    </Box>
+                                    <Typography variant="body2" fontWeight={600} sx={{
+                                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
+                                    }}>
+                                        {item.presenterName || "-"}
+                                    </Typography>
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.5 }}>
+                                        <CreditCard size={12} color="#666" />
+                                        <Typography variant="caption" color="text.secondary">
+                                            {item.presenterDocument || "-"}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                <Box sx={{ mt: 1.5, display: "flex", justifyContent: "center" }}>
+                                    <Chip label="Lixeira" size="small" sx={{
+                                        bgcolor: alpha("#ef5350", 0.1), color: "#ef5350", fontWeight: 600, fontSize: "0.7rem"
+                                    }} />
+                                </Box>
+                            </CardContent>
+                        </Card>
                     </Grid>
                 ))}
             </Grid>
-
-        </>
-
+        </Box>
     );
 };

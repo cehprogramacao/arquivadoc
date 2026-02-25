@@ -78,6 +78,11 @@ const PermissionButton = styled(Button)({
 
 const numberMaskEstruct = '(99) 99999-9999';
 
+const CARGO_GROUP_FILTER = {
+    registro_imoveis: ['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofícios', 'Notas'],
+    registro_civil: ['Registro Civil'],
+};
+
 const userSv = new User();
 
 const UpdateUserById = ({ params }) => {
@@ -87,16 +92,26 @@ const UpdateUserById = ({ params }) => {
     const [activeStep, setActiveStep] = useState(0);
     const [showSuccess, setShowSuccess] = useState(false);
     const router = useRouter()
+    const [serviceGroups, setServiceGroups] = useState([]);
     const [userData, setUserData] = useState({
         name: '',
         phone: '',
         cargo_serventia: 'geral',
-        permissions: Array(7).fill().map(() => [0, 0, 0, 0])
+        permissions: []
     });
 
     const steps = ['Dados do Usuário', 'Configurar Permissões'];
-    const permissionNames = ['Protesto', 'RGI', 'RTD', 'RPJ', 'Ofícios', 'Cadastros', 'Notas'];
     const permissionTypes = ['Visualizar', 'Adicionar', 'Editar', 'Deletar'];
+
+    const getFilteredGroups = () => {
+        const allowedNames = CARGO_GROUP_FILTER[userData.cargo_serventia];
+        if (!allowedNames) {
+            return serviceGroups.map((g, i) => ({ ...g, originalIndex: i }));
+        }
+        return serviceGroups
+            .map((g, i) => ({ ...g, originalIndex: i }))
+            .filter(g => allowedNames.includes(g.public_name));
+    };
 
     const handleCheckedPermission = (permIndex, checkboxIndex) => {
         const newPermissions = userData.permissions.map((perm, index) => {
@@ -112,13 +127,19 @@ const UpdateUserById = ({ params }) => {
     };
 
     const handleSelectAll = () => {
-        const allSelected = userData.permissions.map(() => [1, 1, 1, 1]);
-        setUserData({ ...userData, permissions: allSelected });
+        const newPermissions = [...userData.permissions.map(p => [...p])];
+        getFilteredGroups().forEach(g => {
+            newPermissions[g.originalIndex] = [1, 1, 1, 1];
+        });
+        setUserData({ ...userData, permissions: newPermissions });
     };
 
     const handleClearAll = () => {
-        const allCleared = userData.permissions.map(() => [0, 0, 0, 0]);
-        setUserData({ ...userData, permissions: allCleared });
+        const newPermissions = [...userData.permissions.map(p => [...p])];
+        getFilteredGroups().forEach(g => {
+            newPermissions[g.originalIndex] = [0, 0, 0, 0];
+        });
+        setUserData({ ...userData, permissions: newPermissions });
     };
 
     const handleSelectRowAll = (permIndex) => {
@@ -136,10 +157,24 @@ const UpdateUserById = ({ params }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setErrors({ ...errors, [name]: '' });
-        setUserData({
-            ...userData,
-            [name]: value,
-        });
+
+        if (name === 'cargo_serventia') {
+            const allowedNames = CARGO_GROUP_FILTER[value];
+            if (allowedNames) {
+                const newPermissions = userData.permissions.map((perm, i) => {
+                    const group = serviceGroups[i];
+                    if (group && !allowedNames.includes(group.public_name)) {
+                        return [0, 0, 0, 0];
+                    }
+                    return perm;
+                });
+                setUserData({ ...userData, cargo_serventia: value, permissions: newPermissions });
+            } else {
+                setUserData({ ...userData, cargo_serventia: value });
+            }
+        } else {
+            setUserData({ ...userData, [name]: value });
+        }
     };
 
     const handleInputChange = (e) => {
@@ -210,12 +245,17 @@ const UpdateUserById = ({ params }) => {
                 throw new Error('Usuário não autenticado');
             }
 
-            const data = await userSv.getUserById(params.id);
+            const [groups, data] = await Promise.all([
+                userSv.getServiceGroups(),
+                userSv.getUserById(params.id)
+            ]);
 
-            const initialPermissions = Array(7).fill().map(() => [0, 0, 0, 0]);
+            setServiceGroups(groups);
+
+            const initialPermissions = Array(groups.length).fill().map(() => [0, 0, 0, 0]);
 
             data.permissions.forEach((permission) => {
-                const permIndex = permissionNames.indexOf(permission.public_name);
+                const permIndex = groups.findIndex(g => g.public_name === permission.public_name);
                 if (permIndex !== -1) {
                     initialPermissions[permIndex] = [
                         permission.view,
@@ -486,9 +526,9 @@ const UpdateUserById = ({ params }) => {
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
-                                                        {permissionNames.map((permission, permIndex) => (
+                                                        {getFilteredGroups().map((group) => (
                                                             <TableRow
-                                                                key={permission}
+                                                                key={group.id}
                                                                 sx={{
                                                                     '&:nth-of-type(odd)': { bgcolor: '#f9f9f9' },
                                                                     '&:hover': { bgcolor: '#f0f7ef' }
@@ -501,14 +541,14 @@ const UpdateUserById = ({ params }) => {
                                                                         color: '#333'
                                                                     }}
                                                                 >
-                                                                    {permission}
+                                                                    {group.public_name}
                                                                 </TableCell>
-                                                                {userData.permissions[permIndex].map((value, checkboxIndex) => (
+                                                                {(userData.permissions[group.originalIndex] || [0, 0, 0, 0]).map((value, checkboxIndex) => (
                                                                     <TableCell key={checkboxIndex} align="center">
                                                                         <Checkbox
                                                                             color="success"
                                                                             checked={value === 1}
-                                                                            onChange={() => handleCheckedPermission(permIndex, checkboxIndex)}
+                                                                            onChange={() => handleCheckedPermission(group.originalIndex, checkboxIndex)}
                                                                             sx={{
                                                                                 '&.Mui-checked': {
                                                                                     color: '#237117',
@@ -522,7 +562,7 @@ const UpdateUserById = ({ params }) => {
                                                                         <Tooltip title="Marcar todas desta linha">
                                                                             <IconButton
                                                                                 size="small"
-                                                                                onClick={() => handleSelectRowAll(permIndex)}
+                                                                                onClick={() => handleSelectRowAll(group.originalIndex)}
                                                                                 sx={{
                                                                                     color: '#237117',
                                                                                     '&:hover': { bgcolor: 'rgba(35, 113, 23, 0.08)' }
@@ -534,7 +574,7 @@ const UpdateUserById = ({ params }) => {
                                                                         <Tooltip title="Limpar esta linha">
                                                                             <IconButton
                                                                                 size="small"
-                                                                                onClick={() => handleClearRow(permIndex)}
+                                                                                onClick={() => handleClearRow(group.originalIndex)}
                                                                                 sx={{
                                                                                     color: '#666',
                                                                                     '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' }

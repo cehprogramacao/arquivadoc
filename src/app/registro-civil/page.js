@@ -38,7 +38,7 @@ import {
     Visibility,
     FilterList,
     FilterListOff,
-    Search,
+    Search as SearchIcon,
     Clear
 } from '@mui/icons-material';
 import { Buttons } from '@/Components/Button/Button';
@@ -256,16 +256,33 @@ const PageRegistroCivil = () => {
     return (
         <AuthProvider>
             <PrivateRoute requiredPermissions={['Registro Civil']}>
-                <Box sx={{ width: '100%', height: '100vh', py: 15 }}>
+                <Box sx={{ width: '100%', minHeight: '100vh', bgcolor: '#f5f7fa', pt: 12, pb: 6, px: 2 }}>
                     <Container maxWidth="lg">
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} textAlign="center">
-                                <Typography fontSize={40} fontWeight="bold" color="#000">
-                                    Registro Civil
-                                </Typography>
-                            </Grid>
+                        {/* Header */}
+                        <Box sx={{ mb: 4 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                                <Box sx={{
+                                    width: 56, height: 56, borderRadius: 3,
+                                    background: 'linear-gradient(135deg, #237117 0%, #1a5511 100%)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    boxShadow: '0 4px 14px rgba(35,113,23,0.3)'
+                                }}>
+                                    <Description sx={{ color: '#fff', fontSize: 28 }} />
+                                </Box>
+                                <Box>
+                                    <Typography variant="h4" fontWeight={700} color="#1a1a1a">
+                                        Registro Civil
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {data?.length || 0} {data?.length === 1 ? 'registro encontrado' : 'registros encontrados'}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Box>
 
-                            {/* Filtros principais */}
+                        {/* Search Section */}
+                        <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e5e7eb', mb: 3, bgcolor: '#fff' }}>
+                        <Grid container spacing={2} alignItems="center">
                             <Grid item xs={12} md={4}>
                                 <TextField
                                     fullWidth
@@ -297,7 +314,7 @@ const PageRegistroCivil = () => {
                                 <Stack direction="row" spacing={1.5} justifyContent="center" flexWrap="wrap">
                                     <Button
                                         variant="contained"
-                                        startIcon={<Search />}
+                                        startIcon={<SearchIcon />}
                                         onClick={handleSearch}
                                         sx={{
                                             bgcolor: GREEN,
@@ -426,15 +443,20 @@ const PageRegistroCivil = () => {
                                     </Paper>
                                 </Collapse>
                             </Grid>
-
-                            <Grid item xs={12}>
-                                <DocListCivil
-                                    data={data}
-                                    setSelectedId={setSelectedId}
-                                    handleClick={handleClickMenu}
-                                />
-                            </Grid>
                         </Grid>
+                        </Paper>
+
+                        {/* Table */}
+                        <Paper elevation={0} sx={{
+                            borderRadius: 3, border: '1px solid #e5e7eb',
+                            overflow: 'hidden', bgcolor: '#fff'
+                        }}>
+                            <DocListCivil
+                                data={data}
+                                setSelectedId={setSelectedId}
+                                handleClick={handleClickMenu}
+                            />
+                        </Paper>
                     </Container>
 
                     <Drawer anchor="left" open={openModal} onClose={handleCloseModal}>

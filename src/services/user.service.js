@@ -61,6 +61,10 @@ class User extends ServiceBase {
     return this.get(`/user/${userId}`);
   }
 
+  getServiceGroups() {
+    return this.get("/service-groups");
+  }
+
   deleteUser(userId) {
     return this.delete(`/user/${userId}`);
   }
